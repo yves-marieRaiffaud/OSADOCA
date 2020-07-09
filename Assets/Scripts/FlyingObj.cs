@@ -87,7 +87,6 @@ public static class FlyingObj
             T2 settings = GetObjectSettings<T2>(body); // SpaceshipSettings or CelestialBodySettings
 
             Vector3d bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit, OrbitalParams.bodyPositionType.nu);
-            Debug.Log(castBody.orbitedBody.transform.position);
             castBody.realPosition = UsefulFunctions.AlignPositionVecWithParentPos(bodyRelatedPos, castBody.orbitedBody.transform.position);
             castBody._gameObject.transform.position = (Vector3)castBody.realPosition;
         }

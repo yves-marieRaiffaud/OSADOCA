@@ -127,6 +127,8 @@ public class UniverseRunner : MonoBehaviour
 
             switch(UsefulFunctions.CastStringToGoTags(obj.tag))
             {
+                
+
                 case goTags.Planet:
                     obj.position = Vector3.zero;
                     /*CelestialBody body = obj.GetComponent<CelestialBody>();
