@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78dbd6c3e60a6654cbf4d3d4217527d8, type: 3}
+  m_Name: EarthPlanet
+  m_EditorClassIdentifier: 
+  bodySettingsEditorFoldout: 0
+  orbitInfoShowPredictedOrbitInfo: 0
+  usePredifinedPlanets: 0
+  chosenPredifinedPlanet: 2
+  radius: 6378
+  radiusU: 318.90000000000003
+  soiRadius: 120000
+  massRatio: 0
+  rotationSpeed: 10
+  rotationAxis:
+    x: 0
+    y: 1
+    z: 0
+  cullingMinAngle: 1.2
+  planetRefreshPeriod: 0.5
+  detailLevelDistances:
+  - Infinity
+  - 1000
+  - 100
+  - 50
+  - 10
+  - 5
+  - 1
+  "\xB5": 0
+  gravBodies: []
+  bodyMaterial: {fileID: 2100000, guid: 5579e20e84aaa1b43aedcab695953d25, type: 2}
