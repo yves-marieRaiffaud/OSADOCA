@@ -12,15 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78dbd6c3e60a6654cbf4d3d4217527d8, type: 3}
   m_Name: EarthPlanet
   m_EditorClassIdentifier: 
-  bodySettingsEditorFoldout: 0
+  bodySettingsEditorFoldout: 1
   orbitInfoShowPredictedOrbitInfo: 0
   usePredifinedPlanets: 0
   chosenPredifinedPlanet: 2
   radius: 6378
-  radiusU: 318.90000000000003
+  radiusU: 3189
+  equatorialPlane:
+    forwardVec:
+      x: 1
+      y: 0
+      z: 0
+    rightVec:
+      x: 0
+      y: 0
+      z: 1
+    point:
+      x: 0
+      y: 0
+      z: 0
+    normal:
+      x: 0
+      y: 1
+      z: 0
   soiRadius: 120000
   massRatio: 0
-  rotationSpeed: 10
+  rotationSpeed: 5
   rotationAxis:
     x: 0
     y: 1
@@ -35,6 +52,6 @@ MonoBehaviour:
   - 10
   - 5
   - 1
-  "\xB5": 0
+  mu: 39.8
   gravBodies: []
   bodyMaterial: {fileID: 2100000, guid: 5579e20e84aaa1b43aedcab695953d25, type: 2}

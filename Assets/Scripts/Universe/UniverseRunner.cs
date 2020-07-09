@@ -11,7 +11,7 @@ public class UniverseRunner : MonoBehaviour
     public GameObject playerCamera; // Camera attached to the debugging spacecraft
 
     [HideInInspector] public enum folderNames { PhysicsObjs, Stars, Planets, Spaceships, Orbits };
-    [HideInInspector] public enum goTags { Star, Planet, Spaceship };
+    [HideInInspector] public enum goTags { Star, Planet, Spaceship, Orbit };
 
     [HideInInspector] public GameObject physicsObjGO; //Parent GameObject of all Physics Objects
     [HideInInspector] public GameObject planetsFolder; // GameObject containing every orbiting Planets
@@ -119,7 +119,6 @@ public class UniverseRunner : MonoBehaviour
 
     void Start()
     {
-        //EarlyInitPlanet(); // Init every planets at (0;0;0)
         foreach(Transform obj in physicsObjArray)
         {
             Vector3d tangentialVec;
@@ -127,19 +126,20 @@ public class UniverseRunner : MonoBehaviour
 
             switch(UsefulFunctions.CastStringToGoTags(obj.tag))
             {
-                
+                case goTags.Star:
+                    obj.position = Vector3.zero; // Position the Sun at the center of the Universe
+                    break;
 
                 case goTags.Planet:
-                    obj.position = Vector3.zero;
-                    /*CelestialBody body = obj.GetComponent<CelestialBody>();
-                    body.AssignRefDictOrbitalParams(UniCsts.planetsDict[body.settings.chosenPredifinedPlanet]);
-                    FlyingObj.InitializeOrbit<CelestialBody, CelestialBodySettings>(body);
-                    FlyingObj.InitializeBodyPosition<CelestialBody, CelestialBodySettings>(body);
-                    FlyingObj.InitializeDirVecLineRenderers<CelestialBody, CelestialBodySettings>(body);
+                    CelestialBody celestBody = obj.GetComponent<CelestialBody>();
+                    celestBody.AssignRefDictOrbitalParams(UniCsts.planetsDict[celestBody.settings.chosenPredifinedPlanet]);
+                    FlyingObj.InitializeOrbit<CelestialBody, CelestialBodySettings>(celestBody);
+                    FlyingObj.InitializeBodyPosition<CelestialBody, CelestialBodySettings>(celestBody);
+                    FlyingObj.InitializeDirVecLineRenderers<CelestialBody, CelestialBodySettings>(celestBody);
 
-                    tangentialVec = body.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
-                    orbitalSpeed = body.orbit.GetOrbitalSpeedFromOrbit();
-                    body.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;*/
+                    tangentialVec = celestBody.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
+                    orbitalSpeed = celestBody.orbit.GetOrbitalSpeedFromOrbit();
+                    celestBody.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
                     break;
                 
                 case goTags.Spaceship:
@@ -156,30 +156,24 @@ public class UniverseRunner : MonoBehaviour
         }
     }
 
-    private void EarlyInitPlanet()
-    {
-        GameObject[] goList = GameObject.FindGameObjectsWithTag(goTags.Planet.ToString());
-        foreach(GameObject go in goList)
-        {
-            go.transform.position = Vector3.zero;
-        }
-    }
-
     void FixedUpdate()
     {
         if(simEnv.simulateGravity)
         {
             GravitationalStep();
         }
+        updateFloatingOrigin();
     }
 
     private void GravitationalStep()
     {
+        // First computing the acc, velocity and position updates for each Star, Planet or Spaceship 
         foreach(Transform obj in physicsObjArray)
         {
             ComputeNewPosition(obj, obj.tag);
         }
 
+        // Once everything has been computed, apply the new position ot every objects
         foreach(Transform obj in physicsObjArray)
         {
             ApplyNewPosition(obj, obj.tag);
@@ -188,11 +182,18 @@ public class UniverseRunner : MonoBehaviour
 
     private void ComputeNewPosition(Transform obj, string objTag)
     {
+        // Compute acceleration, velocity and the new position of either a Planet or a Spaceship, due to gravitational pull
         CelestialBody orbitedBody;
         switch(UsefulFunctions.CastStringToGoTags(objTag))
         {
-            case goTags.Planet:
+            case goTags.Star:
                 //do nothing for now
+                break;
+
+            case goTags.Planet:
+                CelestialBody celestBody = obj.GetComponent<CelestialBody>();
+                orbitedBody = celestBody.orbitedBody.GetComponent<CelestialBody>();
+                FlyingObj.GravitationalUpdate<CelestialBody, CelestialBodySettings>(orbitedBody, celestBody);
                 break;
             
             case goTags.Spaceship:
@@ -205,10 +206,12 @@ public class UniverseRunner : MonoBehaviour
 
     private void ApplyNewPosition(Transform obj, string objTag)
     {
+        // Move the rigidbody of a Planet or a Spaceship to its new position due to gravitational pull
         switch(UsefulFunctions.CastStringToGoTags(objTag))
         {
             case goTags.Planet:
-                //do nothing for now
+                CelestialBody celestBody = obj.GetComponent<CelestialBody>();
+                FlyingObj.ApplyRigbidbodyPosUpdate<CelestialBody, CelestialBodySettings>(celestBody, celestBody.settings);
                 break;
             
             case goTags.Spaceship:
@@ -217,4 +220,59 @@ public class UniverseRunner : MonoBehaviour
                 break;
         }
     }
+
+    private void updateFloatingOrigin()
+    {   
+        Vector3 originOffset = playerCamera.transform.position;
+        float dstFromOrigin = originOffset.magnitude;
+        if(dstFromOrigin > UniCsts.dstThreshold)
+        {
+            foreach(Transform t in physicsObjArray)
+            {
+                t.position -= originOffset; // Offset every Star, Planet and Spaceship
+                
+                // Also update their 'realPosition' variable, as it's the variable used to compute gravitational pull at each timestep
+                switch(UsefulFunctions.CastStringToGoTags(t.tag))
+                {
+                    case goTags.Spaceship:
+                        Spaceship ship = t.gameObject.GetComponent<Spaceship>();
+                        ship.realPosition -= originOffset;
+                        break;
+                    
+                    default:
+                        CelestialBody celestBody = t.gameObject.GetComponent<CelestialBody>();
+                        celestBody.realPosition -= originOffset;
+                        break;
+                }
+            }
+            universeOffset += originOffset;
+        }
+    }
+
+
+    void LateUpdate()
+    {
+        UpdateOrbitLineRenderers();
+    }
+
+    private void UpdateOrbitLineRenderers()
+    {
+        foreach(Transform obj in physicsObjArray)
+        {
+            switch(UsefulFunctions.CastStringToGoTags(obj.tag))
+            {
+                case goTags.Spaceship:
+                    Spaceship ship = obj.GetComponent<Spaceship>();
+                    ship.orbit.UpdateLineRendererPos();
+                    break;
+                
+                case goTags.Planet:
+                    CelestialBody celestBody = obj.GetComponent<CelestialBody>();
+                    celestBody.orbit.UpdateLineRendererPos();
+                    break;
+            }
+        }
+    }
+
+
 }

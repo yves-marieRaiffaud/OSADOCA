@@ -104,7 +104,8 @@ public class Orbit
     {
         lineRendererGO = UsefulFunctions.CreateAssignGameObject(suffixGO, typeof(LineRenderer));
         lineRendererGO.layer = 10; // Layer 10 is 'Orbit' Layer (which is not rendered in teh background camera)
-        
+        lineRendererGO.tag = "Orbit";
+
         lineRenderer = lineRendererGO.GetComponent<LineRenderer>();
         lineRenderer.useWorldSpace = false;
         lineRenderer.loop = true;
@@ -347,6 +348,7 @@ public class Orbit
             // Check if GameObject already Exists
             GameObject dirGO = UsefulFunctions.CreateAssignGameObject(param.suffixVectorDir[dirType] + suffixGO);
             dirGO.layer = 10; // 'Orbit' layer
+            dirGO.tag = "Orbit";
             LineRenderer dirLR = (LineRenderer) UsefulFunctions.CreateAssignComponent(typeof(LineRenderer), dirGO);
             dirGO.transform.parent = GameObject.Find(suffixGO).transform;
 
@@ -440,6 +442,7 @@ public class Orbit
             GameObject dirGO = UsefulFunctions.CreateAssignGameObject(nameGameObject + suffixGO);
             dirGO.layer = 10; // 'Orbit' layer
             LineRenderer dirLR = (LineRenderer) UsefulFunctions.CreateAssignComponent(typeof(LineRenderer), dirGO);
+            dirGO.tag = "Orbit";
             dirGO.transform.parent = GameObject.Find(suffixGO).transform;
 
             Vector3[] pos = new Vector3[2];

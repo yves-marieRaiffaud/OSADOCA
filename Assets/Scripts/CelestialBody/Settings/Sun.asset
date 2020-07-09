@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78dbd6c3e60a6654cbf4d3d4217527d8, type: 3}
+  m_Name: Sun
+  m_EditorClassIdentifier: 
+  bodySettingsEditorFoldout: 1
+  orbitInfoShowPredictedOrbitInfo: 0
+  usePredifinedPlanets: 0
+  chosenPredifinedPlanet: 2
+  radius: 696340
+  radiusU: 3189
+  equatorialPlane:
+    forwardVec:
+      x: 1
+      y: 0
+      z: 0
+    rightVec:
+      x: 0
+      y: 0
+      z: 1
+    point:
+      x: 0
+      y: 0
+      z: 0
+    normal:
+      x: 0
+      y: 1
+      z: 0
+  soiRadius: 120000
+  massRatio: 0
+  rotationSpeed: 10
+  rotationAxis:
+    x: 0
+    y: 1
+    z: 0
+  cullingMinAngle: 1.2
+  planetRefreshPeriod: 0.5
+  detailLevelDistances:
+  - Infinity
+  - 1000
+  - 100
+  - 50
+  - 10
+  - 5
+  - 1
+  mu: 13271244.0018
+  gravBodies: []
+  bodyMaterial: {fileID: 2100000, guid: 01f33ea5bf0511c45a5d3ff5cce2b5c8, type: 2}

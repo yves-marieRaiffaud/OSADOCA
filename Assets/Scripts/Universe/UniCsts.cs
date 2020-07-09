@@ -43,7 +43,7 @@ public static class UniCsts
     public const double real2massU = 1d/massU2real;
 
     // Max distance before offseting every object to bring the camera back at the origin
-    public const double dstThreshold = 100d;
+    public const double dstThreshold = 10_000d;
 
     // Vernal Point
     public static readonly  Vector3d pv = Vector3d.right; // SHOULD BE CHANGED TO SOMETHING ELSE
