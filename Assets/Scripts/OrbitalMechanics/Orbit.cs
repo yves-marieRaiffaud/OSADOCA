@@ -4,11 +4,13 @@ using UnityEngine.Rendering;
 
 public class Orbit
 {
+    private const double CIRCULAR_ORBIT_TOLERANCE = 10e-5d; // Tolerance for the excentricity value with respect to zero
+
     public OrbitalParams param;
     public double scalingFactor; // Either 'UniCsts.pl2u' or 'UniCsts.au2u'
 
     private GameObject lineRendererGO;
-    private LineRenderer lineRenderer;
+    public LineRenderer lineRenderer;
     public CelestialBody orbitedBody;
     public GameObject orbitingGO;
     public Quaterniond orbitRot; // Rotation from XZ ellipse to XYZ ellipse by applying i, Omega, omega
@@ -48,6 +50,7 @@ public class Orbit
                 suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
                 CreateAssignOrbitLineRenderer(suffixGO);
                 DrawOrbit();
+                RecomputeMainDirectionVectors(); // Recompute vernal directions, apogee line and longitude of the ascending node line
                 break;
 
             case OrbitalParams.orbitDefinitionType.rpe:
@@ -72,6 +75,7 @@ public class Orbit
                 suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
                 CreateAssignOrbitLineRenderer(suffixGO);
                 DrawOrbit();
+                RecomputeMainDirectionVectors(); // Recompute vernal directions, apogee line and longitude of the ascending node line
                 break;
             
             case OrbitalParams.orbitDefinitionType.pe:
@@ -96,6 +100,7 @@ public class Orbit
                 suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
                 CreateAssignOrbitLineRenderer(suffixGO);
                 DrawOrbit();
+                RecomputeMainDirectionVectors(); // Recompute vernal directions, apogee line and longitude of the ascending node line
                 break;
         }
     }
@@ -104,7 +109,7 @@ public class Orbit
     {
         lineRendererGO = UsefulFunctions.CreateAssignGameObject(suffixGO, typeof(LineRenderer));
         lineRendererGO.layer = 10; // Layer 10 is 'Orbit' Layer (which is not rendered in teh background camera)
-        lineRendererGO.tag = "Orbit";
+        lineRendererGO.tag = UniverseRunner.goTags.Orbit.ToString();
 
         lineRenderer = lineRendererGO.GetComponent<LineRenderer>();
         lineRenderer.useWorldSpace = false;
@@ -121,16 +126,6 @@ public class Orbit
     {
         lineRendererGO.transform.localPosition = orbitedBody.transform.localPosition;
     }
-
-    public void printOrbitalParameters()
-    {
-        string txt = "p: " + param.p + ", e: " + param.e + ", i: " + param.i + ", longAscendingNode: " + param.lAscN + ", periapsisArg: " + param.omega + ", trueAnomaly: " + param.t0 + ", rp: " + param.rp + ", ra: " + param.ra + ", a: " + param.a + ", b: " + param.b + ", c: " + param.c + ", T: " + param.period;
-        Debug.Log(txt);
-        Debug.Log("pv = " + param.vp);
-        Debug.Log("pvAxisA = " + param.vpAxisRight);
-        Debug.Log("pvAxisB = " + param.vpAxisUp);
-    }
-
 
     public static Vector3d GetWorldPositionFromOrbit(Orbit orbit, OrbitalParams.bodyPositionType posType)
     {
@@ -175,6 +170,18 @@ public class Orbit
         // 1
         Vector3[] pos = new Vector3[param.orbitDrawingResolution];
         double incr = 2*Mathf.PI/param.orbitDrawingResolution;
+
+        //======
+        // Get rotation along the vpAxisUp of the parent celestialBody (if it exists) depending on its position on its orbit
+        CelestialBody parentOrbitedBody = orbitedBody;
+        Debug.Log("====");
+        while(parentOrbitedBody != null)
+        {
+            Debug.Log(parentOrbitedBody.name);
+            parentOrbitedBody = parentOrbitedBody.orbitedBody;
+        }
+        Debug.Log("====");
+        //======
         for(int i = 0; i < param.orbitDrawingResolution; i++)
         {
             double theta = i * incr;
@@ -270,6 +277,16 @@ public class Orbit
         return Vector3d.NaN();
     }
 
+    public void RecomputeMainDirectionVectors()
+    {
+
+        param.vp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vernalPoint);
+        param.vpAxisRight = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vpAxisRight);
+        param.vpAxisUp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vpAxisUp);
+        param.apogeeLineDir = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.apogeeLine);
+        param.ascendingNodeLineDir = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.ascendingNodeLine);
+    }
+
     public Vector3d ComputeDirectionVector(OrbitalParams.typeOfVectorDir vecType)
     {
         if(orbitedBody == null)
@@ -280,7 +297,7 @@ public class Orbit
             switch(vecType)
             {
                 case OrbitalParams.typeOfVectorDir.vernalPoint:
-                    return UniCsts.pv;
+                    return (UniCsts.pv - new Vector3d(orbitingGO.transform.position)).normalized;
                 
                 case OrbitalParams.typeOfVectorDir.vpAxisRight:
                     if(!Vector3d.IsValid(param.vp)){
@@ -301,10 +318,19 @@ public class Orbit
                     return new Vector3d(double.NaN, double.NaN, double.NaN);
 
                 case OrbitalParams.typeOfVectorDir.ascendingNodeLine:
-                    Vector3d intersectPoint = new Vector3d();
-                    Vector3d intersectLine = new Vector3d();
-                    OrbitPlane.PlaneIntersectPlane(param.orbitPlane, orbitedBody.settings.equatorialPlane, out intersectPoint, out intersectLine);
-                    return intersectLine;
+                    if(UsefulFunctions.DoublesAreEqual(param.i, 0d, 10e-4))
+                    {
+                        // There is an infinity of Ascending nodes
+                        // Returning the ascending node line as the perpendicular vector with respect to the apogee line, and in the orbit plane
+                        Vector3d tmp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.apogeeLine);
+                        return Vector3d.Cross(tmp, param.orbitPlane.normal);
+                    }
+                    else {
+                        Vector3d intersectPoint = new Vector3d();
+                        Vector3d intersectLine = new Vector3d();
+                        OrbitPlane.PlaneIntersectPlane(param.orbitPlane, orbitedBody.settings.equatorialPlane, out intersectPoint, out intersectLine);
+                        return intersectLine;
+                    }
                 
                 case OrbitalParams.typeOfVectorDir.radialVec:
                     return new Vector3d(orbitedBody.transform.position - orbitingGO.transform.position).normalized;
@@ -348,7 +374,7 @@ public class Orbit
             // Check if GameObject already Exists
             GameObject dirGO = UsefulFunctions.CreateAssignGameObject(param.suffixVectorDir[dirType] + suffixGO);
             dirGO.layer = 10; // 'Orbit' layer
-            dirGO.tag = "Orbit";
+            dirGO.tag = UniverseRunner.goTags.Orbit.ToString();
             LineRenderer dirLR = (LineRenderer) UsefulFunctions.CreateAssignComponent(typeof(LineRenderer), dirGO);
             dirGO.transform.parent = GameObject.Find(suffixGO).transform;
 
@@ -442,7 +468,7 @@ public class Orbit
             GameObject dirGO = UsefulFunctions.CreateAssignGameObject(nameGameObject + suffixGO);
             dirGO.layer = 10; // 'Orbit' layer
             LineRenderer dirLR = (LineRenderer) UsefulFunctions.CreateAssignComponent(typeof(LineRenderer), dirGO);
-            dirGO.tag = "Orbit";
+            dirGO.tag = UniverseRunner.goTags.Orbit.ToString();
             dirGO.transform.parent = GameObject.Find(suffixGO).transform;
 
             Vector3[] pos = new Vector3[2];
@@ -531,6 +557,16 @@ public class Orbit
     {
         // Returns the altitude in real world (in km) from the spaceship position to the surface of the orbited body
         return Get_R(shipPosition) - orbitedBody.settings.radius;
+    }
+
+    public bool IsCircular()
+    {
+        // Check if the orbit is circular
+        if(UsefulFunctions.DoublesAreEqual(param.e, 0d, CIRCULAR_ORBIT_TOLERANCE))
+        {
+            return true; // orbit is circular
+        }
+        else { return false; } // orbit is not circular
     }
 
 }

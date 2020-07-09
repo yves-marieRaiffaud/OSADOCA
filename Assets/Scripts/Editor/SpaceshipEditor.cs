@@ -135,12 +135,12 @@ public class SpaceshipEditor: Editor
     {
         param.showInfoPanel = EditorGUILayout.Foldout(param.showInfoPanel, "Orbit Info");
         OrbitalParams predictedParam = null;
-        /*if(Application.isPlaying && spaceship.predictor != null) {
+        if(Application.isPlaying && spaceship.predictor != null) {
             predictedParam = spaceship.predictor.predictedOrbit.param;
         }
         else {
             predictedParam = null;
-        }*/
+        }
         if(param.showInfoPanel)
         {
             spaceship.settings.orbitInfoShowPredictedOrbitInfo = EditorGUILayout.Toggle("Show predicted orbit info", spaceship.settings.orbitInfoShowPredictedOrbitInfo);

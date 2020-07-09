@@ -216,14 +216,14 @@ public class CelestialBodyEditor : Editor
     public void ShowOrbitInfoPanel(OrbitalParams param)
     {
         param.showInfoPanel = EditorGUILayout.Foldout(param.showInfoPanel, "Orbit Info");
-        celestBody.settings.orbitInfoShowPredictedOrbitInfo = EditorGUILayout.Toggle("Show predicted orbit info", celestBody.settings.orbitInfoShowPredictedOrbitInfo);
         OrbitalParams predictedParam = null;
-        /*if(Application.isPlaying && celestBody.predictor != null) {
+        if(Application.isPlaying && celestBody.predictor != null) {
             predictedParam = celestBody.predictor.predictedOrbit.param;
-        }*/
-        EditorGUI.BeginDisabledGroup(true);
+        }
         if(param.showInfoPanel)
         {
+            celestBody.settings.orbitInfoShowPredictedOrbitInfo = EditorGUILayout.Toggle("Show predicted orbit info", celestBody.settings.orbitInfoShowPredictedOrbitInfo);
+            EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.DoubleField(new GUIContent("Period", ".s\nOrbital period"), param.period);
             if(celestBody.settings.orbitInfoShowPredictedOrbitInfo && predictedParam!=null) {
                 EditorGUILayout.DoubleField(new GUIContent("Predicted period", ".s\nOrbital period of the predicted orbit"), predictedParam.period);
@@ -286,7 +286,7 @@ public class CelestialBodyEditor : Editor
             EditorGUILayout.Vector3Field("Vernal point", (Vector3)param.vp);
             EditorGUILayout.Vector3Field("Vernal right axis", (Vector3)param.vpAxisRight);
             EditorGUILayout.Vector3Field("Vernal up axis", (Vector3)param.vpAxisUp);
+            EditorGUI.EndDisabledGroup();
         }
-        EditorGUI.EndDisabledGroup();
     }
 }

@@ -10,8 +10,9 @@ public interface FlyingObjCommonParams
     // Interface for the shared variables between 'Spaceship' and 'CelestialBody' objects
     CelestialBody orbitedBody {get; set;}
     Orbit orbit {get; set;}
+    OrbitalPredictor predictor {get; set;}
     OrbitalParams orbitalParams {get; set;}
-    
+
     Vector3d orbitedBodyRelativeAcc {get; set;}
     Vector3d orbitedBodyRelativeVelIncr {get; set;}
     Vector3d orbitedBodyRelativeVel {get; set;}

@@ -132,14 +132,22 @@ public class UniverseRunner : MonoBehaviour
 
                 case goTags.Planet:
                     CelestialBody celestBody = obj.GetComponent<CelestialBody>();
-                    celestBody.AssignRefDictOrbitalParams(UniCsts.planetsDict[celestBody.settings.chosenPredifinedPlanet]);
-                    FlyingObj.InitializeOrbit<CelestialBody, CelestialBodySettings>(celestBody);
-                    FlyingObj.InitializeBodyPosition<CelestialBody, CelestialBodySettings>(celestBody);
-                    FlyingObj.InitializeDirVecLineRenderers<CelestialBody, CelestialBodySettings>(celestBody);
+                    if(GameObject.FindGameObjectsWithTag(goTags.Star.ToString()).Length > 0)
+                    {
+                        celestBody.AssignRefDictOrbitalParams(UniCsts.planetsDict[celestBody.settings.chosenPredifinedPlanet]);
+                        FlyingObj.InitializeOrbit<CelestialBody, CelestialBodySettings>(celestBody);
+                        FlyingObj.InitializeBodyPosition<CelestialBody, CelestialBodySettings>(celestBody);
+                        FlyingObj.InitializeDirVecLineRenderers<CelestialBody, CelestialBodySettings>(celestBody);
 
-                    tangentialVec = celestBody.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
-                    orbitalSpeed = celestBody.orbit.GetOrbitalSpeedFromOrbit();
-                    celestBody.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
+                        tangentialVec = celestBody.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
+                        orbitalSpeed = celestBody.orbit.GetOrbitalSpeedFromOrbit();
+                        celestBody.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
+                    }
+                    else {
+                        celestBody.transform.position = Vector3.zero;
+                        celestBody.orbitedBodyRelativeVel = Vector3d.zero;
+                    }
+                    
                     break;
                 
                 case goTags.Spaceship:
@@ -147,6 +155,7 @@ public class UniverseRunner : MonoBehaviour
                     FlyingObj.InitializeOrbit<Spaceship, SpaceshipSettings>(ship);
                     FlyingObj.InitializeBodyPosition<Spaceship, SpaceshipSettings>(ship);
                     FlyingObj.InitializeDirVecLineRenderers<Spaceship, SpaceshipSettings>(ship);
+                    // NEED TO FIX APSIDES AND NODES LINES OF THE ORBIT CLASS
 
                     tangentialVec = ship.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
                     orbitalSpeed = ship.orbit.GetOrbitalSpeedFromOrbit();
@@ -162,7 +171,7 @@ public class UniverseRunner : MonoBehaviour
         {
             GravitationalStep();
         }
-        updateFloatingOrigin();
+        //updateFloatingOrigin();
     }
 
     private void GravitationalStep()
@@ -192,8 +201,11 @@ public class UniverseRunner : MonoBehaviour
 
             case goTags.Planet:
                 CelestialBody celestBody = obj.GetComponent<CelestialBody>();
-                orbitedBody = celestBody.orbitedBody.GetComponent<CelestialBody>();
-                FlyingObj.GravitationalUpdate<CelestialBody, CelestialBodySettings>(orbitedBody, celestBody);
+                if(celestBody.orbitedBody != null)
+                {
+                    orbitedBody = celestBody.orbitedBody.GetComponent<CelestialBody>();
+                    FlyingObj.GravitationalUpdate<CelestialBody, CelestialBodySettings>(orbitedBody, celestBody);
+                }
                 break;
             
             case goTags.Spaceship:
@@ -268,7 +280,10 @@ public class UniverseRunner : MonoBehaviour
                 
                 case goTags.Planet:
                     CelestialBody celestBody = obj.GetComponent<CelestialBody>();
-                    celestBody.orbit.UpdateLineRendererPos();
+                    if(celestBody.orbit != null)
+                    {
+                        celestBody.orbit.UpdateLineRendererPos();
+                    }
                     break;
             }
         }

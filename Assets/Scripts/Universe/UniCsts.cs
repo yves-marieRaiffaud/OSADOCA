@@ -45,8 +45,8 @@ public static class UniCsts
     // Max distance before offseting every object to bring the camera back at the origin
     public const double dstThreshold = 10_000d;
 
-    // Vernal Point
-    public static readonly  Vector3d pv = Vector3d.right; // SHOULD BE CHANGED TO SOMETHING ELSE
+    // Vernal Point, very high value on x so that it is located at the infinity
+    public static readonly  Vector3d pv = new Vector3d(1e100d, 0d, 0d); // SHOULD BE CHANGED TO SOMETHING ELSE
 
     //===============================================================================================
     //===============================================================================================
@@ -75,12 +75,21 @@ public static class UniCsts
         { orbitalParams.trueAnomaly      , 0d}, // VALUE TO SET ACCORDING TO J200
     };
 
-    public static readonly Dictionary <orbitalParams, double> earthOrbitalParams = new Dictionary<orbitalParams, double> {
+    /*public static readonly Dictionary <orbitalParams, double> earthOrbitalParams = new Dictionary<orbitalParams, double> {
         { orbitalParams.aphelion         , 1.067d},
         { orbitalParams.perihelion       , 0.92329d },
         { orbitalParams.i                , 7.155d },
         { orbitalParams.longAscendingNode, 174.9d },
         { orbitalParams.perihelionArg    , 288.1d },
+        { orbitalParams.trueAnomaly      , 0d}, // VALUE TO SET ACCORDING TO J200
+    };*/
+
+    public static readonly Dictionary <orbitalParams, double> earthOrbitalParams = new Dictionary<orbitalParams, double> {
+        { orbitalParams.aphelion         , 1.067d},
+        { orbitalParams.perihelion       , 0.92329d },
+        { orbitalParams.i                , 0d },
+        { orbitalParams.longAscendingNode, 0d },
+        { orbitalParams.perihelionArg    , 0d },
         { orbitalParams.trueAnomaly      , 0d}, // VALUE TO SET ACCORDING TO J200
     };
 

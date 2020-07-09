@@ -25,6 +25,19 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     }
 
     [SerializeField, HideInInspector]
+    private OrbitalPredictor _predictor;
+    [SerializeField, HideInInspector]
+    public OrbitalPredictor predictor
+    {
+        get {
+            return _predictor;
+        }
+        set {
+            _predictor=value;
+        }
+    }
+
+    [SerializeField, HideInInspector]
     private OrbitalParams _orbitalParams;
     [SerializeField, HideInInspector]
     public OrbitalParams orbitalParams
@@ -108,10 +121,10 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         // Do nothing for now
     }
 
-    /*public void InitializeOrbitalPredictor()
+    public void InitializeOrbitalPredictor()
     {
-        predictor = new OrbitalPredictor(this, spaceshipSettings.orbitedBody.GetComponent<CelestialBody>(), spaceshipSettings.orbit);
-    }*/
+        predictor = new OrbitalPredictor(this, orbitedBody.GetComponent<CelestialBody>(), orbit);
+    }
 
     public Vector3d GetRelativeRealWorldPosition()
     {

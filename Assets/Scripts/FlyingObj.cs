@@ -106,6 +106,7 @@ public static class FlyingObj
             T1 castBody = CastObjectToType<T1>(body); // Spaceship or CelestialBody
             T2 settings = GetObjectSettings<T2>(body); // SpaceshipSettings or CelestialBodySettings
 
+            castBody.orbit.RecomputeMainDirectionVectors();
             float lineLength = 10f; // Default length for a spaceship orbiting a planet
             if(castBody.orbit.orbitingGO.tag == UniverseRunner.goTags.Planet.ToString()) {
                 lineLength = 100f;
@@ -119,7 +120,7 @@ public static class FlyingObj
                         if(vectorDir == OrbitalParams.typeOfVectorDir.radialVec || vectorDir == OrbitalParams.typeOfVectorDir.tangentialVec
                         || vectorDir == OrbitalParams.typeOfVectorDir.velocityVec || vectorDir == OrbitalParams.typeOfVectorDir.accelerationVec)
                         {
-                            castBody.orbit.DrawDirection(vectorDir, lineLength, 5_000f, castBody._gameObject.transform.position);
+                            castBody.orbit.DrawDirection(vectorDir, lineLength, 10_000f, castBody._gameObject.transform.position);
                         }
                         else{
                             castBody.orbit.DrawDirection(vectorDir, lineLength);

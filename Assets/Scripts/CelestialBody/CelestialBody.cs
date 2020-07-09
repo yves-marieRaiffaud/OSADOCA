@@ -21,6 +21,19 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
 
+    [SerializeField, HideInInspector]
+    private OrbitalPredictor _predictor;
+    [SerializeField, HideInInspector]
+    public OrbitalPredictor predictor
+    {
+        get {
+            return _predictor;
+        }
+        set {
+            _predictor=value;
+        }
+    }
+
     private OrbitalParams _orbitalParams;
     public OrbitalParams orbitalParams
     {
@@ -32,7 +45,9 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
 
+    [HideInInspector]
     public CelestialBody _orbitedBody;
+    [HideInInspector]
     public CelestialBody orbitedBody
     {
         get {
@@ -43,7 +58,9 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
 
+    [HideInInspector]
     public Vector3d _realPosition;
+    [HideInInspector]
     public Vector3d realPosition
     {
         get {
@@ -54,7 +71,9 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
 
+    [HideInInspector]
     public Vector3d _orbitedBodyRelativeAcc;
+    [HideInInspector]
     public Vector3d orbitedBodyRelativeAcc
     {
         get {
@@ -65,7 +84,9 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
 
+    [HideInInspector]
     public Vector3d _orbitedBodyRelativeVelIncr;
+    [HideInInspector]
     public Vector3d orbitedBodyRelativeVelIncr
     {
         get {
@@ -76,7 +97,9 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
 
+    [HideInInspector]
     public Vector3d _orbitedBodyRelativeVel;
+    [HideInInspector]
     public Vector3d orbitedBodyRelativeVel
     {
         get {
@@ -88,8 +111,8 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     }
     //=========================================
     // Bools for editor
-    public bool showCelestialBodyInfoPanel;
-    public bool planetEditorFoldout;
+    [HideInInspector] public bool showCelestialBodyInfoPanel;
+    [HideInInspector] public bool planetEditorFoldout;
     
     // Active Camera and distance
     private Transform universePlayerCamera;
@@ -227,7 +250,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     private void InitializeOrbitalParameters()
     {
-        Debug.Log("Using a predefined planet for " + this.name);
         orbitalParams = (OrbitalParams)OrbitalParams.CreateInstance<OrbitalParams>();
 
         orbitalParams.orbitRealPredType = OrbitalParams.typeOfOrbit.realOrbit;
@@ -245,7 +267,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         orbitalParams.orbitDrawingResolution = 300;
         orbitalParams.drawOrbit = true;
         orbitalParams.drawDirections = true;
-        orbitalParams.selectedVectorsDir = (OrbitalParams.typeOfVectorDir)256;
+        orbitalParams.selectedVectorsDir = (OrbitalParams.typeOfVectorDir)1022; // Draw everything
     }
 
 

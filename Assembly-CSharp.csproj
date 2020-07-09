@@ -51,6 +51,7 @@
      <Compile Include="Assets\Scripts\OrbitalMechanics\Orbit.cs" />
      <Compile Include="Assets\Scripts\OrbitalMechanics\OrbitPlane.cs" />
      <Compile Include="Assets\Scripts\OrbitalMechanics\OrbitalParams.cs" />
+     <Compile Include="Assets\Scripts\OrbitalMechanics\OrbitalPredictor.cs" />
      <Compile Include="Assets\Scripts\Spaceship\MainNozzle_Control.cs" />
      <Compile Include="Assets\Scripts\Spaceship\Spaceship.cs" />
      <Compile Include="Assets\Scripts\Spaceship\SpaceshipSettings.cs" />
