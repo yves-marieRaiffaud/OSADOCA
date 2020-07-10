@@ -138,16 +138,18 @@ public class UniverseRunner : MonoBehaviour
                         FlyingObj.InitializeOrbit<CelestialBody, CelestialBodySettings>(celestBody);
                         FlyingObj.InitializeBodyPosition<CelestialBody, CelestialBodySettings>(celestBody);
                         FlyingObj.InitializeDirVecLineRenderers<CelestialBody, CelestialBodySettings>(celestBody);
+                        // NEED TO FIX THE NODES LINE OF THE ORBIT CLASS
 
                         tangentialVec = celestBody.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
                         orbitalSpeed = celestBody.orbit.GetOrbitalSpeedFromOrbit();
                         celestBody.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
+
+                        celestBody.InitializeOrbitalPredictor();
                     }
                     else {
                         celestBody.transform.position = Vector3.zero;
                         celestBody.orbitedBodyRelativeVel = Vector3d.zero;
                     }
-                    
                     break;
                 
                 case goTags.Spaceship:
@@ -155,11 +157,13 @@ public class UniverseRunner : MonoBehaviour
                     FlyingObj.InitializeOrbit<Spaceship, SpaceshipSettings>(ship);
                     FlyingObj.InitializeBodyPosition<Spaceship, SpaceshipSettings>(ship);
                     FlyingObj.InitializeDirVecLineRenderers<Spaceship, SpaceshipSettings>(ship);
-                    // NEED TO FIX APSIDES AND NODES LINES OF THE ORBIT CLASS
+                    // NEED TO FIX THE NODES LINE OF THE ORBIT CLASS
 
                     tangentialVec = ship.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
                     orbitalSpeed = ship.orbit.GetOrbitalSpeedFromOrbit();
                     ship.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
+
+                    ship.InitializeOrbitalPredictor();
                     break;
             }
         }
@@ -171,7 +175,7 @@ public class UniverseRunner : MonoBehaviour
         {
             GravitationalStep();
         }
-        //updateFloatingOrigin();
+        updateFloatingOrigin();
     }
 
     private void GravitationalStep()
@@ -205,6 +209,8 @@ public class UniverseRunner : MonoBehaviour
                 {
                     orbitedBody = celestBody.orbitedBody.GetComponent<CelestialBody>();
                     FlyingObj.GravitationalUpdate<CelestialBody, CelestialBodySettings>(orbitedBody, celestBody);
+                    FlyingObj.InitializeDirVecLineRenderers<CelestialBody, CelestialBodySettings>(celestBody);
+                    celestBody.InitializeOrbitalPredictor();
                 }
                 break;
             
@@ -212,6 +218,8 @@ public class UniverseRunner : MonoBehaviour
                 Spaceship ship = obj.GetComponent<Spaceship>();
                 orbitedBody = ship.orbitedBody.GetComponent<CelestialBody>();
                 FlyingObj.GravitationalUpdate<Spaceship, SpaceshipSettings>(orbitedBody, ship);
+                FlyingObj.InitializeDirVecLineRenderers<Spaceship, SpaceshipSettings>(ship);
+                ship.InitializeOrbitalPredictor();
                 break;
         }
     }

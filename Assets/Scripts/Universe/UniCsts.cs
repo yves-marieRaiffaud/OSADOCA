@@ -87,9 +87,9 @@ public static class UniCsts
     public static readonly Dictionary <orbitalParams, double> earthOrbitalParams = new Dictionary<orbitalParams, double> {
         { orbitalParams.aphelion         , 1.067d},
         { orbitalParams.perihelion       , 0.92329d },
-        { orbitalParams.i                , 0d },
-        { orbitalParams.longAscendingNode, 0d },
-        { orbitalParams.perihelionArg    , 0d },
+        { orbitalParams.i                , 7.155d },
+        { orbitalParams.longAscendingNode, 174.9d },
+        { orbitalParams.perihelionArg    , 45d },
         { orbitalParams.trueAnomaly      , 0d}, // VALUE TO SET ACCORDING TO J200
     };
 

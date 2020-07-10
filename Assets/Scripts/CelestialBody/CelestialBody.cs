@@ -270,12 +270,31 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         orbitalParams.selectedVectorsDir = (OrbitalParams.typeOfVectorDir)1022; // Draw everything
     }
 
+    public void InitializeOrbitalPredictor()
+    {
+        predictor = new OrbitalPredictor(this, orbitedBody.GetComponent<CelestialBody>(), orbit);
+    }
 
 
     public static bool CelestialBodyHasTagName(CelestialBody body, string tagName)
     {
         if(body.tag == tagName) { return true; }
         else{ return false; }
+    }
+
+    public Vector3d GetRelativeRealWorldPosition()
+    {
+        return new Vector3d(transform.position - orbitedBody.transform.position) * UniCsts.u2pl;
+    }
+
+    public Vector3d GetRelativeVelocity()
+    {
+        return orbitedBodyRelativeVel;
+    }
+
+    public double GetRelativeVelocityMagnitude()
+    {
+        return orbitedBodyRelativeVel.magnitude;
     }
 
 }

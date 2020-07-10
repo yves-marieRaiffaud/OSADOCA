@@ -171,17 +171,6 @@ public class Orbit
         Vector3[] pos = new Vector3[param.orbitDrawingResolution];
         double incr = 2*Mathf.PI/param.orbitDrawingResolution;
 
-        //======
-        // Get rotation along the vpAxisUp of the parent celestialBody (if it exists) depending on its position on its orbit
-        CelestialBody parentOrbitedBody = orbitedBody;
-        Debug.Log("====");
-        while(parentOrbitedBody != null)
-        {
-            Debug.Log(parentOrbitedBody.name);
-            parentOrbitedBody = parentOrbitedBody.orbitedBody;
-        }
-        Debug.Log("====");
-        //======
         for(int i = 0; i < param.orbitDrawingResolution; i++)
         {
             double theta = i * incr;
@@ -195,6 +184,8 @@ public class Orbit
 
         // 2
         Vector3d aphelionNoRot = new Vector3d(pos[(int)(pos.Length/2)]);
+        // Modifying the y value of the aphelion, so that the 'aphelionNoRot' remains in the (XZ) plane even if the orbited planet has a y value != 0 (because it is on its own orbit)
+        aphelionNoRot.y = orbitedBody.transform.position.y;
         param.apogeeLineDir = (aphelionNoRot - orbitedBody.transform.position).normalized;
         param.ascendingNodeLineDir = Vector3d.Cross(param.apogeeLineDir, param.vpAxisUp).normalized;
         Quaterniond iRot = Quaterniond.AngleAxis(param.i, param.ascendingNodeLineDir).GetNormalized();
@@ -231,8 +222,6 @@ public class Orbit
         if(param.orbitPlane == null) { param.orbitPlane = new OrbitPlane(); }
         Vector3d orbitPlaneRightVec = Vector3d.Cross(param.apogeeLineDir, orbitNormalUp);
         param.orbitPlane.AssignOrbitPlane(param.apogeeLineDir, orbitPlaneRightVec, new Vector3d(pos[0]));
-        Vector3d intersectPoint = new Vector3d();
-        OrbitPlane.PlaneIntersectPlane(param.orbitPlane, orbitedBody.settings.equatorialPlane, out intersectPoint, out param.ascendingNodeLineDir);
 
         if(!Vector3d.IsValidAndNoneZero(param.ascendingNodeLineDir)) {
             param.ascendingNodeLineDir = Vector3d.Cross(param.apogeeLineDir, orbitNormalUp).normalized; // Orbit is circular (coincident planes) or does not intersect equatorial plane

@@ -18,6 +18,10 @@ public interface FlyingObjCommonParams
     Vector3d orbitedBodyRelativeVel {get; set;}
     Vector3d realPosition {get; set;}
 
+    Vector3d GetRelativeRealWorldPosition();
+    Vector3d GetRelativeVelocity();
+    double GetRelativeVelocityMagnitude();
+
     GameObject _gameObject {get; set;}
 }
 

@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using Mathd_Lib;
 
 [Serializable]
@@ -44,10 +45,9 @@ public class OrbitPlane
     {
         // Return the intersection of two planes as a line, as a vector of direction of the line, and a point on this line
         outLineVec = Vector3d.Cross(p1.normal, p2.normal).normalized;
-        if(!Vector3d.IsValidAndNoneZero(outLineVec)) {
+        if(Vector3d.IsInvalindOrZero(outLineVec)) {
             outLineVec = Vector3d.NaN();
         }
-
         Vector3d ldir = Vector3d.Cross(p2.normal, outLineVec);
         double numerator = Vector3d.Dot(p1.normal, ldir);
     

@@ -408,7 +408,7 @@ namespace Mathd_Lib {
         }
 
         public static bool IsZero(Vector3d a) {
-            if(a.x < Mathd.Epsilon && a.y < Mathd.Epsilon && a.z < Mathd.Epsilon)
+            if(Mathd.Abs(a.x) < Mathd.Epsilon && Mathd.Abs(a.y) < Mathd.Epsilon && Mathd.Abs(a.z) < Mathd.Epsilon)
             {
                 return true;
             }

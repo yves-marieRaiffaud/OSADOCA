@@ -6,14 +6,15 @@ using System.Collections.Generic;
 
 public class OrbitalPredictor
 {
-    Spaceship spaceship;
+    FlyingObjCommonParams bodyToPredict;
+    //Spaceship spaceship;
     CelestialBody orbitedBody;
     Orbit linkedOrbit; // initial orbit that the predictor will use to predict its evolution 
     public Orbit predictedOrbit; // orbit that the predictor computed
 
-    public OrbitalPredictor(Spaceship ship, CelestialBody body, Orbit orbit)
+    public OrbitalPredictor(FlyingObjCommonParams predictedBody, CelestialBody body, Orbit orbit)
     {
-        spaceship = ship;
+        bodyToPredict = predictedBody;
         orbitedBody = body;
         linkedOrbit = orbit;
         smartPredictor();
@@ -22,9 +23,9 @@ public class OrbitalPredictor
     [System.Obsolete("Obselete function as it is not optimized. Will considerably slow down the game engine")]
     public void RawPredictor()
     {
-        if(spaceship == null || orbitedBody == null) return;
+        if(bodyToPredict == null || orbitedBody == null) return;
 
-        double speedMagn = spaceship.orbitedBodyRelativeVel.magnitude;
+        double speedMagn = bodyToPredict.orbitedBodyRelativeVel.magnitude;
         double circularSpeed = linkedOrbit.GetCircularOrbitalSpeed();
         double liberationSpeed = Mathd.Sqrt(2d) * circularSpeed;
         // Calculate orbital speed and compare it to the one needed to reach a circular orbit
@@ -33,13 +34,13 @@ public class OrbitalPredictor
             // Orbit is decaying
             int nbMaxIterations = 150;
             int nbCurIter = 0;
-            double dstP2Surf = spaceship.orbit.GetAltitude();
+            double dstP2Surf = bodyToPredict.orbit.GetAltitude();
             Vector3d tmpVelocityIncr = Vector3d.zero;
-            Vector3d tmpVelocity = spaceship.orbitedBodyRelativeVel;
+            Vector3d tmpVelocity = bodyToPredict.orbitedBodyRelativeVel;
             Vector3d acc = Vector3d.zero;
             List<Vector3> pos = new List<Vector3>();
             double timestep = 2d; // second
-            Vector3d lastPos = new Vector3d(spaceship.transform.position);// + universeRunner.universeOffset;
+            Vector3d lastPos = new Vector3d(bodyToPredict._gameObject.transform.position);// + universeRunner.universeOffset;
             while((nbCurIter < nbMaxIterations) && (dstP2Surf > 1d))  
             {
                 // While predicted point did not reach Earth'surface
@@ -54,7 +55,7 @@ public class OrbitalPredictor
                 lastPos += timestep * (tmpVelocity * UniCsts.m2km * UniCsts.pl2u);
                 pos.Add((Vector3)lastPos);
 
-                dstP2Surf = spaceship.orbit.GetAltitude(lastPos);
+                dstP2Surf = bodyToPredict.orbit.GetAltitude(lastPos);
                 nbCurIter += 1;
             }
 
@@ -83,17 +84,17 @@ public class OrbitalPredictor
 
     public void smartPredictor()
     {
-        if(spaceship == null || orbitedBody == null) { return; }
+        if(bodyToPredict == null || orbitedBody == null) { return; }
 
-        double speedMagn = spaceship.GetRelativeVelocityMagnitude();
+        double speedMagn = bodyToPredict.GetRelativeVelocityMagnitude();
         double circularSpeed = linkedOrbit.GetCircularOrbitalSpeed();
         double liberationSpeed = Mathd.Sqrt(2d) * circularSpeed;
         // Calculate orbital speed and compare it to the one needed to reach a circular orbit
 
         double µ = orbitedBody.settings.mu;
-        Vector3d rVec = spaceship.GetRelativeRealWorldPosition()*UniCsts.km2m;
+        Vector3d rVec = bodyToPredict.GetRelativeRealWorldPosition()*UniCsts.km2m;
         double r = rVec.magnitude;
-        Vector3d velocityVec = spaceship.GetRelativeVelocity();
+        Vector3d velocityVec = bodyToPredict.GetRelativeVelocity();
 
         // Computing semi-major axis length
         double a = r * µ*Mathd.Pow(10,13) / (2*µ*Mathd.Pow(10,13) - r*Mathd.Pow(speedMagn,2)) * UniCsts.m2km;
@@ -108,7 +109,19 @@ public class OrbitalPredictor
         OrbitalParams predOrbitParams = OrbitalParams.CreateInstance<OrbitalParams>();
         predOrbitParams.orbitRealPredType = OrbitalParams.typeOfOrbit.predictedOrbit;
         predOrbitParams.orbitDefType = OrbitalParams.orbitDefinitionType.pe;
-        predOrbitParams.orbParamsUnits = OrbitalParams.orbitalParamsUnits.km_degree;
+
+        switch(UsefulFunctions.CastStringToGoTags(bodyToPredict._gameObject.tag))
+        {
+            case UniverseRunner.goTags.Spaceship:
+                predOrbitParams.orbParamsUnits = OrbitalParams.orbitalParamsUnits.km_degree;
+                break;
+            
+            case UniverseRunner.goTags.Planet:
+                predOrbitParams.orbParamsUnits = OrbitalParams.orbitalParamsUnits.km_degree; // TO CHANGE
+                //predOrbitParams.orbParamsUnits = OrbitalParams.orbitalParamsUnits.AU_degree;
+                break;
+        }
+
         predOrbitParams.p = p;
         predOrbitParams.e = e;
         predOrbitParams.i = linkedOrbit.param.i;
@@ -121,7 +134,7 @@ public class OrbitalPredictor
         predOrbitParams.drawDirections = true;
         predOrbitParams.selectedVectorsDir = (OrbitalParams.typeOfVectorDir)254;
 
-        predictedOrbit = new Orbit(predOrbitParams, orbitedBody, spaceship.gameObject);
+        predictedOrbit = new Orbit(predOrbitParams, orbitedBody, bodyToPredict._gameObject);
 
         if(predOrbitParams.drawDirections)
         {
@@ -131,7 +144,7 @@ public class OrbitalPredictor
                 {
                     if(vectorDir.Equals(OrbitalParams.typeOfVectorDir.radialVec) || vectorDir.Equals(OrbitalParams.typeOfVectorDir.tangentialVec))
                     {
-                        predictedOrbit.DrawDirection(vectorDir, 0.1f, 50f, spaceship.transform.position);
+                        predictedOrbit.DrawDirection(vectorDir, 0.1f, 50f, bodyToPredict._gameObject.transform.position);
                     }
                     else{
                         predictedOrbit.DrawDirection(vectorDir, 0.1f, 50f);
