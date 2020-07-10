@@ -117,8 +117,7 @@ public class OrbitalPredictor
                 break;
             
             case UniverseRunner.goTags.Planet:
-                predOrbitParams.orbParamsUnits = OrbitalParams.orbitalParamsUnits.km_degree; // TO CHANGE
-                //predOrbitParams.orbParamsUnits = OrbitalParams.orbitalParamsUnits.AU_degree;
+                predOrbitParams.orbParamsUnits = OrbitalParams.orbitalParamsUnits.AU_degree;
                 break;
         }
 
@@ -152,23 +151,5 @@ public class OrbitalPredictor
                 }
             }
         }
-        
-
-        /*if(UsefulFunctions.DoublesAreEqual(speedMagn, circularSpeed)) {
-            // Orbit is circular
-            Debug.Log("Orbit is circular. Function not imlemented");
-        }
-        else if(speedMagn < liberationSpeed) {
-            // Orbit is elliptic
-            Debug.Log("Orbit is elliptic");
-        }
-        else if(UsefulFunctions.DoublesAreEqual(speedMagn, liberationSpeed)) {
-            // Orbit is parabolic
-            Debug.Log("Orbit is parabolic. Function not imlemented");
-        }
-        else if(speedMagn > liberationSpeed) { 
-            // Orbit is hyperbolic
-            Debug.Log("Orbit is hyperbolic. Function not imlemented");
-        }*/
     }   
 }

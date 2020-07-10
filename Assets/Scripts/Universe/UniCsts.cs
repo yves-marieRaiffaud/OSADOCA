@@ -75,21 +75,12 @@ public static class UniCsts
         { orbitalParams.trueAnomaly      , 0d}, // VALUE TO SET ACCORDING TO J200
     };
 
-    /*public static readonly Dictionary <orbitalParams, double> earthOrbitalParams = new Dictionary<orbitalParams, double> {
-        { orbitalParams.aphelion         , 1.067d},
-        { orbitalParams.perihelion       , 0.92329d },
-        { orbitalParams.i                , 7.155d },
-        { orbitalParams.longAscendingNode, 174.9d },
-        { orbitalParams.perihelionArg    , 288.1d },
-        { orbitalParams.trueAnomaly      , 0d}, // VALUE TO SET ACCORDING TO J200
-    };*/
-
     public static readonly Dictionary <orbitalParams, double> earthOrbitalParams = new Dictionary<orbitalParams, double> {
         { orbitalParams.aphelion         , 1.067d},
         { orbitalParams.perihelion       , 0.92329d },
         { orbitalParams.i                , 7.155d },
         { orbitalParams.longAscendingNode, 174.9d },
-        { orbitalParams.perihelionArg    , 45d },
+        { orbitalParams.perihelionArg    , 288.1d },
         { orbitalParams.trueAnomaly      , 0d}, // VALUE TO SET ACCORDING TO J200
     };
 

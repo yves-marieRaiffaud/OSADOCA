@@ -272,7 +272,7 @@ Camera:
   field of view: 60
   orthographic: 0
   orthographic size: 5
-  m_Depth: -1
+  m_Depth: 99
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 256
@@ -509,11 +509,11 @@ Camera:
     width: 1
     height: 1
   near clip plane: 13.4
-  far clip plane: 100000000
+  far clip plane: 1e+30
   field of view: 28
   orthographic: 0
   orthographic size: 5
-  m_Depth: -1
+  m_Depth: 98
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 512
