@@ -26,6 +26,10 @@ public class Orbit
         else {
             scalingFactor = UniCsts.pl2u;
         }
+
+        // Adjusting the desired inclination with respect to the orbited body inclination
+        orbitalParams.i += celestialBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()];
+
         switch(orbitalParams.orbitDefType)
         {
             case OrbitalParams.orbitDefinitionType.rarp:
@@ -237,7 +241,7 @@ public class Orbit
             return float.NaN;
         }
         else{
-           double T = 2d * Mathd.PI * Mathd.Pow(10,-2) * Mathd.Sqrt(Mathd.Pow(param.a, 3) / orbitedBody.settings.mu); // without E13 for real value
+            double T = 2d * Mathd.PI * Mathd.Pow(10,-2) * Mathd.Sqrt(Mathd.Pow(param.a, 3) / orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()]); // without E13 for real value
             return T;
         }
     }
@@ -268,7 +272,6 @@ public class Orbit
 
     public void RecomputeMainDirectionVectors()
     {
-
         param.vp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vernalPoint);
         param.vpAxisRight = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vpAxisRight);
         param.vpAxisUp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vpAxisUp);
@@ -488,7 +491,7 @@ public class Orbit
             if(param.orbParamsUnits == OrbitalParams.orbitalParamsUnits.AU_degree) {
                 a *= UniCsts.au2km;
             }
-            double velocity = Mathd.Pow(10,5) * Mathd.Sqrt(orbitedBody.settings.mu * (2d/(Get_R()) - 1d/a));
+            double velocity = Mathd.Pow(10,5) * Mathd.Sqrt(orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()] * (2d/(Get_R()) - 1d/a));
             return velocity;
         }
         return double.NaN;
@@ -502,7 +505,7 @@ public class Orbit
 
     public double GetCircularOrbitalSpeed()
     {
-        double velocity = Mathd.Pow(10,5) * Mathd.Sqrt(orbitedBody.settings.mu / Get_R());
+        double velocity = Mathd.Pow(10,5) * Mathd.Sqrt(orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()] / Get_R());
         return velocity;
     }
 
@@ -539,13 +542,13 @@ public class Orbit
     public double GetAltitude()
     {
         // Returns the altitude in real world (in km) from the spaceship position to the surface of the orbited body
-        return Get_R() - orbitedBody.settings.radius;
+        return Get_R() - orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
     }
 
     public double GetAltitude(Vector3d shipPosition)
     {
         // Returns the altitude in real world (in km) from the spaceship position to the surface of the orbited body
-        return Get_R(shipPosition) - orbitedBody.settings.radius;
+        return Get_R(shipPosition) - orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
     }
 
     public bool IsCircular()

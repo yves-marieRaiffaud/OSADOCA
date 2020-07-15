@@ -124,12 +124,13 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     MeshFilter[] meshFilters;
     TerrainFace[] terrainFaces;
 
-     void Awake()
+    public void AwakeCelestialBody()
     {
         UniverseRunner verse = GameObject.Find("UniverseRunner").GetComponent<UniverseRunner>();
         universePlayerCamera = verse.playerCamera.transform;
-        InitializeBodyParameters();
         
+        InitializeBodyParameters();
+
         if (gameObject.GetComponent<Presets>() == null)
         {
             Presets presetScript = gameObject.AddComponent<Presets>();
@@ -140,11 +141,31 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         distanceToPlayer = Vector3.Distance(transform.position, universePlayerCamera.position);
         distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
         GeneratePlanet();
+
+        // Apply oblateness to the planet
+        float flatenningVal = (float)settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()];
+        float flatenningScale = 1f;
+        if(!UsefulFunctions.FloatsAreEqual(flatenningVal, 0f))
+        {
+            flatenningScale = 1f - 1f/flatenningVal;
+        }
+        Vector3 bodyScale = new Vector3(1f, flatenningScale, 1f);
+        gameObject.transform.localScale = bodyScale;
     }
 
     private void InitializeBodyParameters()
     {
-        settings.radiusU = settings.radius * UniCsts.pl2u; // km
+        settings.radiusU = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()] * UniCsts.pl2u; // km
+        
+        double siderealPeriod = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()];
+        if(!UsefulFunctions.DoublesAreEqual(siderealPeriod, 0d))
+        {
+            settings.rotationSpeed = (double)Time.fixedDeltaTime * 360d / siderealPeriod; // in °.s-1
+
+        }
+        else {
+            settings.rotationSpeed = 0d;
+        }
     }
 
     public void GeneratePlanet()
@@ -182,6 +203,9 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
                 meshObj.AddComponent<MeshRenderer>().sharedMaterial = settings.bodyMaterial;
                 meshFilters[i] = meshObj.AddComponent<MeshFilter>();
                 meshFilters[i].sharedMesh = new Mesh();
+                MeshRenderer renderer = meshObj.GetComponent<MeshRenderer>();
+                renderer.receiveShadows = false;
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 meshObj.layer = 9;
             }
             terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this);
@@ -196,11 +220,25 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
     //=========================================
-    void Start()
+    public void StartCelestialBody()
     {
         distanceToPlayer = Vector3.Distance(transform.position, universePlayerCamera.position);
         distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
         StartCoroutine(PlanetGenerationLoop());
+    }
+
+    public void InitializeAxialTilt()
+    {
+        float axialTitleAngle = (float)settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()];
+        // Rotation vector is in the orbital plane and perpendicular to the radial vector
+        Vector3 positivePole = Vector3.up;
+        Debug.Log("orbitalParams.orbitPlane.normal = " + orbitalParams.orbitPlane.normal);
+        Vector3 normalUp = (Vector3)orbitalParams.orbitPlane.normal;
+        //orbit.param.orbitPlane.normal does not work.
+        Vector3 rotAxis = Vector3.Cross(positivePole, normalUp);
+
+        Quaternion tiltRotation = Quaternion.AngleAxis(axialTitleAngle, rotAxis);
+        gameObject.transform.rotation *= tiltRotation;
     }
 
     private IEnumerator PlanetGenerationLoop()
@@ -224,18 +262,21 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     {
         distanceToPlayer = Vector3.Distance(transform.position, universePlayerCamera.position);
         distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
-        RotatePlanet();
+        if(!UsefulFunctions.DoublesAreEqual(settings.rotationSpeed, 0d))
+        {
+            RotatePlanet();
+        }
     }
 
     private void RotatePlanet()
     {
-        Vector3 newRot = (Vector3)settings.rotationAxis * (float)settings.rotationSpeed * Time.deltaTime;
-        gameObject.transform.rotation = transform.rotation * Quaternion.Euler(newRot);  
+        Vector3 rotVec = Vector3.Cross((Vector3)settings.equatorialPlane.rightVec, (Vector3)settings.equatorialPlane.forwardVec);
+        gameObject.transform.rotation = transform.rotation * Quaternion.Euler((float)-settings.rotationSpeed * rotVec);  // Sign "-" for the prograde rotation
     }
     //=========================================
-    public void AssignRefDictOrbitalParams(Dictionary<UniCsts.orbitalParams,double> refDictOrbParams)
+    public void AssignRefDictOrbitalParams(Dictionary<string,double> refDictOrbParams)
     {
-        settings.refDictOrbitalParams = refDictOrbParams;
+        settings.planetBaseParamsDict = refDictOrbParams;
         if(settings.usePredifinedPlanets && orbitalParams==null)
         {
             // If the orbitalParams is not null (an 'OrbitalParams' file has been specified), priority is given to the file
@@ -244,7 +285,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         else if(!settings.usePredifinedPlanets && orbitalParams==null)
         {
             // else, no need to initialize as the orbitalParams File is provided
-            Debug.LogError(this.name + " of type 'CelestialBody' has neither an 'orbitalParams' file nor a predifined planet (set to false).");
+            //Debug.LogError(this.name + " of type 'CelestialBody' has neither an 'orbitalParams' file nor a predifined planet (set to false).");
         }
     }
 
@@ -257,12 +298,12 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         orbitalParams.orbParamsUnits = OrbitalParams.orbitalParamsUnits.AU_degree;
         orbitalParams.bodyPosType = OrbitalParams.bodyPositionType.nu;
 
-        orbitalParams.ra = settings.refDictOrbitalParams[UniCsts.orbitalParams.aphelion];
-        orbitalParams.rp = settings.refDictOrbitalParams[UniCsts.orbitalParams.perihelion];
-        orbitalParams.i = settings.refDictOrbitalParams[UniCsts.orbitalParams.i];
-        orbitalParams.lAscN = settings.refDictOrbitalParams[UniCsts.orbitalParams.longAscendingNode];
-        orbitalParams.omega = settings.refDictOrbitalParams[UniCsts.orbitalParams.perihelionArg];
-        orbitalParams.nu = settings.refDictOrbitalParams[UniCsts.orbitalParams.trueAnomaly];
+        orbitalParams.ra = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.aphelion.ToString()];
+        orbitalParams.rp = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.perihelion.ToString()];
+        orbitalParams.i = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.i.ToString()];
+        orbitalParams.lAscN = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()];
+        orbitalParams.omega = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()];
+        orbitalParams.nu = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()];
 
         orbitalParams.orbitDrawingResolution = 300;
         orbitalParams.drawOrbit = true;

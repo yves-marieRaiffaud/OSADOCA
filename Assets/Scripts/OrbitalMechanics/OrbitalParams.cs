@@ -14,11 +14,11 @@ public class OrbitalParams: ScriptableObject
     public bodyPositionType bodyPosType; // Only in the custom editor
     public orbitalParamsUnits orbParamsUnits; 
     public typeOfOrbit orbitRealPredType; // Only in the custom editor
-    public typeOfVectorDir selectedVectorsDir; // Selected vectors to draw, only in the custom editor
+    public typeOfVectorDir selectedVectorsDir=(typeOfVectorDir)0; // Selected vectors to draw, only in the custom editor
 
-    public bool drawOrbit;
-    public bool drawDirections;
-    public int orbitDrawingResolution;
+    public bool drawOrbit=true;
+    public bool drawDirections=false;
+    public int orbitDrawingResolution=300;
 
     //==============
     // Shape of the orbit

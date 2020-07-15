@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bodySettingsEditorFoldout: 1
   orbitInfoShowPredictedOrbitInfo: 0
-  usePredifinedPlanets: 0
-  chosenPredifinedPlanet: 2
-  radius: 6378
+  usePredifinedPlanets: 1
+  chosenPredifinedPlanet: 3
   radiusU: 3189
   equatorialPlane:
     forwardVec:
@@ -35,23 +34,16 @@ MonoBehaviour:
       x: 0
       y: 1
       z: 0
-  soiRadius: 120000
-  massRatio: 0
-  rotationSpeed: 5
-  rotationAxis:
-    x: 0
-    y: 1
-    z: 0
-  cullingMinAngle: 1.2
+  rotationSpeed: 0.00008356149109295368
+  cullingMinAngle: 0.199
   planetRefreshPeriod: 0.5
   detailLevelDistances:
   - Infinity
   - 1000
+  - 400
+  - 300
   - 100
-  - 50
-  - 10
   - 5
   - 1
-  mu: 39.8
   gravBodies: []
   bodyMaterial: {fileID: 2100000, guid: 5579e20e84aaa1b43aedcab695953d25, type: 2}

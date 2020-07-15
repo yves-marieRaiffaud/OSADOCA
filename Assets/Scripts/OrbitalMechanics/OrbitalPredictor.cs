@@ -47,7 +47,7 @@ public class OrbitalPredictor
                 Vector3d dir = new Vector3d(orbitedBody.transform.position) - lastPos;
                 Vector3d accDirection = dir.normalized;
                 double dstSquared = (dir*UniCsts.u2pl).sqrMagnitude / Mathd.Pow(10,7);
-                acc =  accDirection * orbitedBody.settings.mu / dstSquared; // m.s-2
+                acc =  accDirection * orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()] / dstSquared; // m.s-2
 
                 tmpVelocityIncr = timestep * acc;
                 tmpVelocity += tmpVelocityIncr;
@@ -91,7 +91,7 @@ public class OrbitalPredictor
         double liberationSpeed = Mathd.Sqrt(2d) * circularSpeed;
         // Calculate orbital speed and compare it to the one needed to reach a circular orbit
 
-        double µ = orbitedBody.settings.mu;
+        double µ = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()];
         Vector3d rVec = bodyToPredict.GetRelativeRealWorldPosition()*UniCsts.km2m;
         double r = rVec.magnitude;
         Vector3d velocityVec = bodyToPredict.GetRelativeVelocity();

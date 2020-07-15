@@ -172,7 +172,8 @@ public static class FlyingObj
 
         r *= scalingFactor; // km
         double dstPow3 = Mathd.Pow(r.magnitude, 3); // km^3
-        Vector3d acc =  - Mathd.Pow(10,7) * pullingBody.settings.mu * r / dstPow3; // m.s-2
+        double mu = pullingBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()];
+        Vector3d acc =  - Mathd.Pow(10,7) * mu * r / dstPow3; // m.s-2
 
         if(!Vector3d.IsValid(acc) || UsefulFunctions.DoublesAreEqual(dstPow3, 0d))
         {

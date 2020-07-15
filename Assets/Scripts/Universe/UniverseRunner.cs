@@ -117,6 +117,21 @@ public class UniverseRunner : MonoBehaviour
     }
     //=========================================
 
+    private void InitSunPointLight(GameObject starGO)
+    {
+        GameObject sunPointLightGO = UsefulFunctions.CreateAssignGameObject("sunPointLight", typeof(Light));
+        UsefulFunctions.parentObj(sunPointLightGO, starGO);
+        Light sunPointLight = sunPointLightGO.GetComponent<Light>();
+        sunPointLight.type = LightType.Point;
+        sunPointLight.range = Mathf.Pow(10, 5);
+        sunPointLight.color = Color.white;
+        sunPointLight.shadows = LightShadows.Soft;
+        sunPointLight.cullingMask |= 1 << LayerMask.NameToLayer("Everything");
+        sunPointLight.cullingMask &=  ~(1 << LayerMask.NameToLayer("Orbit"));
+        sunPointLight.lightmapBakeType = LightmapBakeType.Baked;
+        sunPointLight.intensity = 5f;
+    }
+
     void Start()
     {
         foreach(Transform obj in physicsObjArray)
@@ -128,6 +143,11 @@ public class UniverseRunner : MonoBehaviour
             {
                 case goTags.Star:
                     obj.position = Vector3.zero; // Position the Sun at the center of the Universe
+                    CelestialBody starBody = obj.GetComponent<CelestialBody>();
+                    starBody.AssignRefDictOrbitalParams(UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet]);
+                    starBody.AwakeCelestialBody();
+                    starBody.StartCelestialBody();
+                    InitSunPointLight(obj.gameObject); 
                     break;
 
                 case goTags.Planet:
@@ -135,16 +155,18 @@ public class UniverseRunner : MonoBehaviour
                     if(GameObject.FindGameObjectsWithTag(goTags.Star.ToString()).Length > 0)
                     {
                         celestBody.AssignRefDictOrbitalParams(UniCsts.planetsDict[celestBody.settings.chosenPredifinedPlanet]);
+                        celestBody.AwakeCelestialBody();
+                        celestBody.StartCelestialBody();
                         FlyingObj.InitializeOrbit<CelestialBody, CelestialBodySettings>(celestBody);
                         FlyingObj.InitializeBodyPosition<CelestialBody, CelestialBodySettings>(celestBody);
+                        Debug.Log("gameObject = " + celestBody.gameObject.name);
                         FlyingObj.InitializeDirVecLineRenderers<CelestialBody, CelestialBodySettings>(celestBody);
-                        // NEED TO FIX THE NODES LINE OF THE ORBIT CLASS
+                        celestBody.InitializeAxialTilt();
 
                         tangentialVec = celestBody.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
                         orbitalSpeed = celestBody.orbit.GetOrbitalSpeedFromOrbit();
                         celestBody.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
-
-                        celestBody.InitializeOrbitalPredictor();
+                        //celestBody.InitializeOrbitalPredictor();
                     }
                     else {
                         celestBody.transform.position = Vector3.zero;
@@ -157,13 +179,11 @@ public class UniverseRunner : MonoBehaviour
                     FlyingObj.InitializeOrbit<Spaceship, SpaceshipSettings>(ship);
                     FlyingObj.InitializeBodyPosition<Spaceship, SpaceshipSettings>(ship);
                     FlyingObj.InitializeDirVecLineRenderers<Spaceship, SpaceshipSettings>(ship);
-                    // NEED TO FIX THE NODES LINE OF THE ORBIT CLASS
 
                     tangentialVec = ship.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
                     orbitalSpeed = ship.orbit.GetOrbitalSpeedFromOrbit();
                     ship.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
-
-                    ship.InitializeOrbitalPredictor();
+                    //ship.InitializeOrbitalPredictor();
                     break;
             }
         }
@@ -210,7 +230,7 @@ public class UniverseRunner : MonoBehaviour
                     orbitedBody = celestBody.orbitedBody.GetComponent<CelestialBody>();
                     FlyingObj.GravitationalUpdate<CelestialBody, CelestialBodySettings>(orbitedBody, celestBody);
                     FlyingObj.InitializeDirVecLineRenderers<CelestialBody, CelestialBodySettings>(celestBody);
-                    celestBody.InitializeOrbitalPredictor();
+                    //celestBody.InitializeOrbitalPredictor();
                 }
                 break;
             
@@ -219,7 +239,7 @@ public class UniverseRunner : MonoBehaviour
                 orbitedBody = ship.orbitedBody.GetComponent<CelestialBody>();
                 FlyingObj.GravitationalUpdate<Spaceship, SpaceshipSettings>(orbitedBody, ship);
                 FlyingObj.InitializeDirVecLineRenderers<Spaceship, SpaceshipSettings>(ship);
-                ship.InitializeOrbitalPredictor();
+                //ship.InitializeOrbitalPredictor();
                 break;
         }
     }
