@@ -4,7 +4,6 @@ using Mathd_Lib;
 
 public static class FlyingObj
 {
-
     public static T GetObjectSettings<T>(UnityEngine.Object body)
     {
         // 'T' is either SpaceshipSettings or CelestialBodySettings
@@ -50,6 +49,39 @@ public static class FlyingObj
             CelestialBody celestialBody = (CelestialBody)body;
             return (T)(dynamic)celestialBody;
         }
+    }
+
+    //==========================
+    public static void InitializeFlyingObj<T1, T2>(UnityEngine.Object body)
+    where T1: FlyingObjCommonParams where T2: FlyingObjSettings
+    {
+        FlyingObj.InitializeOrbit<T1, T2>(body);
+        FlyingObj.InitializeBodyPosition<T1, T2>(body);
+        FlyingObj.InitializeDirVecLineRenderers<T1, T2>(body);
+
+        // Init Axial Tilt for CelestialBody
+        T1 castBody = CastObjectToType<T1>(body);
+        UniverseRunner.goTags starTag = UniverseRunner.goTags.Star;
+        UniverseRunner.goTags planetTag = UniverseRunner.goTags.Planet;
+        if(UsefulFunctions.StringIsOneOfTheTwoTags(starTag, planetTag, castBody._gameObject.tag))
+        {
+            CelestialBody celestBody = (CelestialBody)body;
+            celestBody.InitializeAxialTilt();
+        }
+
+        // Init orbital speed
+        Vector3d tangentialVec = castBody.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
+        double orbitalSpeed = castBody.orbit.GetOrbitalSpeedFromOrbit();
+        castBody.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
+
+        // Init orbital speed of the Rigidbody
+        float scaleFactor = (float)(UniCsts.m2km * UniCsts.km2au * UniCsts.au2u);
+        if(castBody.orbitalParams.orbParamsUnits == OrbitalParams.orbitalParamsUnits.km_degree)
+        {
+            scaleFactor = (float)(UniCsts.m2km * UniCsts.pl2u);
+        }
+        Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
+        rb.velocity = (Vector3)castBody.orbitedBodyRelativeVel * scaleFactor;
     }
 
     /// <summary>
@@ -135,8 +167,7 @@ public static class FlyingObj
         }
     }
 
-
-
+    //==========================
     public static void GravitationalUpdate<T1 ,T2>(CelestialBody pullingBody, T1 orbitingBody)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
@@ -199,16 +230,37 @@ public static class FlyingObj
         if(castBody._gameObject.tag == UniverseRunner.goTags.Spaceship.ToString()) {
             scaleFact = UniCsts.pl2u;
         }
-        //POSSIBLE ERROR HERE WITH THE TWO DIFFERENT SCALES
 
         Vector3d updatedPos = Time.fixedDeltaTime * UniCsts.m2km * scaleFact * castBody.orbitedBodyRelativeVel;
         castBody.realPosition += updatedPos;
     }
 
-    public static void ApplyRigbidbodyPosUpdate<T1, T2>(T1 castBody, T2 settings)
+    /*public static void ApplyRigbidbodyPosUpdate<T1, T2>(T1 castBody, T2 settings)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
+
+        float scaleFactor = (float)(UniCsts.m2km * UniCsts.km2au * UniCsts.au2u); // Default for CelestialBody
+        if(castBody.orbitalParams.orbParamsUnits == OrbitalParams.orbitalParamsUnits.km_degree)
+        {
+            scaleFactor = (float)(UniCsts.m2km * UniCsts.pl2u); // For spaceships
+        }
+
+        rb.velocity = (Vector3)castBody.orbitedBodyRelativeVel*scaleFactor;
         rb.MovePosition((Vector3)castBody.realPosition);
+    }*/
+
+    public static void ApplyRigbidbodyAccUpdate<T1, T2>(T1 castBody, T2 settings)
+    where T1: FlyingObjCommonParams where T2: FlyingObjSettings
+    {
+        Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
+
+        float scaleFactor = (float)(UniCsts.m2km * UniCsts.km2au * UniCsts.au2u); // Default for CelestialBody
+        if(castBody.orbitalParams.orbParamsUnits == OrbitalParams.orbitalParamsUnits.km_degree)
+        {
+            scaleFactor = (float)(UniCsts.m2km * UniCsts.pl2u); // For spaceships
+        }
+        rb.velocity = (Vector3)castBody.orbitedBodyRelativeVel*scaleFactor;
+        rb.AddForce((Vector3)castBody.orbitedBodyRelativeAcc*scaleFactor, ForceMode.Acceleration);
     }
 }

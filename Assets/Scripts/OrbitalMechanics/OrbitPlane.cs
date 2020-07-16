@@ -12,8 +12,8 @@ public class OrbitPlane
 
     public OrbitPlane(Vector3d fVec, Vector3d rVec, Vector3d p)
     {
-        forwardVec = fVec;
-        rightVec = rVec;
+        forwardVec = fVec.normalized;
+        rightVec = rVec.normalized;
         point = p;
         NormalVec();
     }
@@ -36,9 +36,9 @@ public class OrbitPlane
         NormalVec();
     }
 
-    public void NormalVec()
+    private void NormalVec()
     {
-        normal = Vector3d.Cross(forwardVec, rightVec);
+        normal = Vector3d.Cross(forwardVec, rightVec).normalized;
     }
 
     public static void PlaneIntersectPlane(OrbitPlane p1, OrbitPlane p2, out Vector3d outLinePoint, out Vector3d outLineVec)

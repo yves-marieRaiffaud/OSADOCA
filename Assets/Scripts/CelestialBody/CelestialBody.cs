@@ -124,8 +124,10 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     MeshFilter[] meshFilters;
     TerrainFace[] terrainFaces;
 
-    public void AwakeCelestialBody()
+    public void AwakeCelestialBody(Dictionary<string,double> refDictOrbParams)
     {
+        AssignRefDictOrbitalParams(refDictOrbParams);
+        // Get playerCamera defined in the UniverseRunner Instance
         UniverseRunner verse = GameObject.Find("UniverseRunner").GetComponent<UniverseRunner>();
         universePlayerCamera = verse.playerCamera.transform;
         
@@ -135,13 +137,23 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         {
             Presets presetScript = gameObject.AddComponent<Presets>();
         }
-        // InitializeOrbitalParams cannot be here as the CreateComponent function will not be called at this point. Must be called after the Awake() and Start()
 
-        //distanceToPlayer = 10_000f; // Init with a standard value as the camera is not initialized at this point
+        // InitializeOrbitalParams cannot be here as the CreateComponent function will not be called at this point. Must be called after the Awake() and Start()
+        GetDistancesToCamera();
+        GeneratePlanet();
+        ApplyFlatenningScale();
+        CreateAssignSunPointLight();
+        StartCoroutine(PlanetGenerationLoop());
+    }
+
+    private void GetDistancesToCamera()
+    {
         distanceToPlayer = Vector3.Distance(transform.position, universePlayerCamera.position);
         distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
-        GeneratePlanet();
+    }
 
+    private void ApplyFlatenningScale()
+    {
         // Apply oblateness to the planet
         float flatenningVal = (float)settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()];
         float flatenningScale = 1f;
@@ -225,13 +237,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
     //=========================================
-    public void StartCelestialBody()
-    {
-        distanceToPlayer = Vector3.Distance(transform.position, universePlayerCamera.position);
-        distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
-        StartCoroutine(PlanetGenerationLoop());
-    }
-
     public void InitializeAxialTilt()
     {
         float axialTitleAngle = (float)settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()];
@@ -275,7 +280,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         gameObject.transform.rotation = Quaternion.AngleAxis((float)-settings.rotationSpeed, positivePoleVec) * transform.rotation;  // Sign "-" for the prograde rotation
     }
     //=========================================
-    public void AssignRefDictOrbitalParams(Dictionary<string,double> refDictOrbParams)
+    private void AssignRefDictOrbitalParams(Dictionary<string,double> refDictOrbParams)
     {
         settings.planetBaseParamsDict = refDictOrbParams;
         if(settings.usePredifinedPlanets && orbitalParams==null)
@@ -315,6 +320,25 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     public void InitializeOrbitalPredictor()
     {
         predictor = new OrbitalPredictor(this, orbitedBody.GetComponent<CelestialBody>(), orbit);
+    }
+
+
+    public void CreateAssignSunPointLight()
+    {
+        if(UsefulFunctions.CastStringToGoTags(gameObject.tag).Equals(UniverseRunner.goTags.Star))
+        {
+            GameObject sunPointLightGO = UsefulFunctions.CreateAssignGameObject("sunPointLight", typeof(Light));
+            UsefulFunctions.parentObj(sunPointLightGO, gameObject);
+            Light sunPointLight = sunPointLightGO.GetComponent<Light>();
+            sunPointLight.type = LightType.Point;
+            sunPointLight.range = Mathf.Pow(10, 5);
+            sunPointLight.color = Color.white;
+            sunPointLight.shadows = LightShadows.Soft;
+            sunPointLight.cullingMask |= 1 << LayerMask.NameToLayer("Everything");
+            sunPointLight.cullingMask &=  ~(1 << LayerMask.NameToLayer("Orbit"));
+            sunPointLight.lightmapBakeType = LightmapBakeType.Baked;
+            sunPointLight.intensity = 5f;
+        }
     }
 
 

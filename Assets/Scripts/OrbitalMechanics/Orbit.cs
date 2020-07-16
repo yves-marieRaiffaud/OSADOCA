@@ -51,7 +51,6 @@ public class Orbit
                 suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
                 CreateAssignOrbitLineRenderer(suffixGO);
                 DrawOrbit();
-                RecomputeMainDirectionVectors(); // Recompute vernal directions, apogee line and longitude of the ascending node line
                 break;
 
             case OrbitalParams.orbitDefinitionType.rpe:
@@ -76,7 +75,6 @@ public class Orbit
                 suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
                 CreateAssignOrbitLineRenderer(suffixGO);
                 DrawOrbit();
-                RecomputeMainDirectionVectors(); // Recompute vernal directions, apogee line and longitude of the ascending node line
                 break;
             
             case OrbitalParams.orbitDefinitionType.pe:
@@ -101,7 +99,6 @@ public class Orbit
                 suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
                 CreateAssignOrbitLineRenderer(suffixGO);
                 DrawOrbit();
-                RecomputeMainDirectionVectors(); // Recompute vernal directions, apogee line and longitude of the ascending node line
                 break;
         }
     }
@@ -227,23 +224,21 @@ public class Orbit
             pos[i] = (Vector3)(orbitRot * (noRotPoint * scalingFactor));
         }
 
-        //==============================================================
         lineRenderer.positionCount = param.orbitDrawingResolution;
         lineRenderer.SetPositions(pos);
         if(param.drawOrbit) { lineRenderer.enabled = true; }
         else { lineRenderer.enabled = false; }
 
-        // INCORRECT NORMAL UP
         // 4
         // normalUp vector has changed after the rotation by longAscendingNodeRot.
-        orbitNormalUp = longAscendingNodeRot * orbitNormalUp;
+        orbitNormalUp = equatorialAdjustment * longAscendingNodeRot * orbitNormalUp;
         param.apogeeLineDir = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.apogeeLine);
+        Vector3d orbitPlaneRightVec = Vector3d.Cross(param.apogeeLineDir, orbitNormalUp);
 
         if(param.orbitPlane == null) { param.orbitPlane = new OrbitPlane(); }
-        Vector3d orbitPlaneRightVec = Vector3d.Cross(param.apogeeLineDir, orbitNormalUp);
-        param.orbitPlane.AssignOrbitPlane(param.apogeeLineDir, orbitPlaneRightVec, new Vector3d(pos[0]));
-        //==============================================================================
-
+        param.orbitPlane.AssignOrbitPlane(param.apogeeLineDir, orbitPlaneRightVec, new Vector3d(pos[(int)(pos.Length/2)]));
+        //Orbit plane.normal will point downward.
+        
         if(!Vector3d.IsValidAndNoneZero(param.ascendingNodeLineDir)) {
             param.ascendingNodeLineDir = Vector3d.Cross(param.apogeeLineDir, orbitNormalUp).normalized; // Orbit is circular (coincident planes) or does not intersect equatorial plane
         }
@@ -289,9 +284,6 @@ public class Orbit
 
     public void RecomputeMainDirectionVectors()
     {
-        param.vp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vernalPoint);
-        param.vpAxisRight = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vpAxisRight);
-        param.vpAxisUp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vpAxisUp);
         param.apogeeLineDir = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.apogeeLine);
         param.ascendingNodeLineDir = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.ascendingNodeLine);
     }
@@ -322,7 +314,8 @@ public class Orbit
 
                 case OrbitalParams.typeOfVectorDir.apogeeLine:                    
                     if(lineRenderer != null) {
-                        return new Vector3d(lineRenderer.GetPosition((int)(lineRenderer.positionCount/2)) - orbitedBody.transform.position).normalized;
+                        //return new Vector3d(lineRenderer.GetPosition((int)(lineRenderer.positionCount/2)) - orbitedBody.transform.position).normalized;
+                        return new Vector3d(lineRenderer.GetPosition((int)(lineRenderer.positionCount/2))).normalized;
                     }
                     return new Vector3d(double.NaN, double.NaN, double.NaN);
 
@@ -346,7 +339,6 @@ public class Orbit
 
                 case OrbitalParams.typeOfVectorDir.tangentialVec:
                     Vector3d radial = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.radialVec);
-                    UsefulFunctions.DrawVector(param.orbitPlane.normal, new Vector3d(orbitingGO.transform.position), 5000f, "normalUPP_"+orbitingGO.name);
                     return Vector3d.Cross(radial, param.orbitPlane.normal).normalized;
                 
                 case OrbitalParams.typeOfVectorDir.velocityVec:

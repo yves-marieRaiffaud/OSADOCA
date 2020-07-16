@@ -59,7 +59,7 @@ public class UniverseRunner : MonoBehaviour
         foreach(GameObject star in GameObject.FindGameObjectsWithTag(goTags.Star.ToString()))
         {
             // CelestialBodies and Spaceships must have done their Awake() at this point
-            InitializeRigidbody(star);
+            InitializeRigidbody(star, 100000f);
             InitializeCelestialSphereCollider(star);
 
             AddGameObjectToPhysicsFolders(star, starFolder);
@@ -67,22 +67,23 @@ public class UniverseRunner : MonoBehaviour
         foreach(GameObject planet in GameObject.FindGameObjectsWithTag(goTags.Planet.ToString()))
         {
             // CelestialBodies and Spaceships must have done their Awake() at this point
-            InitializeRigidbody(planet);
+            InitializeRigidbody(planet, 1000f);
             InitializeCelestialSphereCollider(planet);
 
             AddGameObjectToPhysicsFolders(planet, planetsFolder);
         }
         foreach(GameObject vessel in GameObject.FindGameObjectsWithTag(goTags.Spaceship.ToString()))
         {
-            InitializeRigidbody(vessel);
+            InitializeRigidbody(vessel, 0.01f);
             AddGameObjectToPhysicsFolders(vessel, spaceshipFolder);
         }             
     }
 
-    private void InitializeRigidbody(GameObject physicGameObject)
+    private void InitializeRigidbody(GameObject physicGameObject, float rbMass)
     {
         // Initialize everything of the rigidbody except its mass as its need to access the object Settings (done in 'Start' of the UniverseRunner)
         Rigidbody rb = (Rigidbody) UsefulFunctions.CreateAssignComponent(typeof(Rigidbody), physicGameObject);
+        rb.mass = rbMass;
         rb.angularDrag = 0f;
         rb.drag = 0f;
         rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
@@ -115,56 +116,24 @@ public class UniverseRunner : MonoBehaviour
         sp_c.material = sp_c_Material;
     }
     //=========================================
-
-    private void InitSunPointLight(GameObject starGO)
-    {
-        GameObject sunPointLightGO = UsefulFunctions.CreateAssignGameObject("sunPointLight", typeof(Light));
-        UsefulFunctions.parentObj(sunPointLightGO, starGO);
-        Light sunPointLight = sunPointLightGO.GetComponent<Light>();
-        sunPointLight.type = LightType.Point;
-        sunPointLight.range = Mathf.Pow(10, 5);
-        sunPointLight.color = Color.white;
-        sunPointLight.shadows = LightShadows.Soft;
-        sunPointLight.cullingMask |= 1 << LayerMask.NameToLayer("Everything");
-        sunPointLight.cullingMask &=  ~(1 << LayerMask.NameToLayer("Orbit"));
-        sunPointLight.lightmapBakeType = LightmapBakeType.Baked;
-        sunPointLight.intensity = 5f;
-    }
-
     void Start()
     {
         foreach(Transform obj in physicsObjArray)
         {
-            Vector3d tangentialVec;
-            double orbitalSpeed;
-
             switch(UsefulFunctions.CastStringToGoTags(obj.tag))
             {
                 case goTags.Star:
                     obj.position = Vector3.zero; // Position the Sun at the center of the Universe
                     CelestialBody starBody = obj.GetComponent<CelestialBody>();
-                    starBody.AssignRefDictOrbitalParams(UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet]);
-                    starBody.AwakeCelestialBody();
-                    starBody.StartCelestialBody();
-                    InitSunPointLight(obj.gameObject); 
+                    starBody.AwakeCelestialBody(UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet]);
                     break;
 
                 case goTags.Planet:
                     CelestialBody celestBody = obj.GetComponent<CelestialBody>();
                     if(GameObject.FindGameObjectsWithTag(goTags.Star.ToString()).Length > 0)
                     {
-                        celestBody.AssignRefDictOrbitalParams(UniCsts.planetsDict[celestBody.settings.chosenPredifinedPlanet]);
-                        celestBody.AwakeCelestialBody();
-                        celestBody.StartCelestialBody();
-                        FlyingObj.InitializeOrbit<CelestialBody, CelestialBodySettings>(celestBody);
-                        FlyingObj.InitializeBodyPosition<CelestialBody, CelestialBodySettings>(celestBody);
-                        FlyingObj.InitializeDirVecLineRenderers<CelestialBody, CelestialBodySettings>(celestBody);
-                        celestBody.InitializeAxialTilt();
-
-                        tangentialVec = celestBody.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
-                        orbitalSpeed = celestBody.orbit.GetOrbitalSpeedFromOrbit();
-                        celestBody.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
-                        //celestBody.InitializeOrbitalPredictor();
+                        celestBody.AwakeCelestialBody(UniCsts.planetsDict[celestBody.settings.chosenPredifinedPlanet]);
+                        FlyingObj.InitializeFlyingObj<CelestialBody, CelestialBodySettings>(celestBody);
                     }
                     else {
                         celestBody.transform.position = Vector3.zero;
@@ -174,14 +143,7 @@ public class UniverseRunner : MonoBehaviour
                 
                 case goTags.Spaceship:
                     Spaceship ship = obj.GetComponent<Spaceship>();
-                    FlyingObj.InitializeOrbit<Spaceship, SpaceshipSettings>(ship);
-                    FlyingObj.InitializeBodyPosition<Spaceship, SpaceshipSettings>(ship);
-                    FlyingObj.InitializeDirVecLineRenderers<Spaceship, SpaceshipSettings>(ship);
-
-                    tangentialVec = ship.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
-                    orbitalSpeed = ship.orbit.GetOrbitalSpeedFromOrbit();
-                    ship.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
-                    //ship.InitializeOrbitalPredictor();
+                    FlyingObj.InitializeFlyingObj<Spaceship, SpaceshipSettings>(ship);
                     break;
             }
         }
@@ -227,8 +189,6 @@ public class UniverseRunner : MonoBehaviour
                 {
                     orbitedBody = celestBody.orbitedBody.GetComponent<CelestialBody>();
                     FlyingObj.GravitationalUpdate<CelestialBody, CelestialBodySettings>(orbitedBody, celestBody);
-                    FlyingObj.InitializeDirVecLineRenderers<CelestialBody, CelestialBodySettings>(celestBody);
-                    //celestBody.InitializeOrbitalPredictor();
                 }
                 break;
             
@@ -236,8 +196,6 @@ public class UniverseRunner : MonoBehaviour
                 Spaceship ship = obj.GetComponent<Spaceship>();
                 orbitedBody = ship.orbitedBody.GetComponent<CelestialBody>();
                 FlyingObj.GravitationalUpdate<Spaceship, SpaceshipSettings>(orbitedBody, ship);
-                FlyingObj.InitializeDirVecLineRenderers<Spaceship, SpaceshipSettings>(ship);
-                //ship.InitializeOrbitalPredictor();
                 break;
         }
     }
@@ -249,12 +207,12 @@ public class UniverseRunner : MonoBehaviour
         {
             case goTags.Planet:
                 CelestialBody celestBody = obj.GetComponent<CelestialBody>();
-                FlyingObj.ApplyRigbidbodyPosUpdate<CelestialBody, CelestialBodySettings>(celestBody, celestBody.settings);
+                FlyingObj.ApplyRigbidbodyAccUpdate<CelestialBody, CelestialBodySettings>(celestBody, celestBody.settings);
                 break;
             
             case goTags.Spaceship:
                 Spaceship ship = obj.GetComponent<Spaceship>();
-                FlyingObj.ApplyRigbidbodyPosUpdate<Spaceship, SpaceshipSettings>(ship, ship.settings);
+                FlyingObj.ApplyRigbidbodyAccUpdate<Spaceship, SpaceshipSettings>(ship, ship.settings);
                 break;
         }
     }

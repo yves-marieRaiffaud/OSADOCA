@@ -34,7 +34,6 @@ public class MainNozzle_Control : MonoBehaviour
         
         RotateNozzle(targetQuaternion);
         nozzleRigidbody.AddForce(transform.up * nozzleThrust * rawThrustValue, ForceMode.Force);
-
     }
 
     private void SetLiveConfigurableJoint()
