@@ -46,7 +46,6 @@
      <Compile Include="Assets\Scripts\CelestialBody\CelestialBodyParamsBase.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\CelestialBodySettings.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\Presets.cs" />
-     <Compile Include="Assets\Scripts\CelestialBody\Settings\Earth.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\TerrainFace.cs" />
      <Compile Include="Assets\Scripts\FlyingObj.cs" />
      <Compile Include="Assets\Scripts\Interfaces.cs" />

@@ -27,7 +27,6 @@ public class UniverseRunner : MonoBehaviour
     void Awake()
     {
         InitializePhysicsTime();
-
         universeOffset = new Vector3(0f, 0f, 0f);
         physicsObjGO = UsefulFunctions.CreateAssignGameObject(folderNames.PhysicsObjs.ToString());
         
@@ -159,7 +158,6 @@ public class UniverseRunner : MonoBehaviour
                         celestBody.StartCelestialBody();
                         FlyingObj.InitializeOrbit<CelestialBody, CelestialBodySettings>(celestBody);
                         FlyingObj.InitializeBodyPosition<CelestialBody, CelestialBodySettings>(celestBody);
-                        Debug.Log("gameObject = " + celestBody.gameObject.name);
                         FlyingObj.InitializeDirVecLineRenderers<CelestialBody, CelestialBodySettings>(celestBody);
                         celestBody.InitializeAxialTilt();
 

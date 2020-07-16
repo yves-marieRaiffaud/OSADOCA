@@ -27,9 +27,6 @@ public class Orbit
             scalingFactor = UniCsts.pl2u;
         }
 
-        // Adjusting the desired inclination with respect to the orbited body inclination
-        orbitalParams.i += celestialBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()];
-
         switch(orbitalParams.orbitDefType)
         {
             case OrbitalParams.orbitDefinitionType.rarp:
@@ -141,7 +138,11 @@ public class Orbit
                 double posValue = orbit.param.nu * UniCsts.deg2rad;
                 double cosNu = Mathd.Cos(posValue);
                 double r = orbit.param.p / (1 + orbit.param.e*cosNu);
-                worldPos = new Vector3d(r * cosNu, 0d, r*Mathd.Sin(posValue)); // Position without the ellispe rotation
+
+                Vector3d fVec = orbit.orbitedBody.settings.equatorialPlane.forwardVec;
+                Vector3d rVec = orbit.orbitedBody.settings.equatorialPlane.rightVec;
+                worldPos = r*cosNu*fVec + r*Mathd.Sin(posValue)*rVec;
+                //worldPos = new Vector3d(r * cosNu, 0d, r*Mathd.Sin(posValue)); // Position without the ellispe rotation
                 worldPos = orbit.orbitRot * worldPos * orbit.scalingFactor;
                 break;
 
@@ -155,70 +156,85 @@ public class Orbit
     public void DrawOrbit()
     {
         //==================================
-        // 1|==> Draw ellipse in plane (x;z), without any rotation
+        // 1|==> Compute Aphelion in plane of the equatorial plane of the orbited body, without any rotation
         //==================================
         // 2|==> Compute apsidesline 'apogeeLineDir' and 'ascendingNodeLineDir' which is perpendicular to to the apsides line
         // because without any 'argument of the periapsis' rotation applied, the two vectors are perpendicular.
+        //       Compute inclination rotation 'iRot' to the ellipse
         //==================================
-        // 3|==> Apply inclination rotation to the ellipse
+        // 3|==> Compute rotations: first the longitude of the ascending node, then the argument of the perihelion
         //==================================
         // 4|==> Compute normal vector of the rotated orbit plane, and compute rotation quaternions for the 'longitude of the ascending node'
-        // and the argument of the perihelion
+        // and the argument of the perihelion 
         //==================================
-        // 5|==> Apply rotations: first the longitude of the ascending node, then the argument of the perihelion
-        //==================================
-        // 6|==> Orbit is fully rotated, updated directions are computed: first the new normal of the orbit plane,
+        // 5|==> Updating directions are computed: first the new normal of the orbit plane,
         // then the new 'apogeeLineDir', finally the new 'ascendingNodeLineDir'
+        // Finnaly, drawing the ellipse in its equatorial plane and rotating it using the following rotation order:
+        // inclination, argument of the perihelion, longitude of the ascending node.
+        // The equatorial plane has been rotated by the axial tilt angle of the orbited body
         //==================================
         
         // 1
         Vector3[] pos = new Vector3[param.orbitDrawingResolution];
         double incr = 2*Mathf.PI/param.orbitDrawingResolution;
 
+        double thetaAphelion = (int)(param.orbitDrawingResolution/2) * incr;
+        double xAphelion = Mathd.Cos(thetaAphelion)*param.p/(1 + param.e*Mathd.Cos(thetaAphelion));
+        double zAphelion = Mathd.Sin(thetaAphelion)*param.p/(1 + param.e*Mathd.Cos(thetaAphelion));
+        Vector3d aphelionNoRot = new Vector3d(xAphelion, 0d, zAphelion) * scalingFactor;
+
+        // 2
+        // Modifying the y value of the aphelion, so that the 'aphelionNoRot' remains in the (XZ) plane even if the orbited planet has a y value != 0 (because it is on its own orbit)
+        aphelionNoRot.y = orbitedBody.transform.position.y;
+        param.apogeeLineDir = (aphelionNoRot - orbitedBody.transform.position).normalized;
+        param.ascendingNodeLineDir = Vector3d.Cross(param.apogeeLineDir, param.vpAxisUp).normalized;
+        Quaterniond iRot = Quaterniond.AngleAxis(param.i, param.ascendingNodeLineDir).GetNormalized();
+
+        param.apogeeLineDir = iRot * param.apogeeLineDir;
+
+        // 3
+        Vector3d orbitNormalUp = Vector3d.Cross(param.ascendingNodeLineDir, param.apogeeLineDir).normalized;
+        Quaterniond perihelionArgRot = Quaterniond.AngleAxis(90d - param.omega, orbitNormalUp).GetNormalized();
+        Quaterniond longAscendingNodeRot = Quaterniond.AngleAxis(-(param.lAscN + 90d), param.vpAxisUp).GetNormalized();
+        Quaterniond rot = (longAscendingNodeRot*perihelionArgRot).GetNormalized();
+
+        // 5
+        // Taking into account the axial tilt of the planet
+        // Will be used to rotate the equatorial plane/equatorial vectors
+        Quaterniond equatorialAdjustment = Quaterniond.Identity;
+        if(!orbitedBody.tag.Equals(UniverseRunner.goTags.Star.ToString()))
+        {
+            Vector3d tangentialVec = orbitedBody.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
+            double orbitedBodyAxialTilt = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()];
+            equatorialAdjustment = Quaterniond.AngleAxis(orbitedBodyAxialTilt, -tangentialVec).GetNormalized();
+        }
+        orbitedBody.settings.equatorialPlane.forwardVec = equatorialAdjustment * orbitedBody.settings.equatorialPlane.forwardVec;
+        orbitedBody.settings.equatorialPlane.rightVec = equatorialAdjustment * orbitedBody.settings.equatorialPlane.rightVec;
+        orbitedBody.settings.equatorialPlane.normal = equatorialAdjustment * orbitedBody.settings.equatorialPlane.normal;
+        
+        // Rotation Quaternion of the complete rotation (first inclination, then perihelion argument,
+        // then longitude of the ascending node
+        orbitRot = rot * iRot;
+
+        // Drawing the ellipse
         for(int i = 0; i < param.orbitDrawingResolution; i++)
         {
             double theta = i * incr;
             double x = Mathd.Cos(theta)*param.p/(1 + param.e*Mathd.Cos(theta));
             double z = Mathd.Sin(theta)*param.p/(1 + param.e*Mathd.Cos(theta));
 
-            Vector3d noRotPoint = new Vector3d(x, 0d, z);
-            noRotPoint *= scalingFactor;
-            pos[i] = (Vector3) noRotPoint;
+            Vector3d noRotPoint = orbitedBody.settings.equatorialPlane.forwardVec * x + orbitedBody.settings.equatorialPlane.rightVec * z;
+            pos[i] = (Vector3)(orbitRot * (noRotPoint * scalingFactor));
         }
 
-        // 2
-        Vector3d aphelionNoRot = new Vector3d(pos[(int)(pos.Length/2)]);
-        // Modifying the y value of the aphelion, so that the 'aphelionNoRot' remains in the (XZ) plane even if the orbited planet has a y value != 0 (because it is on its own orbit)
-        aphelionNoRot.y = orbitedBody.transform.position.y;
-        param.apogeeLineDir = (aphelionNoRot - orbitedBody.transform.position).normalized;
-        param.ascendingNodeLineDir = Vector3d.Cross(param.apogeeLineDir, param.vpAxisUp).normalized;
-        Quaterniond iRot = Quaterniond.AngleAxis(param.i, param.ascendingNodeLineDir).GetNormalized();
-        for(int i=0; i<pos.Length; i++) {
-            Vector3d tmpPos = new Vector3d(pos[i]);
-            pos[i] = (Vector3) (iRot * tmpPos);
-        }
-        // 3
-        param.apogeeLineDir = iRot * param.apogeeLineDir;
-
-        // 4
-        Vector3d orbitNormalUp = Vector3d.Cross(param.ascendingNodeLineDir, param.apogeeLineDir).normalized;
-        Quaterniond perihelionArgRot = Quaterniond.AngleAxis(90d - param.omega, orbitNormalUp).GetNormalized();
-        Quaterniond longAscendingNodeRot = Quaterniond.AngleAxis(-(param.lAscN + 90d), param.vpAxisUp).GetNormalized();
-        // Complete rotation, first rot is the argument of the perihelion, then the inclination, finally the longitude of the ascending node 
-        Quaterniond rot = (longAscendingNodeRot*perihelionArgRot).GetNormalized();
-        orbitRot = rot * iRot;
-
-        // 5
-        for(int i=0; i<pos.Length; i++) {
-            Vector3d tmpPos = new Vector3d(pos[i]);
-            pos[i] = (Vector3) (rot * tmpPos);
-        }
+        //==============================================================
         lineRenderer.positionCount = param.orbitDrawingResolution;
         lineRenderer.SetPositions(pos);
         if(param.drawOrbit) { lineRenderer.enabled = true; }
         else { lineRenderer.enabled = false; }
 
-        // 6
+        // INCORRECT NORMAL UP
+        // 4
         // normalUp vector has changed after the rotation by longAscendingNodeRot.
         orbitNormalUp = longAscendingNodeRot * orbitNormalUp;
         param.apogeeLineDir = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.apogeeLine);
@@ -226,6 +242,7 @@ public class Orbit
         if(param.orbitPlane == null) { param.orbitPlane = new OrbitPlane(); }
         Vector3d orbitPlaneRightVec = Vector3d.Cross(param.apogeeLineDir, orbitNormalUp);
         param.orbitPlane.AssignOrbitPlane(param.apogeeLineDir, orbitPlaneRightVec, new Vector3d(pos[0]));
+        //==============================================================================
 
         if(!Vector3d.IsValidAndNoneZero(param.ascendingNodeLineDir)) {
             param.ascendingNodeLineDir = Vector3d.Cross(param.apogeeLineDir, orbitNormalUp).normalized; // Orbit is circular (coincident planes) or does not intersect equatorial plane
@@ -329,6 +346,7 @@ public class Orbit
 
                 case OrbitalParams.typeOfVectorDir.tangentialVec:
                     Vector3d radial = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.radialVec);
+                    UsefulFunctions.DrawVector(param.orbitPlane.normal, new Vector3d(orbitingGO.transform.position), 5000f, "normalUPP_"+orbitingGO.name);
                     return Vector3d.Cross(radial, param.orbitPlane.normal).normalized;
                 
                 case OrbitalParams.typeOfVectorDir.velocityVec:

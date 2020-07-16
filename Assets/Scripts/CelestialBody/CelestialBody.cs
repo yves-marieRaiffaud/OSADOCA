@@ -155,8 +155,10 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     private void InitializeBodyParameters()
     {
+        // RadiusU
         settings.radiusU = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()] * UniCsts.pl2u; // km
         
+        // Rotation Speed
         double siderealPeriod = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()];
         if(!UsefulFunctions.DoublesAreEqual(siderealPeriod, 0d))
         {
@@ -166,6 +168,12 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         else {
             settings.rotationSpeed = 0d;
         }
+
+        // Initializing equatorial plane, making sure it is back at its default values
+        settings.equatorialPlane.forwardVec = new Vector3d(1d, 0d, 0d);
+        settings.equatorialPlane.rightVec = new Vector3d(0d, 0d, 1d);
+        settings.equatorialPlane.normal = new Vector3d(0d, 1d, 0d);
+        settings.equatorialPlane.point = new Vector3d(0d, 0d, 0d);
     }
 
     public void GeneratePlanet()
@@ -203,9 +211,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
                 meshObj.AddComponent<MeshRenderer>().sharedMaterial = settings.bodyMaterial;
                 meshFilters[i] = meshObj.AddComponent<MeshFilter>();
                 meshFilters[i].sharedMesh = new Mesh();
-                MeshRenderer renderer = meshObj.GetComponent<MeshRenderer>();
-                renderer.receiveShadows = false;
-                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 meshObj.layer = 9;
             }
             terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this);
@@ -231,13 +236,9 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     {
         float axialTitleAngle = (float)settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()];
         // Rotation vector is in the orbital plane and perpendicular to the radial vector
-        Vector3 positivePole = Vector3.up;
-        Debug.Log("orbitalParams.orbitPlane.normal = " + orbitalParams.orbitPlane.normal);
-        Vector3 normalUp = (Vector3)orbitalParams.orbitPlane.normal;
-        //orbit.param.orbitPlane.normal does not work.
-        Vector3 rotAxis = Vector3.Cross(positivePole, normalUp);
+        Vector3 tangentialVec = (Vector3)orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
 
-        Quaternion tiltRotation = Quaternion.AngleAxis(axialTitleAngle, rotAxis);
+        Quaternion tiltRotation = Quaternion.AngleAxis(axialTitleAngle, -tangentialVec);
         gameObject.transform.rotation *= tiltRotation;
     }
 
@@ -270,8 +271,8 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     private void RotatePlanet()
     {
-        Vector3 rotVec = Vector3.Cross((Vector3)settings.equatorialPlane.rightVec, (Vector3)settings.equatorialPlane.forwardVec);
-        gameObject.transform.rotation = transform.rotation * Quaternion.Euler((float)-settings.rotationSpeed * rotVec);  // Sign "-" for the prograde rotation
+        Vector3 positivePoleVec = (Vector3)settings.equatorialPlane.normal;        
+        gameObject.transform.rotation = Quaternion.AngleAxis((float)-settings.rotationSpeed, positivePoleVec) * transform.rotation;  // Sign "-" for the prograde rotation
     }
     //=========================================
     public void AssignRefDictOrbitalParams(Dictionary<string,double> refDictOrbParams)

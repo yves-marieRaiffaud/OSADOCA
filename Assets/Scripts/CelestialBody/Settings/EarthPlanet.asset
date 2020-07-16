@@ -34,7 +34,7 @@ MonoBehaviour:
       x: 0
       y: 1
       z: 0
-  rotationSpeed: 0.00008356149109295368
+  rotationSpeed: 0.07199999839067459
   cullingMinAngle: 0.199
   planetRefreshPeriod: 0.5
   detailLevelDistances:
