@@ -66,69 +66,73 @@ public class SpaceshipEditor: Editor
 
     public void CreateOrbitalParametersEditor()
     {
-        OrbitalParams param = spaceship.orbitalParams;
-        if(param != null)
+        spaceship.settings.startFromGround = EditorGUILayout.Toggle("Start from ground", spaceship.settings.startFromGround);
+        if(!spaceship.settings.startFromGround)
         {
-            EditorGUILayout.LabelField("Rendering parameters", EditorStyles.boldLabel);
-            param.drawOrbit = EditorGUILayout.Toggle("Draw orbit", param.drawOrbit);
-            param.orbitDrawingResolution = EditorGUILayout.IntSlider("Orbit Resolution", param.orbitDrawingResolution, 5, 500);
-            param.drawDirections = EditorGUILayout.Toggle("Draw directions", param.drawDirections);
-            
-            EditorGUI.BeginDisabledGroup(!param.drawDirections);
-            param.selectedVectorsDir = (OrbitalParams.typeOfVectorDir)EditorGUILayout.EnumFlagsField("Direction vectors to draw", param.selectedVectorsDir);
-            EditorGUI.EndDisabledGroup();
-            EditorGUILayout.Separator();
-
-            param.orbitRealPredType = (OrbitalParams.typeOfOrbit)EditorGUILayout.EnumPopup("Type of orbit", param.orbitRealPredType);
-            param.orbParamsUnits = (OrbitalParams.orbitalParamsUnits)EditorGUILayout.EnumPopup("Parameters' units", param.orbParamsUnits);
-            param.orbitDefType = (OrbitalParams.orbitDefinitionType)EditorGUILayout.EnumPopup("Orbit Definition Type", param.orbitDefType);
-            EditorGUILayout.LabelField("Shape of the orbit", EditorStyles.boldLabel);
-            switch(param.orbitDefType)
+            OrbitalParams param = spaceship.orbitalParams;
+            if(param != null)
             {
-                case OrbitalParams.orbitDefinitionType.rarp:
-                    param.ra = EditorGUILayout.DoubleField("ra", param.ra);
-                    param.rp = EditorGUILayout.DoubleField("rp", param.rp);
-                    break;
-                case OrbitalParams.orbitDefinitionType.rpe:
-                    param.rp = EditorGUILayout.DoubleField("rp", param.rp);
-                    param.e = EditorGUILayout.DoubleField("e", param.e);
-                    break;
-                case OrbitalParams.orbitDefinitionType.pe:
-                    param.p = EditorGUILayout.DoubleField("p", param.p);
-                    param.e = EditorGUILayout.DoubleField("e", param.e);
-                    break;
-            }
+                EditorGUILayout.LabelField("Rendering parameters", EditorStyles.boldLabel);
+                param.drawOrbit = EditorGUILayout.Toggle("Draw orbit", param.drawOrbit);
+                param.orbitDrawingResolution = EditorGUILayout.IntSlider("Orbit Resolution", param.orbitDrawingResolution, 5, 500);
+                param.drawDirections = EditorGUILayout.Toggle("Draw directions", param.drawDirections);
+                
+                EditorGUI.BeginDisabledGroup(!param.drawDirections);
+                param.selectedVectorsDir = (OrbitalParams.typeOfVectorDir)EditorGUILayout.EnumFlagsField("Direction vectors to draw", param.selectedVectorsDir);
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.Separator();
 
-            EditorGUILayout.Separator();
-            EditorGUILayout.LabelField("Rotation of orbit's plane", EditorStyles.boldLabel);
-            param.i = EditorGUILayout.DoubleField("Inclination", param.i);
-            param.lAscN = EditorGUILayout.DoubleField("Longitude of the ascending Node", param.lAscN);
+                param.orbitRealPredType = (OrbitalParams.typeOfOrbit)EditorGUILayout.EnumPopup("Type of orbit", param.orbitRealPredType);
+                param.orbParamsUnits = (OrbitalParams.orbitalParamsUnits)EditorGUILayout.EnumPopup("Parameters' units", param.orbParamsUnits);
+                param.orbitDefType = (OrbitalParams.orbitDefinitionType)EditorGUILayout.EnumPopup("Orbit Definition Type", param.orbitDefType);
+                EditorGUILayout.LabelField("Shape of the orbit", EditorStyles.boldLabel);
+                switch(param.orbitDefType)
+                {
+                    case OrbitalParams.orbitDefinitionType.rarp:
+                        param.ra = EditorGUILayout.DoubleField("ra", param.ra);
+                        param.rp = EditorGUILayout.DoubleField("rp", param.rp);
+                        break;
+                    case OrbitalParams.orbitDefinitionType.rpe:
+                        param.rp = EditorGUILayout.DoubleField("rp", param.rp);
+                        param.e = EditorGUILayout.DoubleField("e", param.e);
+                        break;
+                    case OrbitalParams.orbitDefinitionType.pe:
+                        param.p = EditorGUILayout.DoubleField("p", param.p);
+                        param.e = EditorGUILayout.DoubleField("e", param.e);
+                        break;
+                }
 
-            EditorGUILayout.Separator();
-            EditorGUILayout.LabelField("Rotation of the orbit in its plane", EditorStyles.boldLabel);
-            param.omega = EditorGUILayout.DoubleField("Perihelion's argument", param.omega);
+                EditorGUILayout.Separator();
+                EditorGUILayout.LabelField("Rotation of orbit's plane", EditorStyles.boldLabel);
+                param.i = EditorGUILayout.DoubleField("Inclination", param.i);
+                param.lAscN = EditorGUILayout.DoubleField("Longitude of the ascending Node", param.lAscN);
 
-            EditorGUILayout.Separator();
-            EditorGUILayout.LabelField("Object's position on its orbit", EditorStyles.boldLabel);
-            param.bodyPosType = (OrbitalParams.bodyPositionType)EditorGUILayout.EnumPopup("Body Position Type", param.bodyPosType);
+                EditorGUILayout.Separator();
+                EditorGUILayout.LabelField("Rotation of the orbit in its plane", EditorStyles.boldLabel);
+                param.omega = EditorGUILayout.DoubleField("Perihelion's argument", param.omega);
 
-            switch(param.bodyPosType)
-            {
-                case OrbitalParams.bodyPositionType.l0:
-                    param.l0 = EditorGUILayout.DoubleField("Mean longitude", param.l0);
-                    break;
-                case OrbitalParams.bodyPositionType.m0:
-                    param.m0 = EditorGUILayout.DoubleField("Mean anomaly", param.m0);
-                    break;
-                case OrbitalParams.bodyPositionType.nu:
-                    param.nu = EditorGUILayout.DoubleField("True anomaly", param.nu);
-                    break;
-                case OrbitalParams.bodyPositionType.t0:
-                    param.t0 = EditorGUILayout.DoubleField("Perihelion time of passage", param.t0);
-                    break;
-            }
-            ShowOrbitInfoPanel(param);
-        }
+                EditorGUILayout.Separator();
+                EditorGUILayout.LabelField("Object's position on its orbit", EditorStyles.boldLabel);
+                param.bodyPosType = (OrbitalParams.bodyPositionType)EditorGUILayout.EnumPopup("Body Position Type", param.bodyPosType);
+
+                switch(param.bodyPosType)
+                {
+                    case OrbitalParams.bodyPositionType.l0:
+                        param.l0 = EditorGUILayout.DoubleField("Mean longitude", param.l0);
+                        break;
+                    case OrbitalParams.bodyPositionType.m0:
+                        param.m0 = EditorGUILayout.DoubleField("Mean anomaly", param.m0);
+                        break;
+                    case OrbitalParams.bodyPositionType.nu:
+                        param.nu = EditorGUILayout.DoubleField("True anomaly", param.nu);
+                        break;
+                    case OrbitalParams.bodyPositionType.t0:
+                        param.t0 = EditorGUILayout.DoubleField("Perihelion time of passage", param.t0);
+                        break;
+                }
+                ShowOrbitInfoPanel(param);
+            } // End of the 'if param == null'
+        } // End of the 'if StartFromGround'
     }
 
     public void ShowOrbitInfoPanel(OrbitalParams param)

@@ -67,79 +67,6 @@ public static class UniCsts
     // All distance in AU or degrees
     // i is inclination with respect to the Sun's equator
 
-    /*public static readonly Dictionary <orbitalParams, double> mercuryOrbitalParams = new Dictionary<orbitalParams, double> {
-        { orbitalParams.aphelion         , 0.466697d},
-        { orbitalParams.perihelion       , 0.307499d },
-        { orbitalParams.i                , 3.38d },
-        { orbitalParams.longAscendingNode, 48.331d },
-        { orbitalParams.perihelionArg    , 29.124d },
-        { orbitalParams.trueAnomaly      , 0d}, // VALUE TO SET ACCORDING TO J200
-    };
-
-    public static readonly Dictionary <orbitalParams, double> venusOrbitalParams = new Dictionary<orbitalParams, double> {
-        { orbitalParams.aphelion         , 0.728213d},
-        { orbitalParams.perihelion       , 0.718440d },
-        { orbitalParams.i                , 3.86d },
-        { orbitalParams.longAscendingNode, 76.680d },
-        { orbitalParams.perihelionArg    , 54.884d },
-        { orbitalParams.trueAnomaly      , 0d}, // VALUE TO SET ACCORDING TO J200
-    };
-
-    public static readonly Dictionary <orbitalParams, double> earthOrbitalParams = new Dictionary<orbitalParams, double> {
-        // VALUES TO SET ACCORDING TO J200
-        { orbitalParams.aphelion         , 1.067d},
-        { orbitalParams.perihelion       , 0.92329d },
-        { orbitalParams.i                , 7.155d },
-        { orbitalParams.longAscendingNode, 174.9d },
-        { orbitalParams.perihelionArg    , 288.1d },
-        { orbitalParams.trueAnomaly      , 0d},
-    };
-
-    public static readonly Dictionary <orbitalParams, double> marsOrbitalParams = new Dictionary<orbitalParams, double> {
-        { orbitalParams.aphelion         , 1.666d},
-        { orbitalParams.perihelion       , 1.382d },
-        { orbitalParams.i                , 5.65d },
-        { orbitalParams.longAscendingNode, 49.558d },
-        { orbitalParams.perihelionArg    , 286.502d },
-        { orbitalParams.trueAnomaly      , 0d}, // VALUE TO SET ACCORDING TO J200
-    };
-
-    public static readonly Dictionary <orbitalParams, double> jupiterOrbitalParams = new Dictionary<orbitalParams, double> {
-        { orbitalParams.aphelion         , 5.4588d},
-        { orbitalParams.perihelion       , 4.9501d },
-        { orbitalParams.i                , 6.09d },
-        { orbitalParams.longAscendingNode, 100.464d },
-        { orbitalParams.perihelionArg    , 273.867d },
-        { orbitalParams.trueAnomaly      , 0d}, // VALUE TO SET ACCORDING TO J200
-    };
-
-    public static readonly Dictionary <orbitalParams, double> saturnOrbitalParams = new Dictionary<orbitalParams, double> {
-        { orbitalParams.aphelion         , 10.1238d},
-        { orbitalParams.perihelion       , 9.0412d },
-        { orbitalParams.i                , 5.51d },
-        { orbitalParams.longAscendingNode, 113.665d },
-        { orbitalParams.perihelionArg    , 339.392d },
-        { orbitalParams.trueAnomaly      , 0d}, // VALUE TO SET ACCORDING TO J200
-    };
-
-    public static readonly Dictionary <orbitalParams, double> uranusOrbitalParams = new Dictionary<orbitalParams, double> {
-        { orbitalParams.aphelion         , 20.11d},
-        { orbitalParams.perihelion       , 18.33d },
-        { orbitalParams.i                , 6.48d },
-        { orbitalParams.longAscendingNode, 74.006d },
-        { orbitalParams.perihelionArg    , 96.998857d },
-        { orbitalParams.trueAnomaly      , 0d}, // VALUE TO SET ACCORDING TO J200
-    };
-
-    public static readonly Dictionary <orbitalParams, double> neptuneOrbitalParams = new Dictionary<orbitalParams, double> {
-        { orbitalParams.aphelion         , 30.33d },
-        { orbitalParams.perihelion       , 29.81d },
-        { orbitalParams.i                , 6.43d },
-        { orbitalParams.longAscendingNode, 131.784d },
-        { orbitalParams.perihelionArg    , 276.336d },
-        { orbitalParams.trueAnomaly      , 0d }, // VALUE TO SET ACCORDING TO J200
-    };*/
-
     public static Dictionary<string, double> sunBaseParams = new Dictionary<string, double> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 8_000d },
         { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 0d },
@@ -229,7 +156,7 @@ public static class UniCsts
         { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 298.257223563d },
         { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 120_000d }, // TO CHANNGE
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 23.4392811d },
-        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 100d},//, 86_164.09d }, // Indicate a positive value for a rotation of the planet in prograde rotation. A negative value for a retrograde rotation
+        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 86_164.09d }, // Indicate a positive value for a rotation of the planet in prograde rotation. A negative value for a retrograde rotation
         { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , 39.86004418d },
 
         { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , 1.067d },
@@ -243,6 +170,7 @@ public static class UniCsts
         { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , 1.217d }, // kg.m-3
         { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , 288d }, // Average temp, in K
         { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , 100d }, // Karman line, in km
+        { CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()         , 8.848d }, // for the height map, in km
 
         { CelestialBodyParamsBase.jnParams.j2.ToString()                        , 1_082.63d }, // x10^(-6)
         { CelestialBodyParamsBase.jnParams.j3.ToString()                        , 0d },

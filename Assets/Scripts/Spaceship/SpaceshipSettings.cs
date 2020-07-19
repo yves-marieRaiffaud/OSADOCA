@@ -11,6 +11,7 @@ public class SpaceshipSettings : ScriptableObject, FlyingObjSettings
     public bool orbitInfoShowPredictedOrbitInfo;
 
     public double mass; // kg
+    public bool startFromGround; // Boolean if the spaceship must spawn on the OrbitedBody surface (no orbit definition then)
 
     [SerializeField] public Material bodyMaterial;
     //==============

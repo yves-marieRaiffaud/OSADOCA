@@ -107,10 +107,11 @@ public class UniverseRunner : MonoBehaviour
         CelestialBody celestialBody = bodyGO.GetComponent<CelestialBody>();
         SphereCollider sp_c = (SphereCollider) UsefulFunctions.CreateAssignComponent(typeof(SphereCollider), bodyGO);
         sp_c.radius = (float) celestialBody.settings.radiusU;
+
         PhysicMaterial sp_c_Material = new PhysicMaterial();
         sp_c_Material.bounciness = 0f;
-        sp_c_Material.dynamicFriction = 0f;
-        sp_c_Material.staticFriction = 0f;
+        sp_c_Material.dynamicFriction = 1f;
+        sp_c_Material.staticFriction = 1f;
         sp_c_Material.frictionCombine = PhysicMaterialCombine.Average;
         sp_c_Material.bounceCombine = PhysicMaterialCombine.Average;
         sp_c.material = sp_c_Material;
@@ -259,7 +260,10 @@ public class UniverseRunner : MonoBehaviour
             {
                 case goTags.Spaceship:
                     Spaceship ship = obj.GetComponent<Spaceship>();
-                    ship.orbit.UpdateLineRendererPos();
+                    if(ship.orbit != null)
+                    {
+                        ship.orbit.UpdateLineRendererPos();
+                    }
                     break;
                 
                 case goTags.Planet:

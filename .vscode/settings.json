@@ -59,7 +59,11 @@
         "Logs/":true,
         "Packages":true,
         "**/*.csproj":true,
-        ".vs/":true
+        ".vs/":true,
+        "Assets/Additional":true,
+        "Assets/SampleScenes":true,
+        "Assets/Skybox":true,
+        "Assets/Standard Assets":true
     },
     "unity-tools.enableRightClickSearch": true,
     "unity-tools.documentationVersion": "2019.4"

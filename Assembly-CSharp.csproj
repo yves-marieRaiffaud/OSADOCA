@@ -36,12 +36,21 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\SampleScenes\Menu\Scripts\MenuSceneLoader.cs" />
+     <Compile Include="Assets\SampleScenes\Menu\Scripts\PauseMenu.cs" />
+     <Compile Include="Assets\SampleScenes\Menu\Scripts\SceneAndURLLoader.cs" />
+     <Compile Include="Assets\SampleScenes\Scripts\CameraSwitch.cs" />
+     <Compile Include="Assets\SampleScenes\Scripts\LevelReset.cs" />
+     <Compile Include="Assets\SampleScenes\Scripts\ParticleSceneControls.cs" />
+     <Compile Include="Assets\SampleScenes\Scripts\PlaceTargetWithMouse.cs" />
+     <Compile Include="Assets\SampleScenes\Scripts\SlowMoButton.cs" />
      <Compile Include="Assets\Scripts\ALibs\Mathd.cs" />
      <Compile Include="Assets\Scripts\ALibs\Quaterniond.cs" />
      <Compile Include="Assets\Scripts\ALibs\UsefulFunctions.cs" />
      <Compile Include="Assets\Scripts\ALibs\Vector2d.cs" />
      <Compile Include="Assets\Scripts\ALibs\Vector3d.cs" />
      <Compile Include="Assets\Scripts\ALibs\Vector4d.cs" />
+     <Compile Include="Assets\Scripts\Camera\CameraMov.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\CelestialBody.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\CelestialBodyParamsBase.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\CelestialBodySettings.cs" />
@@ -53,47 +62,33 @@
      <Compile Include="Assets\Scripts\OrbitalMechanics\OrbitPlane.cs" />
      <Compile Include="Assets\Scripts\OrbitalMechanics\OrbitalParams.cs" />
      <Compile Include="Assets\Scripts\OrbitalMechanics\OrbitalPredictor.cs" />
+     <Compile Include="Assets\Scripts\ScenesManager.cs" />
      <Compile Include="Assets\Scripts\Spaceship\MainNozzle_Control.cs" />
      <Compile Include="Assets\Scripts\Spaceship\Spaceship.cs" />
      <Compile Include="Assets\Scripts\Spaceship\SpaceshipSettings.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\CrossPlatformInput\Scripts\AxisTouchButton.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\CrossPlatformInput\Scripts\ButtonHandler.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\CrossPlatformInput\Scripts\CrossPlatformInputManager.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\CrossPlatformInput\Scripts\InputAxisScrollbar.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\CrossPlatformInput\Scripts\Joystick.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\CrossPlatformInput\Scripts\MobileControlRig.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\CrossPlatformInput\Scripts\PlatformSpecific\MobileInput.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\CrossPlatformInput\Scripts\PlatformSpecific\StandaloneInput.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\CrossPlatformInput\Scripts\TiltInput.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\CrossPlatformInput\Scripts\TouchPad.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\CrossPlatformInput\Scripts\VirtualInput.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\ActivateTrigger.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\AlphaButtonClickMask.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\AutoMobileShaderSwitch.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\AutoMoveAndRotate.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\CameraRefocus.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\CurveControlledBob.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\DragRigidbody.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\DynamicShadowSettings.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\EventSystemChecker.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\FOVKick.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\FPSCounter.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\FollowTarget.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\ForcedReset.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\LerpControlledBob.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\ObjectResetter.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\ParticleSystemDestroyer.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\PlatformSpecificContent.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\SimpleMouseRotator.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\SmoothFollow.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\TimedObjectActivator.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\TimedObjectDestructor.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\WaypointCircuit.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Utility\WaypointProgressTracker.cs" />
      <Compile Include="Assets\Scripts\Universe\SimulationEnv.cs" />
      <Compile Include="Assets\Scripts\Universe\UniCsts.cs" />
      <Compile Include="Assets\Scripts\Universe\UniverseRunner.cs" />
-     <None Include="Assets\Scripts\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
+     <Compile Include="Assets\Scripts\Universe\UniverseTestCelestialBody.cs" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_Bitmap.shader" />
+     <None Include="Assets\SampleScenes\Shaders\Skybox-Procedural.shader" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface.shader" />
+     <None Include="Assets\Additional\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF.shader" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMPro_Properties.cginc" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMPro_Surface.cginc" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Masking.shader" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF Overlay.shader" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Mobile.shader" />
+     <None Include="Assets\Additional\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile.shader" />
+     <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_Sprite.shader" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
@@ -660,6 +655,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{3dbf80e5-4baf-aee9-d671-853e4213d73c}</Project>
+      <Name>Assembly-CSharp-firstpass</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

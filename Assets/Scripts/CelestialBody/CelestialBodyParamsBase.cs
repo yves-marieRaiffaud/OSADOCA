@@ -10,7 +10,8 @@ public class CelestialBodyParamsBase
 
     public enum orbitalParams { aphelion, perihelion, i, longAscendingNode, perihelionArg, trueAnomaly };
 
-    public enum biomeParams { surfPressure, surfDensity, surfTemp, maxAtmoHeight};
+    // 'highestBumpAlt' is in km. Specify the highest altitude in km to scale the grayscale height map when drawing the celestialBody
+    public enum biomeParams { surfPressure, surfDensity, surfTemp, maxAtmoHeight, highestBumpAlt};
 
     // Jn of the CelestialBody for the unequal gravitational potential
     public enum jnParams { j2, j3, j4, j5, j6 };

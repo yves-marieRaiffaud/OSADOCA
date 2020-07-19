@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 using Mathd_Lib;
 
 [CustomEditor(typeof(CelestialBody),true), CanEditMultipleObjects]
@@ -50,7 +52,8 @@ public class CelestialBodyEditor : Editor
     {
         CelestialBodySettings param = (CelestialBodySettings) settings;
         //==========================================================================
-        param.bodyMaterial = (Material)EditorGUILayout.ObjectField("Body material", param.bodyMaterial, typeof(Material), true);
+        param.bodyMaterial = (Material)EditorGUILayout.ObjectField("Body material", param.bodyMaterial, typeof(Material), false);
+        param.heightMap = (Texture2D)EditorGUILayout.ObjectField("Height map", param.heightMap, typeof(Texture2D), false);
         celestBody.showCelestialBodyInfoPanel = EditorGUILayout.Foldout(celestBody.showCelestialBodyInfoPanel, "CelestialBody Info");
         if(celestBody.showCelestialBodyInfoPanel)
         {

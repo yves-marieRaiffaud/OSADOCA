@@ -212,6 +212,16 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         };
 
         terrainFaces = new TerrainFace[6];
+        if(settings.heightMap == null) {
+            // Set the variable to the default (all black) Texture2D
+            settings.heightMap = (Texture2D)Resources.Load("CelestialBodies/TextureFiles/Default/default_heightMap");
+        }
+        if(!settings.planetBaseParamsDict.ContainsKey(CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()))
+        {
+            // Set variable to a default key
+            settings.planetBaseParamsDict.Add(CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString(), 0f);
+        }
+        settings.heightMap = UsefulFunctions.RotateTexture180(settings.heightMap);
 
         for(int i=0; i<6; i++)
         {
@@ -225,7 +235,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
                 meshFilters[i].sharedMesh = new Mesh();
                 meshObj.layer = 9;
             }
-            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this);
+            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this, settings.heightMap, universePlayerCamera);
         }
     }
 
@@ -337,7 +347,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             sunPointLight.cullingMask |= 1 << LayerMask.NameToLayer("Everything");
             sunPointLight.cullingMask &=  ~(1 << LayerMask.NameToLayer("Orbit"));
             sunPointLight.lightmapBakeType = LightmapBakeType.Baked;
-            sunPointLight.intensity = 5f;
+            sunPointLight.intensity = 1f;
         }
     }
 
@@ -361,6 +371,12 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     public double GetRelativeVelocityMagnitude()
     {
         return orbitedBodyRelativeVel.magnitude;
+    }
+
+    public Vector3d GetWorldPositionFromGroundStart()
+    {
+        Debug.Log(gameObject.name + " - " + settings.radiusU);
+        return -settings.radiusU * Vector3d.forward;
     }
 
 }

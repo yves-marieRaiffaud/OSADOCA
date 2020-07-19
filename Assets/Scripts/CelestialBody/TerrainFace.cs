@@ -24,14 +24,19 @@ public class TerrainFace
     public List<int> borderTriangles = new List<int>();
     public Dictionary<int, bool> edgefanIndex = new Dictionary<int, bool>();
 
+    Texture2D bumpMap;
+    Transform activeCamera;
+
     // Constructor
-    public TerrainFace(Mesh mesh, Vector3 localUp, CelestialBody celestialBody)
+    public TerrainFace(Mesh mesh, Vector3 localUp, CelestialBody celestialBody, Texture2D bumpMapTexture, Transform playerActiveCamera)
     {
         this.mesh = mesh;
         this.localUp = localUp;
         this.celestialBody = celestialBody;
         this.celestialBodySettingsScript = celestialBody.settings;
         this.radius = (float)celestialBody.settings.radiusU;
+        this.bumpMap = bumpMapTexture;
+        this.activeCamera = playerActiveCamera;
 
         axisA = new Vector3(localUp.y, localUp.z, localUp.x);
         axisB = Vector3.Cross(localUp, axisA);
@@ -51,7 +56,7 @@ public class TerrainFace
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32; // Extend the resolution capabilities of the mesh
         
         // Generate chunks
-        parentChunk = new Chunk(1, celestialBodySettingsScript, celestialBody, this, null, localUp.normalized * radius, radius, 0, localUp, axisA, axisB, new byte[4], 0);
+        parentChunk = new Chunk(1, celestialBodySettingsScript, celestialBody, this, null, localUp.normalized * radius, radius, 0, localUp, axisA, axisB, new byte[4], 0, activeCamera, bumpMap);
         parentChunk.GenerateChildren();
 
         // Get chunk mesh data
@@ -171,11 +176,15 @@ public class Chunk
     public int[] triangles;
     public int[] borderTriangles;
     public Vector3[] normals;
+    
     Transform universePlayerCamera;
+    Texture2D initialBumpMap;
+    float MAX_ALTITUDE;
+    float pixelWidthOffset;
 
     public byte[] neighbours = new byte[4]; //East, west, north, south. True if less detailed (Lower LOD)
     // Constructor
-    public Chunk(uint hashvalue, CelestialBodySettings celestialBodySettingsScript, CelestialBody celestialBody, TerrainFace terrainFace, Chunk[] children, Vector3 position, float radius, int detailLevel, Vector3 localUp, Vector3 axisA, Vector3 axisB, byte[] neighbours, byte corner)
+    public Chunk(uint hashvalue, CelestialBodySettings celestialBodySettingsScript, CelestialBody celestialBody, TerrainFace terrainFace, Chunk[] children, Vector3 position, float radius, int detailLevel, Vector3 localUp, Vector3 axisA, Vector3 axisB, byte[] neighbours, byte corner, Transform activeCamera, Texture2D bumpMapTexture)
     {
         this.hashvalue = hashvalue;
         this.celestialBodySettingsScript = celestialBodySettingsScript;
@@ -192,8 +201,11 @@ public class Chunk
         this.corner = corner;
         this.normalizedPos = position.normalized;
 
-        UniverseRunner verse = GameObject.Find("UniverseRunner").GetComponent<UniverseRunner>();
-        universePlayerCamera = verse.playerCamera.transform;
+        this.initialBumpMap = bumpMapTexture;
+        this.MAX_ALTITUDE = (float)celestialBodySettingsScript.planetBaseParamsDict[CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()];
+        this.pixelWidthOffset = initialBumpMap.width - (0.5f + Mathf.Atan2(1f, 0f) / (2f*Mathf.PI)) * initialBumpMap.width;
+
+        universePlayerCamera = activeCamera;
     }
 
     public void GenerateChildren()
@@ -207,10 +219,12 @@ public class Chunk
                 // Position is calculated on a cube and based on the fact that each child has 1/2 the radius of its parent
                 // Detail level is increased by 1. This doesn't change anything itself, but rather symbolizes that something HAS been changed (the detail).
                 children = new Chunk[4];
-                children[0] = new Chunk(hashvalue * 4, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position + axisA * radius * 0.5f - axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 0); // TOP LEFT
-                children[1] = new Chunk(hashvalue * 4 + 1, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position + axisA * radius * 0.5f + axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 1); // TOP RIGHT
-                children[2] = new Chunk(hashvalue * 4 + 2, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position - axisA * radius * 0.5f + axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 2); // BOTTOM RIGHT
-                children[3] = new Chunk(hashvalue * 4 + 3, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position - axisA * radius * 0.5f - axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 3); // BOTTOM LEFT
+                float subWidth = initialBumpMap.width / Mathf.Pow(2, detailLevel+1);
+                float subHeight = initialBumpMap.height / Mathf.Pow(2, detailLevel+1);
+                children[0] = new Chunk(hashvalue * 4, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position + axisA * radius * 0.5f - axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 0, universePlayerCamera, initialBumpMap); // TOP LEFT
+                children[1] = new Chunk(hashvalue * 4 + 1, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position + axisA * radius * 0.5f + axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 1, universePlayerCamera, initialBumpMap); // TOP RIGHT
+                children[2] = new Chunk(hashvalue * 4 + 2, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position - axisA * radius * 0.5f + axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 2, universePlayerCamera, initialBumpMap); // BOTTOM RIGHT
+                children[3] = new Chunk(hashvalue * 4 + 3, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position - axisA * radius * 0.5f - axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 3, universePlayerCamera, initialBumpMap); // BOTTOM LEFT
 
                 // Create grandchildren
                 foreach (Chunk child in children)
@@ -427,37 +441,54 @@ public class Chunk
 
         // Create transform matrix
         transformMatrix = Matrix4x4.TRS(position, Quaternion.Euler(rotationMatrixAttrib), scaleMatrixAttrib);
-
+  
         // Index of quad template
         int quadIndex = (neighbours[0] | neighbours[1] * 2 | neighbours[2] * 4 | neighbours[3] * 8);
 
         // Choose a quad from the templates, then move it using the transform matrix, normalize its vertices, scale it and store it
         vertices = new Vector3[(Presets.quadRes + 1) * (Presets.quadRes + 1)];
         
+        float pixelWidthOffset = initialBumpMap.width - (0.5f + Mathf.Atan2(1f, 0f) / (2f*Mathf.PI)) * initialBumpMap.width;
         for (int i = 0; i < vertices.Length; i++)
         {
+            // pointOnCube goes along the x values, then the y values (with a localUp normal along +z axis)
             Vector3 pointOnCube = transformMatrix.MultiplyPoint(Presets.quadTemplateVertices[quadIndex][i]);
             Vector3 pointOnUnitSphere = pointOnCube.normalized;
-            float elevation = 0f; //planetScript.noiseFilter.Evaluate(pointOnUnitSphere);
-            vertices[i] = pointOnUnitSphere * (1 + elevation) * (float)celestialBodySettingsScript.radiusU;
+            
+            float pixel_w = (0.5f + Mathf.Atan2(pointOnUnitSphere.x, pointOnUnitSphere.z) / (2f*Mathf.PI)) * initialBumpMap.width;
+            float pixel_h = (0.5f - Mathf.Asin(pointOnUnitSphere.y) / Mathf.PI) * initialBumpMap.height;
+            pixel_w = (pixel_w-pixelWidthOffset) < 0f ? initialBumpMap.width + (pixel_w-pixelWidthOffset) : pixel_w-pixelWidthOffset;
+
+            float p1 = initialBumpMap.GetPixel((int)Mathf.Floor(pixel_w), (int)Mathf.Floor(pixel_h)).grayscale; // bottom left
+            float p2 = initialBumpMap.GetPixel((int)Mathf.Ceil(pixel_w), (int)Mathf.Floor(pixel_h)).grayscale; // bottom right
+            float p3 = initialBumpMap.GetPixel((int)Mathf.Ceil(pixel_w), (int)Mathf.Ceil(pixel_h)).grayscale; // top right
+            float p4 = initialBumpMap.GetPixel((int)Mathf.Floor(pixel_w), (int)Mathf.Ceil(pixel_h)).grayscale; // top left
+            float medianGrayVal = (p1+p2+p3+p4)/4;
+            // First value is minimum grayscale value: 0 == black
+            // Second value is the coorepsonding elevation for minimum grayscale value: 0 == ocean floor
+            // third value is maximum grayscale value: 255 == white
+            // Fourth value is the corresponding elevation for maximum grayscale value: MAX_ALTITUDE in unity units
+            float elevation = UsefulFunctions.linearInterpolation(0, 0, 1, MAX_ALTITUDE, medianGrayVal);
+            elevation = (1f + (10f*elevation/(float)(celestialBodySettingsScript.radiusU)));
+
+            vertices[i] = pointOnUnitSphere * elevation * (float)celestialBodySettingsScript.radiusU;
         }
 
         // Do the same for the border vertices
         borderVertices = new Vector3[Presets.quadTemplateBorderVertices[quadIndex].Length];
+        //Debug.Log("borderVertices.Length = " + borderVertices.Length);
 
         for (int i = 0; i < borderVertices.Length; i++)
         {
             Vector3 pointOnCube = transformMatrix.MultiplyPoint(Presets.quadTemplateBorderVertices[quadIndex][i]);
             Vector3 pointOnUnitSphere = pointOnCube.normalized;
-            float elevation = 0f; //planetScript.noiseFilter.Evaluate(pointOnUnitSphere);
-            borderVertices[i] = pointOnUnitSphere * (1 + elevation) * (float)celestialBodySettingsScript.radiusU;
+            borderVertices[i] = pointOnUnitSphere * (float)celestialBodySettingsScript.radiusU;
         }
 
         // Store the triangles
         triangles = Presets.quadTemplateTriangles[quadIndex];
         borderTriangles = Presets.quadTemplateBorderTriangles[quadIndex];
 
-        // MASSIVE CREDIT TO SEBASTIAN LAGUE FOR PROVIDING THE FOUNDATION FOR THE FOLLOWING CODE
         // Calculate the normals
         normals = new Vector3[vertices.Length];
 

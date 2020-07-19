@@ -39,7 +39,6 @@
      <Compile Include="Assets\Scripts\Editor\CelestialBodyEditor.cs" />
      <Compile Include="Assets\Scripts\Editor\SpaceshipEditor.cs" />
      <Compile Include="Assets\Scripts\Editor\UniverseRunnerEditor.cs" />
-     <Compile Include="Assets\Scripts\Standard Assets\Editor\CrossPlatformInput\CrossPlatformInputInitialize.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
@@ -231,6 +230,9 @@
     </Reference>
     <Reference Include="UnityEditor.WindowsStandalone.Extensions">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.Android.Extensions">
+        <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
@@ -624,9 +626,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{3dbf80e5-4baf-aee9-d671-853e4213d73c}</Project>
+      <Name>Assembly-CSharp-firstpass</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
     <ProjectReference Include="Assembly-CSharp.csproj">
       <Project>{01a55be1-999a-65f8-bac3-d690b8ea5272}</Project>
       <Name>Assembly-CSharp</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="Assembly-CSharp-Editor-firstpass.csproj">
+      <Project>{2e16e8a3-7867-f371-3b2b-9a5d85a0c05a}</Project>
+      <Name>Assembly-CSharp-Editor-firstpass</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>

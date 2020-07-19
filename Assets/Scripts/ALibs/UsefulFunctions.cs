@@ -74,6 +74,11 @@ public static class UsefulFunctions
     }
 
 
+    public static float linearInterpolation(float x1, float y1, float x3, float y3, float xValToGuessY)
+    {
+        return (y3-y1)/(x3-x1) * (xValToGuessY-x1) + y1;
+    }
+
     public static bool FloatsAreEqual(float a, float b, float tolerance=0.00001f)
     {
         if(Mathf.Abs(a - b) <= tolerance) { return true; }
@@ -276,4 +281,28 @@ public static class UsefulFunctions
             dirLR.sharedMaterial = Resources.Load("OrbitMaterial", typeof(Material)) as Material;
         }
     }
+
+    public static Texture2D RotateTexture180(Texture2D originalTexture)
+    {
+        Color32[] textureColors = originalTexture.GetPixels32();
+
+        System.Array.Reverse(textureColors, 0, textureColors.Length);
+
+        Texture2D rotatedTexture = new Texture2D(originalTexture.width, originalTexture.height);
+        rotatedTexture.SetPixels32(textureColors);
+        rotatedTexture.Apply();
+        return rotatedTexture;
+    }
+
+    public static void DebugCreateTexturedGameObject(string goName, Texture2D texture, Vector3 goScale)
+    {
+        GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        plane.name = goName;
+        plane.transform.localScale = goScale;
+        MeshRenderer renderer = plane.GetComponent<MeshRenderer>();
+        Material material = new Material(Shader.Find("Unlit/Transparent"));
+        renderer.material = material;
+        renderer.material.mainTexture = texture;
+    }
+
 }

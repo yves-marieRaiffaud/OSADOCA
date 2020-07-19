@@ -55,12 +55,25 @@ public static class FlyingObj
     public static void InitializeFlyingObj<T1, T2>(UnityEngine.Object body)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
+        T1 castBody = CastObjectToType<T1>(body);
+        T2 bodySettings = GetObjectSettings<T2>(body);
+
+        if(body is Spaceship)
+        {
+            SpaceshipSettings shipSettings = (SpaceshipSettings)(dynamic)bodySettings;
+            if(shipSettings.startFromGround)
+            {
+                // Init position of the ship and return == do not init any orbit
+                FlyingObj.InitializeBodyPosition<T1, T2>(body);
+                return;
+            }
+        }
+
         FlyingObj.InitializeOrbit<T1, T2>(body);
         FlyingObj.InitializeBodyPosition<T1, T2>(body);
         FlyingObj.InitializeDirVecLineRenderers<T1, T2>(body);
 
         // Init Axial Tilt for CelestialBody
-        T1 castBody = CastObjectToType<T1>(body);
         UniverseRunner.goTags starTag = UniverseRunner.goTags.Star;
         UniverseRunner.goTags planetTag = UniverseRunner.goTags.Planet;
         if(UsefulFunctions.StringIsOneOfTheTwoTags(starTag, planetTag, castBody._gameObject.tag))
@@ -118,7 +131,25 @@ public static class FlyingObj
             T1 castBody = CastObjectToType<T1>(body); // Spaceship or CelestialBody
             T2 settings = GetObjectSettings<T2>(body); // SpaceshipSettings or CelestialBodySettings
 
-            Vector3d bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit, OrbitalParams.bodyPositionType.nu);
+            Vector3d bodyRelatedPos;
+            if(body is Spaceship)
+            {
+                SpaceshipSettings shipSettings = (SpaceshipSettings)(dynamic)settings;
+                if(shipSettings.startFromGround)
+                {
+                    // A spaceship with planetary surface init
+                    bodyRelatedPos = castBody.orbitedBody.GetWorldPositionFromGroundStart();
+                }
+                else {
+                    // A spaceship with in orbit init
+                    bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit, OrbitalParams.bodyPositionType.nu);
+                }
+            }
+            else {
+                // A celestialBody with in orbit init
+                bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit, OrbitalParams.bodyPositionType.nu);
+            }
+
             castBody.realPosition = UsefulFunctions.AlignPositionVecWithParentPos(bodyRelatedPos, castBody.orbitedBody.transform.position);
             castBody._gameObject.transform.position = (Vector3)castBody.realPosition;
         }
