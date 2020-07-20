@@ -60,7 +60,7 @@ public class UniverseRunner : MonoBehaviour
         {
             // CelestialBodies and Spaceships must have done their Awake() at this point
             InitializeRigidbody(star, 100000f);
-            InitializeCelestialSphereCollider(star);
+            //InitializeCelestialSphereCollider(star);
 
             AddGameObjectToPhysicsFolders(star, starFolder);
         }
@@ -68,7 +68,7 @@ public class UniverseRunner : MonoBehaviour
         {
             // CelestialBodies and Spaceships must have done their Awake() at this point
             InitializeRigidbody(planet, 1000f);
-            InitializeCelestialSphereCollider(planet);
+            //InitializeCelestialSphereCollider(planet);
 
             AddGameObjectToPhysicsFolders(planet, planetsFolder);
         }
@@ -104,17 +104,7 @@ public class UniverseRunner : MonoBehaviour
 
     private void InitializeCelestialSphereCollider(GameObject bodyGO)
     {
-        CelestialBody celestialBody = bodyGO.GetComponent<CelestialBody>();
-        SphereCollider sp_c = (SphereCollider) UsefulFunctions.CreateAssignComponent(typeof(SphereCollider), bodyGO);
-        sp_c.radius = (float) celestialBody.settings.radiusU;
-
-        PhysicMaterial sp_c_Material = new PhysicMaterial();
-        sp_c_Material.bounciness = 0f;
-        sp_c_Material.dynamicFriction = 1f;
-        sp_c_Material.staticFriction = 1f;
-        sp_c_Material.frictionCombine = PhysicMaterialCombine.Average;
-        sp_c_Material.bounceCombine = PhysicMaterialCombine.Average;
-        sp_c.material = sp_c_Material;
+       //
     }
     //=========================================
     void Start()

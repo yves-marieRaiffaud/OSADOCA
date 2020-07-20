@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Mathd_Lib;
 
 public static class UsefulFunctions
@@ -131,6 +132,43 @@ public static class UsefulFunctions
         else { return false; }
     }
 
+
+    public enum UIPanelReturnType { GameObject, RectTransform, Image, CanvasRenderer };
+    public static T CreateAssignUIPanel<T>(string panelName, GameObject parent, UIPanelReturnType returnType)
+    {
+        GameObject uiPanelGO = UsefulFunctions.CreateAssignGameObject(panelName, parent);
+        uiPanelGO.layer = 5; // UI layer
+        RectTransform uiRectTR = uiPanelGO.AddComponent<RectTransform>();
+        uiRectTR.position = parent.GetComponent<RectTransform>().position;
+        uiRectTR.sizeDelta = new Vector2(100f, 100f);
+        uiRectTR.anchorMin = new Vector2(0.5f, 0.5f);
+        uiRectTR.anchorMax = new Vector2(0.5f, 0.5f);
+        uiRectTR.pivot = new Vector2(0.5f, 0.5f);
+
+        CanvasRenderer uiCanvasRenderer = uiPanelGO.AddComponent<CanvasRenderer>();
+        Image uiImage = uiPanelGO.AddComponent<Image>();
+
+        switch(returnType.ToString())
+        {
+            case "GameObject":
+                return (T)(dynamic)uiPanelGO;
+
+            case "RectTransform":
+                return (T)(dynamic)uiRectTR;
+
+            case "Image":
+                return (T)(dynamic)uiImage;
+
+            case "CanvasRenderer":
+                return (T)(dynamic)uiCanvasRenderer;
+
+            case null:
+                return (T)(dynamic)uiPanelGO;
+        }
+        return (T)(dynamic)uiPanelGO;
+    }
+
+
     public static GameObject CreateAssignGameObject(string gameObjectName)
     {
         if(GameObject.Find(gameObjectName) == null)
@@ -141,7 +179,6 @@ public static class UsefulFunctions
             return GameObject.Find(gameObjectName);
         }
     }
-
 
     public static GameObject CreateAssignGameObject(string gameObjectName, GameObject parent)
     {

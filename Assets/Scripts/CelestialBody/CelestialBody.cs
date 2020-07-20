@@ -231,8 +231,10 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
                 meshObj.transform.parent = transform;
 
                 meshObj.AddComponent<MeshRenderer>().sharedMaterial = settings.bodyMaterial;
+                InitMeshColliders(meshObj);
                 meshFilters[i] = meshObj.AddComponent<MeshFilter>();
                 meshFilters[i].sharedMesh = new Mesh();
+                meshFilters[i].sharedMesh.name = directionsDict[directionsDict.Keys.ElementAt(i)].ToString() + "_mesh";
                 meshObj.layer = 9;
             }
             terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this, settings.heightMap, universePlayerCamera);
@@ -241,9 +243,13 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     private void GenerateMesh()
     {
+        int idx = 0;
         foreach(TerrainFace face in terrainFaces)
         {
             face.ConstructTree();
+            MeshCollider mCollider = meshFilters[idx].gameObject.GetComponent<MeshCollider>();
+            mCollider.sharedMesh = face.mesh;
+            idx += 1;
         }
     }
     //=========================================
@@ -377,6 +383,20 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     {
         Debug.Log(gameObject.name + " - " + settings.radiusU);
         return -settings.radiusU * Vector3d.forward;
+    }
+
+    public void InitMeshColliders(GameObject faceGO)
+    {
+        MeshCollider meshCollider = (MeshCollider)UsefulFunctions.CreateAssignComponent(typeof(MeshCollider), faceGO);
+        meshCollider.convex = true;
+
+        PhysicMaterial sp_c_Material = new PhysicMaterial();
+        sp_c_Material.bounciness = 0f;
+        sp_c_Material.dynamicFriction = 1f;
+        sp_c_Material.staticFriction = 1f;
+        sp_c_Material.frictionCombine = PhysicMaterialCombine.Average;
+        sp_c_Material.bounceCombine = PhysicMaterialCombine.Average;
+        meshCollider.material = sp_c_Material;
     }
 
 }
