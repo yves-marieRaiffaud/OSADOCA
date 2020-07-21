@@ -12,34 +12,9 @@ public class UIMainMenu : MonoBehaviour
 
     public RectTransform activeContentPanel; // Panel containing all the sub panels for each menu
 
-    public TMPro.TMP_Dropdown startLocInitTypeDropdown;
-
-    [HideInInspector]
-    public enum startLocInitType { inOrbit, planetarySurface };
-    [HideInInspector]
-    public Dictionary<startLocInitType, string> startLocInitTypeDict = new Dictionary<startLocInitType, string> {
-        { startLocInitType.inOrbit, "In Orbit" },
-        { startLocInitType.planetarySurface, "Planetary Surface" }
-    };
-    public GameObject section_InitPlanetarySurfaceGO;
-    public GameObject section_InitOrbitGO;
-
     void Start()
     {
         InitMainButtons();
-        Init_startLocInitTypeDropdown();
-
-        startLocInitTypeDropdown.onValueChanged.AddListener(delegate
-        {
-            OnValueChangedStartLocInitTypeDropdown();
-        });
-
-    }
-
-    private void Init_startLocInitTypeDropdown()
-    {
-        startLocInitTypeDropdown.ClearOptions();
-        startLocInitTypeDropdown.AddOptions(new List<string>(startLocInitTypeDict.Values));
     }
 
     private void InitMainButtons()
@@ -48,22 +23,6 @@ public class UIMainMenu : MonoBehaviour
         btn_Spacecraft.onClick.AddListener(onSpacecraftBtnClick);
         btn_Matlab.onClick.AddListener(onMatlabBtnClick);
         btn_SimSettings.onClick.AddListener(onSimSettingsBtnClick);
-    }
-
-    private void OnValueChangedStartLocInitTypeDropdown()
-    {
-        switch(startLocInitTypeDropdown.value)
-        {
-            case 0:
-                section_InitOrbitGO.SetActive(true);
-                section_InitPlanetarySurfaceGO.SetActive(false);
-                break;
-            
-            case 1:
-                section_InitOrbitGO.SetActive(false);
-                section_InitPlanetarySurfaceGO.SetActive(true);
-                break;
-        }
     }
 
     private void onStartLocationBtnClick()
@@ -88,8 +47,6 @@ public class UIMainMenu : MonoBehaviour
     {
         Debug.Log("Click on sim settings btn");
     }
-
-    
 
     void OnGUI()
     {

@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Mathd_Lib;
+using System;
+using System.Globalization;
 
 public static class UsefulFunctions
 {
+    public static NumberStyles DOUBLE_PARSE_STYLES = NumberStyles.AllowDecimalPoint;
+    public static IFormatProvider DOUBLE_PARSE_FORMAT = CultureInfo.CreateSpecificCulture("en-GB");
+    //======================================================================================================
+
     public static float mapInRange(Vector2 inputRange, Vector2 outputRange, float valueToMap)
     {
         float a1 = inputRange.x;
@@ -74,6 +80,33 @@ public static class UsefulFunctions
         return false;
     }
 
+    public static string ToSignificantDigits(double value, int significant_digits)
+    {
+        string format1 = "{0:G" + significant_digits.ToString() + "}";
+        string result = String.Format(format1, value);
+        return result;
+    }
+
+    public static bool DoubleIsValid(double val1)
+    {
+        if(!double.IsInfinity(val1) && !double.IsNaN(val1))
+        {
+            return true;
+        }
+        else { return false; }
+    }
+
+    public static bool DoubleIsValid(params double[] values)
+    {
+        foreach(double value in values)
+        {
+            bool isValid = DoubleIsValid(value);
+            if(!isValid) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static float linearInterpolation(float x1, float y1, float x3, float y3, float xValToGuessY)
     {
@@ -114,6 +147,51 @@ public static class UsefulFunctions
         }
     }
 
+    public static OrbitalParams.orbitDefinitionType String2_orbitDefinitionTypeEnum(string goTag)
+    {
+        if(goTag.Equals(OrbitalParams.orbitDefinitionType.rarp.ToString()))
+        {
+            return OrbitalParams.orbitDefinitionType.rarp;
+        }
+        else if(goTag.Equals(OrbitalParams.orbitDefinitionType.rpe.ToString()))
+        {
+            return OrbitalParams.orbitDefinitionType.rpe;
+        }
+        else {
+            return OrbitalParams.orbitDefinitionType.pe;
+        }
+    }
+
+    public static OrbitalParams.bodyPositionType String2_bodyPosTypeEnum(string goTag)
+    {
+        if(goTag.Equals(OrbitalParams.bodyPositionType.nu.ToString()))
+        {
+            return OrbitalParams.bodyPositionType.nu;
+        }
+        else if(goTag.Equals(OrbitalParams.bodyPositionType.m0.ToString()))
+        {
+            return OrbitalParams.bodyPositionType.m0;
+        }
+        else if(goTag.Equals(OrbitalParams.bodyPositionType.l0.ToString()))
+        {
+            return OrbitalParams.bodyPositionType.l0;
+        }
+        else {
+            return OrbitalParams.bodyPositionType.t0;
+        }
+    }
+
+    public static OrbitalParams.orbitalParamsUnits String2_OrbitalParamsUnitsEnum(string goTag)
+    {
+        if(goTag.Equals(OrbitalParams.orbitalParamsUnits.km_degree.ToString()))
+        {
+            return OrbitalParams.orbitalParamsUnits.km_degree;
+        }
+        else {
+            return OrbitalParams.orbitalParamsUnits.AU_degree;
+        }
+    }
+
     public static bool GoTagAndStringAreEqual(UniverseRunner.goTags tags, string stringToCompare)
     {
         if(tags.ToString().Equals(stringToCompare))
@@ -132,6 +210,17 @@ public static class UsefulFunctions
         else { return false; }
     }
 
+    public static bool ParseStringToDouble(string stringToCheck, out double result)
+    {
+        bool operationRes = double.TryParse(stringToCheck, DOUBLE_PARSE_STYLES, DOUBLE_PARSE_FORMAT, out result);
+        if(operationRes) {
+            return true;
+        }
+        else {
+            result = double.NaN;
+            return false;
+        }
+    }
 
     public enum UIPanelReturnType { GameObject, RectTransform, Image, CanvasRenderer };
     public static T CreateAssignUIPanel<T>(string panelName, GameObject parent, UIPanelReturnType returnType)
@@ -342,4 +431,9 @@ public static class UsefulFunctions
         renderer.material.mainTexture = texture;
     }
 
+    public static void SetUpDropdown(TMPro.TMP_Dropdown dropdown, List<string> dataList)
+    {
+        dropdown.ClearOptions();
+        dropdown.AddOptions(dataList);
+    }
 }

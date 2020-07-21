@@ -114,9 +114,13 @@ public class Orbit
         lineRenderer.loop = true;
         lineRenderer.receiveShadows = false;
         lineRenderer.shadowCastingMode = ShadowCastingMode.Off;
-        lineRenderer.transform.parent = GameObject.Find("Orbits").transform;
         lineRenderer.widthCurve = AnimationCurve.Constant(0f, 1f, 30f);
         lineRenderer.sharedMaterial = Resources.Load("OrbitMaterial", typeof(Material)) as Material;
+        if(!orbitedBody.spawnAsSimpleSphere)
+        {
+            // Execute only if we are in the simulation. Else, the GameObject 'Orbits' does not exist
+            lineRenderer.transform.parent = GameObject.Find("Orbits").transform;
+        }
     }
 
 
@@ -199,7 +203,7 @@ public class Orbit
         // Taking into account the axial tilt of the planet
         // Will be used to rotate the equatorial plane/equatorial vectors
         Quaterniond equatorialAdjustment = Quaterniond.Identity;
-        if(!orbitedBody.tag.Equals(UniverseRunner.goTags.Star.ToString()))
+        if(!orbitedBody.tag.Equals(UniverseRunner.goTags.Star.ToString()) && !orbitedBody.spawnAsSimpleSphere)
         {
             Vector3d tangentialVec = orbitedBody.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
             double orbitedBodyAxialTilt = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()];

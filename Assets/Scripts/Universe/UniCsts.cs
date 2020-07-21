@@ -6,6 +6,8 @@ using Mathd_Lib;
 
 public static class UniCsts
 {
+    public const int UI_SIGNIFICANT_DIGITS = 6;
+    //==========================================================================================
     public const double G = 6.67430d; //E-11f; // m3 kg−1 s−2
     public const double earthMass = 5.97d; //E24 kg
     public const double earthMassExponent = 1_000_000_000_000_000_000_000_000d; // E24

@@ -53,6 +53,58 @@ public class CelestialBodyEditor : Editor
         CelestialBodySettings param = (CelestialBodySettings) settings;
         //==========================================================================
         param.bodyMaterial = (Material)EditorGUILayout.ObjectField("Body material", param.bodyMaterial, typeof(Material), false);
+        if(celestBody.spawnAsSimpleSphere)
+        {
+            // Only add the predifined planet selection
+            if(CelestialBody.CelestialBodyHasTagName(celestBody, "Planet"))
+            {
+                if(celestBody.orbitalParams == null)
+                {
+                    celestBody.orbitalParams = (OrbitalParams)OrbitalParams.CreateInstance("OrbitalParams");
+                }
+                param.usePredifinedPlanets = true;
+                EditorGUI.BeginDisabledGroup(true);
+                param.usePredifinedPlanets = EditorGUILayout.Toggle("Use a predifined planet for its orbit", param.usePredifinedPlanets);
+                EditorGUI.EndDisabledGroup();
+                param.chosenPredifinedPlanet = (UniCsts.planets)EditorGUILayout.EnumPopup("Choose planet", param.chosenPredifinedPlanet);
+                switch(param.chosenPredifinedPlanet)
+                {
+                    case UniCsts.planets.Mercury:
+                        celestBody.settings.planetBaseParamsDict = UniCsts.mercuryBaseParams;
+                        break;
+                    
+                    case UniCsts.planets.Venus:
+                        celestBody.settings.planetBaseParamsDict = UniCsts.venusBaseParams;
+                        break;
+
+                    case UniCsts.planets.Earth:
+                        celestBody.settings.planetBaseParamsDict = UniCsts.earthBaseParams;
+                        break;
+
+                    case UniCsts.planets.Mars:
+                        celestBody.settings.planetBaseParamsDict = UniCsts.marsBaseParams;
+                        break;
+                    
+                    case UniCsts.planets.Jupiter:
+                        celestBody.settings.planetBaseParamsDict = UniCsts.jupiterBaseParams;
+                        break;
+                    
+                    case UniCsts.planets.Saturn:
+                        celestBody.settings.planetBaseParamsDict = UniCsts.saturnBaseParams;
+                        break;
+                    
+                    case UniCsts.planets.Uranus:
+                        celestBody.settings.planetBaseParamsDict = UniCsts.uranusBaseParams;
+                        break;
+                    
+                    case UniCsts.planets.Neptune:
+                        celestBody.settings.planetBaseParamsDict = UniCsts.uranusBaseParams;
+                        break;
+                }
+            }
+            return;
+        }
+
         param.heightMap = (Texture2D)EditorGUILayout.ObjectField("Height map", param.heightMap, typeof(Texture2D), false);
         celestBody.showCelestialBodyInfoPanel = EditorGUILayout.Foldout(celestBody.showCelestialBodyInfoPanel, "CelestialBody Info");
         if(celestBody.showCelestialBodyInfoPanel)
@@ -149,6 +201,11 @@ public class CelestialBodyEditor : Editor
                 CreateOrbitalParametersEditor(celestBody.settings.planetBaseParamsDict);
             }
         }
+    }
+
+    private void PredifinedPlanetEditorGUI()
+    {
+        
     }
 
     public Dictionary<string, double> InitNewPlanetBaseParamsDict()

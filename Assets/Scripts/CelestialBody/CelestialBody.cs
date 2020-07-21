@@ -110,6 +110,8 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
     //=========================================
+    public bool spawnAsSimpleSphere = false; // For the UI, will spawn a simple sphere (no LOD, culling etc.). For the simlation, will spawn the complex one
+    //=========================================
     // Bools for editor
     [HideInInspector] public bool showCelestialBodyInfoPanel;
     [HideInInspector] public bool planetEditorFoldout;
@@ -124,9 +126,23 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     MeshFilter[] meshFilters;
     TerrainFace[] terrainFaces;
 
+    void Awake()
+    {
+        if(GameObject.Find("UniverseRunner") == null)
+        {
+            // Can not find any UniverseRunner in the scene, thus it is a celetialBody in a UI menu
+            spawnAsSimpleSphere = true; // Enforcing simple sphere rendering as no universePlayerCamera will be found
+        }
+    }
+
     public void AwakeCelestialBody(Dictionary<string,double> refDictOrbParams)
     {
         AssignRefDictOrbitalParams(refDictOrbParams);
+        if(spawnAsSimpleSphere) { 
+            InitializeBodyParameters();
+            return; // Early exit if it's a UI celestialBody
+        }
+
         // Get playerCamera defined in the UniverseRunner Instance
         UniverseRunner verse = GameObject.Find("UniverseRunner").GetComponent<UniverseRunner>();
         universePlayerCamera = verse.playerCamera.transform;
@@ -282,11 +298,17 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     //=========================================
     void FixedUpdate()
     {
-        distanceToPlayer = Vector3.Distance(transform.position, universePlayerCamera.position);
-        distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
-        if(!UsefulFunctions.DoublesAreEqual(settings.rotationSpeed, 0d))
+        if(!spawnAsSimpleSphere)
         {
-            RotatePlanet();
+            distanceToPlayer = Vector3.Distance(transform.position, universePlayerCamera.position);
+            distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
+            if(!UsefulFunctions.DoublesAreEqual(settings.rotationSpeed, 0d))
+            {
+                RotatePlanet();
+            }
+        }
+        else {
+            
         }
     }
 
