@@ -34,22 +34,34 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     [Header("Orbit Info Panel")]
     public TMPro.TMP_Text info_orbitShape_p1_txt;
     public TMPro.TMP_Text info_orbitShape_p1_val;
+    public TMPro.TMP_Text info_orbitShape_p1_unit;
     public TMPro.TMP_Text info_orbitShape_p2_txt;
     public TMPro.TMP_Text info_orbitShape_p2_val;
+    public TMPro.TMP_Text info_orbitShape_p2_unit;
 
     public TMPro.TMP_Text info_orbit_a_val;
+    public TMPro.TMP_Text info_orbit_a_unit;
     public TMPro.TMP_Text info_orbit_b_val;
+    public TMPro.TMP_Text info_orbit_b_unit;
     public TMPro.TMP_Text info_orbit_c_val;
+    public TMPro.TMP_Text info_orbit_c_unit;
 
     public TMPro.TMP_Text info_bodyPos_p1_txt;
     public TMPro.TMP_Text info_bodyPos_p1_val;
+    public TMPro.TMP_Text info_bodyPos_p1_unit;
     public TMPro.TMP_Text info_bodyPos_p2_txt;
     public TMPro.TMP_Text info_bodyPos_p2_val;
+    public TMPro.TMP_Text info_bodyPos_p2_unit;
     public TMPro.TMP_Text info_bodyPos_p3_txt;
     public TMPro.TMP_Text info_bodyPos_p3_val;
+    public TMPro.TMP_Text info_bodyPos_p3_unit;
 
     public TMPro.TMP_Text info_meanMotion_val;
     public TMPro.TMP_Text info_orbitalPeriod_val;
+    //==================================================================
+    [Header("Orbit Preview UI Elements")]
+    public RectTransform perihelionPinpoint;
+    public RectTransform aphelionPinpoint;
     //==================================================================
     private bool ORBITAL_PARAMS_VALID = true;
     public Orbit previewedOrbit;
@@ -100,7 +112,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 // 'pe' enum
                 orbitShape_p1_txt.text = "Semi-latus rectum";
                 surnameOrbitShape_p1 = "p";
-                orbitShape_p2_txt.text = "Excentricity";
+                orbitShape_p2_txt.text = "Excentricity"; 
                 surnameOrbitShape_p2 = "e";
                 break;
         }
@@ -168,18 +180,96 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     public void OnUpdateOrbit_BtnClick()
     {
         ORBITAL_PARAMS_VALID = true;
-        OrbitalParams orbitalParams = ComputeNewOrbit();
+        CheckForEmptyFields();
+        OrbitalParams orbitalParams = Create_OrbitalParams_File();
         if(ORBITAL_PARAMS_VALID)
         {
             previewedOrbit = new Orbit(orbitalParams, orbitedBody, orbitingSpacecraft);
+            previewedOrbit.UpdateLineRendererPos();
+            UpdateSpacecraftPosition();
+            UpdatePinpointsPosition();
             UpdateOrbitInfoValues();
+            UpdateOrbitInfoUnits();
         }
         else {
             Debug.LogWarning("ORBITAL_PARAMS_VALID has been set to false. Check the entered orbital parameters.");
         }
     }
 
-    private OrbitalParams ComputeNewOrbit()
+    private void UpdateSpacecraftPosition()
+    {
+        OrbitalParams.bodyPositionType inputPosType = UsefulFunctions.String2_bodyPosTypeEnum(bodyPosType.options[bodyPosType.value].text);
+        Vector3d shipWorldPos = Orbit.GetWorldPositionFromOrbit(previewedOrbit, inputPosType);
+        orbitingSpacecraft.transform.position = (Vector3) shipWorldPos + orbitedBody.gameObject.transform.position;
+    }
+
+    private void UpdatePinpointsPosition()
+    {
+        // Positioning the perihelion and aphelion pinpoints in world space
+        // Can only do so IF the excentricity e > 0 (if e=0, there is no aphelion nor perihelion as orbit is circular)
+        if(previewedOrbit.param.e > 0d)
+        {
+            double bodyRadius = previewedOrbit.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
+            if((previewedOrbit.param.rp - bodyRadius) > 0d)
+            {
+                ShowPinpoint(perihelionPinpoint);
+                perihelionPinpoint.transform.position = orbitedBody.gameObject.transform.position + previewedOrbit.lineRenderer.GetPosition(0);
+            }
+            else {
+                HidePinpoint(perihelionPinpoint);
+            }
+
+            if((previewedOrbit.param.ra - bodyRadius) > 0d)
+            {
+                ShowPinpoint(aphelionPinpoint);
+                aphelionPinpoint.transform.position = orbitedBody.gameObject.transform.position + previewedOrbit.lineRenderer.GetPosition((int)(previewedOrbit.lineRenderer.positionCount/2));
+            }
+            else {
+                HidePinpoint(aphelionPinpoint);
+            }
+        }
+        else {
+            // Hiding the pinpoints
+            HidePinpoint(perihelionPinpoint);
+            HidePinpoint(aphelionPinpoint);
+        }
+    }
+
+    private void ShowPinpoint(RectTransform pinPoint)
+    {
+        pinPoint.gameObject.SetActive(true);
+    }
+
+    private void HidePinpoint(RectTransform pinPoint)
+    {
+        pinPoint.gameObject.SetActive(false);
+    }
+
+    private void CheckForEmptyFields()
+    {
+        // Inserting a 0 as the default value for each empty field when the UpdateOrbit button is pressed
+
+        if(orbitShape_p1_field.text.Equals("")) {
+            orbitShape_p1_field.text = "0";
+        }
+        if(orbitShape_p2_field.text.Equals("")) {
+            orbitShape_p2_field.text = "0";
+        }
+        if(inclination_field.text.Equals("")) {
+            inclination_field.text = "0";
+        }
+        if(lAscN_field.text.Equals("")) {
+            lAscN_field.text = "0";
+        }
+        if(periapsisArg_field.text.Equals("")) {
+            periapsisArg_field.text = "0";
+        }
+        if(bodyPos_field.text.Equals("")) {
+            bodyPos_field.text = "0";
+        }
+    }
+
+    private OrbitalParams Create_OrbitalParams_File()
     {
         OrbitalParams orbitalParams = (OrbitalParams)OrbitalParams.CreateInstance("OrbitalParams");
         orbitalParams.drawOrbit = true;
@@ -190,15 +280,20 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         orbitalParams.orbitDefType = UsefulFunctions.String2_orbitDefinitionTypeEnum(orbitDefType.options[orbitDefType.value].text);
         orbitalParams.orbParamsUnits = UsefulFunctions.String2_OrbitalParamsUnitsEnum(unitsDropdown.options[unitsDropdown.value].text);
 
+        double scaleFactor = 1d; // Default for 'km_degree' units
+        if(unitsDropdown.value == 1) {
+            scaleFactor = UniCsts.km2au;
+        }
         switch(orbitDefType.value)
         {
             case 0:
                 // rarp
                 UsefulFunctions.ParseStringToDouble(orbitShape_p1_field.text, out orbitalParams.ra);
                 UsefulFunctions.ParseStringToDouble(orbitShape_p2_field.text, out orbitalParams.rp);
+
                 // Converting entered altitude to a proper distance with respect to the planet centre
-                orbitalParams.ra += orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
-                orbitalParams.rp += orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
+                orbitalParams.ra += scaleFactor*orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
+                orbitalParams.rp += scaleFactor*orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
                 if(orbitalParams.ra < orbitalParams.rp || orbitalParams.ra < Mathd.Epsilon) {
                     ORBITAL_PARAMS_VALID = false;
                 }
@@ -206,9 +301,9 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
             case 1:
                 // rpe
                 UsefulFunctions.ParseStringToDouble(orbitShape_p1_field.text, out orbitalParams.rp);
-                orbitalParams.rp += orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
+                orbitalParams.rp += scaleFactor*orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
                 UsefulFunctions.ParseStringToDouble(orbitShape_p2_field.text, out orbitalParams.e);
-                if(orbitalParams.e - Mathd.Epsilon < Mathd.Epsilon) {
+                if(orbitalParams.e < 0d) {
                     ORBITAL_PARAMS_VALID = false;
                 }
 
@@ -217,7 +312,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 // pe
                 UsefulFunctions.ParseStringToDouble(orbitShape_p1_field.text, out orbitalParams.p);
                 UsefulFunctions.ParseStringToDouble(orbitShape_p2_field.text, out orbitalParams.e);
-                if(orbitalParams.e - Mathd.Epsilon < Mathd.Epsilon) {
+                if(orbitalParams.e < 0d) {
                     ORBITAL_PARAMS_VALID = false;
                 }
                 break;
@@ -246,6 +341,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 UsefulFunctions.ParseStringToDouble(bodyPos_field.text, out orbitalParams.t0);
                 break;
         }
+
         return orbitalParams;
     }
 
@@ -279,8 +375,46 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         info_orbit_a_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.a, UniCsts.UI_SIGNIFICANT_DIGITS);
         info_orbit_b_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.b, UniCsts.UI_SIGNIFICANT_DIGITS);
         info_orbit_c_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.c, UniCsts.UI_SIGNIFICANT_DIGITS);
-        info_meanMotion_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.n, UniCsts.UI_SIGNIFICANT_DIGITS);
+        info_meanMotion_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.n*180d/Mathd.PI, UniCsts.UI_SIGNIFICANT_DIGITS);
         info_orbitalPeriod_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.period, UniCsts.UI_SIGNIFICANT_DIGITS);
+    }
+
+    private void UpdateOrbitInfoUnits()
+    {
+        string distanceUnit = "";
+        switch(unitsDropdown.value)
+        {
+            case 0:
+                // 'km_degree' selected
+                distanceUnit = " km";
+                break;
+            case 1:
+                // 'AU_degree' selected
+                distanceUnit = " AU";
+                break;
+        }
+
+        switch(orbitDefType.value)
+        {
+            case 0:
+                // 'rarp'
+                info_orbitShape_p1_unit.text = distanceUnit;
+                info_orbitShape_p2_unit.text = "";
+                break;
+            case 1:
+                // 'rpe'
+                info_orbitShape_p1_unit.text = distanceUnit;
+                info_orbitShape_p2_unit.text = distanceUnit;
+                break;
+            case 2:
+                // 'pe'
+                info_orbitShape_p1_unit.text = distanceUnit;
+                info_orbitShape_p2_unit.text = distanceUnit;
+                break;
+        }
+        info_orbit_a_unit.text = distanceUnit;
+        info_orbit_b_unit.text = distanceUnit;
+        info_orbit_c_unit.text = distanceUnit;
     }
 
     void OnDisable()

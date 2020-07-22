@@ -8,7 +8,7 @@ using System.Globalization;
 
 public static class UsefulFunctions
 {
-    public static NumberStyles DOUBLE_PARSE_STYLES = NumberStyles.AllowDecimalPoint;
+    public static NumberStyles DOUBLE_PARSE_STYLES = NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign;
     public static IFormatProvider DOUBLE_PARSE_FORMAT = CultureInfo.CreateSpecificCulture("en-GB");
     //======================================================================================================
 

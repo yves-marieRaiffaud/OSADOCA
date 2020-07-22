@@ -20,11 +20,26 @@ public class Orbit
     public string suffixGO; // Suffix used for every gameObject that is created and parented to the spaceship
     
     public Orbit(OrbitalParams orbitalParams, CelestialBody celestialBody, GameObject orbitingBody) {
-        if(orbitalParams.orbParamsUnits == OrbitalParams.orbitalParamsUnits.AU_degree) {
-            scalingFactor = UniCsts.au2u;
-        }
-        else {
-            scalingFactor = UniCsts.pl2u;
+        switch(celestialBody.spawnAsSimpleSphere)
+        {
+            case true:
+                if(orbitalParams.orbParamsUnits == OrbitalParams.orbitalParamsUnits.AU_degree)
+                {
+                    scalingFactor = (double) (celestialBody.transform.localScale.x / (2d*UniCsts.km2au*celestialBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()]));
+                }
+                else {
+                    scalingFactor = (double) (celestialBody.transform.localScale.x / (2d*celestialBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()]));
+                }
+                break;
+
+            case false:
+                if(orbitalParams.orbParamsUnits == OrbitalParams.orbitalParamsUnits.AU_degree) {
+                    scalingFactor = UniCsts.au2u;
+                }
+                else {
+                    scalingFactor = UniCsts.pl2u;
+                }
+                break;
         }
 
         switch(orbitalParams.orbitDefType)
@@ -121,6 +136,10 @@ public class Orbit
             // Execute only if we are in the simulation. Else, the GameObject 'Orbits' does not exist
             lineRenderer.transform.parent = GameObject.Find("Orbits").transform;
         }
+        else {
+            lineRenderer.transform.parent = GameObject.Find("Planets_Rendering").transform;
+            lineRenderer.widthCurve = AnimationCurve.Constant(0f, 1f, 1f);
+        }
     }
 
 
@@ -143,7 +162,6 @@ public class Orbit
                 Vector3d fVec = orbit.orbitedBody.settings.equatorialPlane.forwardVec;
                 Vector3d rVec = orbit.orbitedBody.settings.equatorialPlane.rightVec;
                 worldPos = r*cosNu*fVec + r*Mathd.Sin(posValue)*rVec;
-                //worldPos = new Vector3d(r * cosNu, 0d, r*Mathd.Sin(posValue)); // Position without the ellispe rotation
                 worldPos = orbit.orbitRot * worldPos * orbit.scalingFactor;
                 break;
 
@@ -257,7 +275,12 @@ public class Orbit
             return float.NaN;
         }
         else{
-            double T = 2d * Mathd.PI * Mathd.Pow(10,-2) * Mathd.Sqrt(Mathd.Pow(param.a, 3) / orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()]); // without E13 for real value
+            double neededScaleFactor = 1d; // Default for 'km_degree' units
+            if(param.orbParamsUnits.ToString().Equals(OrbitalParams.orbitalParamsUnits.AU_degree.ToString()))
+            {
+                neededScaleFactor = UniCsts.au2km;
+            }
+            double T = 2d * Mathd.PI * Mathd.Pow(10,-2) * Mathd.Sqrt(Mathd.Pow(param.a*neededScaleFactor, 3) / orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()]); // without E13 for real value
             return T;
         }
     }
