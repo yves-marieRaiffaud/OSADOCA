@@ -22,6 +22,10 @@ public class UIStartLoc_Panel : MonoBehaviour
     {
         Init_startLocInitTypeDropdown();
         startLocInitTypeDropdown.onValueChanged.AddListener(delegate { OnValueChangedStartLocInitTypeDropdown(); });
+
+        // ONLY FOR DEBUG
+        // Start directly on the planetary surface init, for debug
+        startLocInitTypeDropdown.value = 1;
     }
 
     private void Init_startLocInitTypeDropdown()
