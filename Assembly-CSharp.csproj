@@ -68,8 +68,10 @@
      <Compile Include="Assets\Scripts\Spaceship\Spaceship.cs" />
      <Compile Include="Assets\Scripts\Spaceship\SpaceshipSettings.cs" />
      <Compile Include="Assets\Scripts\UI\LaunchPad.cs" />
+     <Compile Include="Assets\Scripts\UI\LaunchPadList.cs" />
      <Compile Include="Assets\Scripts\UI\UIMainMenu.cs" />
      <Compile Include="Assets\Scripts\UI\UIStartLoc_InitOrbit.cs" />
+     <Compile Include="Assets\Scripts\UI\UIStartLoc_InitPlanetarySurf.cs" />
      <Compile Include="Assets\Scripts\UI\UIStartLoc_Panel.cs" />
      <Compile Include="Assets\Scripts\Universe\SimulationEnv.cs" />
      <Compile Include="Assets\Scripts\Universe\UniCsts.cs" />

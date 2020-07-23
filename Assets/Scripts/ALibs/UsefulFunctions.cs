@@ -80,11 +80,18 @@ public static class UsefulFunctions
         return false;
     }
 
-    public static string ToSignificantDigits(double value, int significant_digits)
+    public static string DoubleToSignificantDigits(double value, int significant_digits)
     {
-        string format1 = "{0:G" + significant_digits.ToString() + "}";
-        string result = String.Format(format1, value);
+        string format1 = "G" + significant_digits.ToString();
+        string result = value.ToString(format1, CultureInfo.InvariantCulture);
         return result;
+    }
+
+    public static string StringToSignificantDigits(string value, int significant_digits)
+    {
+        double castValue;
+        ParseStringToDouble(value, out castValue);
+        return DoubleToSignificantDigits(castValue, significant_digits);
     }
 
     public static bool DoubleIsValid(double val1)
@@ -144,6 +151,49 @@ public static class UsefulFunctions
         }
         else {
             return UniverseRunner.goTags.Star;
+        }
+    }
+
+    public static UniCsts.planets CastStringTo_Unicsts_Planets(string goTag)
+    {
+        if(goTag.Equals(UniCsts.planets.Earth.ToString()))
+        {
+            return UniCsts.planets.Earth;
+        }
+        else if(goTag.Equals(UniCsts.planets.Jupiter.ToString()))
+        {
+            return UniCsts.planets.Jupiter;
+        }
+        else if(goTag.Equals(UniCsts.planets.Mars.ToString()))
+        {
+            return UniCsts.planets.Mars;
+        }
+        else if(goTag.Equals(UniCsts.planets.Mercury.ToString()))
+        {
+            return UniCsts.planets.Mercury;
+        }
+        else if(goTag.Equals(UniCsts.planets.Neptune.ToString()))
+        {
+            return UniCsts.planets.Neptune;
+        }
+        else if(goTag.Equals(UniCsts.planets.Saturn.ToString()))
+        {
+            return UniCsts.planets.Saturn;
+        }
+        else if(goTag.Equals(UniCsts.planets.Sun.ToString()))
+        {
+            return UniCsts.planets.Sun;
+        }
+        else if(goTag.Equals(UniCsts.planets.Uranus.ToString()))
+        {
+            return UniCsts.planets.Uranus;
+        }
+        else if(goTag.Equals(UniCsts.planets.Venus.ToString()))
+        {
+            return UniCsts.planets.Venus;
+        }
+        else {
+            return UniCsts.planets.None;
         }
     }
 

@@ -75,6 +75,8 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         orbitDefType.onValueChanged.AddListener(delegate { OnOrbitDefTypeDropdownValueChanged(); });
         unitsDropdown.onValueChanged.AddListener(delegate { OnUnitsDropdownValueChanged(); });
         bodyPosType.onValueChanged.AddListener(delegate { OnBodyPosDropdownValueChanged(); });
+
+        ClearOrbitInfoValues();
     }
 
     private void InitDropdowns()
@@ -345,6 +347,41 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         return orbitalParams;
     }
 
+    private void ClearOrbitInfoValues()
+    {
+        info_orbitShape_p1_txt.text = "";
+        info_orbitShape_p1_unit.text = "";
+        info_orbitShape_p1_val.text = "";
+
+        info_orbitShape_p2_txt.text = "";
+        info_orbitShape_p2_unit.text = "";
+        info_orbitShape_p2_val.text = "";
+
+        info_orbit_a_unit.text = "";
+        info_orbit_a_val.text = "";
+
+        info_orbit_b_unit.text = "";
+        info_orbit_b_val.text = "";
+
+        info_orbit_c_unit.text = "";
+        info_orbit_c_val.text = "";
+
+        info_bodyPos_p1_txt.text = "";
+        info_bodyPos_p1_unit.text = "";
+        info_bodyPos_p1_val.text = "";
+
+        info_bodyPos_p2_txt.text = "";
+        info_bodyPos_p2_unit.text = "";
+        info_bodyPos_p2_val.text = "";
+
+        info_bodyPos_p3_txt.text = "";
+        info_bodyPos_p3_unit.text = "";
+        info_bodyPos_p3_val.text = "";
+
+        info_meanMotion_val.text = "";
+        info_orbitalPeriod_val.text = "";
+    }
+
     private void UpdateOrbitInfoValues()
     {
         switch(orbitDefType.value)
@@ -352,31 +389,31 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
             case 0:
                 // rarp, thus displaying p and e
                 info_orbitShape_p1_txt.text = "p";
-                info_orbitShape_p1_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.p, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_orbitShape_p1_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.p, UniCsts.UI_SIGNIFICANT_DIGITS);
                 info_orbitShape_p2_txt.text = "e";
-                info_orbitShape_p2_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.e, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_orbitShape_p2_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.e, UniCsts.UI_SIGNIFICANT_DIGITS);
                 break;
             case 1:
                 // rpe, thus displaying ra and p
                 info_orbitShape_p1_txt.text = "ra";
-                info_orbitShape_p1_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.ra, UniCsts.UI_SIGNIFICANT_DIGITS);;
+                info_orbitShape_p1_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.ra, UniCsts.UI_SIGNIFICANT_DIGITS);;
                 info_orbitShape_p2_txt.text = "p";
-                info_orbitShape_p2_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.p, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_orbitShape_p2_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.p, UniCsts.UI_SIGNIFICANT_DIGITS);
                 break;
             case 2:
                 // pe, thus displaying ra and rp
                 info_orbitShape_p1_txt.text = "ra";
-                info_orbitShape_p1_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.ra, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_orbitShape_p1_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.ra, UniCsts.UI_SIGNIFICANT_DIGITS);
                 info_orbitShape_p2_txt.text = "rp";
-                info_orbitShape_p2_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.rp, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_orbitShape_p2_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.rp, UniCsts.UI_SIGNIFICANT_DIGITS);
                 break;
         }
         
-        info_orbit_a_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.a, UniCsts.UI_SIGNIFICANT_DIGITS);
-        info_orbit_b_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.b, UniCsts.UI_SIGNIFICANT_DIGITS);
-        info_orbit_c_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.c, UniCsts.UI_SIGNIFICANT_DIGITS);
-        info_meanMotion_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.n*180d/Mathd.PI, UniCsts.UI_SIGNIFICANT_DIGITS);
-        info_orbitalPeriod_val.text = UsefulFunctions.ToSignificantDigits(previewedOrbit.param.period, UniCsts.UI_SIGNIFICANT_DIGITS);
+        info_orbit_a_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.a, UniCsts.UI_SIGNIFICANT_DIGITS);
+        info_orbit_b_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.b, UniCsts.UI_SIGNIFICANT_DIGITS);
+        info_orbit_c_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.c, UniCsts.UI_SIGNIFICANT_DIGITS);
+        info_meanMotion_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.n*180d/Mathd.PI, UniCsts.UI_SIGNIFICANT_DIGITS);
+        info_orbitalPeriod_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.period, UniCsts.UI_SIGNIFICANT_DIGITS);
     }
 
     private void UpdateOrbitInfoUnits()
