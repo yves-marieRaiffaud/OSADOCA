@@ -116,6 +116,10 @@ public class UniverseRunner : MonoBehaviour
                 case goTags.Star:
                     obj.position = Vector3.zero; // Position the Sun at the center of the Universe
                     CelestialBody starBody = obj.GetComponent<CelestialBody>();
+
+                    // Modifying the radius of the sun, else it will be too large to be rendered
+                    UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet][CelestialBodyParamsBase.planetaryParams.radius.ToString()] = 8_000d;
+                    UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet][CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()] = 8_000d;
                     starBody.AwakeCelestialBody(UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet]);
                     break;
 
@@ -176,16 +180,16 @@ public class UniverseRunner : MonoBehaviour
 
             case goTags.Planet:
                 CelestialBody celestBody = obj.GetComponent<CelestialBody>();
-                if(celestBody.orbitedBody != null)
+                if(celestBody.orbitalParams.orbitedBody != null)
                 {
-                    orbitedBody = celestBody.orbitedBody.GetComponent<CelestialBody>();
+                    orbitedBody = celestBody.orbitalParams.orbitedBody.GetComponent<CelestialBody>();
                     FlyingObj.GravitationalUpdate<CelestialBody, CelestialBodySettings>(orbitedBody, celestBody);
                 }
                 break;
             
             case goTags.Spaceship:
                 Spaceship ship = obj.GetComponent<Spaceship>();
-                orbitedBody = ship.orbitedBody.GetComponent<CelestialBody>();
+                orbitedBody = ship.orbitalParams.orbitedBody.GetComponent<CelestialBody>();
                 FlyingObj.GravitationalUpdate<Spaceship, SpaceshipSettings>(orbitedBody, ship);
                 break;
         }

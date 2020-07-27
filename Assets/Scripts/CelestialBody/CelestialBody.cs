@@ -10,6 +10,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     //=========================================
     public GameObject _gameObject { get{return this.gameObject;} set{_gameObject=this.gameObject;} }
 
+    [HideInInspector, SerializeField]
     private Orbit _orbit;
     public Orbit orbit
     {
@@ -21,9 +22,8 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
 
-    [SerializeField, HideInInspector]
+    [HideInInspector, SerializeField]
     private OrbitalPredictor _predictor;
-    [SerializeField, HideInInspector]
     public OrbitalPredictor predictor
     {
         get {
@@ -34,7 +34,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
 
-    private OrbitalParams _orbitalParams;
+    public OrbitalParams _orbitalParams;
     public OrbitalParams orbitalParams
     {
         get {
@@ -46,21 +46,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     }
 
     [HideInInspector]
-    public CelestialBody _orbitedBody;
-    [HideInInspector]
-    public CelestialBody orbitedBody
-    {
-        get {
-            return _orbitedBody;
-        }
-        set {
-            _orbitedBody=value;
-        }
-    }
-
-    [HideInInspector]
     public Vector3d _realPosition;
-    [HideInInspector]
     public Vector3d realPosition
     {
         get {
@@ -73,7 +59,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     [HideInInspector]
     public Vector3d _orbitedBodyRelativeAcc;
-    [HideInInspector]
     public Vector3d orbitedBodyRelativeAcc
     {
         get {
@@ -86,7 +71,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     [HideInInspector]
     public Vector3d _orbitedBodyRelativeVelIncr;
-    [HideInInspector]
     public Vector3d orbitedBodyRelativeVelIncr
     {
         get {
@@ -99,7 +83,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     [HideInInspector]
     public Vector3d _orbitedBodyRelativeVel;
-    [HideInInspector]
     public Vector3d orbitedBodyRelativeVel
     {
         get {
@@ -122,7 +105,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     [HideInInspector] public float distanceToPlayerPow2;
     
     // Related to CelestialBody Generation
-    [SerializeField, HideInInspector]
     MeshFilter[] meshFilters;
     TerrainFace[] terrainFaces;
 
@@ -133,12 +115,21 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             // Can not find any UniverseRunner in the scene, thus it is a celetialBody in a UI menu
             spawnAsSimpleSphere = true; // Enforcing simple sphere rendering as no universePlayerCamera will be found
         }
+
+        if(orbitalParams.orbitedBodyName.Equals("None")) {
+            orbitalParams.orbitedBody = null;
+        }
+        else {
+            string suffix = spawnAsSimpleSphere ? "Planet_UI" : "";
+            orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName+suffix).GetComponent<CelestialBody>();
+        }
     }
 
     public void AwakeCelestialBody(Dictionary<string,double> refDictOrbParams)
     {
         AssignRefDictOrbitalParams(refDictOrbParams);
         if(spawnAsSimpleSphere) { 
+            gameObject.GetComponent<MeshRenderer>().material = settings.bodyMaterial;
             InitializeBodyParameters();
             return; // Early exit if it's a UI celestialBody
         }
@@ -273,7 +264,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     {
         float axialTitleAngle = (float)settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()];
         // Rotation vector is in the orbital plane and perpendicular to the radial vector
-        Vector3 tangentialVec = (Vector3)orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
+        Vector3 tangentialVec = (Vector3)orbit.ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.tangentialVec);
 
         Quaternion tiltRotation = Quaternion.AngleAxis(axialTitleAngle, -tangentialVec);
         gameObject.transform.rotation *= tiltRotation;
@@ -321,26 +312,22 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     private void AssignRefDictOrbitalParams(Dictionary<string,double> refDictOrbParams)
     {
         settings.planetBaseParamsDict = refDictOrbParams;
-        if(settings.usePredifinedPlanets && orbitalParams==null)
+        if(settings.usePredifinedPlanets)
         {
-            // If the orbitalParams is not null (an 'OrbitalParams' file has been specified), priority is given to the file
+            // Copying orbital values from the planet dictionary to the orbitalParams scriptable object
             InitializeOrbitalParameters();
-        } 
-        else if(!settings.usePredifinedPlanets && orbitalParams==null)
-        {
-            // else, no need to initialize as the orbitalParams File is provided
-            //Debug.LogError(this.name + " of type 'CelestialBody' has neither an 'orbitalParams' file nor a predifined planet (set to false).");
         }
+        // if 'usePredefinedPlanet' is false, then the orbital values are directly user input in the scriptable object 'orbitalParams' file
     }
 
     private void InitializeOrbitalParameters()
     {
-        orbitalParams = (OrbitalParams)OrbitalParams.CreateInstance<OrbitalParams>();
-
-        orbitalParams.orbitRealPredType = OrbitalParams.typeOfOrbit.realOrbit;
-        orbitalParams.orbitDefType = OrbitalParams.orbitDefinitionType.rarp;
-        orbitalParams.orbParamsUnits = OrbitalParams.orbitalParamsUnits.AU_degree;
-        orbitalParams.bodyPosType = OrbitalParams.bodyPositionType.nu;
+        // Called only if 'usePredefinedPlanet' is true
+        // Copying orbital values from the planet dictionary to the orbitalParams scriptable object
+        orbitalParams.orbitRealPredType = OrbitalTypes.typeOfOrbit.realOrbit;
+        orbitalParams.orbitDefType = OrbitalTypes.orbitDefinitionType.rarp;
+        orbitalParams.orbParamsUnits = OrbitalTypes.orbitalParamsUnits.AU_degree;
+        orbitalParams.bodyPosType = OrbitalTypes.bodyPositionType.nu;
 
         orbitalParams.ra = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.aphelion.ToString()];
         orbitalParams.rp = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.perihelion.ToString()];
@@ -348,16 +335,11 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         orbitalParams.lAscN = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()];
         orbitalParams.omega = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()];
         orbitalParams.nu = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()];
-
-        orbitalParams.orbitDrawingResolution = 300;
-        orbitalParams.drawOrbit = true;
-        orbitalParams.drawDirections = true;
-        orbitalParams.selectedVectorsDir = (OrbitalParams.typeOfVectorDir)1022; // Draw everything
     }
 
     public void InitializeOrbitalPredictor()
     {
-        predictor = new OrbitalPredictor(this, orbitedBody.GetComponent<CelestialBody>(), orbit);
+        predictor = new OrbitalPredictor(this, orbitalParams.orbitedBody.GetComponent<CelestialBody>(), orbit);
     }
 
 
@@ -388,7 +370,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     public Vector3d GetRelativeRealWorldPosition()
     {
-        return new Vector3d(transform.position - orbitedBody.transform.position) * UniCsts.u2pl;
+        return new Vector3d(transform.position - orbitalParams.orbitedBody.transform.position) * UniCsts.u2pl;
     }
 
     public Vector3d GetRelativeVelocity()

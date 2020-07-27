@@ -1,10 +1,12 @@
 using UnityEngine;
 using Mathd_Lib;
 using UnityEngine.Rendering;
+using System;
 
+[Serializable]
 public class Orbit
 {
-    private const double CIRCULAR_ORBIT_TOLERANCE = 10e-5d; // Tolerance for the excentricity value with respect to zero
+    [SerializeField] private const double CIRCULAR_ORBIT_TOLERANCE = 10e-5d; // Tolerance for the excentricity value with respect to zero
 
     public OrbitalParams param;
     public double scalingFactor; // Either 'UniCsts.pl2u' or 'UniCsts.au2u'
@@ -23,7 +25,7 @@ public class Orbit
         switch(celestialBody.spawnAsSimpleSphere)
         {
             case true:
-                if(orbitalParams.orbParamsUnits == OrbitalParams.orbitalParamsUnits.AU_degree)
+                if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU_degree)
                 {
                     scalingFactor = (double) (celestialBody.transform.localScale.x / (2d*UniCsts.km2au*celestialBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()]));
                 }
@@ -33,7 +35,7 @@ public class Orbit
                 break;
 
             case false:
-                if(orbitalParams.orbParamsUnits == OrbitalParams.orbitalParamsUnits.AU_degree) {
+                if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU_degree) {
                     scalingFactor = UniCsts.au2u;
                 }
                 else {
@@ -44,7 +46,7 @@ public class Orbit
 
         switch(orbitalParams.orbitDefType)
         {
-            case OrbitalParams.orbitDefinitionType.rarp:
+            case OrbitalTypes.orbitDefinitionType.rarp:
                 param = orbitalParams;
                 orbitingGO = orbitingBody;
                 orbitedBody = celestialBody;
@@ -59,16 +61,16 @@ public class Orbit
                 param.period = ComputeOrbitalPeriod();
                 n = ComputeMeanMotion();
 
-                param.vp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vernalPoint);
-                param.vpAxisRight = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vpAxisRight);
-                param.vpAxisUp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vpAxisUp);
+                param.vp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vernalPoint);
+                param.vpAxisRight = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisRight);
+                param.vpAxisUp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisUp);
 
                 suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
                 CreateAssignOrbitLineRenderer(suffixGO);
                 DrawOrbit();
                 break;
 
-            case OrbitalParams.orbitDefinitionType.rpe:
+            case OrbitalTypes.orbitDefinitionType.rpe:
                 param = orbitalParams;
                 orbitingGO = orbitingBody;
                 orbitedBody = celestialBody;
@@ -83,16 +85,16 @@ public class Orbit
                 param.period = ComputeOrbitalPeriod();
                 n = ComputeMeanMotion();
 
-                param.vp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vernalPoint);
-                param.vpAxisRight = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vpAxisRight);
-                param.vpAxisUp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vpAxisUp);
+                param.vp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vernalPoint);
+                param.vpAxisRight = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisRight);
+                param.vpAxisUp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisUp);
 
                 suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
                 CreateAssignOrbitLineRenderer(suffixGO);
                 DrawOrbit();
                 break;
             
-            case OrbitalParams.orbitDefinitionType.pe:
+            case OrbitalTypes.orbitDefinitionType.pe:
                 param = orbitalParams;
                 orbitingGO = orbitingBody;
                 orbitedBody = celestialBody;
@@ -107,9 +109,9 @@ public class Orbit
                 param.period = ComputeOrbitalPeriod();
                 n = ComputeMeanMotion();
                 
-                param.vp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vernalPoint);
-                param.vpAxisRight = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vpAxisRight);
-                param.vpAxisUp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vpAxisUp);
+                param.vp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vernalPoint);
+                param.vpAxisRight = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisRight);
+                param.vpAxisUp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisUp);
 
                 suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
                 CreateAssignOrbitLineRenderer(suffixGO);
@@ -148,24 +150,25 @@ public class Orbit
         lineRendererGO.transform.localPosition = orbitedBody.transform.localPosition;
     }
 
-    public static Vector3d GetWorldPositionFromOrbit(Orbit orbit, OrbitalParams.bodyPositionType posType)
+    public static Vector3d GetWorldPositionFromOrbit(Orbit orbit, OrbitalTypes.bodyPositionType posType)
     {
         // Return the Vector3d position in the world (X,Y,Z) from the position of the body on its orbit
         Vector3d worldPos = Vector3d.NaN();
         switch(posType)
         {
-            case OrbitalParams.bodyPositionType.nu:
+            case OrbitalTypes.bodyPositionType.nu:
                 double posValue = orbit.param.nu * UniCsts.deg2rad;
                 double cosNu = Mathd.Cos(posValue);
                 double r = orbit.param.p / (1 + orbit.param.e*cosNu);
 
                 Vector3d fVec = orbit.orbitedBody.settings.equatorialPlane.forwardVec;
                 Vector3d rVec = orbit.orbitedBody.settings.equatorialPlane.rightVec;
+
                 worldPos = r*cosNu*fVec + r*Mathd.Sin(posValue)*rVec;
                 worldPos = orbit.orbitRot * worldPos * orbit.scalingFactor;
                 break;
 
-            case OrbitalParams.bodyPositionType.m0:
+            case OrbitalTypes.bodyPositionType.m0:
                 break;
         }
         return worldPos;
@@ -223,7 +226,7 @@ public class Orbit
         Quaterniond equatorialAdjustment = Quaterniond.Identity;
         if(!orbitedBody.tag.Equals(UniverseRunner.goTags.Star.ToString()) && !orbitedBody.spawnAsSimpleSphere)
         {
-            Vector3d tangentialVec = orbitedBody.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
+            Vector3d tangentialVec = orbitedBody.orbit.ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.tangentialVec);
             double orbitedBodyAxialTilt = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()];
             equatorialAdjustment = Quaterniond.AngleAxis(orbitedBodyAxialTilt, -tangentialVec).GetNormalized();
         }
@@ -254,7 +257,7 @@ public class Orbit
         // 4
         // normalUp vector has changed after the rotation by longAscendingNodeRot.
         orbitNormalUp = equatorialAdjustment * longAscendingNodeRot * orbitNormalUp;
-        param.apogeeLineDir = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.apogeeLine);
+        param.apogeeLineDir = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.apogeeLine);
         Vector3d orbitPlaneRightVec = Vector3d.Cross(param.apogeeLineDir, orbitNormalUp);
 
         if(param.orbitPlane == null) { param.orbitPlane = new OrbitPlane(); }
@@ -276,7 +279,7 @@ public class Orbit
         }
         else{
             double neededScaleFactor = 1d; // Default for 'km_degree' units
-            if(param.orbParamsUnits.ToString().Equals(OrbitalParams.orbitalParamsUnits.AU_degree.ToString()))
+            if(param.orbParamsUnits.ToString().Equals(OrbitalTypes.orbitalParamsUnits.AU_degree.ToString()))
             {
                 neededScaleFactor = UniCsts.au2km;
             }
@@ -311,11 +314,11 @@ public class Orbit
 
     public void RecomputeMainDirectionVectors()
     {
-        param.apogeeLineDir = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.apogeeLine);
-        param.ascendingNodeLineDir = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.ascendingNodeLine);
+        param.apogeeLineDir = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.apogeeLine);
+        param.ascendingNodeLineDir = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.ascendingNodeLine);
     }
 
-    public Vector3d ComputeDirectionVector(OrbitalParams.typeOfVectorDir vecType)
+    public Vector3d ComputeDirectionVector(OrbitalTypes.typeOfVectorDir vecType)
     {
         if(orbitedBody == null)
         {
@@ -324,34 +327,34 @@ public class Orbit
         else {
             switch(vecType)
             {
-                case OrbitalParams.typeOfVectorDir.vernalPoint:
+                case OrbitalTypes.typeOfVectorDir.vernalPoint:
                     return (UniCsts.pv - new Vector3d(orbitingGO.transform.position)).normalized;
                 
-                case OrbitalParams.typeOfVectorDir.vpAxisRight:
+                case OrbitalTypes.typeOfVectorDir.vpAxisRight:
                     if(!Vector3d.IsValid(param.vp)){
-                        ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vernalPoint);
+                        ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vernalPoint);
                     }
                     return new Vector3d(param.vp.y, param.vp.z, param.vp.x).normalized;
                 
-                case OrbitalParams.typeOfVectorDir.vpAxisUp:
+                case OrbitalTypes.typeOfVectorDir.vpAxisUp:
                     if(!Vector3d.IsValid(param.vp)){
-                        ComputeDirectionVector(OrbitalParams.typeOfVectorDir.vernalPoint);
+                        ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vernalPoint);
                     }
                     return new Vector3d(param.vp.z, param.vp.x, param.vp.y).normalized;
 
-                case OrbitalParams.typeOfVectorDir.apogeeLine:                    
+                case OrbitalTypes.typeOfVectorDir.apogeeLine:                    
                     if(lineRenderer != null) {
                         //return new Vector3d(lineRenderer.GetPosition((int)(lineRenderer.positionCount/2)) - orbitedBody.transform.position).normalized;
                         return new Vector3d(lineRenderer.GetPosition((int)(lineRenderer.positionCount/2))).normalized;
                     }
                     return new Vector3d(double.NaN, double.NaN, double.NaN);
 
-                case OrbitalParams.typeOfVectorDir.ascendingNodeLine:
+                case OrbitalTypes.typeOfVectorDir.ascendingNodeLine:
                     if(UsefulFunctions.DoublesAreEqual(param.i, 0d, 10e-4))
                     {
                         // There is an infinity of Ascending nodes
                         // Returning the ascending node line as the perpendicular vector with respect to the apogee line, and in the orbit plane
-                        Vector3d tmp = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.apogeeLine);
+                        Vector3d tmp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.apogeeLine);
                         return Vector3d.Cross(tmp, param.orbitPlane.normal);
                     }
                     else {
@@ -361,14 +364,14 @@ public class Orbit
                         return intersectLine;
                     }
                 
-                case OrbitalParams.typeOfVectorDir.radialVec:
+                case OrbitalTypes.typeOfVectorDir.radialVec:
                     return new Vector3d(orbitedBody.transform.position - orbitingGO.transform.position).normalized;
 
-                case OrbitalParams.typeOfVectorDir.tangentialVec:
-                    Vector3d radial = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.radialVec);
+                case OrbitalTypes.typeOfVectorDir.tangentialVec:
+                    Vector3d radial = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.radialVec);
                     return Vector3d.Cross(radial, param.orbitPlane.normal).normalized;
                 
-                case OrbitalParams.typeOfVectorDir.velocityVec:
+                case OrbitalTypes.typeOfVectorDir.velocityVec:
                     if(UsefulFunctions.GoTagAndStringAreEqual(UniverseRunner.goTags.Spaceship, orbitingGO.tag))
                     {
                         Spaceship ship = orbitingGO.GetComponent<Spaceship>();
@@ -379,7 +382,7 @@ public class Orbit
                         return body.orbitedBodyRelativeVel.normalized;
                     }
                 
-                case OrbitalParams.typeOfVectorDir.accelerationVec:
+                case OrbitalTypes.typeOfVectorDir.accelerationVec:
                     if(UsefulFunctions.GoTagAndStringAreEqual(UniverseRunner.goTags.Spaceship, orbitingGO.tag))
                     {
                         Spaceship ship = orbitingGO.GetComponent<Spaceship>();
@@ -394,7 +397,7 @@ public class Orbit
         return new Vector3d(double.NaN, double.NaN, double.NaN);
     }
 
-    public void DrawDirection(OrbitalParams.typeOfVectorDir dirType, float lineWidth=1f, float lineLength=100f, Vector3 startPos=default(Vector3))
+    public void DrawDirection(OrbitalTypes.typeOfVectorDir dirType, float lineWidth=1f, float lineLength=100f, Vector3 startPos=default(Vector3))
     {
         if(!Vector3d.IsValid(param.vp)) {
             return;
@@ -410,61 +413,61 @@ public class Orbit
             Vector3[] pos = new Vector3[2];
             switch(dirType)
             {
-                case OrbitalParams.typeOfVectorDir.vernalPoint:
+                case OrbitalTypes.typeOfVectorDir.vernalPoint:
                     pos[0] = Vector3.Scale(orbitedBody.transform.position, (Vector3)param.vp);
                     pos[1] = (float)(param.ra*scalingFactor) * (Vector3)param.vp;
                     break;
                 
-                case OrbitalParams.typeOfVectorDir.vpAxisRight:
+                case OrbitalTypes.typeOfVectorDir.vpAxisRight:
                     pos[0] = Vector3.Scale(orbitedBody.transform.position, (Vector3)param.vpAxisRight);
                     pos[1] = (float)(param.ra*scalingFactor) * (Vector3)param.vpAxisRight;
                     break;
                 
-                case OrbitalParams.typeOfVectorDir.vpAxisUp:
+                case OrbitalTypes.typeOfVectorDir.vpAxisUp:
                     pos[0] = Vector3.Scale(orbitedBody.transform.position, (Vector3)param.vpAxisUp);
                     pos[1] = (float)(param.ra*scalingFactor) * (Vector3)param.vpAxisUp;
                     break;
                 
-                case OrbitalParams.typeOfVectorDir.apogeeLine:
+                case OrbitalTypes.typeOfVectorDir.apogeeLine:
                     pos[0] = (float)(-param.rp*scalingFactor) * (Vector3)param.apogeeLineDir;
                     pos[1] = (float)(param.ra*scalingFactor) * (Vector3)param.apogeeLineDir;
                     break;
                 
-                case OrbitalParams.typeOfVectorDir.ascendingNodeLine:
+                case OrbitalTypes.typeOfVectorDir.ascendingNodeLine:
                     pos[0] = (float)-(param.ra*scalingFactor) * (Vector3)param.ascendingNodeLineDir;
                     pos[1] = (float)(param.ra*scalingFactor) * (Vector3)param.ascendingNodeLineDir;
                     break;
                 
-                case OrbitalParams.typeOfVectorDir.tangentialVec:
+                case OrbitalTypes.typeOfVectorDir.tangentialVec:
                     if(startPos != null){
-                        Vector3d tangentialVec = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
+                        Vector3d tangentialVec = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.tangentialVec);
                         pos[0] = Vector3.zero;
                         pos[1] = lineLength * (Vector3)tangentialVec;
                         dirLR.transform.position = startPos;
                     }
                     break;
 
-                case OrbitalParams.typeOfVectorDir.radialVec:
+                case OrbitalTypes.typeOfVectorDir.radialVec:
                     if(startPos != null){
-                        Vector3d radialVec = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.radialVec);
+                        Vector3d radialVec = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.radialVec);
                         pos[0] = Vector3.zero;
                         pos[1] = lineLength * (Vector3)radialVec;
                         dirLR.transform.position = startPos;
                     }
                     break;
                 
-                case OrbitalParams.typeOfVectorDir.velocityVec:
+                case OrbitalTypes.typeOfVectorDir.velocityVec:
                     if(startPos != null){
-                        Vector3d speedVec = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.velocityVec);
+                        Vector3d speedVec = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.velocityVec);
                         pos[0] = Vector3.zero;
                         pos[1] = lineLength * (Vector3)speedVec;
                         dirLR.transform.position = startPos;
                     }
                     break;
                 
-                case OrbitalParams.typeOfVectorDir.accelerationVec:
+                case OrbitalTypes.typeOfVectorDir.accelerationVec:
                     if(startPos != null){
-                        Vector3d accVec = ComputeDirectionVector(OrbitalParams.typeOfVectorDir.accelerationVec);
+                        Vector3d accVec = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.accelerationVec);
                         pos[0] = Vector3.zero;
                         pos[1] = lineLength * (Vector3)accVec;
                         dirLR.transform.position = startPos;
@@ -481,7 +484,7 @@ public class Orbit
 
     public void DrawAllDirections()
     {
-        foreach(OrbitalParams.typeOfVectorDir direction in param.suffixVectorDir.Keys)
+        foreach(OrbitalTypes.typeOfVectorDir direction in param.suffixVectorDir.Keys)
         {
             DrawDirection(direction);
         }
@@ -525,7 +528,7 @@ public class Orbit
         else if (UsefulFunctions.isInRange(param.e, 0d, 1d, UsefulFunctions.isInRangeFlags.both_excluded)){
             // Orbit is elliptic
             double a = param.a;
-            if(param.orbParamsUnits == OrbitalParams.orbitalParamsUnits.AU_degree) {
+            if(param.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU_degree) {
                 a *= UniCsts.au2km;
             }
             double velocity = Mathd.Pow(10,5) * Mathd.Sqrt(orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()] * (2d/(Get_R()) - 1d/a));
@@ -553,7 +556,7 @@ public class Orbit
         // Returns the distance in real world (in km) from the spaceship position to the centre of the orbited body
         double distance = Vector3d.Distance(new Vector3d(orbitingGO.transform.position), new Vector3d(orbitedBody.transform.position));
         distance /= scalingFactor; // Either km or AU
-        if(param.orbParamsUnits == OrbitalParams.orbitalParamsUnits.AU_degree) {
+        if(param.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU_degree) {
             // AU
             return distance * UniCsts.au2km;
         }
@@ -567,7 +570,7 @@ public class Orbit
         // Returns the distance in real world (in km) from the spaceship position to the centre of the orbited body
         double distance = Vector3d.Distance(shipPosition, new Vector3d(orbitedBody.transform.position));
         distance /= scalingFactor; // Either km or AU
-        if(param.orbParamsUnits == OrbitalParams.orbitalParamsUnits.AU_degree) {
+        if(param.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU_degree) {
             // AU
             return distance * UniCsts.au2km;
         }

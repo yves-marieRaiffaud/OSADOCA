@@ -11,9 +11,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     //=========================================
     public GameObject _gameObject { get{return this.gameObject;} set{_gameObject=this.gameObject;} }
 
-    [SerializeField, HideInInspector]
+    [HideInInspector]
     private Orbit _orbit;
-    [SerializeField, HideInInspector]
     public Orbit orbit
     {
         get {
@@ -24,9 +23,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
     }
 
-    [SerializeField, HideInInspector]
+    [HideInInspector]
     private OrbitalPredictor _predictor;
-    [SerializeField, HideInInspector]
     public OrbitalPredictor predictor
     {
         get {
@@ -37,9 +35,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
     }
 
-    [SerializeField, HideInInspector]
-    private OrbitalParams _orbitalParams;
-    [SerializeField, HideInInspector]
+    public OrbitalParams _orbitalParams;
     public OrbitalParams orbitalParams
     {
         get {
@@ -50,22 +46,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
     }
 
-    [SerializeField, HideInInspector]
-    private CelestialBody _orbitedBody;
-    [SerializeField, HideInInspector]
-    public CelestialBody orbitedBody
-    {
-        get {
-            return _orbitedBody;
-        }
-        set {
-            _orbitedBody=value;
-        }
-    }
-
-    [SerializeField, HideInInspector]
+    [HideInInspector]
     private Vector3d _realPosition;
-    [SerializeField, HideInInspector]
     public Vector3d realPosition
     {
         get {
@@ -76,9 +58,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
     }
 
-    [SerializeField, HideInInspector]
+    [HideInInspector]
     private Vector3d _orbitedBodyRelativeAcc;
-    [SerializeField, HideInInspector]
     public Vector3d orbitedBodyRelativeAcc
     {
         get {
@@ -89,9 +70,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
     }
 
-    [SerializeField, HideInInspector]
+    [HideInInspector]
     private Vector3d _orbitedBodyRelativeVelIncr;
-    [SerializeField, HideInInspector]
     public Vector3d orbitedBodyRelativeVelIncr
     {
         get {
@@ -102,9 +82,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
     }
 
-    [SerializeField, HideInInspector]
+    [HideInInspector]
     private Vector3d _orbitedBodyRelativeVel;
-    [SerializeField, HideInInspector]
     public Vector3d orbitedBodyRelativeVel
     {
         get {
@@ -118,17 +97,22 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     
     void Awake()
     {
-        // Do nothing for now
+        if(orbitalParams.orbitedBodyName.Equals("None")) {
+            orbitalParams.orbitedBody = null;
+        }
+        else {
+            orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
+        }
     }
 
     public void InitializeOrbitalPredictor()
     {
-        predictor = new OrbitalPredictor(this, orbitedBody.GetComponent<CelestialBody>(), orbit);
+        predictor = new OrbitalPredictor(this, orbitalParams.orbitedBody.GetComponent<CelestialBody>(), orbit);
     }
 
     public Vector3d GetRelativeRealWorldPosition()
     {
-        return new Vector3d(transform.position - orbitedBody.transform.position) * UniCsts.u2pl;
+        return new Vector3d(transform.position - orbitalParams.orbitedBody.transform.position) * UniCsts.u2pl;
     }
 
     public Vector3d GetRelativeVelocity()

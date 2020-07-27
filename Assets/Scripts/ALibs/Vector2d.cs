@@ -3,12 +3,14 @@
 // Assembly location: C:\Program Files (x86)\Unity\Editor\Data\Managed\UnityEngine.dll
 using System;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace Mathd_Lib {
+    [Serializable]
     public struct Vector2d {
         public const double kEpsilon = 1E-05d;
-        public double x;
-        public double y;
+        [SerializeField] public double x;
+        [SerializeField] public double y;
 
         public double this[int index] {
             get {

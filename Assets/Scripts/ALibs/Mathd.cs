@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Mathd_Lib {
+    [Serializable]
     public struct Mathd {
         public const double PI = 3.141593d;
         public const double Infinity = double.PositiveInfinity;

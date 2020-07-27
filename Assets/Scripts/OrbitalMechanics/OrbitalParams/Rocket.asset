@@ -9,24 +9,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8749886e1bcfb6541b0707f8512ee8ab, type: 3}
+  m_Script: {fileID: 0}
   m_Name: Rocket
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrbitalParams
+  orbitedBodyName: Earth
+  orbitedBody: {fileID: 0}
   orbitDefType: 0
   bodyPosType: 0
   orbParamsUnits: 0
   orbitRealPredType: 0
-  selectedVectorsDir: -1
+  selectedVectorsDir: 816
   drawOrbit: 1
   drawDirections: 1
-  orbitDrawingResolution: 300
-  ra: 16378
-  rp: 6578
-  p: 0
-  e: 0
-  a: 0
-  b: 0
-  c: 0
+  orbitDrawingResolution: 346
+  ra: 10000
+  rp: 6478
+  p: 7862.604685034592
+  e: 0.21373953149654085
+  a: 8239
+  b: 8048.602363143554
+  c: 1761
   i: 0
   lAscN: 0
   omega: 0
@@ -34,42 +36,42 @@ MonoBehaviour:
   m0: 0
   l0: 0
   t0: 0
-  period: 0
+  period: 7442.567508907675
   vp:
-    x: 0
-    y: 0
-    z: 0
+    x: 1
+    y: -1.8657886505126953e-99
+    z: -3.053682804107666e-100
   vpAxisRight:
-    x: 0
-    y: 0
-    z: 0
+    x: -1.8657886505126953e-99
+    y: -3.053682804107666e-100
+    z: 1
   vpAxisUp:
-    x: 0
-    y: 0
-    z: 0
+    x: -3.053682804107666e-100
+    y: 1
+    z: -1.8657886505126953e-99
   ascendingNodeLineDir:
-    x: 0
-    y: 0
-    z: 0
+    x: 0.033281404631340786
+    y: -0.3867858157207953
+    z: 0.921568815044739
   apogeeLineDir:
-    x: 0
-    y: 0
-    z: 0
+    x: -0.9957897404766538
+    y: -0.09163273874092637
+    z: -0.0024967883922880725
   orbitPlane:
     forwardVec:
-      x: NaN
-      y: NaN
-      z: NaN
+      x: -0.9957897404766538
+      y: -0.09163273874092637
+      z: -0.0024967883922880725
     rightVec:
-      x: NaN
-      y: NaN
-      z: NaN
+      x: -0.033281404631340786
+      y: 0.3867858157207953
+      z: -0.9215688150447389
     point:
-      x: NaN
-      y: NaN
-      z: NaN
+      x: -4978.94873046875
+      y: -458.1636962890625
+      z: -12.483942031860352
     normal:
-      x: 0
-      y: 0
-      z: 0
+      x: 0.085411596795773
+      y: -0.9176056745400151
+      z: -0.3882070133121762
   showInfoPanel: 0

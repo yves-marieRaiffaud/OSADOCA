@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
 
-[CreateAssetMenu(), System.Serializable]
+[CreateAssetMenu()]
 public class SpaceshipSettings : ScriptableObject, FlyingObjSettings
 {
     public bool foldoutSpaceshipSettings;
@@ -13,7 +13,7 @@ public class SpaceshipSettings : ScriptableObject, FlyingObjSettings
     public double mass; // kg
     public bool startFromGround; // Boolean if the spaceship must spawn on the OrbitedBody surface (no orbit definition then)
 
-    [SerializeField] public Material bodyMaterial;
+    public Material bodyMaterial;
     //==============
     public bool showInfoPanel=false;
 }

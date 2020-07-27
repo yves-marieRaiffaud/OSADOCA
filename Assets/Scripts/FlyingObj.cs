@@ -83,13 +83,13 @@ public static class FlyingObj
         }
 
         // Init orbital speed
-        Vector3d tangentialVec = castBody.orbit.ComputeDirectionVector(OrbitalParams.typeOfVectorDir.tangentialVec);
+        Vector3d tangentialVec = castBody.orbit.ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.tangentialVec);
         double orbitalSpeed = castBody.orbit.GetOrbitalSpeedFromOrbit();
         castBody.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
 
         // Init orbital speed of the Rigidbody
         float scaleFactor = (float)(UniCsts.m2km * UniCsts.km2au * UniCsts.au2u);
-        if(castBody.orbitalParams.orbParamsUnits == OrbitalParams.orbitalParamsUnits.km_degree)
+        if(castBody.orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree)
         {
             scaleFactor = (float)(UniCsts.m2km * UniCsts.pl2u);
         }
@@ -110,7 +110,7 @@ public static class FlyingObj
         {
             T1 castBody = CastObjectToType<T1>(body); // Spaceship or CelestialBody
             T2 settings = GetObjectSettings<T2>(body); // SpaceshipSettings or CelestialBodySettings
-            castBody.orbit = new Orbit(castBody.orbitalParams, castBody.orbitedBody.GetComponent<CelestialBody>(), castBody._gameObject);
+            castBody.orbit = new Orbit(castBody.orbitalParams, castBody.orbitalParams.orbitedBody.GetComponent<CelestialBody>(), castBody._gameObject);
         }
         else {
             Debug.LogError("Specified UnityEngine.Object is not of the specified generic type.");
@@ -138,19 +138,19 @@ public static class FlyingObj
                 if(shipSettings.startFromGround)
                 {
                     // A spaceship with planetary surface init
-                    bodyRelatedPos = castBody.orbitedBody.GetWorldPositionFromGroundStart();
+                    bodyRelatedPos = castBody.orbitalParams.orbitedBody.GetWorldPositionFromGroundStart();
                 }
                 else {
                     // A spaceship with in orbit init
-                    bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit, OrbitalParams.bodyPositionType.nu);
+                    bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit, OrbitalTypes.bodyPositionType.nu);
                 }
             }
             else {
                 // A celestialBody with in orbit init
-                bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit, OrbitalParams.bodyPositionType.nu);
+                bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit, OrbitalTypes.bodyPositionType.nu);
             }
 
-            castBody.realPosition = UsefulFunctions.AlignPositionVecWithParentPos(bodyRelatedPos, castBody.orbitedBody.transform.position);
+            castBody.realPosition = UsefulFunctions.AlignPositionVecWithParentPos(bodyRelatedPos, castBody.orbitalParams.orbitedBody.transform.position);
             castBody._gameObject.transform.position = (Vector3)castBody.realPosition;
         }
     }
@@ -176,12 +176,12 @@ public static class FlyingObj
             }
             if(castBody.orbitalParams.drawDirections)
             {
-                foreach(OrbitalParams.typeOfVectorDir vectorDir in Enum.GetValues(typeof(OrbitalParams.typeOfVectorDir)))
+                foreach(OrbitalTypes.typeOfVectorDir vectorDir in Enum.GetValues(typeof(OrbitalTypes.typeOfVectorDir)))
                 {
                     if (castBody.orbitalParams.selectedVectorsDir.HasFlag(vectorDir))
                     {
-                        if(vectorDir == OrbitalParams.typeOfVectorDir.radialVec || vectorDir == OrbitalParams.typeOfVectorDir.tangentialVec
-                        || vectorDir == OrbitalParams.typeOfVectorDir.velocityVec || vectorDir == OrbitalParams.typeOfVectorDir.accelerationVec)
+                        if(vectorDir == OrbitalTypes.typeOfVectorDir.radialVec || vectorDir == OrbitalTypes.typeOfVectorDir.tangentialVec
+                        || vectorDir == OrbitalTypes.typeOfVectorDir.velocityVec || vectorDir == OrbitalTypes.typeOfVectorDir.accelerationVec)
                         {
                             castBody.orbit.DrawDirection(vectorDir, lineLength, 10_000f, castBody._gameObject.transform.position);
                         }
@@ -227,7 +227,7 @@ public static class FlyingObj
 
         Vector3d r = new Vector3d(castOrbitingBodyTr.position) - pullinBodyPos;
         double scalingFactor = UniCsts.u2au * UniCsts.au2km; // km, for planets
-        if(orbitingBody.orbitalParams.orbParamsUnits == OrbitalParams.orbitalParamsUnits.km_degree)
+        if(orbitingBody.orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree)
         {
             scalingFactor = UniCsts.u2pl; // km, for spaceships
         }
@@ -287,7 +287,7 @@ public static class FlyingObj
         Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
 
         float scaleFactor = (float)(UniCsts.m2km * UniCsts.km2au * UniCsts.au2u); // Default for CelestialBody
-        if(castBody.orbitalParams.orbParamsUnits == OrbitalParams.orbitalParamsUnits.km_degree)
+        if(castBody.orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree)
         {
             scaleFactor = (float)(UniCsts.m2km * UniCsts.pl2u); // For spaceships
         }

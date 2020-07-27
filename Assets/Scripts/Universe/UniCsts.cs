@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using Mathd_Lib;
@@ -70,11 +69,12 @@ public static class UniCsts
     // i is inclination with respect to the Sun's equator
 
     public static Dictionary<string, double> sunBaseParams = new Dictionary<string, double> {
-        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 8_000d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 0d },
+        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 695_700d },
+        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 695_700d },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 20_000d },
         { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 100_000d }, //TO CHANGE
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 0d },
-        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 0d },
+        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 2_192_832d },
         { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , 13_271_244.0018d },
 
         { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , 0d },
@@ -192,7 +192,7 @@ public static class UniCsts
     public static Dictionary<string, double> marsBaseParams = new Dictionary<string, double> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 3396.2d },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 3376.2d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 0.00589d },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 16.9779d },
         { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 0d },
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 25.19d },
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 88_642.44d },
@@ -222,7 +222,7 @@ public static class UniCsts
     public static Dictionary<string, double> jupiterBaseParams = new Dictionary<string, double> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 71_492d },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 66_854d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 0.06487d },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 15.4154d },
         { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 0d },
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 3.13d },
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 35_730d },
@@ -252,7 +252,7 @@ public static class UniCsts
     public static Dictionary<string, double> saturnBaseParams = new Dictionary<string, double> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 60_268d },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 54_364d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 0.09796d },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 10.2082d },
         { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 0d },
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 26.73d },
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 38_361.6d },
@@ -282,7 +282,7 @@ public static class UniCsts
     public static Dictionary<string, double> uranusBaseParams = new Dictionary<string, double> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 25_559d },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 24_973d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 0.02293d },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 43.61098d },
         { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 0d },
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 82.33d },
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , -62_064d },
@@ -312,7 +312,7 @@ public static class UniCsts
     public static Dictionary<string, double> neptuneBaseParams = new Dictionary<string, double> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 24_764d },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 24_341d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 0.01708d },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 58.54808d },
         { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 0d },
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 28.32d },
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 57_996d },

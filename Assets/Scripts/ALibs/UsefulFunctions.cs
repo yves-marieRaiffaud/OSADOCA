@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
+using System.IO;
 using UnityEngine.UI;
 using Mathd_Lib;
 using System;
@@ -197,48 +199,48 @@ public static class UsefulFunctions
         }
     }
 
-    public static OrbitalParams.orbitDefinitionType String2_orbitDefinitionTypeEnum(string goTag)
+    public static OrbitalTypes.orbitDefinitionType String2_orbitDefinitionTypeEnum(string goTag)
     {
-        if(goTag.Equals(OrbitalParams.orbitDefinitionType.rarp.ToString()))
+        if(goTag.Equals(OrbitalTypes.orbitDefinitionType.rarp.ToString()))
         {
-            return OrbitalParams.orbitDefinitionType.rarp;
+            return OrbitalTypes.orbitDefinitionType.rarp;
         }
-        else if(goTag.Equals(OrbitalParams.orbitDefinitionType.rpe.ToString()))
+        else if(goTag.Equals(OrbitalTypes.orbitDefinitionType.rpe.ToString()))
         {
-            return OrbitalParams.orbitDefinitionType.rpe;
+            return OrbitalTypes.orbitDefinitionType.rpe;
         }
         else {
-            return OrbitalParams.orbitDefinitionType.pe;
+            return OrbitalTypes.orbitDefinitionType.pe;
         }
     }
 
-    public static OrbitalParams.bodyPositionType String2_bodyPosTypeEnum(string goTag)
+    public static OrbitalTypes.bodyPositionType String2_bodyPosTypeEnum(string goTag)
     {
-        if(goTag.Equals(OrbitalParams.bodyPositionType.nu.ToString()))
+        if(goTag.Equals(OrbitalTypes.bodyPositionType.nu.ToString()))
         {
-            return OrbitalParams.bodyPositionType.nu;
+            return OrbitalTypes.bodyPositionType.nu;
         }
-        else if(goTag.Equals(OrbitalParams.bodyPositionType.m0.ToString()))
+        else if(goTag.Equals(OrbitalTypes.bodyPositionType.m0.ToString()))
         {
-            return OrbitalParams.bodyPositionType.m0;
+            return OrbitalTypes.bodyPositionType.m0;
         }
-        else if(goTag.Equals(OrbitalParams.bodyPositionType.l0.ToString()))
+        else if(goTag.Equals(OrbitalTypes.bodyPositionType.l0.ToString()))
         {
-            return OrbitalParams.bodyPositionType.l0;
+            return OrbitalTypes.bodyPositionType.l0;
         }
         else {
-            return OrbitalParams.bodyPositionType.t0;
+            return OrbitalTypes.bodyPositionType.t0;
         }
     }
 
-    public static OrbitalParams.orbitalParamsUnits String2_OrbitalParamsUnitsEnum(string goTag)
+    public static OrbitalTypes.orbitalParamsUnits String2_OrbitalParamsUnitsEnum(string goTag)
     {
-        if(goTag.Equals(OrbitalParams.orbitalParamsUnits.km_degree.ToString()))
+        if(goTag.Equals(OrbitalTypes.orbitalParamsUnits.km_degree.ToString()))
         {
-            return OrbitalParams.orbitalParamsUnits.km_degree;
+            return OrbitalTypes.orbitalParamsUnits.km_degree;
         }
         else {
-            return OrbitalParams.orbitalParamsUnits.AU_degree;
+            return OrbitalTypes.orbitalParamsUnits.AU_degree;
         }
     }
 
@@ -486,4 +488,5 @@ public static class UsefulFunctions
         dropdown.ClearOptions();
         dropdown.AddOptions(dataList);
     }
+
 }

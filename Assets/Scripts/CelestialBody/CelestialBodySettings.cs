@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Mathd_Lib;
 
 [CreateAssetMenu()]
 public class CelestialBodySettings : ScriptableObject, FlyingObjSettings

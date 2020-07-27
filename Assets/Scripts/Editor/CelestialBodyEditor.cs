@@ -4,16 +4,35 @@ using System.Collections.Generic;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 using Mathd_Lib;
+using System.IO;
 
 [CustomEditor(typeof(CelestialBody),true), CanEditMultipleObjects]
 public class CelestialBodyEditor : Editor
 {
-    CelestialBody celestBody;
+    private CelestialBody celestBody;
+    private SerializedObject serializedOrbitalParams;
 
     private void OnEnable()
     {
         celestBody = (CelestialBody)target;
+        CheckCreateOrbitalParamsAsset();
+        serializedOrbitalParams = new SerializedObject(serializedObject.FindProperty("_orbitalParams").objectReferenceValue);
     }
+
+    private void CheckCreateOrbitalParamsAsset()
+    {
+        string orbitalParamsPath = "Assets/Scripts/OrbitalMechanics/OrbitalParams/" + celestBody.gameObject.name + ".asset";
+        if(!File.Exists(orbitalParamsPath))
+        {
+            Debug.Log("Creating a new instance of OrbitalParams at path: '" + orbitalParamsPath + "'");
+            OrbitalParams newInstance = ScriptableObject.CreateInstance<OrbitalParams>();
+            AssetDatabase.CreateAsset(newInstance, orbitalParamsPath);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+        celestBody.orbitalParams = (OrbitalParams)AssetDatabase.LoadAssetAtPath(orbitalParamsPath, typeof(OrbitalParams));
+    }
+
 
     public void OnInspectorUpdate()
     {
@@ -30,83 +49,123 @@ public class CelestialBodyEditor : Editor
         {
             base.OnInspectorGUI();
         }
-        DrawCelestialBodySettingsEditor(celestBody.settings, ref celestBody.settings.bodySettingsEditorFoldout);
+
+        serializedOrbitalParams.Update();
+        EditorGUI.BeginChangeCheck();
+
+        EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("orbitedBodyName"));
+
+        if(CelestialBody.CelestialBodyHasTagName(celestBody, "Planet"))
+        {
+            DrawCelestialBodySettingsEditor(ref celestBody.settings.bodySettingsEditorFoldout);
+        }
+        else if(CelestialBody.CelestialBodyHasTagName(celestBody, "Star")) { InitSunParams(); }
+
+
+        serializedOrbitalParams.ApplyModifiedProperties();
+        if (EditorGUI.EndChangeCheck())
+        {
+            EditorUtility.SetDirty(target); 
+        }
     }
 
-    private void DrawCelestialBodySettingsEditor(Object settings, ref bool foldout)
+    private void InitSunParams()
     {
-        if(settings != null)
+        serializedOrbitalParams.FindProperty("orbitedBodyName").stringValue = "None";
+        celestBody.settings.usePredifinedPlanets = true;
+        celestBody.settings.chosenPredifinedPlanet = UniCsts.planets.Sun;
+        EditorGUI.BeginDisabledGroup(true);
+        celestBody.settings.chosenPredifinedPlanet = (UniCsts.planets)EditorGUILayout.EnumPopup("Choose planet", celestBody.settings.chosenPredifinedPlanet);
+        EditorGUI.EndDisabledGroup();
+    }
+
+    private void DrawCelestialBodySettingsEditor(ref bool foldout)
+    {
+        if(celestBody.settings != null && celestBody.orbitalParams != null)
         {
-            foldout = EditorGUILayout.InspectorTitlebar(foldout, settings);
+            foldout = EditorGUILayout.InspectorTitlebar(foldout, celestBody.settings);
             using(var check = new EditorGUI.ChangeCheckScope())
             {   
                 if(foldout)
                 {
-                    CreateCelestialBodySettingsEditor(settings);
+                    CreateCelestialBodySettingsEditor();
                 }
             }
         } 
     }
 
-    private void CreateCelestialBodySettingsEditor(Object settings)
+    private void CreateCelestialBodySettingsEditor()
     {
-        CelestialBodySettings param = (CelestialBodySettings) settings;
-        //==========================================================================
-        param.bodyMaterial = (Material)EditorGUILayout.ObjectField("Body material", param.bodyMaterial, typeof(Material), false);
+        celestBody.settings.bodyMaterial = (Material)EditorGUILayout.ObjectField("Body material", celestBody.settings.bodyMaterial, typeof(Material), false);
         if(celestBody.spawnAsSimpleSphere)
         {
-            // Only add the predifined planet selection
-            if(CelestialBody.CelestialBodyHasTagName(celestBody, "Planet"))
-            {
-                if(celestBody.orbitalParams == null)
-                {
-                    celestBody.orbitalParams = (OrbitalParams)OrbitalParams.CreateInstance("OrbitalParams");
-                }
-                param.usePredifinedPlanets = true;
-                EditorGUI.BeginDisabledGroup(true);
-                param.usePredifinedPlanets = EditorGUILayout.Toggle("Use a predifined planet for its orbit", param.usePredifinedPlanets);
-                EditorGUI.EndDisabledGroup();
-                param.chosenPredifinedPlanet = (UniCsts.planets)EditorGUILayout.EnumPopup("Choose planet", param.chosenPredifinedPlanet);
-                switch(param.chosenPredifinedPlanet)
-                {
-                    case UniCsts.planets.Mercury:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.mercuryBaseParams;
-                        break;
-                    
-                    case UniCsts.planets.Venus:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.venusBaseParams;
-                        break;
-
-                    case UniCsts.planets.Earth:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.earthBaseParams;
-                        break;
-
-                    case UniCsts.planets.Mars:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.marsBaseParams;
-                        break;
-                    
-                    case UniCsts.planets.Jupiter:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.jupiterBaseParams;
-                        break;
-                    
-                    case UniCsts.planets.Saturn:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.saturnBaseParams;
-                        break;
-                    
-                    case UniCsts.planets.Uranus:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.uranusBaseParams;
-                        break;
-                    
-                    case UniCsts.planets.Neptune:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.uranusBaseParams;
-                        break;
-                }
-            }
+            InitSpawnAsSimpleSpheres();
             return;
         }
 
-        param.heightMap = (Texture2D)EditorGUILayout.ObjectField("Height map", param.heightMap, typeof(Texture2D), false);
+        celestBody.settings.heightMap = (Texture2D)EditorGUILayout.ObjectField("Height map", celestBody.settings.heightMap, typeof(Texture2D), false);
         celestBody.showCelestialBodyInfoPanel = EditorGUILayout.Foldout(celestBody.showCelestialBodyInfoPanel, "CelestialBody Info");
+        ShowCelestialBodyInfoPanel();
+
+        celestBody.settings.usePredifinedPlanets = EditorGUILayout.Toggle("Use a predifined planet for its orbit", celestBody.settings.usePredifinedPlanets);
+        if(celestBody.settings.usePredifinedPlanets)
+        {
+            Init_SimCelestialBody_UsePredefinedPlanet();
+        }
+        else{
+            if(celestBody.settings.planetBaseParamsDict == null)
+            {
+                celestBody.settings.planetBaseParamsDict = InitNewPlanetBaseParamsDict();
+            }
+            CreateOrbitalParametersEditor(celestBody.settings.planetBaseParamsDict);
+        }
+    }
+
+    private void InitSpawnAsSimpleSpheres()
+    {
+        celestBody.settings.usePredifinedPlanets = true;
+        EditorGUI.BeginDisabledGroup(true);
+        celestBody.settings.usePredifinedPlanets = EditorGUILayout.Toggle("Use a predifined planet for its orbit", celestBody.settings.usePredifinedPlanets);
+        EditorGUI.EndDisabledGroup();
+        celestBody.settings.chosenPredifinedPlanet = (UniCsts.planets)EditorGUILayout.EnumPopup("Choose planet", celestBody.settings.chosenPredifinedPlanet);
+        switch(celestBody.settings.chosenPredifinedPlanet)
+        {
+            case UniCsts.planets.Mercury:
+                celestBody.settings.planetBaseParamsDict = UniCsts.mercuryBaseParams;
+                break;
+            
+            case UniCsts.planets.Venus:
+                celestBody.settings.planetBaseParamsDict = UniCsts.venusBaseParams;
+                break;
+
+            case UniCsts.planets.Earth:
+                celestBody.settings.planetBaseParamsDict = UniCsts.earthBaseParams;
+                break;
+
+            case UniCsts.planets.Mars:
+                celestBody.settings.planetBaseParamsDict = UniCsts.marsBaseParams;
+                break;
+            
+            case UniCsts.planets.Jupiter:
+                celestBody.settings.planetBaseParamsDict = UniCsts.jupiterBaseParams;
+                break;
+            
+            case UniCsts.planets.Saturn:
+                celestBody.settings.planetBaseParamsDict = UniCsts.saturnBaseParams;
+                break;
+            
+            case UniCsts.planets.Uranus:
+                celestBody.settings.planetBaseParamsDict = UniCsts.uranusBaseParams;
+                break;
+            
+            case UniCsts.planets.Neptune:
+                celestBody.settings.planetBaseParamsDict = UniCsts.uranusBaseParams;
+                break;
+        }
+    }
+
+    private void ShowCelestialBodyInfoPanel()
+    {
         if(celestBody.showCelestialBodyInfoPanel)
         {
             EditorGUI.BeginDisabledGroup(true);
@@ -118,100 +177,71 @@ public class CelestialBodyEditor : Editor
             EditorGUILayout.Vector3Field(new GUIContent("Universe Position", "Position in the universe, global position"), (Vector3)celestBody.realPosition);
             EditorGUILayout.Separator();
 
-            EditorGUILayout.DoubleField("RadiusU", param.radiusU);
+            EditorGUILayout.DoubleField("RadiusU", celestBody.settings.radiusU);
             EditorGUI.EndDisabledGroup();
         }
         EditorGUILayout.Separator();
-
-        //==========================================================================
-        if(CelestialBody.CelestialBodyHasTagName(celestBody, "Star"))
-        {
-            celestBody.orbitedBody = null;
-            celestBody.orbitalParams = null;
-            celestBody.settings.usePredifinedPlanets = true;
-            celestBody.settings.chosenPredifinedPlanet = UniCsts.planets.Sun;
-            EditorGUI.BeginDisabledGroup(true);
-            celestBody.settings.chosenPredifinedPlanet = (UniCsts.planets)EditorGUILayout.EnumPopup("Choose planet", param.chosenPredifinedPlanet);
-            EditorGUI.EndDisabledGroup();
-        }
-        else if(CelestialBody.CelestialBodyHasTagName(celestBody, "Planet"))
-        {
-            if(celestBody.orbitalParams == null)
-            {
-                celestBody.orbitalParams = (OrbitalParams)OrbitalParams.CreateInstance("OrbitalParams");
-            }
-            celestBody.orbitedBody = (CelestialBody)EditorGUILayout.ObjectField("Orbited Body", celestBody.orbitedBody, typeof(CelestialBody), true);
-            param.usePredifinedPlanets = EditorGUILayout.Toggle("Use a predifined planet for its orbit", param.usePredifinedPlanets);
-            if(param.usePredifinedPlanets)
-            {
-                param.chosenPredifinedPlanet = (UniCsts.planets)EditorGUILayout.EnumPopup("Choose planet", param.chosenPredifinedPlanet);
-                switch(param.chosenPredifinedPlanet)
-                {
-                    case UniCsts.planets.Mercury:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.mercuryBaseParams;
-                        break;
-                    
-                    case UniCsts.planets.Venus:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.venusBaseParams;
-                        break;
-
-                    case UniCsts.planets.Earth:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.earthBaseParams;
-                        break;
-
-                    case UniCsts.planets.Mars:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.marsBaseParams;
-                        break;
-                    
-                    case UniCsts.planets.Jupiter:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.jupiterBaseParams;
-                        break;
-                    
-                    case UniCsts.planets.Saturn:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.saturnBaseParams;
-                        break;
-                    
-                    case UniCsts.planets.Uranus:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.uranusBaseParams;
-                        break;
-                    
-                    case UniCsts.planets.Neptune:
-                        celestBody.settings.planetBaseParamsDict = UniCsts.uranusBaseParams;
-                        break;
-                }
-                EditorGUILayout.LabelField("Rendering parameters", EditorStyles.boldLabel);
-                celestBody.orbitalParams.orbitDefType = OrbitalParams.orbitDefinitionType.rarp;
-                celestBody.orbitalParams.orbitRealPredType = OrbitalParams.typeOfOrbit.realOrbit;
-                celestBody.orbitalParams.orbParamsUnits = OrbitalParams.orbitalParamsUnits.AU_degree;
-                celestBody.orbitalParams.drawOrbit = EditorGUILayout.Toggle("Draw orbit", celestBody.orbitalParams.drawOrbit);
-                celestBody.orbitalParams.orbitDrawingResolution = EditorGUILayout.IntSlider("Orbit Resolution", celestBody.orbitalParams.orbitDrawingResolution, 5, 500);
-                celestBody.orbitalParams.drawDirections = EditorGUILayout.Toggle("Draw directions", celestBody.orbitalParams.drawDirections);
-
-                EditorGUI.BeginDisabledGroup(!celestBody.orbitalParams.drawDirections);
-                celestBody.orbitalParams.selectedVectorsDir = (OrbitalParams.typeOfVectorDir)EditorGUILayout.EnumFlagsField("Direction vectors to draw", celestBody.orbitalParams.selectedVectorsDir);
-                EditorGUI.EndDisabledGroup();
-                EditorGUILayout.Separator();
-                ShowOrbitInfoPanel(celestBody.orbitalParams);
-            }
-            else{
-                if(celestBody.settings.planetBaseParamsDict == null)
-                {
-                    celestBody.settings.planetBaseParamsDict = InitNewPlanetBaseParamsDict();
-                }
-                CreateOrbitalParametersEditor(celestBody.settings.planetBaseParamsDict);
-            }
-        }
     }
 
-    private void PredifinedPlanetEditorGUI()
+    private void Init_SimCelestialBody_UsePredefinedPlanet()
     {
-        
+        celestBody.settings.chosenPredifinedPlanet = (UniCsts.planets)EditorGUILayout.EnumPopup("Choose planet", celestBody.settings.chosenPredifinedPlanet);
+        switch(celestBody.settings.chosenPredifinedPlanet)
+        {
+            case UniCsts.planets.Mercury:
+                celestBody.settings.planetBaseParamsDict = UniCsts.mercuryBaseParams;
+                break;
+            
+            case UniCsts.planets.Venus:
+                celestBody.settings.planetBaseParamsDict = UniCsts.venusBaseParams;
+                break;
+
+            case UniCsts.planets.Earth:
+                celestBody.settings.planetBaseParamsDict = UniCsts.earthBaseParams;
+                break;
+
+            case UniCsts.planets.Mars:
+                celestBody.settings.planetBaseParamsDict = UniCsts.marsBaseParams;
+                break;
+            
+            case UniCsts.planets.Jupiter:
+                celestBody.settings.planetBaseParamsDict = UniCsts.jupiterBaseParams;
+                break;
+            
+            case UniCsts.planets.Saturn:
+                celestBody.settings.planetBaseParamsDict = UniCsts.saturnBaseParams;
+                break;
+            
+            case UniCsts.planets.Uranus:
+                celestBody.settings.planetBaseParamsDict = UniCsts.uranusBaseParams;
+                break;
+            
+            case UniCsts.planets.Neptune:
+                celestBody.settings.planetBaseParamsDict = UniCsts.uranusBaseParams;
+                break;
+        }
+        EditorGUILayout.LabelField("Rendering parameters", EditorStyles.boldLabel);
+
+        celestBody.orbitalParams.orbitDefType = OrbitalTypes.orbitDefinitionType.rarp;
+        celestBody.orbitalParams.orbitRealPredType = OrbitalTypes.typeOfOrbit.realOrbit;
+        celestBody.orbitalParams.orbParamsUnits = OrbitalTypes.orbitalParamsUnits.AU_degree;
+        celestBody.orbitalParams.drawOrbit = EditorGUILayout.Toggle("Draw orbit", celestBody.orbitalParams.drawOrbit);
+        celestBody.orbitalParams.orbitDrawingResolution = EditorGUILayout.IntSlider("Orbit Resolution", celestBody.orbitalParams.orbitDrawingResolution, 5, 500);
+        celestBody.orbitalParams.drawDirections = EditorGUILayout.Toggle("Draw directions", celestBody.orbitalParams.drawDirections);
+
+        EditorGUI.BeginDisabledGroup(!celestBody.orbitalParams.drawDirections);
+        celestBody.orbitalParams.selectedVectorsDir = (OrbitalTypes.typeOfVectorDir)EditorGUILayout.EnumFlagsField("Direction vectors to draw", celestBody.orbitalParams.selectedVectorsDir);
+        EditorGUI.EndDisabledGroup();
+        EditorGUILayout.Separator();
+        ShowOrbitInfoPanel();
     }
+
 
     public Dictionary<string, double> InitNewPlanetBaseParamsDict()
     {
         return new Dictionary<string, double> {
             { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 0d },
+            { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()             , 0d },
             { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 0d },
             { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 0d },
             { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 0d },
@@ -236,6 +266,7 @@ public class CelestialBodyEditor : Editor
             { CelestialBodyParamsBase.jnParams.j5.ToString()                        , 0d },
             { CelestialBodyParamsBase.jnParams.j6.ToString()                        , 0d },
 
+            { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , 0d }
         };
     }
 
@@ -243,36 +274,54 @@ public class CelestialBodyEditor : Editor
     {
         // Dictionary Filling
         EditorGUILayout.LabelField("Planetary Params", EditorStyles.boldLabel);
-        dict[CelestialBodyParamsBase.planetaryParams.radius.ToString()] = EditorGUILayout.DoubleField("Radius", dict[CelestialBodyParamsBase.planetaryParams.radius.ToString()]);
+        dict[CelestialBodyParamsBase.planetaryParams.radius.ToString()] = EditorGUILayout.DoubleField("Equatorial radius", dict[CelestialBodyParamsBase.planetaryParams.radius.ToString()]);
+        dict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()] = EditorGUILayout.DoubleField("Polar radius", dict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()]);
         dict[CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()] = EditorGUILayout.DoubleField("Inverse flattening", dict[CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()]);
         dict[CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()] = EditorGUILayout.DoubleField("SOI Radius", dict[CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()]);
         dict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()] = EditorGUILayout.DoubleField("Axial tilt", dict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()]);
         dict[CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()] = EditorGUILayout.DoubleField("Sidereal Rot period", dict[CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()]);
         dict[CelestialBodyParamsBase.planetaryParams.mu.ToString()] = EditorGUILayout.DoubleField("µ", dict[CelestialBodyParamsBase.planetaryParams.mu.ToString()]);
+        dict[CelestialBodyParamsBase.otherParams.isRockyBody.ToString()] = EditorGUILayout.DoubleField("Rocky planet ?", dict[CelestialBodyParamsBase.otherParams.isRockyBody.ToString()]);
 
         EditorGUILayout.Separator();
         // ORBITAL PARAMETERS
         EditorGUILayout.LabelField("Rendering parameters", EditorStyles.boldLabel);
-        celestBody.orbitalParams.drawOrbit = EditorGUILayout.Toggle("Draw orbit", celestBody.orbitalParams.drawOrbit);
-        celestBody.orbitalParams.orbitDrawingResolution = EditorGUILayout.IntSlider("Orbit Resolution", celestBody.orbitalParams.orbitDrawingResolution, 5, 500);
-        celestBody.orbitalParams.drawDirections = EditorGUILayout.Toggle("Draw directions", celestBody.orbitalParams.drawDirections);
-        EditorGUI.BeginDisabledGroup(!celestBody.orbitalParams.drawDirections);
-        celestBody.orbitalParams.selectedVectorsDir = (OrbitalParams.typeOfVectorDir)EditorGUILayout.EnumFlagsField("Direction vectors to draw", celestBody.orbitalParams.selectedVectorsDir);
+        EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("drawOrbit"));
+        EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("orbitDrawingResolution"));
+        EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("drawDirections"));
+        EditorGUI.BeginDisabledGroup(!serializedOrbitalParams.FindProperty("drawDirections").boolValue);
+        EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("selectedVectorsDir"));
         EditorGUI.EndDisabledGroup();
         EditorGUILayout.Separator();
-        celestBody.orbitalParams.orbitRealPredType = (OrbitalParams.typeOfOrbit)EditorGUILayout.EnumPopup("Type of orbit", celestBody.orbitalParams.orbitRealPredType);
-        celestBody.orbitalParams.orbParamsUnits = (OrbitalParams.orbitalParamsUnits)EditorGUILayout.EnumPopup("Parameters' units", celestBody.orbitalParams.orbParamsUnits);
-        EditorGUI.BeginDisabledGroup(true);
-        celestBody.orbitalParams.orbitDefType = (OrbitalParams.orbitDefinitionType)EditorGUILayout.EnumPopup("Orbit Definition Type", celestBody.orbitalParams.orbitDefType);
-        EditorGUI.EndDisabledGroup();
+        
+        EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("orbitRealPredType"));
+        EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("orbParamsUnits"));
+        EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("orbitDefType"));
 
         EditorGUILayout.LabelField("Orbital Parameters", EditorStyles.boldLabel);
-        dict[CelestialBodyParamsBase.orbitalParams.aphelion.ToString()] = EditorGUILayout.DoubleField("Aphelion", dict[CelestialBodyParamsBase.orbitalParams.aphelion.ToString()]);
-        dict[CelestialBodyParamsBase.orbitalParams.perihelion.ToString()] = EditorGUILayout.DoubleField("Perihelion", dict[CelestialBodyParamsBase.orbitalParams.perihelion.ToString()]);
-        dict[CelestialBodyParamsBase.orbitalParams.i.ToString()] = EditorGUILayout.DoubleField("i", dict[CelestialBodyParamsBase.orbitalParams.i.ToString()]);
-        dict[CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()] = EditorGUILayout.DoubleField("Longitude of the ascending node", dict[CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()]);
-        dict[CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()] = EditorGUILayout.DoubleField("Argument of the perihelion", dict[CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()]);
-        dict[CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()] = EditorGUILayout.DoubleField("True anomaly", dict[CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()]);
+        switch(serializedOrbitalParams.FindProperty("orbitDefType").intValue)
+        {
+            case 0:
+                // 'rarp'
+                EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("ra"));
+                EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("rp"));
+                break;
+            case 1:
+                // 'rpe'
+                EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("rp"));
+                EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("e"));
+                break;
+            case 2:
+                // 'pe'
+                EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("p"));
+                EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("e"));
+                break;
+        }
+        EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("i"));
+        EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("lAscN"));
+        EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("omega"));
+        EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("nu"));
+
 
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("Biome Parameters", EditorStyles.boldLabel);
@@ -290,36 +339,37 @@ public class CelestialBodyEditor : Editor
         dict[CelestialBodyParamsBase.jnParams.j6.ToString()] = EditorGUILayout.DoubleField("J6", dict[CelestialBodyParamsBase.jnParams.j6.ToString()]);
         // End of Dictionary Filling
 
-        ShowOrbitInfoPanel(celestBody.orbitalParams);
+        ShowOrbitInfoPanel();
     }
 
-    public void ShowOrbitInfoPanel(OrbitalParams param)
+    public void ShowOrbitInfoPanel()
     {
-        param.showInfoPanel = EditorGUILayout.Foldout(param.showInfoPanel, "Orbit Info");
+
+        serializedOrbitalParams.FindProperty("showInfoPanel").boolValue = EditorGUILayout.Foldout(serializedOrbitalParams.FindProperty("showInfoPanel").boolValue, "Orbit Info");
         OrbitalParams predictedParam = null;
         if(Application.isPlaying && celestBody.predictor != null) {
             predictedParam = celestBody.predictor.predictedOrbit.param;
         }
-        if(param.showInfoPanel)
+        if(serializedOrbitalParams.FindProperty("showInfoPanel").boolValue)
         {
             celestBody.settings.orbitInfoShowPredictedOrbitInfo = EditorGUILayout.Toggle("Show predicted orbit info", celestBody.settings.orbitInfoShowPredictedOrbitInfo);
             EditorGUI.BeginDisabledGroup(true);
-            EditorGUILayout.DoubleField(new GUIContent("Period", ".s\nOrbital period"), param.period);
+            EditorGUILayout.DoubleField(new GUIContent("Period", ".s\nOrbital period"), serializedOrbitalParams.FindProperty("period").doubleValue);
             if(celestBody.settings.orbitInfoShowPredictedOrbitInfo && predictedParam!=null) {
                 EditorGUILayout.DoubleField(new GUIContent("Predicted period", ".s\nOrbital period of the predicted orbit"), predictedParam.period);
             }
 
             EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Shape of the orbit", EditorStyles.boldLabel);
-            EditorGUILayout.DoubleField(new GUIContent("ra", "km\nRadius of the aphelion"), param.ra, GUILayout.MaxWidth(Screen.width/2));
-            EditorGUILayout.DoubleField(new GUIContent("rp", "km\nRadius of the perihelion"), param.rp, GUILayout.MaxWidth(Screen.width/2));
+            EditorGUILayout.DoubleField(new GUIContent("ra", "km\nRadius of the aphelion"), serializedOrbitalParams.FindProperty("ra").doubleValue, GUILayout.MaxWidth(Screen.width/2));
+            EditorGUILayout.DoubleField(new GUIContent("rp", "km\nRadius of the perihelion"), serializedOrbitalParams.FindProperty("rp").doubleValue, GUILayout.MaxWidth(Screen.width/2));
 
-            EditorGUILayout.DoubleField(new GUIContent("p", "km\nParameter of the conic"), param.p);
-            EditorGUILayout.DoubleField(new GUIContent("e", "-\nExcentricity"), param.e);
+            EditorGUILayout.DoubleField(new GUIContent("p", "km\nParameter of the conic"), serializedOrbitalParams.FindProperty("p").doubleValue);
+            EditorGUILayout.DoubleField(new GUIContent("e", "-\nExcentricity"), serializedOrbitalParams.FindProperty("e").doubleValue);
 
-            EditorGUILayout.DoubleField(new GUIContent("a", "km\nSemi-Major axis"), param.a);
-            EditorGUILayout.DoubleField(new GUIContent("b", "km\nSemi-Minor axis"), param.b);
-            EditorGUILayout.DoubleField(new GUIContent("c", "km\nDistance focus-origin"), param.c); 
+            EditorGUILayout.DoubleField(new GUIContent("a", "km\nSemi-Major axis"), serializedOrbitalParams.FindProperty("a").doubleValue);
+            EditorGUILayout.DoubleField(new GUIContent("b", "km\nSemi-Minor axis"), serializedOrbitalParams.FindProperty("b").doubleValue);
+            EditorGUILayout.DoubleField(new GUIContent("c", "km\nDistance focus-origin"), serializedOrbitalParams.FindProperty("c").doubleValue); 
 
             if(celestBody.settings.orbitInfoShowPredictedOrbitInfo && predictedParam!=null) {
                 EditorGUILayout.LabelField("Shape of the predicted orbit", EditorStyles.boldLabel);
@@ -336,8 +386,8 @@ public class CelestialBodyEditor : Editor
 
             EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Rotation of the plane of the orbit", EditorStyles.boldLabel);
-            EditorGUILayout.DoubleField(new GUIContent("i", "°\nInclination"), param.i);
-            EditorGUILayout.DoubleField(new GUIContent("lAscN", "°\nLongitude of the asceding node"), param.lAscN);
+            EditorGUILayout.DoubleField(new GUIContent("i", "°\nInclination"), serializedOrbitalParams.FindProperty("i").doubleValue);
+            EditorGUILayout.DoubleField(new GUIContent("lAscN", "°\nLongitude of the asceding node"), serializedOrbitalParams.FindProperty("lAscN").doubleValue);
 
             if(celestBody.settings.orbitInfoShowPredictedOrbitInfo && predictedParam!=null) {
                 EditorGUILayout.LabelField("Rotation of the plane of the predicted orbit", EditorStyles.boldLabel);
@@ -347,7 +397,7 @@ public class CelestialBodyEditor : Editor
 
             EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Rotation of the orbit in its plane", EditorStyles.boldLabel);
-            EditorGUILayout.DoubleField(new GUIContent("omega", "°\nArgument of the perihelion"), param.omega);
+            EditorGUILayout.DoubleField(new GUIContent("omega", "°\nArgument of the perihelion"), serializedOrbitalParams.FindProperty("omega").doubleValue);
 
             if(celestBody.settings.orbitInfoShowPredictedOrbitInfo && predictedParam!=null) {
                 EditorGUILayout.LabelField("Rotation of the predicted orbit in its plane", EditorStyles.boldLabel);
@@ -356,16 +406,16 @@ public class CelestialBodyEditor : Editor
 
             EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Position of the body", EditorStyles.boldLabel);
-            EditorGUILayout.DoubleField(new GUIContent("nu", "°\nTrue anomaly"), param.nu);
-            EditorGUILayout.DoubleField(new GUIContent("m0", "°\nMean anomaly"), param.m0);
-            EditorGUILayout.DoubleField(new GUIContent("l0", "°\nMean longitude"), param.l0);
-            EditorGUILayout.DoubleField(new GUIContent("t0", ".s\nTime of passage at perihelion"), param.t0);
+            EditorGUILayout.DoubleField(new GUIContent("nu", "°\nTrue anomaly"), serializedOrbitalParams.FindProperty("nu").doubleValue);
+            EditorGUILayout.DoubleField(new GUIContent("m0", "°\nMean anomaly"), serializedOrbitalParams.FindProperty("m0").doubleValue);
+            EditorGUILayout.DoubleField(new GUIContent("l0", "°\nMean longitude"), serializedOrbitalParams.FindProperty("l0").doubleValue);
+            EditorGUILayout.DoubleField(new GUIContent("t0", ".s\nTime of passage at perihelion"), serializedOrbitalParams.FindProperty("t0").doubleValue);
             
             EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Vernal Axes", EditorStyles.boldLabel);
-            EditorGUILayout.Vector3Field("Vernal point", (Vector3)param.vp);
-            EditorGUILayout.Vector3Field("Vernal right axis", (Vector3)param.vpAxisRight);
-            EditorGUILayout.Vector3Field("Vernal up axis", (Vector3)param.vpAxisUp);
+            EditorGUILayout.Vector3Field("Vernal point", (Vector3)celestBody.orbitalParams.vp);
+            EditorGUILayout.Vector3Field("Vernal right axis", (Vector3)celestBody.orbitalParams.vpAxisRight);
+            EditorGUILayout.Vector3Field("Vernal up axis", (Vector3)celestBody.orbitalParams.vpAxisUp);
             EditorGUI.EndDisabledGroup();
         }
     }
