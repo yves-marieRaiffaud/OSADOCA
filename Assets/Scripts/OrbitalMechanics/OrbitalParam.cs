@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using Mathd_Lib;
 
@@ -71,4 +71,86 @@ public class OrbitalParams : ScriptableObject
     };
     //==============
     public bool showInfoPanel=false;
+}
+
+[System.Serializable]
+public struct OrbitalParamsSaveData
+{
+    //=========================================
+    public const int NB_PARAMS=17; // Won't be serialized and won't be saved. Used only to set the size of the array passed in the constructor
+    //=========================================
+    [SerializeField] private string orbitedBodyName;
+    
+    [SerializeField] private string orbitDefTypeInt;
+    [SerializeField] private string bodyPosTypeInt;
+    [SerializeField] private string orbParamsUnitsInt;
+    [SerializeField] private string orbitRealPredTypeInt;
+    [SerializeField] private string selectedVectordDirInt;
+
+    [SerializeField] private string drawOrbitInt;
+    [SerializeField] private string drawDirectionsInt;
+    [SerializeField] private string orbitDrawingResolutionInt;
+
+    [SerializeField] private string raDouble;
+    [SerializeField] private string rpDouble;
+    [SerializeField] private string pDouble;
+    [SerializeField] private string eDouble;
+
+    [SerializeField] private string iDouble;
+    [SerializeField] private string lAscNDouble;
+    [SerializeField] private string omegaDouble;
+    [SerializeField] private string nuDouble;
+
+    public OrbitalParamsSaveData(params string[] values)
+    {
+        if(values.Length != NB_PARAMS) {
+            Debug.Log("The passed array to save the OrbitalParams has an incorrect size. Size should be " + NB_PARAMS + ", but passed array has size " + values.Length);
+        }
+        this.orbitedBodyName           = values[0];
+        this.orbitDefTypeInt           = values[1];
+        this.bodyPosTypeInt            = values[2];
+        this.orbParamsUnitsInt         = values[3];
+        this.orbitRealPredTypeInt      = values[4];
+        this.selectedVectordDirInt     = values[5];
+        this.drawOrbitInt              = values[6];
+        this.drawDirectionsInt         = values[7];
+        this.orbitDrawingResolutionInt = values[8];
+        this.raDouble                  = values[9];
+        this.rpDouble                  = values[10];
+        this.pDouble                   = values[11];
+        this.eDouble                   = values[12];
+        this.iDouble                   = values[13];
+        this.lAscNDouble               = values[14];
+        this.omegaDouble               = values[15];
+        this.nuDouble                  = values[16];
+    }
+
+    //========================================================================
+    public static OrbitalParams LoadObjectFromJSON(string filepath)
+    {
+        OrbitalParamsSaveData loadedData = JsonUtility.FromJson<OrbitalParamsSaveData>(File.ReadAllText(filepath));
+        
+        OrbitalParams output = (OrbitalParams)ScriptableObject.CreateInstance<OrbitalParams>();
+        output.orbitedBodyName = loadedData.orbitedBodyName;
+        output.orbitDefType = (OrbitalTypes.orbitDefinitionType) int.Parse(loadedData.orbitDefTypeInt);
+        output.bodyPosType = (OrbitalTypes.bodyPositionType) int.Parse(loadedData.bodyPosTypeInt);
+        output.orbParamsUnits = (OrbitalTypes.orbitalParamsUnits) int.Parse(loadedData.orbParamsUnitsInt);
+        output.orbitRealPredType = (OrbitalTypes.typeOfOrbit) int.Parse(loadedData.orbitRealPredTypeInt);
+        output.selectedVectorsDir = (OrbitalTypes.typeOfVectorDir) int.Parse(loadedData.selectedVectordDirInt);
+
+        output.drawOrbit = System.Convert.ToBoolean(int.Parse(loadedData.drawOrbitInt));
+        output.drawDirections = System.Convert.ToBoolean(int.Parse(loadedData.drawDirectionsInt));
+
+        output.orbitDrawingResolution = int.Parse(loadedData.orbitDrawingResolutionInt);
+        UsefulFunctions.ParseStringToDouble(loadedData.raDouble, out output.ra);
+        UsefulFunctions.ParseStringToDouble(loadedData.rpDouble, out output.rp);
+        UsefulFunctions.ParseStringToDouble(loadedData.pDouble, out output.p);
+        UsefulFunctions.ParseStringToDouble(loadedData.eDouble, out output.e);
+        UsefulFunctions.ParseStringToDouble(loadedData.iDouble, out output.i);
+        UsefulFunctions.ParseStringToDouble(loadedData.lAscNDouble, out output.lAscN);
+        UsefulFunctions.ParseStringToDouble(loadedData.omegaDouble, out output.omega);
+        UsefulFunctions.ParseStringToDouble(loadedData.nuDouble, out output.nu);
+        
+        return output;
+    }
 }

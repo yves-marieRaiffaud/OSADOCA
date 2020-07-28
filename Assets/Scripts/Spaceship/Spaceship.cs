@@ -97,12 +97,29 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     
     void Awake()
     {
-        if(orbitalParams.orbitedBodyName.Equals("None")) {
-            orbitalParams.orbitedBody = null;
+        // FOR DEBUG PURPOSES
+        if(GameObject.Find("DEBUG") != null) 
+        {
+            DebugGameObject debugGO = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
+            if(GameObject.Find("UniverseRunner") != null && orbitalParams == null && !debugGO.loadShipDataFromUIDiskFile)
+            {
+                Debug.Log("in");
+                Debug.Log("/Spaceship/Rocket/OrbitalParams/" + gameObject.name + "_OrbitalParams.asset");
+                orbitalParams = Resources.Load<OrbitalParams>("/Spaceship/Rocket/OrbitalParams/" + gameObject.name + "_OrbitalParams.asset");
+                Debug.Log(orbitalParams);
+                if(orbitalParams.orbitedBodyName.Equals("None"))
+                {
+                    orbitalParams.orbitedBody = null;
+                }
+            }
+            else
+            {
+                DEBUG_LOAD_DATA_TO_SCRIPTABLE_OBJS();
+                orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
+            }
         }
-        else {
-            orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
-        }
+
+        
     }
 
     public void InitializeOrbitalPredictor()
@@ -123,5 +140,21 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     public double GetRelativeVelocityMagnitude()
     {
         return orbitedBodyRelativeVel.magnitude;
+    }
+
+    public void DEBUG_LOAD_DATA_TO_SCRIPTABLE_OBJS()
+    {
+        if(GameObject.Find("DEBUG") != null)
+        {
+            DebugGameObject scriptInstance = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
+            bool needToLoadJSONFiles = scriptInstance.loadShipDataFromUIDiskFile;
+            if(needToLoadJSONFiles)
+            {
+                // Reading & Copying the JSON files to the right Scriptable Objects of the spaceship
+                settings = SpaceshipSettingsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_settings);
+                orbitalParams = OrbitalParamsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams);
+            }
+        }
+        // don't need to do anything if we want to use the Scriptables objects set up in the Unity Editor Inspector
     }
 }

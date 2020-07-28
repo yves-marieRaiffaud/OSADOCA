@@ -748,7 +748,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   foldoutFlyingObjInfoPanel: 0
   settings: {fileID: 11400000, guid: bce1d11779f1fcc4d87f267e35648035, type: 2}
-  _orbitalParams: {fileID: 11400000, guid: 71481aac16e82ae4c8f4ef4d822cc4ab, type: 2}
+  _orbitalParams: {fileID: 11400000, guid: 324388c31741f0046a4e62e95cb59e3b, type: 2}
 --- !u!1 &7206259411323703471
 GameObject:
   m_ObjectHideFlags: 0

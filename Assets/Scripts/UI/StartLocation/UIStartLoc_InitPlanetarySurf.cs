@@ -26,6 +26,8 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
     private Image planetMapImg;
     private GameObject[] launchPadGOs;
     private LaunchPad[] launchPadInstances;
+    //===============================================
+    public LaunchPad currSelectedLaunchpad;
 
     void Start()
     {
@@ -53,7 +55,7 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         if(currBodyIsRocky == 1d)
         {
             // planet is rocky
-            string pathToMap = "CelestialBodies/TextureFiles/UIPlanetary_Maps/" + currPlanetSelectedName;
+            string pathToMap = "CelestialBody/TextureFiles/UIPlanetary_Maps/" + currPlanetSelectedName;
             Sprite newSprite = Resources.Load<Sprite>(pathToMap);
             
             if(planetMapImg == null) {
@@ -121,6 +123,8 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
 
     private void OnLaunchPadClick(LaunchPad clickedLP)
     {
+        currSelectedLaunchpad = clickedLP;
+
         lp_name_val.text = clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.name];
         lp_country_val.text = clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.country];
         lp_agency_val.text = clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.supervision];

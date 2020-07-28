@@ -17,7 +17,7 @@ public class SpaceshipEditor: Editor
 
     private void CheckCreateOrbitalParamsAsset()
     {
-        string orbitalParamsPath = "Assets/Scripts/OrbitalMechanics/OrbitalParams/" + spaceship.gameObject.name + ".asset";
+        string orbitalParamsPath = "Assets/Resources/Spaceship/Rocket/OrbitalParams/" + spaceship.gameObject.name + "_OrbitalParams.asset";
         if(!File.Exists(orbitalParamsPath))
         {
             Debug.Log("Creating a new instance of OrbitalParams at path: '" + orbitalParamsPath + "'");

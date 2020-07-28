@@ -21,7 +21,7 @@ public class CelestialBodyEditor : Editor
 
     private void CheckCreateOrbitalParamsAsset()
     {
-        string orbitalParamsPath = "Assets/Scripts/OrbitalMechanics/OrbitalParams/" + celestBody.gameObject.name + ".asset";
+        string orbitalParamsPath = "Assets/Resources/CelestialBody/OrbitalParams/" + celestBody.gameObject.name + ".asset";
         if(!File.Exists(orbitalParamsPath))
         {
             Debug.Log("Creating a new instance of OrbitalParams at path: '" + orbitalParamsPath + "'");

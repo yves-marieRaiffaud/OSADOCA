@@ -71,4 +71,13 @@ public class LaunchPad
 
         return new Vector2(pixel_w, pixel_h);
     }
+
+    public Vector2 Get_Lat_Long()
+    {
+        // Returns a vector2 of the latitude (as float) and the longitude (as float)
+        double latitude, longitude;
+        UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.latitude], out latitude);
+        UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.longitude], out longitude);
+        return new Vector2((float)latitude, (float)longitude);
+    }
 }

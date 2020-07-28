@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.UI;
 using System.Linq;
+using System.IO;
 
 public class UIStartLoc_Panel : MonoBehaviour
 {
@@ -24,10 +26,15 @@ public class UIStartLoc_Panel : MonoBehaviour
         { startLocInitType.inOrbit, "In Orbit" },
         { startLocInitType.planetarySurface, "Planetary Surface" }
     };
-
+    //======
+    public bool isPLanetarySurfaceInitialization;
+    private string selectedSpacecraftName;
 
     void Start()
     {
+        selectedSpacecraftName = "Rocket";
+        //======================================
+
         lastSelectedPlanetName = UniCsts.planets.Earth.ToString();
 
         Init_startLocInitTypeDropdown();
@@ -39,6 +46,17 @@ public class UIStartLoc_Panel : MonoBehaviour
         InitSimpleSpheres();
     }
 
+    public void On_FLY_click_GatherOrbitalParams()
+    {
+        // Called when the 'FLY' button is pressed.
+        // Gathers the initialisation data and saved the data to a file stored on the disk.
+        // This file will then be read in the simulation scene and its values copied to the corresponding spacecraft scriptable object
+        SaveOrbitalParamsDataToDisk();
+        SaveShipSettingsToDisk();
+        Debug.Log("Ship OrbitalParams & Ship Settings have been saved");
+    }
+
+    
     private void InitSimpleSpheres()
     {
         // Spawn every simpleSpheres in the folder, and set the 'orbitedBody' variable
@@ -62,11 +80,13 @@ public class UIStartLoc_Panel : MonoBehaviour
             case 0:
                 section_InitOrbitGO.SetActive(true);
                 section_InitPlanetarySurfaceGO.SetActive(false);
+                isPLanetarySurfaceInitialization = false;
                 break;
             
             case 1:
                 section_InitOrbitGO.SetActive(false);
                 section_InitPlanetarySurfaceGO.SetActive(true);
+                isPLanetarySurfaceInitialization = true;
                 break;
         }
         // Need to update the dropdown of the possible start planets
@@ -166,5 +186,71 @@ public class UIStartLoc_Panel : MonoBehaviour
 
         lastSelectedPlanetName = startLocPlanetSelectorDropdown.options[startLocPlanetSelectorDropdown.value].text;
     }
+    
+    //=====================================================================
+    //=====================================================================
+    public void SaveOrbitalParamsDataToDisk()
+    {
+        // Save the needed orbitalParams data to disk
+        // Saved data file has the name 'shipToLoad_orbitalParams.json'
+        UIStartLoc_InitOrbit UI_initOrbit = section_InitOrbitGO.GetComponent<UIStartLoc_InitOrbit>();
+        // Creating the string[] for the 'OrbitalParamsSaveData' struct
+        // Refer to struct definition for the order of the variables to add to the string[]
+        string[] arrayToSave = new string[OrbitalParamsSaveData.NB_PARAMS];
+
+        arrayToSave[0] = startLocPlanetSelectorDropdown.options[startLocPlanetSelectorDropdown.value].text;
+        if(!isPLanetarySurfaceInitialization)
+        {
+            arrayToSave[1] = UI_initOrbit.orbitDefType.value.ToString();
+            arrayToSave[2] = UI_initOrbit.bodyPosType.value.ToString();
+            arrayToSave[3] = UI_initOrbit.unitsDropdown.value.ToString();
+            arrayToSave[4] = "0"; // Defining a real orbit, not a predicted one
+            arrayToSave[5] = "0"; // For the moment, don't draw any vectors/directions
+            arrayToSave[6] = "1"; // default as true for drawOrbit bool
+            arrayToSave[7] = "0"; // default as false for drawDirections bool
+            arrayToSave[8] = "300"; //default value for the orbitDrawingResolution
+            arrayToSave[9] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.ra);
+            arrayToSave[10] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.rp);
+            arrayToSave[11] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.p);
+            arrayToSave[12] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.e);
+            arrayToSave[13] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.i);
+            arrayToSave[14] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.lAscN);
+            arrayToSave[15] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.omega);
+            arrayToSave[16] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.nu);
+        }
+        else {
+            for(int i=1; i<arrayToSave.Length; i++) { arrayToSave[i]="Nan"; }
+        }
+        OrbitalParamsSaveData orbParamsSaveData = new OrbitalParamsSaveData(arrayToSave);
+
+        string filepath = Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams;
+        File.WriteAllText(filepath, JsonUtility.ToJson(orbParamsSaveData, true));
+    }
+
+    private void SaveShipSettingsToDisk()
+    {
+        // Save the needed SpaceshipSettings data to disk
+        // Saved data file has the name 'shipToLoad_settings.json'
+        UIStartLoc_InitPlanetarySurf UI_initSurface = section_InitPlanetarySurfaceGO.GetComponent<UIStartLoc_InitPlanetarySurf>();
+        // Creating the string[] for the 'SpaceshipSettingsSaveData' struct
+        // Refer to struct definition for the order of the variables to add to the string[]
+        string[] arrayToSave = new string[SpaceshipSettingsSaveData.NB_PARAMS];
+        arrayToSave[0] = "1000.0"; // Fake value for the ship mass
+        
+        if(isPLanetarySurfaceInitialization)
+        {
+            arrayToSave[1] = "1"; // True if the planetary surface was the last panel in the start location to be active
+            arrayToSave[2] = UI_initSurface.currSelectedLaunchpad.Get_Lat_Long().ToString();
+        }
+        else {
+            arrayToSave[1] = "0"; // Not a planetary init, thus an in-orbit init
+            arrayToSave[2] = new Vector2(float.NaN, float.NaN).ToString();
+        }
+        SpaceshipSettingsSaveData shipSettingsSaveData = new SpaceshipSettingsSaveData(arrayToSave);
+
+        string filepath = Application.persistentDataPath + Filepaths.shipToLoad_settings;
+        File.WriteAllText(filepath, JsonUtility.ToJson(shipSettingsSaveData, true));
+    }
+
 
 }

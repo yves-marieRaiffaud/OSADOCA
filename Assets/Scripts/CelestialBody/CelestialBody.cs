@@ -116,13 +116,31 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             spawnAsSimpleSphere = true; // Enforcing simple sphere rendering as no universePlayerCamera will be found
         }
 
-        if(orbitalParams.orbitedBodyName.Equals("None")) {
-            orbitalParams.orbitedBody = null;
+        // FOR DEBUG PURPOSES
+        if(GameObject.Find("DEBUG") != null) 
+        {
+            DebugGameObject debugGO = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
+            if(GameObject.Find("UniverseRunner") != null && orbitalParams == null && !debugGO.loadShipDataFromUIDiskFile)
+            {
+                orbitalParams = Resources.Load<OrbitalParams>("/CelestialBody/OrbitalParams/" + gameObject.name + ".asset");
+                if(orbitalParams.orbitedBodyName.Equals("None"))
+                {
+                    orbitalParams.orbitedBody = null;
+                }
+            }
+            else
+            {
+                if(orbitalParams.orbitedBodyName.Equals("None"))
+                {
+                    orbitalParams.orbitedBody = null;
+                }
+                else {
+                    string suffix = spawnAsSimpleSphere ? "Planet_UI" : "";
+                    orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName+suffix).GetComponent<CelestialBody>();
+                }
+            }
         }
-        else {
-            string suffix = spawnAsSimpleSphere ? "Planet_UI" : "";
-            orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName+suffix).GetComponent<CelestialBody>();
-        }
+        
     }
 
     public void AwakeCelestialBody(Dictionary<string,double> refDictOrbParams)
@@ -221,7 +239,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         terrainFaces = new TerrainFace[6];
         if(settings.heightMap == null) {
             // Set the variable to the default (all black) Texture2D
-            settings.heightMap = (Texture2D)Resources.Load("CelestialBodies/TextureFiles/Default/default_heightMap");
+            settings.heightMap = (Texture2D)Resources.Load("CelestialBody/TextureFiles/default_heightMap");
         }
         if(!settings.planetBaseParamsDict.ContainsKey(CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()))
         {

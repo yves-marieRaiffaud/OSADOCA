@@ -89,11 +89,37 @@ public static class UsefulFunctions
         return result;
     }
 
+    public static string DoubleToString(double value)
+    {
+        string result = value.ToString("G", CultureInfo.InvariantCulture);
+        return result;
+    }
+
     public static string StringToSignificantDigits(string value, int significant_digits)
     {
         double castValue;
         ParseStringToDouble(value, out castValue);
         return DoubleToSignificantDigits(castValue, significant_digits);
+    }
+
+    public static bool ParseStringToDouble(string stringToCheck, out double result)
+    {
+        bool operationRes = double.TryParse(stringToCheck, DOUBLE_PARSE_STYLES, DOUBLE_PARSE_FORMAT, out result);
+        if(operationRes) {
+            return true;
+        }
+        else {
+            result = double.NaN;
+            return false;
+        }
+    }
+
+    public static Vector2 StringToVector2(string stringVal)
+    {
+        string[] temp = stringVal.Substring(1, stringVal.Length-2).Split(',');
+        double xVal = double.Parse(temp[0], CultureInfo.InvariantCulture);
+        double yVal = double.Parse(temp[1], CultureInfo.InvariantCulture);
+        return new Vector2((float)xVal, (float)yVal);
     }
 
     public static bool DoubleIsValid(double val1)
@@ -260,18 +286,6 @@ public static class UsefulFunctions
             return true;
         }
         else { return false; }
-    }
-
-    public static bool ParseStringToDouble(string stringToCheck, out double result)
-    {
-        bool operationRes = double.TryParse(stringToCheck, DOUBLE_PARSE_STYLES, DOUBLE_PARSE_FORMAT, out result);
-        if(operationRes) {
-            return true;
-        }
-        else {
-            result = double.NaN;
-            return false;
-        }
     }
 
     public enum UIPanelReturnType { GameObject, RectTransform, Image, CanvasRenderer };
@@ -488,5 +502,7 @@ public static class UsefulFunctions
         dropdown.ClearOptions();
         dropdown.AddOptions(dataList);
     }
+
+    //public static void SaveDataToFile(string filepath, )
 
 }

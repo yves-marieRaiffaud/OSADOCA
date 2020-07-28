@@ -132,7 +132,7 @@ public class Orbit
         lineRenderer.receiveShadows = false;
         lineRenderer.shadowCastingMode = ShadowCastingMode.Off;
         lineRenderer.widthCurve = AnimationCurve.Constant(0f, 1f, 30f);
-        lineRenderer.sharedMaterial = Resources.Load("OrbitMaterial", typeof(Material)) as Material;
+        lineRenderer.sharedMaterial = Resources.Load("OrbitalMechanics/OrbitMaterial", typeof(Material)) as Material;
         if(!orbitedBody.spawnAsSimpleSphere)
         {
             // Execute only if we are in the simulation. Else, the GameObject 'Orbits' does not exist
@@ -478,7 +478,7 @@ public class Orbit
             dirLR.positionCount = pos.Length;
             dirLR.SetPositions(pos);
             dirLR.widthCurve = AnimationCurve.Constant(0f, lineLength, lineWidth);
-            dirLR.sharedMaterial = Resources.Load("OrbitMaterial", typeof(Material)) as Material;
+            dirLR.sharedMaterial = Resources.Load("OrbitalMechanics/OrbitMaterial", typeof(Material)) as Material;
         }
     }
 
@@ -511,7 +511,7 @@ public class Orbit
             dirLR.positionCount = pos.Length;
             dirLR.SetPositions(pos);
             dirLR.widthCurve = AnimationCurve.Constant(0f, 1f, 100f);
-            dirLR.sharedMaterial = Resources.Load("OrbitMaterial", typeof(Material)) as Material;
+            dirLR.sharedMaterial = Resources.Load("OrbitalMechanics/OrbitMaterial", typeof(Material)) as Material;
         }
     }
 
