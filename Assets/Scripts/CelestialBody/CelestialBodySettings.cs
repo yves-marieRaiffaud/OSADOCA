@@ -34,5 +34,6 @@ public class CelestialBodySettings : ScriptableObject, FlyingObjSettings
 
     public List<CelestialBody> gravBodies = new List<CelestialBody>(); // List of celestial bodies influencing this Celestial Body with their gravitational force (celestial body within their SOIs)
     public Material bodyMaterial;
+    public Material sphereTemplateMaterial;
     public Texture2D heightMap;
 }

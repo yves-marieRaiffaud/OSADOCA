@@ -8,6 +8,8 @@ public class UniverseRunner : MonoBehaviour
 {
     [HideInInspector] public SimulationEnv simEnv;
     //public SimulationEnv simulationEnv;
+
+    public Spaceship activeSpaceship;
     public GameObject playerCamera; // Camera attached to the debugging spacecraft
 
     [HideInInspector] public enum folderNames { PhysicsObjs, Stars, Planets, Spaceships, Orbits };

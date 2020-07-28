@@ -6,6 +6,8 @@ using Mathd_Lib;
 
 public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 {
+    [HideInInspector] public UniverseRunner universeRunner; // Assigned in the Awake() function
+    //=========================================
     public CelestialBodySettings settings;
     //=========================================
     public GameObject _gameObject { get{return this.gameObject;} set{_gameObject=this.gameObject;} }
@@ -98,15 +100,21 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     // Bools for editor
     [HideInInspector] public bool showCelestialBodyInfoPanel;
     [HideInInspector] public bool planetEditorFoldout;
-    
+    //=========================================
     // Active Camera and distance
     private Transform universePlayerCamera;
     [HideInInspector] public float distanceToPlayer;
     [HideInInspector] public float distanceToPlayerPow2;
-    
+    //=========================================
     // Related to CelestialBody Generation
     MeshFilter[] meshFilters;
     TerrainFace[] terrainFaces;
+    //=========================================
+    private IEnumerator planetGenerationCoroutine;
+    private bool planetGenerationCoroutineIsRunning;
+    private float nonLODTransitionDistance; // in unity units, using the 'pl2u' scaling factor
+    string sphereTemplateCelestBodyName = "sphereTemplate";
+    //=========================================
 
     void Awake()
     {
@@ -114,13 +122,17 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         {
             // Can not find any UniverseRunner in the scene, thus it is a celetialBody in a UI menu
             spawnAsSimpleSphere = true; // Enforcing simple sphere rendering as no universePlayerCamera will be found
+            universeRunner = null;
+        }
+        else {
+            universeRunner = GameObject.Find("UniverseRunner").GetComponent<UniverseRunner>();
         }
 
         // FOR DEBUG PURPOSES
         if(GameObject.Find("DEBUG") == null) { return; }
 
         DebugGameObject debugGO = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
-        if(GameObject.Find("UniverseRunner") != null && orbitalParams == null)
+        if(universeRunner != null && orbitalParams == null)
         {
             orbitalParams = Resources.Load<OrbitalParams>(Filepaths.DEBUG_planetOrbitalParams_0 + gameObject.name + Filepaths.DEBUG_planetOrbitalParams_2);
             if(orbitalParams.orbitedBodyName.Equals("None"))
@@ -152,8 +164,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
 
         // Get playerCamera defined in the UniverseRunner Instance
-        UniverseRunner verse = GameObject.Find("UniverseRunner").GetComponent<UniverseRunner>();
-        universePlayerCamera = verse.playerCamera.transform;
+        universePlayerCamera = universeRunner.playerCamera.transform;
         
         InitializeBodyParameters();
 
@@ -167,7 +178,23 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         GeneratePlanet();
         ApplyFlatenningScale();
         CreateAssignSunPointLight();
-        StartCoroutine(PlanetGenerationLoop());
+
+        planetGenerationCoroutine = PlanetGenerationLoop();
+        planetGenerationCoroutineIsRunning = true;
+        StartCoroutine(planetGenerationCoroutine);
+        
+        UpdateLODDistances();
+    }
+
+    private void UpdateLODDistances()
+    {
+        settings.detailLevelDistances[0] = float.PositiveInfinity;
+        settings.detailLevelDistances[1] = (float)settings.radiusU * UniCsts.ratioCelestBodiesLODDistances[0];
+        settings.detailLevelDistances[2] = (float)settings.radiusU * UniCsts.ratioCelestBodiesLODDistances[1];
+        settings.detailLevelDistances[3] = (float)settings.radiusU * UniCsts.ratioCelestBodiesLODDistances[2];
+        settings.detailLevelDistances[4] = (float)settings.radiusU * UniCsts.ratioCelestBodiesLODDistances[3]; 
+        settings.detailLevelDistances[5] = 0.05f;
+        settings.detailLevelDistances[6] = float.NegativeInfinity;
     }
 
     private void GetDistancesToCamera()
@@ -193,7 +220,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     {
         // RadiusU
         settings.radiusU = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()] * UniCsts.pl2u; // km
-        
+
         // Rotation Speed
         double siderealPeriod = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()];
         if(!UsefulFunctions.DoublesAreEqual(siderealPeriod, 0d))
@@ -238,7 +265,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         terrainFaces = new TerrainFace[6];
         if(settings.heightMap == null) {
             // Set the variable to the default (all black) Texture2D
-            settings.heightMap = (Texture2D)Resources.Load("CelestialBody/TextureFiles/default_heightMap");
+            settings.heightMap = (Texture2D)Resources.Load(Filepaths.DEBUG_defaultHeightMap);
         }
         if(!settings.planetBaseParamsDict.ContainsKey(CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()))
         {
@@ -263,6 +290,26 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             }
             terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this, settings.heightMap, universePlayerCamera);
         }
+
+        // Finally, create an additional gameobject to hold the sphere template when the celestialBody is super far from the activeCamera
+        // By default, the NON-LOD sphere system is disabled
+        CreateNonLODSphere_GameObject();
+    }
+
+    private void CreateNonLODSphere_GameObject()
+    {
+        GameObject sphereGO = new GameObject(sphereTemplateCelestBodyName, typeof(MeshRenderer), typeof(MeshFilter));
+        sphereGO.transform.parent = transform;
+        sphereGO.layer = 9;
+        float scaleToApply = 2f * (float)settings.radiusU;
+        sphereGO.transform.localScale = new Vector3(scaleToApply, scaleToApply, scaleToApply);
+
+        MeshFilter meshFilterToCopy = GameObject.Find(UniCsts.sphereNoLODTemplate_GO).GetComponent<MeshFilter>();
+        MeshFilter meshFilter = transform.Find(sphereTemplateCelestBodyName).GetComponent<MeshFilter>();
+        meshFilter.mesh = meshFilterToCopy.mesh;
+        MeshRenderer meshRenderer = transform.Find(sphereTemplateCelestBodyName).GetComponent<MeshRenderer>();
+        meshRenderer.material = settings.sphereTemplateMaterial;
+        sphereGO.SetActive(false);
     }
 
     private void GenerateMesh()
@@ -306,17 +353,64 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     //=========================================
     void FixedUpdate()
     {
-        if(!spawnAsSimpleSphere)
+        // 'spawnAsSimpleSphere' only refers to the UI SimpleSphere, not the NON-LOD sphere 
+        if(spawnAsSimpleSphere) { return; }
+
+        distanceToPlayer = Vector3.Distance(transform.position, universePlayerCamera.position);
+        distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
+
+        string currShipOrbitedBodyName = universeRunner.activeSpaceship.orbitalParams.orbitedBodyName;
+        if(currShipOrbitedBodyName.Equals(gameObject.name) && !planetGenerationCoroutineIsRunning)
         {
-            distanceToPlayer = Vector3.Distance(transform.position, universePlayerCamera.position);
-            distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
-            if(!UsefulFunctions.DoublesAreEqual(settings.rotationSpeed, 0d))
+            SwitchFromNonLODSphereToLODSystem();
+        }
+        else if(!currShipOrbitedBodyName.Equals(gameObject.name) && planetGenerationCoroutineIsRunning)
+        {
+            SwitchFromLODSystemToNonLODSphere();
+        }
+
+        if(!UsefulFunctions.DoublesAreEqual(settings.rotationSpeed, 0d))
+        {
+            RotatePlanet();
+        }
+    }
+
+    private void SwitchFromNonLODSphereToLODSystem()
+    {
+        foreach(Transform child in transform)
+        {
+            if(child.name.Equals(sphereTemplateCelestBodyName))
             {
-                RotatePlanet();
+                // Disabing the sphere template
+                child.gameObject.SetActive(false);
+            }
+            else {
+                // Else enabling the LOD sphere rendering GameObjects
+                child.gameObject.SetActive(true);
             }
         }
-        else {
-            
+        planetGenerationCoroutineIsRunning = true;
+        StartCoroutine(planetGenerationCoroutine);
+    }
+
+    private void SwitchFromLODSystemToNonLODSphere()
+    {
+        // Stop the LOD update
+        planetGenerationCoroutineIsRunning = false;
+        StopCoroutine(planetGenerationCoroutine);
+
+        foreach(Transform child in transform)
+        {
+            if(child.name.Equals(sphereTemplateCelestBodyName) || child.name.Equals("sunPointLight"))
+            {
+                // Either enabling the NON-LOD Sphere
+                child.gameObject.SetActive(true);
+            }
+            else {
+                // It is a gameobject for the LOD sphere rendering
+                // Thus, disabling it as the sphere template is active
+                child.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -374,7 +468,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             sunPointLight.cullingMask |= 1 << LayerMask.NameToLayer("Everything");
             sunPointLight.cullingMask &=  ~(1 << LayerMask.NameToLayer("Orbit"));
             sunPointLight.lightmapBakeType = LightmapBakeType.Baked;
-            sunPointLight.intensity = 1f;
+            sunPointLight.intensity = 10f;
         }
     }
 

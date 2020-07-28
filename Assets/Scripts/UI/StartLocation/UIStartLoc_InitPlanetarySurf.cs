@@ -55,7 +55,7 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         if(currBodyIsRocky == 1d)
         {
             // planet is rocky
-            string pathToMap = "CelestialBody/TextureFiles/UIPlanetary_Maps/" + currPlanetSelectedName;
+            string pathToMap = Filepaths.DEBUG_UIPlanetaryMaps + currPlanetSelectedName;
             Sprite newSprite = Resources.Load<Sprite>(pathToMap);
             
             if(planetMapImg == null) {

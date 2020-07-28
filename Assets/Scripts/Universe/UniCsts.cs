@@ -28,12 +28,20 @@ public static class UniCsts
     public const double km2au = 1/au2km;
 
     // u2au = 1000 ==> 1000 unity units == 1 AU
-    public const double au2u = 20_000d; // 1 AU (150M km) translated into the unity coordinates system. 1au == 1000f
+    public const double au2u = 60_000d; // 1 AU (150M km) translated into the unity coordinates system. 1au == 1000f
     public const double u2au = 1d/au2u;
 
     // u2pl=2f ==> 1 unity unit == 2km of the radius of a planet
-    public const double u2pl = 2d; // Conversion between the planetary scale and the unit coordinate system.
+    public const double u2pl = 20d; // Conversion between the planetary scale and the unit coordinate system.
     public const double pl2u = 1d/u2pl;
+
+    // Only 6 levels in this array as the first distance is '+infinity' for level 0
+    // level 0 is +infinity and will not be modified
+    // level 5 and 6 are for on ground planetary surface. They have fixed values and are not concernet by these ratios hereunder 
+    // Order of the array's ratios : 'level1', 'level2', 'level3', 'level4'.
+    // Values corresponds to the radiusU. New distance is ths 'radiusU * ratio'
+    public static float[] ratioCelestBodiesLODDistances = new float[] { 5f, 2f, 0.2f, 0.1f };
+    public const string sphereNoLODTemplate_GO = "Sphere_noLOD_Template";
 
     // u2sh=1f ==> 1 unity unit == 1 m of the spaceship
     public const double u2sh = 1d;

@@ -68,6 +68,7 @@
      <Compile Include="Assets\Scripts\Spaceship\SimRocketCam_MouseOrbit.cs" />
      <Compile Include="Assets\Scripts\Spaceship\Spaceship.cs" />
      <Compile Include="Assets\Scripts\Spaceship\SpaceshipSettings.cs" />
+     <Compile Include="Assets\Scripts\UI\ControlBarCheck.cs" />
      <Compile Include="Assets\Scripts\UI\StartLocation\LaunchPad.cs" />
      <Compile Include="Assets\Scripts\UI\StartLocation\LaunchPadList.cs" />
      <Compile Include="Assets\Scripts\UI\StartLocation\UIStartLoc_InitOrbit.cs" />
@@ -97,7 +98,7 @@
      <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF Overlay.shader" />
      <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Mobile.shader" />
      <None Include="Assets\Additional\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
-     <None Include="Assets\Resources\UI\Shader.shader" />
+     <None Include="Assets\Files_InGame\UI\Shader.shader" />
      <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile.shader" />
      <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_Sprite.shader" />
     <Reference Include="UnityEngine">

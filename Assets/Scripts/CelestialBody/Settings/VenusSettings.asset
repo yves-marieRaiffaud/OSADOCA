@@ -47,4 +47,6 @@ MonoBehaviour:
   - 0.1
   gravBodies: []
   bodyMaterial: {fileID: 2100000, guid: cc2006c618dbd624cb2dba8567981891, type: 2}
+  sphereTemplateMaterial: {fileID: 2100000, guid: cc2006c618dbd624cb2dba8567981891,
+    type: 2}
   heightMap: {fileID: 0}

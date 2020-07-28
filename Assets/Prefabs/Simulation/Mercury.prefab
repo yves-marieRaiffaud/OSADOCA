@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7027766348454280768
+--- !u!1 &3252324858151988421
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,10 +8,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7027766348454280772}
-  - component: {fileID: 7027766348454280771}
-  - component: {fileID: 7027766348454280770}
-  - component: {fileID: 7027766348454280769}
+  - component: {fileID: 3252324858151988417}
+  - component: {fileID: 3252324858151988418}
+  - component: {fileID: 3252324858151988419}
+  - component: {fileID: 3252324858151988420}
   m_Layer: 9
   m_Name: Mercury
   m_TagString: Planet
@@ -19,13 +19,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7027766348454280772
+--- !u!4 &3252324858151988417
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7027766348454280768}
+  m_GameObject: {fileID: 3252324858151988421}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -14.467587, y: 9.396717, z: -6.544395}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -33,25 +33,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7027766348454280771
+--- !u!114 &3252324858151988418
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7027766348454280768}
+  m_GameObject: {fileID: 3252324858151988421}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9a9b4959f5f3994b87d608284f83fb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!54 &7027766348454280770
+--- !u!54 &3252324858151988419
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7027766348454280768}
+  m_GameObject: {fileID: 3252324858151988421}
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
@@ -61,19 +61,46 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &7027766348454280769
+--- !u!114 &3252324858151988420
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7027766348454280768}
+  m_GameObject: {fileID: 3252324858151988421}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c314a971f6f66b4d9cf62cb03d11036, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   settings: {fileID: 11400000, guid: d978362e290e12c429c623528fe6783c, type: 2}
+  _orbit:
+    param: {fileID: 0}
+    scalingFactor: 0
+    lineRenderer: {fileID: 0}
+    orbitedBody: {fileID: 0}
+    orbitingGO: {fileID: 0}
+    n: 0
+    suffixGO: 
+  _predictor:
+    orbitedBody: {fileID: 0}
+    linkedOrbit:
+      param: {fileID: 0}
+      scalingFactor: 0
+      lineRenderer: {fileID: 0}
+      orbitedBody: {fileID: 0}
+      orbitingGO: {fileID: 0}
+      n: 0
+      suffixGO: 
+    predictedOrbit:
+      param: {fileID: 0}
+      scalingFactor: 0
+      lineRenderer: {fileID: 0}
+      orbitedBody: {fileID: 0}
+      orbitingGO: {fileID: 0}
+      n: 0
+      suffixGO: 
+  _orbitalParams: {fileID: 11400000, guid: a02b1a7204500e94aa637f6c10397393, type: 2}
   _realPosition:
     x: 0
     y: 0
@@ -95,4 +122,3 @@ MonoBehaviour:
   planetEditorFoldout: 0
   distanceToPlayer: 0
   distanceToPlayerPow2: 0
-  meshFilters: []

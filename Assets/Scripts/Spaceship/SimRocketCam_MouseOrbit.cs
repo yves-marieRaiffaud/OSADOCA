@@ -31,6 +31,7 @@ public class SimRocketCam_MouseOrbit : MonoBehaviour
     {
         targetLocalScale = 3f / (target.localScale.x + target.localScale.y + target.localScale.z);
         distance = cameraBackTR.position.magnitude/targetLocalScale;
+        farClipPlaneMargin = (float)UniCsts.u2pl/2f;
 
         mainCameraForRocket = gameObject.GetComponent<Camera>();
         cameraBackOuterSpace = cameraBackTR.gameObject.GetComponent<Camera>();
@@ -49,6 +50,8 @@ public class SimRocketCam_MouseOrbit : MonoBehaviour
  
     void LateUpdate () 
     {
+        farClipPlaneMargin = Mathf.Min(farClipPlaneMargin, 10f);
+
         UpdateCamera_Rotation_Zoom();
         cameraBackOuterSpace.nearClipPlane = mainCameraForRocket.farClipPlane;
         cameraBackTR.transform.position = transform.position;
@@ -84,7 +87,7 @@ public class SimRocketCam_MouseOrbit : MonoBehaviour
 
             transform.position = position;
         }
-        mainCameraForRocket.farClipPlane = distance + farClipPlaneMargin;
+        mainCameraForRocket.farClipPlane = distance*(float)UniCsts.pl2u + farClipPlaneMargin;
     }
 
     public static float ClampAngle(float angle, float min, float max)

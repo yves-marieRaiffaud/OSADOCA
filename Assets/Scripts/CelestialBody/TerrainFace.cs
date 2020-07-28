@@ -469,7 +469,7 @@ public class Chunk
             // third value is maximum grayscale value: 255 == white
             // Fourth value is the corresponding elevation for maximum grayscale value: MAX_ALTITUDE in unity units
             float elevation = UsefulFunctions.linearInterpolation(0, 0, 1, MAX_ALTITUDE, medianGrayVal);
-            elevation = (1f + (10f*elevation/(float)(celestialBodySettingsScript.radiusU)));
+            elevation = (1f + ((float)UniCsts.pl2u*10f*elevation/(float)(celestialBodySettingsScript.radiusU)));
 
             vertices[i] = pointOnUnitSphere * elevation * (float)celestialBodySettingsScript.radiusU;
         }

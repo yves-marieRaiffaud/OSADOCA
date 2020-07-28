@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Rocket_OrbitalParams
+  m_EditorClassIdentifier: Assembly-CSharp::OrbitalParams
+  orbitedBodyName: Earth
+  orbitedBody: {fileID: 0}
+  orbitDefType: 0
+  bodyPosType: 0
+  orbParamsUnits: 0
+  orbitRealPredType: 0
+  selectedVectorsDir: 0
+  drawOrbit: 1
+  drawDirections: 0
+  orbitDrawingResolution: 300
+  ra: 20000
+  rp: 15000
+  p: 13333.333333333334
+  e: 0.3333333333333333
+  a: 15000
+  b: 14142.13562373095
+  c: 5000
+  i: 0
+  lAscN: 0
+  omega: 0
+  nu: 0
+  m0: 0
+  l0: 0
+  t0: 0
+  period: 18283.019268525582
+  vp:
+    x: 1
+    y: -1.8657886505126953e-99
+    z: -3.053682804107666e-100
+  vpAxisRight:
+    x: -1.8657886505126953e-99
+    y: -3.053682804107666e-100
+    z: 1
+  vpAxisUp:
+    x: -3.053682804107666e-100
+    y: 1
+    z: -1.8657886505126953e-99
+  ascendingNodeLineDir:
+    x: 0.03328140433191137
+    y: -0.3867858170632238
+    z: 0.9215688144921301
+  apogeeLineDir:
+    x: -0.9957897406534926
+    y: -0.09163273682873434
+    z: -0.0024967880418689777
+  orbitPlane:
+    forwardVec:
+      x: -0.9957897406534926
+      y: -0.09163273682873434
+      z: -0.0024967880418689777
+    rightVec:
+      x: -0.03328140433191137
+      y: 0.3867858170632238
+      z: -0.9215688144921302
+    point:
+      x: -995.7897338867188
+      y: -91.63273620605469
+      z: -2.4967880249023438
+    normal:
+      x: 0.08541159485073403
+      y: -0.9176056741651123
+      z: -0.3882070146262735
+  showInfoPanel: 0

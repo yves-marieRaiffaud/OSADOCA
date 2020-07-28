@@ -69,7 +69,8 @@
         ".gitignore.txt":true,
         "Assets/Scripts/CelestialBody/Settings":true,
         "Assets/Scripts/OrbitalMechanics/OrbitalParams":true,
-        "Assets/Scripts/Spaceship/Settings":true
+        "Assets/Scripts/Spaceship/Settings":true,
+        "Assets/Files_InGame":true
     },
     "unity-tools.enableRightClickSearch": true,
     "unity-tools.documentationVersion": "2019.4"

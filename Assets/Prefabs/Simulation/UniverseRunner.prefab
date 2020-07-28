@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   simEnv: {fileID: 0}
+  activeSpaceship: {fileID: 0}
   playerCamera: {fileID: 0}
   physicsObjGO: {fileID: 0}
   planetsFolder: {fileID: 0}
