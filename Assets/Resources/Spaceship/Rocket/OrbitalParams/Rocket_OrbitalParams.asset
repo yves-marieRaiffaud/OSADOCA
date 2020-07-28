@@ -22,8 +22,8 @@ MonoBehaviour:
   drawOrbit: 1
   drawDirections: 0
   orbitDrawingResolution: 300
-  ra: 60000
-  rp: 20000
+  ra: 20000
+  rp: 10000
   p: 0
   e: 0
   a: 0

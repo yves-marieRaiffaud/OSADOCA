@@ -25214,12 +25214,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: SaturnPlanet_UI
       objectReference: {fileID: 0}
-    - target: {fileID: 871450992269806493, guid: 058da6f614e9f7d4e8358a8a89ec648b,
-        type: 3}
-      propertyPath: _orbitalParams
-      value: 
-      objectReference: {fileID: 11400000, guid: bbb60ee576be23b44b6ff0c094d65361,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 058da6f614e9f7d4e8358a8a89ec648b, type: 3}
 --- !u!1001 &1023415298816414805
@@ -25229,12 +25223,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1207253231}
     m_Modifications:
-    - target: {fileID: 1023415298707381032, guid: b9df030ef83d6c24281247c91cf4c0ba,
-        type: 3}
-      propertyPath: _orbitalParams
-      value: 
-      objectReference: {fileID: 11400000, guid: 8789d7dca8e183043ba7d7605ea04e5e,
-        type: 2}
     - target: {fileID: 1023415298707381033, guid: b9df030ef83d6c24281247c91cf4c0ba,
         type: 3}
       propertyPath: m_Name
@@ -25364,12 +25352,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4170418715312701651, guid: 91aa24acf60501c4f82acfd747431d90,
-        type: 3}
-      propertyPath: _orbitalParams
-      value: 
-      objectReference: {fileID: 11400000, guid: 120aeed72bd1196499c659be4584afbb,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 91aa24acf60501c4f82acfd747431d90, type: 3}
 --- !u!114 &2470243414557893381 stripped
@@ -25402,12 +25384,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: NeptunePlanet_UI
       objectReference: {fileID: 0}
-    - target: {fileID: 2665326548511265317, guid: 93a9c96be6a64ee48a02fcbf483c42fe,
-        type: 3}
-      propertyPath: _orbitalParams
-      value: 
-      objectReference: {fileID: 11400000, guid: 7d2f1f61f7c6c30488231ae8fda07ff4,
-        type: 2}
     - target: {fileID: 2665326548969614343, guid: 93a9c96be6a64ee48a02fcbf483c42fe,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -25484,12 +25460,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1207253231}
     m_Modifications:
-    - target: {fileID: 6227806083405684113, guid: 47a68109a2fb0eb459b76f5adebfdf22,
-        type: 3}
-      propertyPath: _orbitalParams
-      value: 
-      objectReference: {fileID: 11400000, guid: 1e1e566b5d1c3d340afef81d3225bb99,
-        type: 2}
     - target: {fileID: 6227806083405684114, guid: 47a68109a2fb0eb459b76f5adebfdf22,
         type: 3}
       propertyPath: m_Name
@@ -25564,12 +25534,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: VenusPlanet_UI
       objectReference: {fileID: 0}
-    - target: {fileID: 6412011265225920259, guid: 2714a93ac4cfecb468db5b452c65b286,
-        type: 3}
-      propertyPath: _orbitalParams
-      value: 
-      objectReference: {fileID: 11400000, guid: f357a6494cca80a4e99cff96f4e75e34,
-        type: 2}
     - target: {fileID: 8621176147406177830, guid: 2714a93ac4cfecb468db5b452c65b286,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -25689,12 +25653,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7616310063666489085, guid: 80474d5647a2bbd4382dc23cb2c90de6,
-        type: 3}
-      propertyPath: _orbitalParams
-      value: 
-      objectReference: {fileID: 11400000, guid: 487f2b19be184394d84ed408e0c3599a,
-        type: 2}
     - target: {fileID: 7616310063666489086, guid: 80474d5647a2bbd4382dc23cb2c90de6,
         type: 3}
       propertyPath: m_Name
@@ -25769,12 +25727,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: MercuryPlanet_UI
       objectReference: {fileID: 0}
-    - target: {fileID: 7989594488673190159, guid: 0dcaa4d4b0526aa4895619a3f1e45bfb,
-        type: 3}
-      propertyPath: _orbitalParams
-      value: 
-      objectReference: {fileID: 11400000, guid: 8ab727f01f7e3fc428cacfbf2e17abe2,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0dcaa4d4b0526aa4895619a3f1e45bfb, type: 3}
 --- !u!1001 &8995394094162067252
@@ -25789,12 +25741,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: SunPlanet_UI
       objectReference: {fileID: 0}
-    - target: {fileID: 8995394093988265605, guid: e95fd37de1b17ee47bcd149e4e152585,
-        type: 3}
-      propertyPath: _orbitalParams
-      value: 
-      objectReference: {fileID: 11400000, guid: 63d70437caa64c34f97f60290cd71379,
-        type: 2}
     - target: {fileID: 8995394094148090250, guid: e95fd37de1b17ee47bcd149e4e152585,
         type: 3}
       propertyPath: m_LocalPosition.x

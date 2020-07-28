@@ -36,9 +36,9 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\Editor\CelestialBodyEditor.cs" />
-     <Compile Include="Assets\Scripts\Editor\SpaceshipEditor.cs" />
-     <Compile Include="Assets\Scripts\Editor\UniverseRunnerEditor.cs" />
+     <Compile Include="Assets\Editor\CelestialBodyEditor.cs" />
+     <Compile Include="Assets\Editor\SpaceshipEditor.cs" />
+     <Compile Include="Assets\Editor\UniverseRunnerEditor.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

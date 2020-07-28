@@ -117,27 +117,26 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
 
         // FOR DEBUG PURPOSES
-        if(GameObject.Find("DEBUG") != null) 
+        if(GameObject.Find("DEBUG") == null) { return; }
+
+        DebugGameObject debugGO = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
+        if(GameObject.Find("UniverseRunner") != null && orbitalParams == null)
         {
-            DebugGameObject debugGO = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
-            if(GameObject.Find("UniverseRunner") != null && orbitalParams == null && !debugGO.loadShipDataFromUIDiskFile)
+            orbitalParams = Resources.Load<OrbitalParams>(Filepaths.DEBUG_planetOrbitalParams_0 + gameObject.name + Filepaths.DEBUG_planetOrbitalParams_2);
+            if(orbitalParams.orbitedBodyName.Equals("None"))
             {
-                orbitalParams = Resources.Load<OrbitalParams>("/CelestialBody/OrbitalParams/" + gameObject.name + ".asset");
-                if(orbitalParams.orbitedBodyName.Equals("None"))
-                {
-                    orbitalParams.orbitedBody = null;
-                }
+                orbitalParams.orbitedBody = null;
             }
-            else
+        }
+        else
+        {
+            if(orbitalParams.orbitedBodyName.Equals("None"))
             {
-                if(orbitalParams.orbitedBodyName.Equals("None"))
-                {
-                    orbitalParams.orbitedBody = null;
-                }
-                else {
-                    string suffix = spawnAsSimpleSphere ? "Planet_UI" : "";
-                    orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName+suffix).GetComponent<CelestialBody>();
-                }
+                orbitalParams.orbitedBody = null;
+            }
+            else {
+                string suffix = spawnAsSimpleSphere ? "Planet_UI" : "";
+                orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName+suffix).GetComponent<CelestialBody>();
             }
         }
         

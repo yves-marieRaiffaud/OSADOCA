@@ -98,28 +98,23 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     void Awake()
     {
         // FOR DEBUG PURPOSES
-        if(GameObject.Find("DEBUG") != null) 
+        if(GameObject.Find("DEBUG") == null) { return; }
+
+        DebugGameObject debugGO = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
+        if(GameObject.Find("UniverseRunner") != null && orbitalParams == null && !debugGO.loadShipDataFromUIDiskFile)
         {
-            DebugGameObject debugGO = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
-            if(GameObject.Find("UniverseRunner") != null && orbitalParams == null && !debugGO.loadShipDataFromUIDiskFile)
+            Debug.Log(Filepaths.DEBUG_shipOrbitalParams_0 + gameObject.name + Filepaths.DEBUG_shipOrbitalParams_2);
+            orbitalParams = Resources.Load<OrbitalParams>(Filepaths.DEBUG_shipOrbitalParams_0 + gameObject.name + Filepaths.DEBUG_shipOrbitalParams_2);
+            if(orbitalParams.orbitedBodyName.Equals("None"))
             {
-                Debug.Log("in");
-                Debug.Log("/Spaceship/Rocket/OrbitalParams/" + gameObject.name + "_OrbitalParams.asset");
-                orbitalParams = Resources.Load<OrbitalParams>("/Spaceship/Rocket/OrbitalParams/" + gameObject.name + "_OrbitalParams.asset");
-                Debug.Log(orbitalParams);
-                if(orbitalParams.orbitedBodyName.Equals("None"))
-                {
-                    orbitalParams.orbitedBody = null;
-                }
-            }
-            else
-            {
-                DEBUG_LOAD_DATA_TO_SCRIPTABLE_OBJS();
-                orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
+                orbitalParams.orbitedBody = null;
             }
         }
-
-        
+        else
+        {
+            DEBUG_LOAD_DATA_TO_SCRIPTABLE_OBJS();
+            orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
+        }
     }
 
     public void InitializeOrbitalPredictor()

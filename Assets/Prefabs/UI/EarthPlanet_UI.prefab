@@ -27,7 +27,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1992945044775009866}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
@@ -110,7 +110,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings: {fileID: 11400000, guid: c913b2763ac72764f94efa33ca6b20a4, type: 2}
-  _orbitedBody: {fileID: 0}
+  _orbit:
+    param: {fileID: 0}
+    scalingFactor: 0
+    lineRenderer: {fileID: 0}
+    orbitedBody: {fileID: 0}
+    orbitingGO: {fileID: 0}
+    n: 0
+    suffixGO: 
+  _predictor:
+    orbitedBody: {fileID: 0}
+    linkedOrbit:
+      param: {fileID: 0}
+      scalingFactor: 0
+      lineRenderer: {fileID: 0}
+      orbitedBody: {fileID: 0}
+      orbitingGO: {fileID: 0}
+      n: 0
+      suffixGO: 
+    predictedOrbit:
+      param: {fileID: 0}
+      scalingFactor: 0
+      lineRenderer: {fileID: 0}
+      orbitedBody: {fileID: 0}
+      orbitingGO: {fileID: 0}
+      n: 0
+      suffixGO: 
+  _orbitalParams: {fileID: 11400000, guid: 120aeed72bd1196499c659be4584afbb, type: 2}
   _realPosition:
     x: 0
     y: 0
@@ -132,4 +158,3 @@ MonoBehaviour:
   planetEditorFoldout: 0
   distanceToPlayer: 0
   distanceToPlayerPow2: 0
-  meshFilters: []

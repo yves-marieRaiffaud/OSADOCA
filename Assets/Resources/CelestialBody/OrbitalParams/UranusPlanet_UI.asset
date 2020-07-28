@@ -16,22 +16,22 @@ MonoBehaviour:
   orbitedBody: {fileID: 0}
   orbitDefType: 0
   bodyPosType: 0
-  orbParamsUnits: 1
+  orbParamsUnits: 0
   orbitRealPredType: 0
   selectedVectorsDir: 0
   drawOrbit: 1
   drawDirections: 0
   orbitDrawingResolution: 300
-  ra: 20.11
-  rp: 18.33
+  ra: 0
+  rp: 0
   p: 0
   e: 0
   a: 0
   b: 0
   c: 0
-  i: 0.772
-  lAscN: 74.006
-  omega: 96.998857
+  i: 0
+  lAscN: 0
+  omega: 0
   nu: 0
   m0: 0
   l0: 0

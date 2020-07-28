@@ -16,10 +16,10 @@ MonoBehaviour:
   orbitedBody: {fileID: 0}
   orbitDefType: 0
   bodyPosType: 0
-  orbParamsUnits: 1
+  orbParamsUnits: 0
   orbitRealPredType: 0
   selectedVectorsDir: 0
-  drawOrbit: 0
+  drawOrbit: 1
   drawDirections: 0
   orbitDrawingResolution: 300
   ra: 0
