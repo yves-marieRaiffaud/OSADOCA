@@ -453,7 +453,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         predictor = new OrbitalPredictor(this, orbitalParams.orbitedBody.GetComponent<CelestialBody>(), orbit);
     }
 
-
     public void CreateAssignSunPointLight()
     {
         if(UsefulFunctions.CastStringToGoTags(gameObject.tag).Equals(UniverseRunner.goTags.Star))
@@ -471,7 +470,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             sunPointLight.intensity = 10f;
         }
     }
-
 
     public static bool CelestialBodyHasTagName(CelestialBody body, string tagName)
     {
