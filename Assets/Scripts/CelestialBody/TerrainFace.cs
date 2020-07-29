@@ -15,7 +15,6 @@ public class TerrainFace
     public Chunk parentChunk;
     public List<Chunk> visibleChildren = new List<Chunk>();
     
-
     // These will be filled with the generated data
     public List<Vector3> vertices = new List<Vector3>();
     public List<Vector3> borderVertices = new List<Vector3>();
@@ -25,10 +24,11 @@ public class TerrainFace
     public Dictionary<int, bool> edgefanIndex = new Dictionary<int, bool>();
 
     Texture2D bumpMap;
+    bool isDefaultHeightMap;
     Transform activeCamera;
 
     // Constructor
-    public TerrainFace(Mesh mesh, Vector3 localUp, CelestialBody celestialBody, Texture2D bumpMapTexture, Transform playerActiveCamera)
+    public TerrainFace(Mesh mesh, Vector3 localUp, CelestialBody celestialBody, Texture2D bumpMapTexture, bool isDefaultHeightMapBool, Transform playerActiveCamera)
     {
         this.mesh = mesh;
         this.localUp = localUp;
@@ -36,6 +36,7 @@ public class TerrainFace
         this.celestialBodySettingsScript = celestialBody.settings;
         this.radius = (float)celestialBody.settings.radiusU;
         this.bumpMap = bumpMapTexture;
+        this.isDefaultHeightMap = isDefaultHeightMapBool;
         this.activeCamera = playerActiveCamera;
 
         axisA = new Vector3(localUp.y, localUp.z, localUp.x);
@@ -56,7 +57,7 @@ public class TerrainFace
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32; // Extend the resolution capabilities of the mesh
         
         // Generate chunks
-        parentChunk = new Chunk(1, celestialBodySettingsScript, celestialBody, this, null, localUp.normalized * radius, radius, 0, localUp, axisA, axisB, new byte[4], 0, activeCamera, bumpMap);
+        parentChunk = new Chunk(1, celestialBodySettingsScript, celestialBody, this, null, localUp.normalized * radius, radius, 0, localUp, axisA, axisB, new byte[4], 0, activeCamera, bumpMap, isDefaultHeightMap);
         parentChunk.GenerateChildren();
 
         // Get chunk mesh data
@@ -179,12 +180,13 @@ public class Chunk
     
     Transform universePlayerCamera;
     Texture2D initialBumpMap;
+    bool hasDefaultHeightmap; // Meaning the heightmap is all black (no elevation), so some calculations will not be done
     float MAX_ALTITUDE;
     float pixelWidthOffset;
 
     public byte[] neighbours = new byte[4]; //East, west, north, south. True if less detailed (Lower LOD)
     // Constructor
-    public Chunk(uint hashvalue, CelestialBodySettings celestialBodySettingsScript, CelestialBody celestialBody, TerrainFace terrainFace, Chunk[] children, Vector3 position, float radius, int detailLevel, Vector3 localUp, Vector3 axisA, Vector3 axisB, byte[] neighbours, byte corner, Transform activeCamera, Texture2D bumpMapTexture)
+    public Chunk(uint hashvalue, CelestialBodySettings celestialBodySettingsScript, CelestialBody celestialBody, TerrainFace terrainFace, Chunk[] children, Vector3 position, float radius, int detailLevel, Vector3 localUp, Vector3 axisA, Vector3 axisB, byte[] neighbours, byte corner, Transform activeCamera, Texture2D bumpMapTexture, bool isDefaultHeightMapBool)
     {
         this.hashvalue = hashvalue;
         this.celestialBodySettingsScript = celestialBodySettingsScript;
@@ -205,7 +207,8 @@ public class Chunk
         this.MAX_ALTITUDE = (float)celestialBodySettingsScript.planetBaseParamsDict[CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()];
         this.pixelWidthOffset = initialBumpMap.width - (0.5f + Mathf.Atan2(1f, 0f) / (2f*Mathf.PI)) * initialBumpMap.width;
 
-        universePlayerCamera = activeCamera;
+        this.universePlayerCamera = activeCamera;
+        this.hasDefaultHeightmap = isDefaultHeightMapBool;
     }
 
     public void GenerateChildren()
@@ -221,10 +224,10 @@ public class Chunk
                 children = new Chunk[4];
                 float subWidth = initialBumpMap.width / Mathf.Pow(2, detailLevel+1);
                 float subHeight = initialBumpMap.height / Mathf.Pow(2, detailLevel+1);
-                children[0] = new Chunk(hashvalue * 4, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position + axisA * radius * 0.5f - axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 0, universePlayerCamera, initialBumpMap); // TOP LEFT
-                children[1] = new Chunk(hashvalue * 4 + 1, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position + axisA * radius * 0.5f + axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 1, universePlayerCamera, initialBumpMap); // TOP RIGHT
-                children[2] = new Chunk(hashvalue * 4 + 2, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position - axisA * radius * 0.5f + axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 2, universePlayerCamera, initialBumpMap); // BOTTOM RIGHT
-                children[3] = new Chunk(hashvalue * 4 + 3, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position - axisA * radius * 0.5f - axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 3, universePlayerCamera, initialBumpMap); // BOTTOM LEFT
+                children[0] = new Chunk(hashvalue * 4, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position + axisA * radius * 0.5f - axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 0, universePlayerCamera, initialBumpMap, hasDefaultHeightmap); // TOP LEFT
+                children[1] = new Chunk(hashvalue * 4 + 1, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position + axisA * radius * 0.5f + axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 1, universePlayerCamera, initialBumpMap, hasDefaultHeightmap); // TOP RIGHT
+                children[2] = new Chunk(hashvalue * 4 + 2, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position - axisA * radius * 0.5f + axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 2, universePlayerCamera, initialBumpMap, hasDefaultHeightmap); // BOTTOM RIGHT
+                children[3] = new Chunk(hashvalue * 4 + 3, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position - axisA * radius * 0.5f - axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 3, universePlayerCamera, initialBumpMap, hasDefaultHeightmap); // BOTTOM LEFT
 
                 // Create grandchildren
                 foreach (Chunk child in children)
@@ -447,30 +450,43 @@ public class Chunk
 
         // Choose a quad from the templates, then move it using the transform matrix, normalize its vertices, scale it and store it
         vertices = new Vector3[(Presets.quadRes + 1) * (Presets.quadRes + 1)];
-        
-        float pixelWidthOffset = initialBumpMap.width - (0.5f + Mathf.Atan2(1f, 0f) / (2f*Mathf.PI)) * initialBumpMap.width;
+
+        if(hasDefaultHeightmap)
+        {
+            float pixelWidthOffset = initialBumpMap.width - (0.5f + Mathf.Atan2(1f, 0f) / (2f*Mathf.PI)) * initialBumpMap.width;
+        }
+
+        float pixel_w, pixel_h, elevation, pi_x_2;
+        pi_x_2 = 2f*Mathf.PI;
         for (int i = 0; i < vertices.Length; i++)
         {
             // pointOnCube goes along the x values, then the y values (with a localUp normal along +z axis)
             Vector3 pointOnCube = transformMatrix.MultiplyPoint(Presets.quadTemplateVertices[quadIndex][i]);
             Vector3 pointOnUnitSphere = pointOnCube.normalized;
             
-            float pixel_w = (0.5f + Mathf.Atan2(pointOnUnitSphere.x, pointOnUnitSphere.z) / (2f*Mathf.PI)) * initialBumpMap.width;
-            float pixel_h = (0.5f - Mathf.Asin(pointOnUnitSphere.y) / Mathf.PI) * initialBumpMap.height;
-            pixel_w = (pixel_w-pixelWidthOffset) < 0f ? initialBumpMap.width + (pixel_w-pixelWidthOffset) : pixel_w-pixelWidthOffset;
+            if(!hasDefaultHeightmap)
+            {
+                pixel_w = (0.5f + Mathf.Atan2(pointOnUnitSphere.x, pointOnUnitSphere.z) / pi_x_2) * initialBumpMap.width;
+                pixel_h = (0.5f - Mathf.Asin(pointOnUnitSphere.y) / Mathf.PI) * initialBumpMap.height;
+                pixel_w = (pixel_w-pixelWidthOffset) < 0f ? initialBumpMap.width + (pixel_w-pixelWidthOffset) : pixel_w-pixelWidthOffset;
 
-            float p1 = initialBumpMap.GetPixel((int)Mathf.Floor(pixel_w), (int)Mathf.Floor(pixel_h)).grayscale; // bottom left
-            float p2 = initialBumpMap.GetPixel((int)Mathf.Ceil(pixel_w), (int)Mathf.Floor(pixel_h)).grayscale; // bottom right
-            float p3 = initialBumpMap.GetPixel((int)Mathf.Ceil(pixel_w), (int)Mathf.Ceil(pixel_h)).grayscale; // top right
-            float p4 = initialBumpMap.GetPixel((int)Mathf.Floor(pixel_w), (int)Mathf.Ceil(pixel_h)).grayscale; // top left
-            float medianGrayVal = (p1+p2+p3+p4)/4;
-            // First value is minimum grayscale value: 0 == black
-            // Second value is the coorepsonding elevation for minimum grayscale value: 0 == ocean floor
-            // third value is maximum grayscale value: 255 == white
-            // Fourth value is the corresponding elevation for maximum grayscale value: MAX_ALTITUDE in unity units
-            float elevation = UsefulFunctions.linearInterpolation(0, 0, 1, MAX_ALTITUDE, medianGrayVal);
-            elevation = (1f + ((float)UniCsts.pl2u*10f*elevation/(float)(celestialBodySettingsScript.radiusU)));
-
+                float p1 = initialBumpMap.GetPixel((int)Mathf.Floor(pixel_w), (int)Mathf.Floor(pixel_h)).grayscale; // bottom left
+                float p2 = initialBumpMap.GetPixel((int)Mathf.Ceil(pixel_w), (int)Mathf.Floor(pixel_h)).grayscale; // bottom right
+                float p3 = initialBumpMap.GetPixel((int)Mathf.Ceil(pixel_w), (int)Mathf.Ceil(pixel_h)).grayscale; // top right
+                float p4 = initialBumpMap.GetPixel((int)Mathf.Floor(pixel_w), (int)Mathf.Ceil(pixel_h)).grayscale; // top left
+                float medianGrayVal = (p1+p2+p3+p4)/4;
+                // First value is minimum grayscale value: 0 == black
+                // Second value is the coorepsonding elevation for minimum grayscale value: 0 == ocean floor
+                // third value is maximum grayscale value: 255 == white
+                // Fourth value is the corresponding elevation for maximum grayscale value: MAX_ALTITUDE in unity units
+                elevation = (float)UniCsts.pl2u * UsefulFunctions.linearInterpolation(0, 0, 1, MAX_ALTITUDE, medianGrayVal);
+                elevation = 1f + elevation / (float)(celestialBodySettingsScript.radiusU); // Adding the altitude elevation to the base surface elevation 
+                // elevation in km, then unity units, then in ratio of the celestialBody radiusU
+            }
+            else
+            {
+                elevation = 1f;
+            }
             vertices[i] = pointOnUnitSphere * elevation * (float)celestialBodySettingsScript.radiusU;
         }
 

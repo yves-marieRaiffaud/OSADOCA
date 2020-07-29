@@ -21,7 +21,7 @@ public class CelestialBodyEditor : Editor
 
     private void CheckCreateOrbitalParamsAsset()
     {
-        string orbitalParamsPath = "Assets/Resources" + Filepaths.DEBUG_planetOrbitalParams_0 + celestBody.gameObject.name + Filepaths.DEBUG_planetOrbitalParams_2;
+        string orbitalParamsPath = "Assets/Resources/" + Filepaths.DEBUG_planetOrbitalParams_0 + celestBody.gameObject.name + Filepaths.DEBUG_planetOrbitalParams_2;
         if(!File.Exists(orbitalParamsPath))
         {
             Debug.Log("Creating a new instance of OrbitalParams at path: '" + orbitalParamsPath + "'");
@@ -76,6 +76,7 @@ public class CelestialBodyEditor : Editor
         celestBody.settings.chosenPredifinedPlanet = UniCsts.planets.Sun;
         EditorGUI.BeginDisabledGroup(true);
         celestBody.settings.chosenPredifinedPlanet = (UniCsts.planets)EditorGUILayout.EnumPopup("Choose planet", celestBody.settings.chosenPredifinedPlanet);
+        EditorGUILayout.DoubleField("RadiusU", celestBody.settings.radiusU);
         EditorGUI.EndDisabledGroup();
     }
 

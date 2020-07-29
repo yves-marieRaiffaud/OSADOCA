@@ -180,8 +180,9 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         CreateAssignSunPointLight();
 
         planetGenerationCoroutine = PlanetGenerationLoop();
-        planetGenerationCoroutineIsRunning = true;
-        StartCoroutine(planetGenerationCoroutine);
+        SwitchFromLODSystemToNonLODSphere();
+        //planetGenerationCoroutineIsRunning = true;
+        //StartCoroutine(planetGenerationCoroutine);
         
         UpdateLODDistances();
     }
@@ -263,9 +264,12 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         };
 
         terrainFaces = new TerrainFace[6];
+
+        bool hasDefaultHeightMap = false;
         if(settings.heightMap == null) {
             // Set the variable to the default (all black) Texture2D
-            settings.heightMap = (Texture2D)Resources.Load(Filepaths.DEBUG_defaultHeightMap);
+            settings.heightMap = Resources.Load<Texture2D>(Filepaths.DEBUG_defaultHeightMap);
+            hasDefaultHeightMap = true;
         }
         if(!settings.planetBaseParamsDict.ContainsKey(CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()))
         {
@@ -287,8 +291,9 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
                 meshFilters[i].sharedMesh = new Mesh();
                 meshFilters[i].sharedMesh.name = directionsDict[directionsDict.Keys.ElementAt(i)].ToString() + "_mesh";
                 meshObj.layer = 9;
+                meshObj.SetActive(false);
             }
-            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this, settings.heightMap, universePlayerCamera);
+            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this, settings.heightMap, hasDefaultHeightMap, universePlayerCamera);
         }
 
         // Finally, create an additional gameobject to hold the sphere template when the celestialBody is super far from the activeCamera
@@ -309,7 +314,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         meshFilter.mesh = meshFilterToCopy.mesh;
         MeshRenderer meshRenderer = transform.Find(sphereTemplateCelestBodyName).GetComponent<MeshRenderer>();
         meshRenderer.material = settings.sphereTemplateMaterial;
-        sphereGO.SetActive(false);
+        sphereGO.SetActive(true);
     }
 
     private void GenerateMesh()
@@ -356,9 +361,12 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         // 'spawnAsSimpleSphere' only refers to the UI SimpleSphere, not the NON-LOD sphere 
         if(spawnAsSimpleSphere) { return; }
 
-        distanceToPlayer = Vector3.Distance(transform.position, universePlayerCamera.position);
-        distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
+        GetDistancesToCamera();
+        CheckUpdate_LOD_NonLOD_System();
+    }
 
+    private void CheckUpdate_LOD_NonLOD_System()
+    {
         string currShipOrbitedBodyName = universeRunner.activeSpaceship.orbitalParams.orbitedBodyName;
         if(currShipOrbitedBodyName.Equals(gameObject.name) && !planetGenerationCoroutineIsRunning)
         {

@@ -106,7 +106,7 @@ public class UniverseRunner : MonoBehaviour
 
     private void InitializeCelestialSphereCollider(GameObject bodyGO)
     {
-       //
+       // Need to find a smart way to create colliders for the celestialBodies
     }
     //=========================================
     void Start()
@@ -177,7 +177,7 @@ public class UniverseRunner : MonoBehaviour
         switch(UsefulFunctions.CastStringToGoTags(objTag))
         {
             case goTags.Star:
-                //do nothing for now
+                // Do nothing for now
                 break;
 
             case goTags.Planet:

@@ -16,62 +16,62 @@ MonoBehaviour:
   orbitedBody: {fileID: 0}
   orbitDefType: 0
   bodyPosType: 0
-  orbParamsUnits: 0
+  orbParamsUnits: 1
   orbitRealPredType: 0
   selectedVectorsDir: 0
   drawOrbit: 1
   drawDirections: 0
   orbitDrawingResolution: 300
-  ra: 0
-  rp: 0
-  p: 0
-  e: 0
-  a: 0
-  b: 0
-  c: 0
-  i: 0
-  lAscN: 0
-  omega: 0
+  ra: 1.067
+  rp: 0.92329
+  p: 0.9899566696310589
+  e: 0.07220555798401233
+  a: 0.995145
+  b: 0.9925474447098235
+  c: 0.07185499999999995
+  i: 7.155
+  lAscN: 174.9
+  omega: 288.1
   nu: 0
   m0: 0
   l0: 0
   t0: 0
-  period: 0
+  period: 31328656.083478868
   vp:
-    x: 0
-    y: 0
-    z: 0
+    x: 1
+    y: -9.396717071533203e-100
+    z: 6.544394969940185e-100
   vpAxisRight:
-    x: 0
-    y: 0
-    z: 0
+    x: -9.396717071533203e-100
+    y: 6.544394969940185e-100
+    z: 1
   vpAxisUp:
-    x: 0
-    y: 0
-    z: 0
+    x: 6.544394969940185e-100
+    y: 1
+    z: -9.396717071533203e-100
   ascendingNodeLineDir:
-    x: 0
+    x: -0.9960411184081637
     y: 0
-    z: 0
+    z: 0.08889370304028504
   apogeeLineDir:
-    x: 0
-    y: 0
-    z: 0
+    x: 0.2256099799520724
+    y: -0.11839052482216607
+    z: -0.9669973219085757
   orbitPlane:
     forwardVec:
-      x: NaN
-      y: NaN
-      z: NaN
+      x: 0.2256099799520724
+      y: -0.11839052482216607
+      z: -0.9669973219085757
     rightVec:
-      x: NaN
-      y: NaN
-      z: NaN
+      x: 0.9741547855899699
+      y: 0.0386960378356657
+      z: 0.22254228894297956
     point:
-      x: NaN
-      y: NaN
-      z: NaN
+      x: 14443.55078125
+      y: -7579.361328125
+      z: -61907.16796875
     normal:
-      x: 0
-      y: 0
-      z: 0
+      x: 0.011072066572476176
+      y: -0.9922128301368376
+      z: 0.12406090864435038
   showInfoPanel: 0
