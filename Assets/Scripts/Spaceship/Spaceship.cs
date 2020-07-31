@@ -46,6 +46,17 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
     }
 
+    private double _distanceScaleFactor;
+    public double distanceScaleFactor
+    {
+        get {
+            return _distanceScaleFactor;
+        }
+        set {
+            _distanceScaleFactor=value;
+        }
+    }
+
     [HideInInspector]
     private Vector3d _realPosition;
     public Vector3d realPosition
@@ -103,7 +114,16 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         DebugGameObject debugGO = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
         if(GameObject.Find("UniverseRunner") != null && orbitalParams == null && !debugGO.loadShipDataFromUIDiskFile)
         {
-            Debug.Log(Filepaths.DEBUG_shipOrbitalParams_0 + gameObject.name + Filepaths.DEBUG_shipOrbitalParams_2);
+            //==============================================================================================================================
+            //==============================================================================================================================
+            //=======================TO-DO==================================================================================================
+            // LOAD HERE THE DATA FROM 'shipToLoad_settings.json' & 'shipToLoad_OrbitalParams.json'
+            // MODIFY AND CALL 'DEBUG_LOAD_DATA_TO_SCRIPTABLE_OBJS()'
+            // SO THAT DISREGARDING IF WE USE THE UI OR DIRECTLY THE EDITOR, DATA WILL BE LOADED FROM THE SAVED FILES (real case scenario)
+            //==============================================================================================================================
+            //==============================================================================================================================
+            //==============================================================================================================================
+            //Debug.Log(Filepaths.DEBUG_shipOrbitalParams_0 + gameObject.name + Filepaths.DEBUG_shipOrbitalParams_2);
             orbitalParams = Resources.Load<OrbitalParams>(Filepaths.DEBUG_shipOrbitalParams_0 + gameObject.name + Filepaths.DEBUG_shipOrbitalParams_2);
             if(orbitalParams.orbitedBodyName.Equals("None"))
             {
@@ -151,5 +171,45 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
             }
         }
         // don't need to do anything if we want to use the Scriptables objects set up in the Unity Editor Inspector
+    }
+
+    public double Get_R()
+    {
+        // Returns the distance in real world (in km) from the spaceship position to the centre of the orbited body
+        double distance = Vector3d.Distance(new Vector3d(gameObject.transform.position), new Vector3d(orbitalParams.orbitedBody.transform.position));
+        distance *= UniCsts.u2pl; // km
+        return distance; // distance in km
+    }
+
+    public double Get_R(Vector3d shipPosition)
+    {
+        // Returns the distance in real world (in km) from the spaceship position to the centre of the orbited body
+        double distance = Vector3d.Distance(shipPosition, new Vector3d(orbitalParams.orbitedBody.transform.position));
+        distance *= UniCsts.u2pl; // Either km or AU
+        return distance; // distance in km
+    }
+
+    public double GetAltitude()
+    {
+        // Returns the altitude in real world (in km) from the spaceship position to the surface of the orbited body
+        return Get_R() - orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
+    }
+
+    public double GetAltitude(Vector3d shipPosition)
+    {
+        // Returns the altitude in real world (in km) from the spaceship position to the surface of the orbited body
+        return Get_R(shipPosition) - orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
+    }
+
+    public double SetDistanceScaleFactor()
+    {
+        if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree)
+        {
+            distanceScaleFactor = UniCsts.m2km2pl2u; // If the orbit is defined in km_degree
+        }
+        else {
+            distanceScaleFactor = UniCsts.m2km2au2u; // If the orbit is defined in AU_degree
+        }
+        return distanceScaleFactor;
     }
 }

@@ -1,12 +1,14 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Collections.Generic;
 
 [CustomEditor(typeof(Spaceship),true), CanEditMultipleObjects]
 public class SpaceshipEditor: Editor
 {
     private Spaceship spaceship;
     private SerializedObject serializedOrbitalParams;
+    private int selectedStartLP=0;
 
     private void OnEnable()
     {
@@ -98,11 +100,24 @@ public class SpaceshipEditor: Editor
     {
         spaceship.settings.startFromGround = EditorGUILayout.Toggle("Start from ground", spaceship.settings.startFromGround);
 
-        if(!spaceship.settings.startFromGround)
+        if(spaceship.settings.startFromGround)
+        {
+            string[] launchPadOptions = GetStartingLaunchPadOptions(serializedOrbitalParams.FindProperty("orbitedBodyName").stringValue);
+            if(launchPadOptions.Length > 0) {
+                selectedStartLP = EditorGUILayout.Popup("Start LaunchPad", selectedStartLP, launchPadOptions);
+                spaceship.settings.startLaunchPadName = launchPadOptions[selectedStartLP];
+            }
+            else {
+                EditorGUILayout.LabelField("Enter a valid name of terrestrial Planet to select a LaunchPad", EditorStyles.boldLabel);
+            }
+        }
+        else
         {
             EditorGUILayout.LabelField("Rendering parameters", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("drawOrbit"));
-            EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("orbitDrawingResolution"));
+
+            SerializedProperty orbDrawingRes = serializedOrbitalParams.FindProperty("orbitDrawingResolution");
+            orbDrawingRes.intValue = EditorGUILayout.IntSlider("Orbit Drawing Resolution", orbDrawingRes.intValue, 10, 500);
             EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("drawDirections"));
 
             EditorGUI.BeginDisabledGroup(!serializedOrbitalParams.FindProperty("drawDirections").boolValue);
@@ -168,6 +183,62 @@ public class SpaceshipEditor: Editor
             }
             ShowOrbitInfoPanel();
         }
+        //=========================================================================
+        //=========================================================================
+        if(GUI.changed)
+        {
+            SpaceshipSettingsSaveData dataToWrite = GatherSpaceshipDataToWriteToFile();
+            string filepath = UsefulFunctions.WriteToFileSpaceshipSettingsSaveData(dataToWrite);
+            Debug.Log("SpaceshipSettingsSaveData successfully saved at: '" + filepath + "'.");
+        }
+    }
+
+    private string[] GetStartingLaunchPadOptions(string startBodyName)
+    {
+        if(startBodyName.Equals("None")) { return new string[] {}; }
+
+        UniCsts.planets selectedPlanet = UsefulFunctions.CastStringTo_Unicsts_Planets(startBodyName);
+        if(selectedPlanet.Equals(UniCsts.planets.None))
+        {
+            return new string[] {};
+        }
+        else {
+            double isRocky = UniCsts.planetsDict[selectedPlanet][CelestialBodyParamsBase.otherParams.isRockyBody.ToString()];
+            if(isRocky == 0d) {
+                return new string[] {};
+            }
+        }
+
+        Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>> dict = LaunchPadList.launchPadsDict[selectedPlanet];
+        
+        if(dict.Count < 1) { return new string[] {}; }
+
+        List<string> keyList = new List<string>(dict.Keys);
+        return keyList.ToArray();
+    }
+
+    private SpaceshipSettingsSaveData GatherSpaceshipDataToWriteToFile()
+    {
+        /*
+        string massDouble;
+        string startFromGroundInt; // Bool
+        string groundStartLatLongVec2;
+        */
+        string[] shipDataToSave = new string[SpaceshipSettingsSaveData.NB_PARAMS];
+        shipDataToSave[0] = UsefulFunctions.DoubleToString(spaceship.settings.mass);
+        if(spaceship.settings.startFromGround)
+        {
+            shipDataToSave[1] = "1";
+            UniCsts.planets orbitedPlanet = UsefulFunctions.CastStringTo_Unicsts_Planets(serializedOrbitalParams.FindProperty("orbitedBodyName").stringValue);
+            Vector2 lp_latLong = LaunchPad.GetLaunchPadFromName(spaceship.settings.startLaunchPadName, orbitedPlanet).Get_Lat_Long();
+            shipDataToSave[2] = lp_latLong.ToString();
+        }
+        else
+        {
+            shipDataToSave[1] = "0";
+            shipDataToSave[2] = new Vector2(float.NaN, float.NaN).ToString();
+        }
+        return new SpaceshipSettingsSaveData(shipDataToSave);
     }
 
     public void ShowOrbitInfoPanel()
@@ -250,6 +321,3 @@ public class SpaceshipEditor: Editor
         }
     }
 }
-
-
-

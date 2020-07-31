@@ -13,6 +13,7 @@ public class SpaceshipSettings : ScriptableObject, FlyingObjSettings
     public Material bodyMaterial;
     //==============
     public bool startFromGround; // Boolean if the spaceship must spawn on the OrbitedBody surface (no orbit definition then)
+    public string startLaunchPadName; // Used Only if StartFromGround is enabled
     public Vector2 groundStartLatLong; // Latitude and longitude for a spacecraft starting from ground. Must have 'startFromGround' set to true
     //==============
     public bool showInfoPanel=false;

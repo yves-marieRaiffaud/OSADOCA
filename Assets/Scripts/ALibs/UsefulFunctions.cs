@@ -503,6 +503,46 @@ public static class UsefulFunctions
         dropdown.AddOptions(dataList);
     }
 
-    //public static void SaveDataToFile(string filepath, )
+    public static float ClampAngle(float lowerBound, float upperBound, float valueToClamp)
+    {
+        float outValue;
+        if(valueToClamp < lowerBound)
+        {
+            outValue = ClampAngle(lowerBound, upperBound, upperBound + valueToClamp);
+        }
+        else if(valueToClamp > upperBound)
+        {
+            outValue = ClampAngle(lowerBound, upperBound, valueToClamp - upperBound);
+        }
+        else {
+            outValue = valueToClamp;
+        }
+        return outValue;
+    }
+
+    public static double ClampAngle(double lowerBound, double upperBound, double valueToClamp)
+    {
+        double outValue;
+        if(valueToClamp < lowerBound)
+        {
+            outValue = ClampAngle(lowerBound, upperBound, upperBound + valueToClamp);
+        }
+        else if(valueToClamp > upperBound)
+        {
+            outValue = ClampAngle(lowerBound, upperBound, valueToClamp - upperBound);
+        }
+        else {
+            outValue = valueToClamp;
+        }
+        return outValue;
+    }
+
+    public static string WriteToFileSpaceshipSettingsSaveData(SpaceshipSettingsSaveData data)
+    {
+        // Save the file and returns the filepath
+        string filepath = Application.persistentDataPath + Filepaths.shipToLoad_settings;
+        File.WriteAllText(filepath, JsonUtility.ToJson(data, true));
+        return filepath;
+    }
 
 }

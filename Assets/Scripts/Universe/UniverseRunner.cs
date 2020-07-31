@@ -66,6 +66,7 @@ public class UniverseRunner : MonoBehaviour
 
             AddGameObjectToPhysicsFolders(star, starFolder);
         }
+
         foreach(GameObject planet in GameObject.FindGameObjectsWithTag(goTags.Planet.ToString()))
         {
             // CelestialBodies and Spaceships must have done their Awake() at this point
@@ -74,11 +75,12 @@ public class UniverseRunner : MonoBehaviour
 
             AddGameObjectToPhysicsFolders(planet, planetsFolder);
         }
+
         foreach(GameObject vessel in GameObject.FindGameObjectsWithTag(goTags.Spaceship.ToString()))
         {
             InitializeRigidbody(vessel, 0.01f);
             AddGameObjectToPhysicsFolders(vessel, spaceshipFolder);
-        }             
+        }
     }
 
     private void InitializeRigidbody(GameObject physicGameObject, float rbMass)
@@ -89,7 +91,14 @@ public class UniverseRunner : MonoBehaviour
         rb.angularDrag = 0f;
         rb.drag = 0f;
         rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        if(UsefulFunctions.GoTagAndStringAreEqual(goTags.Spaceship, physicGameObject.tag))
+        {
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+        }
+        else {
+            rb.interpolation = RigidbodyInterpolation.None;
+        }
+        
         rb.constraints = RigidbodyConstraints.None;
         rb.detectCollisions = true;
         rb.isKinematic = false;
@@ -157,13 +166,13 @@ public class UniverseRunner : MonoBehaviour
 
     private void GravitationalStep()
     {
-        // First computing the acc, velocity and position updates for each Star, Planet or Spaceship 
+        // First computing the acceleration updates for each Star, Planet or Spaceship 
         foreach(Transform obj in physicsObjArray)
         {
             ComputeNewPosition(obj, obj.tag);
         }
 
-        // Once everything has been computed, apply the new position ot every objects
+        // Once everything has been computed, apply the new accelerations at every objects
         foreach(Transform obj in physicsObjArray)
         {
             ApplyNewPosition(obj, obj.tag);

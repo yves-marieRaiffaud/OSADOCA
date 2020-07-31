@@ -288,7 +288,8 @@ public class CelestialBodyEditor : Editor
         // ORBITAL PARAMETERS
         EditorGUILayout.LabelField("Rendering parameters", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("drawOrbit"));
-        EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("orbitDrawingResolution"));
+        SerializedProperty orbDrawingRes = serializedOrbitalParams.FindProperty("orbitDrawingResolution");
+        orbDrawingRes.intValue = EditorGUILayout.IntSlider("Orbit Drawing Resolution", orbDrawingRes.intValue, 10, 500);
         EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("drawDirections"));
         EditorGUI.BeginDisabledGroup(!serializedOrbitalParams.FindProperty("drawDirections").boolValue);
         EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("selectedVectorsDir"));

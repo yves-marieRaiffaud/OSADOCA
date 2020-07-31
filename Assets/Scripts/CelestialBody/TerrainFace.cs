@@ -204,7 +204,7 @@ public class Chunk
         this.normalizedPos = position.normalized;
 
         this.initialBumpMap = bumpMapTexture;
-        this.MAX_ALTITUDE = (float)celestialBodySettingsScript.planetBaseParamsDict[CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()];
+        this.MAX_ALTITUDE = (float)UniCsts.pl2u*(float)celestialBodySettingsScript.planetBaseParamsDict[CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()];
         this.pixelWidthOffset = initialBumpMap.width - (0.5f + Mathf.Atan2(1f, 0f) / (2f*Mathf.PI)) * initialBumpMap.width;
 
         this.universePlayerCamera = activeCamera;
@@ -242,6 +242,7 @@ public class Chunk
     public void UpdateChunk()
     {
         float distanceToPlayer = Vector3.Distance(celestialBody.transform.TransformDirection(normalizedPos * (float)celestialBodySettingsScript.radiusU) + celestialBody.transform.position, universePlayerCamera.position);
+        //Debug.LogFormat("distance = {0} - detailLevel = {1}", distanceToPlayer, detailLevel);
         if (detailLevel <= celestialBodySettingsScript.detailLevelDistances.Length - 1)
         {
             if (distanceToPlayer > celestialBodySettingsScript.detailLevelDistances[detailLevel])
@@ -458,6 +459,8 @@ public class Chunk
 
         float pixel_w, pixel_h, elevation, pi_x_2;
         pi_x_2 = 2f*Mathf.PI;
+
+        float maxRatio = MAX_ALTITUDE / (float)(celestialBodySettingsScript.radiusU);
         for (int i = 0; i < vertices.Length; i++)
         {
             // pointOnCube goes along the x values, then the y values (with a localUp normal along +z axis)
@@ -469,19 +472,21 @@ public class Chunk
                 pixel_w = (0.5f + Mathf.Atan2(pointOnUnitSphere.x, pointOnUnitSphere.z) / pi_x_2) * initialBumpMap.width;
                 pixel_h = (0.5f - Mathf.Asin(pointOnUnitSphere.y) / Mathf.PI) * initialBumpMap.height;
                 pixel_w = (pixel_w-pixelWidthOffset) < 0f ? initialBumpMap.width + (pixel_w-pixelWidthOffset) : pixel_w-pixelWidthOffset;
-
-                float p1 = initialBumpMap.GetPixel((int)Mathf.Floor(pixel_w), (int)Mathf.Floor(pixel_h)).grayscale; // bottom left
-                float p2 = initialBumpMap.GetPixel((int)Mathf.Ceil(pixel_w), (int)Mathf.Floor(pixel_h)).grayscale; // bottom right
-                float p3 = initialBumpMap.GetPixel((int)Mathf.Ceil(pixel_w), (int)Mathf.Ceil(pixel_h)).grayscale; // top right
-                float p4 = initialBumpMap.GetPixel((int)Mathf.Floor(pixel_w), (int)Mathf.Ceil(pixel_h)).grayscale; // top left
+                pixel_w = pixel_w > initialBumpMap.width ? (pixel_w-initialBumpMap.width) : pixel_w;
+                
+                Color[] surroundingPixels = initialBumpMap.GetPixels((int)Mathf.Floor(pixel_w), (int)Mathf.Floor(pixel_h), 3, 3);
+                float p1 = surroundingPixels[0].grayscale; // bottom left
+                float p2 = surroundingPixels[2].grayscale; // bottom right
+                float p3 = surroundingPixels[6].grayscale; // top left
+                float p4 = surroundingPixels[8].grayscale; // top right
                 float medianGrayVal = (p1+p2+p3+p4)/4;
+
                 // First value is minimum grayscale value: 0 == black
                 // Second value is the coorepsonding elevation for minimum grayscale value: 0 == ocean floor
                 // third value is maximum grayscale value: 255 == white
-                // Fourth value is the corresponding elevation for maximum grayscale value: MAX_ALTITUDE in unity units
-                elevation = (float)UniCsts.pl2u * UsefulFunctions.linearInterpolation(0, 0, 1, MAX_ALTITUDE, medianGrayVal);
-                elevation = 1f + elevation / (float)(celestialBodySettingsScript.radiusU); // Adding the altitude elevation to the base surface elevation 
-                // elevation in km, then unity units, then in ratio of the celestialBody radiusU
+                // Fourth value is the corresponding elevation for maximum grayscale value: MAX_ALTITUDE in km
+                elevation = UsefulFunctions.linearInterpolation(0, 0, 1, MAX_ALTITUDE, medianGrayVal) / (float)(celestialBodySettingsScript.radiusU);
+                elevation = 1f + Mathf.Clamp(elevation, 0f, maxRatio); // Adding the altitude elevation to the base surface elevation
             }
             else
             {
@@ -492,13 +497,39 @@ public class Chunk
 
         // Do the same for the border vertices
         borderVertices = new Vector3[Presets.quadTemplateBorderVertices[quadIndex].Length];
-        //Debug.Log("borderVertices.Length = " + borderVertices.Length);
 
         for (int i = 0; i < borderVertices.Length; i++)
         {
             Vector3 pointOnCube = transformMatrix.MultiplyPoint(Presets.quadTemplateBorderVertices[quadIndex][i]);
             Vector3 pointOnUnitSphere = pointOnCube.normalized;
-            borderVertices[i] = pointOnUnitSphere * (float)celestialBodySettingsScript.radiusU;
+
+            if(!hasDefaultHeightmap)
+            {
+                pixel_w = (0.5f + Mathf.Atan2(pointOnUnitSphere.x, pointOnUnitSphere.z) / pi_x_2) * initialBumpMap.width;
+                pixel_h = (0.5f - Mathf.Asin(pointOnUnitSphere.y) / Mathf.PI) * initialBumpMap.height;
+                pixel_w = (pixel_w-pixelWidthOffset) < 0f ? initialBumpMap.width + (pixel_w-pixelWidthOffset) : pixel_w-pixelWidthOffset;
+                pixel_w = pixel_w > initialBumpMap.width ? (pixel_w-initialBumpMap.width) : pixel_w;
+                
+                Color[] surroundingPixels = initialBumpMap.GetPixels((int)Mathf.Floor(pixel_w), (int)Mathf.Floor(pixel_h), 3, 3);
+                float p1 = surroundingPixels[0].grayscale; // bottom left
+                float p2 = surroundingPixels[2].grayscale; // bottom right
+                float p3 = surroundingPixels[6].grayscale; // top left
+                float p4 = surroundingPixels[8].grayscale; // top right
+                float medianGrayVal = (p1+p2+p3+p4)/4;
+
+                // First value is minimum grayscale value: 0 == black
+                // Second value is the coorepsonding elevation for minimum grayscale value: 0 == ocean floor
+                // third value is maximum grayscale value: 255 == white
+                // Fourth value is the corresponding elevation for maximum grayscale value: MAX_ALTITUDE in km
+                elevation = UsefulFunctions.linearInterpolation(0, 0, 1, MAX_ALTITUDE, medianGrayVal) / (float)(celestialBodySettingsScript.radiusU);
+                elevation = 1f + Mathf.Clamp(elevation, 0f, maxRatio); // Adding the altitude elevation to the base surface elevation 
+            }
+            else
+            {
+                elevation = 1f;
+            }
+
+            borderVertices[i] = pointOnUnitSphere * elevation * (float)celestialBodySettingsScript.radiusU;
         }
 
         // Store the triangles

@@ -25,13 +25,14 @@ public class SimRocketCam_MouseOrbit : MonoBehaviour
 
     private Camera mainCameraForRocket; // Needed to modify its Far clipping plane value when zooming in/out
     private Camera cameraBackOuterSpace;
-    private float farClipPlaneMargin = 10f;
+    private float farClipPlaneMargin;
 
     void Start () 
     {
         targetLocalScale = 3f / (target.localScale.x + target.localScale.y + target.localScale.z);
         distance = cameraBackTR.position.magnitude/targetLocalScale;
-        farClipPlaneMargin = (float)UniCsts.u2pl/2f;
+        //farClipPlaneMargin = (float)UniCsts.u2pl/2f;
+        farClipPlaneMargin = (float)UniCsts.u2pl/2f / targetLocalScale;
 
         mainCameraForRocket = gameObject.GetComponent<Camera>();
         cameraBackOuterSpace = cameraBackTR.gameObject.GetComponent<Camera>();
@@ -50,7 +51,7 @@ public class SimRocketCam_MouseOrbit : MonoBehaviour
  
     void LateUpdate () 
     {
-        farClipPlaneMargin = Mathf.Min(farClipPlaneMargin, 10f);
+        farClipPlaneMargin = Mathf.Min(farClipPlaneMargin, (float)UniCsts.u2pl/2f/targetLocalScale);
 
         UpdateCamera_Rotation_Zoom();
         cameraBackOuterSpace.nearClipPlane = mainCameraForRocket.farClipPlane;
@@ -87,7 +88,7 @@ public class SimRocketCam_MouseOrbit : MonoBehaviour
 
             transform.position = position;
         }
-        mainCameraForRocket.farClipPlane = distance*(float)UniCsts.pl2u + farClipPlaneMargin;
+        mainCameraForRocket.farClipPlane = distance/targetLocalScale + farClipPlaneMargin;
     }
 
     public static float ClampAngle(float angle, float min, float max)

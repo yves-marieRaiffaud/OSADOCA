@@ -58,6 +58,9 @@ public static class FlyingObj
         T1 castBody = CastObjectToType<T1>(body);
         T2 bodySettings = GetObjectSettings<T2>(body);
 
+        castBody.SetDistanceScaleFactor(); // Set the scaleFactor of the body, depending on the definition of the orbit (in km or in AU)
+        // From this point, we can directly use the 'distanceScaleFactor' property of the body
+
         if(body is Spaceship)
         {
             SpaceshipSettings shipSettings = (SpaceshipSettings)(dynamic)bodySettings;
@@ -71,6 +74,7 @@ public static class FlyingObj
 
         FlyingObj.InitializeOrbit<T1, T2>(body);
         FlyingObj.InitializeBodyPosition<T1, T2>(body);
+        FlyingObj.InitializeOrbitalSpeed<T1, T2>(body);
         FlyingObj.InitializeDirVecLineRenderers<T1, T2>(body);
 
         // Init Axial Tilt for CelestialBody
@@ -82,19 +86,6 @@ public static class FlyingObj
             celestBody.InitializeAxialTilt();
         }
 
-        // Init orbital speed
-        Vector3d tangentialVec = castBody.orbit.ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.tangentialVec);
-        double orbitalSpeed = castBody.orbit.GetOrbitalSpeedFromOrbit();
-        castBody.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
-
-        // Init orbital speed of the Rigidbody
-        float scaleFactor = (float)(UniCsts.m2km * UniCsts.km2au * UniCsts.au2u);
-        if(castBody.orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree)
-        {
-            scaleFactor = (float)(UniCsts.m2km * UniCsts.pl2u);
-        }
-        Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
-        rb.velocity = (Vector3)castBody.orbitedBodyRelativeVel * scaleFactor;
     }
 
     /// <summary>
@@ -142,7 +133,8 @@ public static class FlyingObj
                 }
                 else {
                     // A spaceship with in orbit init
-                    bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit, OrbitalTypes.bodyPositionType.nu);
+                    //bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit, OrbitalTypes.bodyPositionType.nu);
+                    bodyRelatedPos = Orbit.GetWorldPositionFromLineRendererOrbit(castBody.orbit, OrbitalTypes.bodyPositionType.nu);
                 }
             }
             else {
@@ -153,6 +145,41 @@ public static class FlyingObj
             castBody.realPosition = UsefulFunctions.AlignPositionVecWithParentPos(bodyRelatedPos, castBody.orbitalParams.orbitedBody.transform.position);
             castBody._gameObject.transform.position = (Vector3)castBody.realPosition;
         }
+    }
+
+    public static void InitializeOrbitalSpeed<T1, T2>(UnityEngine.Object body)
+    where T1: FlyingObjCommonParams where T2: FlyingObjSettings
+    {
+        T1 castBody = CastObjectToType<T1>(body);
+        T2 bodySettings = GetObjectSettings<T2>(body);
+
+        // Init orbital speed
+        Vector3d tangentialVec = castBody.orbit.ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.tangentialVec);
+        double orbitalSpeed = castBody.orbit.GetOrbitalSpeedFromOrbit();
+        castBody.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
+
+        Vector3d speedOfOrbitedBody = Vector3d.zero;
+        if(!castBody.orbitalParams.orbitedBodyName.Equals("None")) {
+            CelestialBody orbitedBody = castBody.orbitalParams.orbitedBody;
+            speedOfOrbitedBody = orbitedBody.orbitedBodyRelativeVel;
+        } 
+
+        // Init orbital speed of the Rigidbody
+        double scaleFactor = castBody.distanceScaleFactor;
+        Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
+        Vector3d absoluteScaledVelocity = castBody.orbitedBodyRelativeVel*scaleFactor + speedOfOrbitedBody*UniCsts.m2km2au2u;
+        rb.velocity = (Vector3)absoluteScaledVelocity;
+
+        if(body is Spaceship) {
+            InitializeSpaceshipRotation<T1>(castBody, (Vector3)tangentialVec);
+        }
+    }
+
+    public static void InitializeSpaceshipRotation<T1>(T1 shipBody, Vector3 directionVector)
+    where T1: FlyingObjCommonParams
+    {
+        // The y-axis of the spaceship will be aligned with the passed 'directionVector'
+        shipBody._gameObject.transform.rotation = Quaternion.FromToRotation(Vector3.up, (Vector3)directionVector);
     }
 
     /// <summary>
@@ -239,7 +266,7 @@ public static class FlyingObj
 
         if(!Vector3d.IsValid(acc) || UsefulFunctions.DoublesAreEqual(dstPow3, 0d))
         {
-            Debug.Log("Acc is not valid or distance between the pulling body and the target body is null");
+            Debug.LogError("Acc is not valid or distance between the pulling body and the target body is null");
             orbitingBody.orbitedBodyRelativeAcc = Vector3d.positiveInfinity;
         }
         else {
@@ -257,41 +284,39 @@ public static class FlyingObj
     public static void ComputeUpdatedPosition<T1, T2>(T1 castBody, T2 settings)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
-        double scaleFact = UniCsts.km2au * UniCsts.au2u; // Default for planets and stars
-        if(castBody._gameObject.tag == UniverseRunner.goTags.Spaceship.ToString()) {
-            scaleFact = UniCsts.pl2u;
-        }
-
-        Vector3d updatedPos = Time.fixedDeltaTime * UniCsts.m2km * scaleFact * castBody.orbitedBodyRelativeVel;
+        Vector3d updatedPos = Time.fixedDeltaTime * castBody.distanceScaleFactor * castBody.orbitedBodyRelativeVel;
         castBody.realPosition += updatedPos;
     }
-
-    /*public static void ApplyRigbidbodyPosUpdate<T1, T2>(T1 castBody, T2 settings)
-    where T1: FlyingObjCommonParams where T2: FlyingObjSettings
-    {
-        Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
-
-        float scaleFactor = (float)(UniCsts.m2km * UniCsts.km2au * UniCsts.au2u); // Default for CelestialBody
-        if(castBody.orbitalParams.orbParamsUnits == OrbitalParams.orbitalParamsUnits.km_degree)
-        {
-            scaleFactor = (float)(UniCsts.m2km * UniCsts.pl2u); // For spaceships
-        }
-
-        rb.velocity = (Vector3)castBody.orbitedBodyRelativeVel*scaleFactor;
-        rb.MovePosition((Vector3)castBody.realPosition);
-    }*/
 
     public static void ApplyRigbidbodyAccUpdate<T1, T2>(T1 castBody, T2 settings)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
 
-        float scaleFactor = (float)(UniCsts.m2km * UniCsts.km2au * UniCsts.au2u); // Default for CelestialBody
-        if(castBody.orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree)
-        {
-            scaleFactor = (float)(UniCsts.m2km * UniCsts.pl2u); // For spaceships
-        }
-        rb.velocity = (Vector3)castBody.orbitedBodyRelativeVel*scaleFactor;
-        rb.AddForce((Vector3)castBody.orbitedBodyRelativeAcc*scaleFactor, ForceMode.Acceleration);
+        double scaleFactor = castBody.distanceScaleFactor;
+
+        Vector3d force = castBody.orbitedBodyRelativeAcc * scaleFactor;
+        rb.AddForce((Vector3)force, ForceMode.Acceleration);
+
+        Vector3d orbitedBodyVel = Vector3d.zero;
+        if(!castBody.orbitalParams.orbitedBodyName.Equals("None")) {
+            CelestialBody orbitedBody = castBody.orbitalParams.orbitedBody;
+            orbitedBodyVel = orbitedBody.orbitedBodyRelativeVel;
+        } 
+        rb.velocity = (Vector3)(castBody.orbitedBodyRelativeVel*scaleFactor + orbitedBodyVel*UniCsts.m2km2au2u);
+    }
+
+    public static Vector3d GetAbsoluteVelocity<T1>(T1 castBody)
+    where T1 : FlyingObjCommonParams
+    {
+        // Returns a Vector3d of the absolute velocity of the passed flyingObjBody: either a Spaceship or a CelestialBody
+        Vector3d speedOfOrbitedBody = Vector3d.zero;
+        if(!castBody.orbitalParams.orbitedBodyName.Equals("None")) {
+            CelestialBody orbitedBody = castBody.orbitalParams.orbitedBody;
+            speedOfOrbitedBody = orbitedBody.orbitedBodyRelativeVel;
+        } 
+
+        double scaleFactor = castBody.distanceScaleFactor;
+        return castBody.orbitedBodyRelativeVel*scaleFactor + speedOfOrbitedBody*UniCsts.m2km2au2u;
     }
 }

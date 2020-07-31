@@ -147,7 +147,42 @@ public class Orbit
 
     public void UpdateLineRendererPos()
     {
-        lineRendererGO.transform.localPosition = orbitedBody.transform.localPosition;
+        lineRendererGO.transform.position = orbitedBody.transform.position;
+
+        string radial = param.suffixVectorDir[OrbitalTypes.typeOfVectorDir.radialVec];
+        string tangent = param.suffixVectorDir[OrbitalTypes.typeOfVectorDir.tangentialVec];
+        string velocity = param.suffixVectorDir[OrbitalTypes.typeOfVectorDir.velocityVec];
+        string acc = param.suffixVectorDir[OrbitalTypes.typeOfVectorDir.accelerationVec];
+
+        foreach(Transform child in lineRendererGO.transform)
+        {
+            if(child.name.Contains(radial) || child.name.Contains(tangent) || child.name.Contains(velocity) || child.name.Contains(acc))
+            {
+                OrbitalTypes.typeOfVectorDir vecDirection;
+                if(child.name.Contains(radial)) {
+                    vecDirection = OrbitalTypes.typeOfVectorDir.radialVec;
+                }
+                else if(child.name.Contains(tangent)) {
+                    vecDirection = OrbitalTypes.typeOfVectorDir.tangentialVec;
+                }
+                else if(child.name.Contains(velocity)) {
+                    vecDirection = OrbitalTypes.typeOfVectorDir.velocityVec;
+                }
+                else {
+                    vecDirection = OrbitalTypes.typeOfVectorDir.accelerationVec;
+                }
+                UpdateDirectionVectorLineRenderer(child.gameObject.GetComponent<LineRenderer>(), vecDirection);
+                // Need to position the gameobject vector on the spaceship
+                child.transform.position = orbitingGO.transform.localPosition;
+            }
+        }
+    }
+
+    private void UpdateDirectionVectorLineRenderer(LineRenderer lineRenderer, OrbitalTypes.typeOfVectorDir vectorDirection)
+    {
+        Vector3 vec = (Vector3)ComputeDirectionVector(vectorDirection).normalized;
+        lineRenderer.SetPosition(0, Vector3.zero);
+        lineRenderer.SetPosition(1, (float)(param.ra*scalingFactor)*vec);
     }
 
     public static Vector3d GetWorldPositionFromOrbit(Orbit orbit, OrbitalTypes.bodyPositionType posType)
@@ -166,6 +201,25 @@ public class Orbit
 
                 worldPos = r*cosNu*fVec + r*Mathd.Sin(posValue)*rVec;
                 worldPos = orbit.orbitRot * worldPos * orbit.scalingFactor;
+                break;
+
+            case OrbitalTypes.bodyPositionType.m0:
+                break;
+        }
+        return worldPos;
+    }
+
+    public static Vector3d GetWorldPositionFromLineRendererOrbit(Orbit orbit, OrbitalTypes.bodyPositionType posType)
+    {
+        // Return the Vector3d position in the world (X,Y,Z) from the position of the body on its orbit
+        // BUT RECOVERES THE POSITION DIRECTLY FROM THE LINE RENDERER DATA
+        Vector3d worldPos = Vector3d.NaN();
+        switch(posType)
+        {
+            case OrbitalTypes.bodyPositionType.nu:
+                double posValue = UsefulFunctions.ClampAngle(0d, 360d, orbit.param.nu);
+                int posIndex = Convert.ToInt32(orbit.lineRenderer.positionCount * posValue / 360d);
+                worldPos = new Vector3d(orbit.lineRenderer.GetPosition(posIndex));
                 break;
 
             case OrbitalTypes.bodyPositionType.m0:
@@ -548,8 +602,6 @@ public class Orbit
         double velocity = Mathd.Pow(10,5) * Mathd.Sqrt(orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()] / Get_R());
         return velocity;
     }
-
-
 
     public double Get_R()
     {

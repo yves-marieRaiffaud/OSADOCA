@@ -47,6 +47,17 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
 
+    private double _distanceScaleFactor;
+    public double distanceScaleFactor
+    {
+        get {
+            return _distanceScaleFactor;
+        }
+        set {
+            _distanceScaleFactor=value;
+        }
+    }
+
     [HideInInspector]
     public Vector3d _realPosition;
     public Vector3d realPosition
@@ -111,9 +122,12 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     TerrainFace[] terrainFaces;
     //=========================================
     private IEnumerator planetGenerationCoroutine;
-    private bool planetGenerationCoroutineIsRunning;
+    public bool planetGenerationCoroutineIsRunning = false;
     private float nonLODTransitionDistance; // in unity units, using the 'pl2u' scaling factor
     string sphereTemplateCelestBodyName = "sphereTemplate";
+    public bool addMeshColliders = true;
+    public bool forceNonLODSphere = false;
+    public bool forceLODSphere = false;
     //=========================================
 
     void Awake()
@@ -158,7 +172,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     {
         AssignRefDictOrbitalParams(refDictOrbParams);
         if(spawnAsSimpleSphere) { 
-            gameObject.GetComponent<MeshRenderer>().material = settings.bodyMaterial;
+            gameObject.GetComponent<MeshRenderer>().material = settings.sphereTemplateMaterial;
             InitializeBodyParameters();
             return; // Early exit if it's a UI celestialBody
         }
@@ -178,13 +192,10 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         GeneratePlanet();
         ApplyFlatenningScale();
         CreateAssignSunPointLight();
+        UpdateLODDistances();
 
         planetGenerationCoroutine = PlanetGenerationLoop();
         SwitchFromLODSystemToNonLODSphere();
-        //planetGenerationCoroutineIsRunning = true;
-        //StartCoroutine(planetGenerationCoroutine);
-        
-        UpdateLODDistances();
     }
 
     private void UpdateLODDistances()
@@ -194,8 +205,8 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         settings.detailLevelDistances[2] = (float)settings.radiusU * UniCsts.ratioCelestBodiesLODDistances[1];
         settings.detailLevelDistances[3] = (float)settings.radiusU * UniCsts.ratioCelestBodiesLODDistances[2];
         settings.detailLevelDistances[4] = (float)settings.radiusU * UniCsts.ratioCelestBodiesLODDistances[3]; 
-        settings.detailLevelDistances[5] = 0.05f;
-        settings.detailLevelDistances[6] = float.NegativeInfinity;
+        settings.detailLevelDistances[5] = (float)settings.radiusU * UniCsts.ratioCelestBodiesLODDistances[4];
+        settings.detailLevelDistances[6] = (float)settings.radiusU * UniCsts.ratioCelestBodiesLODDistances[5];
     }
 
     private void GetDistancesToCamera()
@@ -284,9 +295,12 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             {
                 GameObject meshObj = new GameObject(directionsDict[directionsDict.Keys.ElementAt(i)]);
                 meshObj.transform.parent = transform;
+                meshObj.transform.position = transform.position;
 
                 meshObj.AddComponent<MeshRenderer>().sharedMaterial = settings.bodyMaterial;
-                InitMeshColliders(meshObj);
+                if(addMeshColliders) {
+                    InitMeshColliders(meshObj);
+                }
                 meshFilters[i] = meshObj.AddComponent<MeshFilter>();
                 meshFilters[i].sharedMesh = new Mesh();
                 meshFilters[i].sharedMesh.name = directionsDict[directionsDict.Keys.ElementAt(i)].ToString() + "_mesh";
@@ -305,6 +319,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     {
         GameObject sphereGO = new GameObject(sphereTemplateCelestBodyName, typeof(MeshRenderer), typeof(MeshFilter));
         sphereGO.transform.parent = transform;
+        sphereGO.transform.position = transform.position;
         sphereGO.layer = 9;
         float scaleToApply = 2f * (float)settings.radiusU;
         sphereGO.transform.localScale = new Vector3(scaleToApply, scaleToApply, scaleToApply);
@@ -323,8 +338,10 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         foreach(TerrainFace face in terrainFaces)
         {
             face.ConstructTree();
-            MeshCollider mCollider = meshFilters[idx].gameObject.GetComponent<MeshCollider>();
-            mCollider.sharedMesh = face.mesh;
+            if(addMeshColliders) {
+                MeshCollider mCollider = meshFilters[idx].gameObject.GetComponent<MeshCollider>();
+                mCollider.sharedMesh = face.mesh;
+            }
             idx += 1;
         }
     }
@@ -363,10 +380,27 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
         GetDistancesToCamera();
         CheckUpdate_LOD_NonLOD_System();
+
+        if(!UsefulFunctions.DoublesAreEqual(settings.rotationSpeed, 0d))
+        {
+            RotatePlanet();
+        }
     }
 
     private void CheckUpdate_LOD_NonLOD_System()
     {
+        if(forceNonLODSphere) {
+            if(planetGenerationCoroutineIsRunning) {
+                SwitchFromLODSystemToNonLODSphere();
+            }
+            return;
+        }
+        if(forceLODSphere) {
+            if(!planetGenerationCoroutineIsRunning) {
+                SwitchFromNonLODSphereToLODSystem();
+            }
+        }
+
         string currShipOrbitedBodyName = universeRunner.activeSpaceship.orbitalParams.orbitedBodyName;
         if(currShipOrbitedBodyName.Equals(gameObject.name) && !planetGenerationCoroutineIsRunning)
         {
@@ -375,11 +409,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         else if(!currShipOrbitedBodyName.Equals(gameObject.name) && planetGenerationCoroutineIsRunning)
         {
             SwitchFromLODSystemToNonLODSphere();
-        }
-
-        if(!UsefulFunctions.DoublesAreEqual(settings.rotationSpeed, 0d))
-        {
-            RotatePlanet();
         }
     }
 
@@ -404,8 +433,10 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     private void SwitchFromLODSystemToNonLODSphere()
     {
         // Stop the LOD update
+        if(planetGenerationCoroutineIsRunning) {
+            StopCoroutine(planetGenerationCoroutine);
+        }
         planetGenerationCoroutineIsRunning = false;
-        StopCoroutine(planetGenerationCoroutine);
 
         foreach(Transform child in transform)
         {
@@ -503,7 +534,8 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     public Vector3d GetWorldPositionFromGroundStart()
     {
         Debug.Log(gameObject.name + " - " + settings.radiusU);
-        return -settings.radiusU * Vector3d.forward;
+        // '1f*UniCsts.m2km2pl2u' TO CHANGE
+        return -(settings.radiusU + 1f*UniCsts.m2km2pl2u) * Vector3d.forward;
     }
 
     public void InitMeshColliders(GameObject faceGO)
@@ -518,6 +550,18 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         sp_c_Material.frictionCombine = PhysicMaterialCombine.Average;
         sp_c_Material.bounceCombine = PhysicMaterialCombine.Average;
         meshCollider.material = sp_c_Material;
+    }
+
+    public double SetDistanceScaleFactor()
+    {
+        if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree)
+        {
+            distanceScaleFactor = UniCsts.m2km2pl2u; // If the orbit is defined in km_degree
+        }
+        else {
+            distanceScaleFactor = UniCsts.m2km2au2u; // If the orbit is defined in AU_degree
+        }
+        return distanceScaleFactor;
     }
 
 }

@@ -12308,7 +12308,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 930964324}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eee267f4d24b19e40a67a0692fb10e78, type: 3}
+  m_Script: {fileID: 11500000, guid: 650578dddc9ec9f4096393d75e4b36b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   btn_StartLocation: {fileID: 315406266}
@@ -12318,7 +12318,7 @@ MonoBehaviour:
   btn_Fly: {fileID: 1603119725}
   controlBarCheckScript: {fileID: 1983871710}
   currentSelectedMenuInt: 0
-  activeContentPanel: {fileID: 958038299}
+  activeContentPanel: {fileID: 0}
 --- !u!114 &930964329
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24098,12 +24098,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1983871708}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0fae80d01b1a9e3419ffb4749b8fc4ca, type: 3}
+  m_Script: {fileID: 11500000, guid: e314a48768949c94fb2bde0f820587a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color_isSetUp: {r: 0.24137694, g: 0.8207547, b: 0.18195976, a: 1}
-  color_isNOTSetUp: {r: 0.9607843, g: 0.35352236, b: 0.06666665, a: 1}
-  color_selectedPanel: {r: 0.32872015, g: 0.50875247, b: 0.8396226, a: 1}
+  color_isSetUp: {r: 0.20647918, g: 0.754717, b: 0.2966499, a: 1}
+  color_isNOTSetUp: {r: 1, g: 0.45402387, b: 0.1981132, a: 1}
+  color_selectedPanel: {r: 0.3194197, g: 0.6184882, b: 0.9150943, a: 1}
   color_default: {r: 1, g: 1, b: 1, a: 1}
   controlBar_startLoc_Img: {fileID: 18180326}
   controlBar_Spacecraft_Img: {fileID: 430226102}
@@ -26141,7 +26141,7 @@ PrefabInstance:
     - target: {fileID: 8430513295115143510, guid: 54784e818031e9840b85f08421972e08,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 8430513295115143510, guid: 54784e818031e9840b85f08421972e08,
         type: 3}

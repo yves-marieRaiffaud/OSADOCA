@@ -7,17 +7,17 @@ public interface FlyingObjCommonParams
 {
     // Either 'Spaceship' or 'CelestialBody'
     // Interface for the shared variables between 'Spaceship' and 'CelestialBody' objects
-
-    //CelestialBody orbitedBody {get; set;} MOVED IN THE ORBITAL PARAMS FILE
     Orbit orbit {get; set;}
     OrbitalPredictor predictor {get; set;}
     OrbitalParams orbitalParams {get; set;}
 
+    double distanceScaleFactor {get; set;} // Either 'UniCsts.m2km2au2u' if the orbit is defined in AU, or 'UniCsts.m2km2pl2u' if the orbit is defined in km
     Vector3d orbitedBodyRelativeAcc {get; set;}
     Vector3d orbitedBodyRelativeVelIncr {get; set;}
     Vector3d orbitedBodyRelativeVel {get; set;}
     Vector3d realPosition {get; set;}
 
+    double SetDistanceScaleFactor(); // To set the Scaling factor to convert meters to unity units, depending if the orbit is defined in 'km' or in 'AU' 
     Vector3d GetRelativeRealWorldPosition();
     Vector3d GetRelativeVelocity();
     double GetRelativeVelocityMagnitude();

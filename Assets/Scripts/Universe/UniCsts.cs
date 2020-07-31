@@ -27,6 +27,9 @@ public static class UniCsts
     public const double au2km = 149_597_870.7d; // km
     public const double km2au = 1/au2km;
 
+    public const double m2km2au2u = m2km * km2au * au2u; // To convert meters to unity units for CELESTIALBODIES
+    public const double m2km2pl2u = m2km * pl2u; // To convert meters to unity units for SPACESHIPS
+
     // u2au = 1000 ==> 1000 unity units == 1 AU
     public const double au2u = 60_000d; // 1 AU (150M km) translated into the unity coordinates system. 1au == 1000f
     public const double u2au = 1d/au2u;
@@ -37,10 +40,9 @@ public static class UniCsts
 
     // Only 6 levels in this array as the first distance is '+infinity' for level 0
     // level 0 is +infinity and will not be modified
-    // level 5 and 6 are for on ground planetary surface. They have fixed values and are not concernet by these ratios hereunder 
-    // Order of the array's ratios : 'level1', 'level2', 'level3', 'level4'.
+    // Order of the array's ratios : 'level1', 'level2', 'level3', 'level4', 'level5', 'level6'
     // Values corresponds to the radiusU. New distance is ths 'radiusU * ratio'
-    public static float[] ratioCelestBodiesLODDistances = new float[] { 5f, 2f, 0.2f, 0.1f };
+    public static float[] ratioCelestBodiesLODDistances = new float[] { 0.8f, 0.3f, 0.05f, 0.005f, 0.0007f, 0.00015f };
     public const string sphereNoLODTemplate_GO = "Sphere_noLOD_Template";
 
     // u2sh=1f ==> 1 unity unit == 1 m of the spaceship
@@ -52,7 +54,7 @@ public static class UniCsts
     public const double real2massU = 1d/massU2real;
 
     // Max distance before offseting every object to bring the camera back at the origin
-    public const double dstThreshold = 10_000d;
+    public const double dstThreshold = 300d;
 
     // Vernal Point, very high value on x so that it is located at the infinity
     public static readonly  Vector3d pv = new Vector3d(1e100d, 0d, 0d); // SHOULD BE CHANGED TO SOMETHING ELSE

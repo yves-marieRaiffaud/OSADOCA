@@ -109,6 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c314a971f6f66b4d9cf62cb03d11036, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  universeRunner: {fileID: 0}
   settings: {fileID: 11400000, guid: c913b2763ac72764f94efa33ca6b20a4, type: 2}
   _orbit:
     param: {fileID: 0}
@@ -136,7 +137,7 @@ MonoBehaviour:
       orbitingGO: {fileID: 0}
       n: 0
       suffixGO: 
-  _orbitalParams: {fileID: 11400000, guid: 120aeed72bd1196499c659be4584afbb, type: 2}
+  _orbitalParams: {fileID: 11400000, guid: 8c928429380af84499cd8c472efe1138, type: 2}
   _realPosition:
     x: 0
     y: 0
