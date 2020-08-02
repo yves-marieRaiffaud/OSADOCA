@@ -122,10 +122,11 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     TerrainFace[] terrainFaces;
     //=========================================
     private IEnumerator planetGenerationCoroutine;
-    public bool planetGenerationCoroutineIsRunning = false;
+    [HideInInspector] public bool planetGenerationCoroutineIsRunning = false;
     private float nonLODTransitionDistance; // in unity units, using the 'pl2u' scaling factor
     string sphereTemplateCelestBodyName = "sphereTemplate";
     public bool addMeshColliders = true;
+    [Header("Force LOD/Non-LOD Sphere System")]
     public bool forceNonLODSphere = false;
     public bool forceLODSphere = false;
     //=========================================
@@ -531,11 +532,14 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         return orbitedBodyRelativeVel.magnitude;
     }
 
-    public Vector3d GetWorldPositionFromGroundStart()
+    public Vector3d GetWorldPositionFromGroundStart(double latitude, double longitude)
     {
-        Debug.Log(gameObject.name + " - " + settings.radiusU);
-        // '1f*UniCsts.m2km2pl2u' TO CHANGE
-        return -(settings.radiusU + 1f*UniCsts.m2km2pl2u) * Vector3d.forward;
+        Vector3d northPoleAxis = new Vector3d(Vector3.Cross(transform.right,transform.forward));
+        Vector3d rightAxis = new Vector3d(transform.right);
+        // SOMETHING WRONG HERE, need to fix the latitude position when the axial tilt of the planet is not null
+        Vector3d sphereUnitPos = LaunchPad.LatitudeLongitude_to_3DWorldUNITPoint(latitude, longitude, northPoleAxis, -rightAxis);
+        Quaterniond rot = Quaterniond.AngleAxis(-90d, northPoleAxis);
+        return  rot*sphereUnitPos * settings.radiusU;
     }
 
     public void InitMeshColliders(GameObject faceGO)

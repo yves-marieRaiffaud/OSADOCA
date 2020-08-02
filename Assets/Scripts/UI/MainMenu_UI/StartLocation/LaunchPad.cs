@@ -62,8 +62,7 @@ public class LaunchPad
         bool latSuccess = UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.latitude], out lat);
         bool longSuccess = UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.longitude], out longitude);
 
-        // COnvert lat & long to a 3D point on a unit sphere
-        Vector3 worldPos = (Quaternion.AngleAxis((float)longitude, Vector3.up) * Quaternion.AngleAxis((float)lat, Vector3.right) * new Vector3(0,0,1));
+        Vector3 worldPos = (Vector3)LaunchPad.LatitudeLongitude_to_3DWorldUNITPoint((float)lat, (float)longitude, Vector3d.up, Vector3d.right);
 
         // Convert the 3D point on the map
         // Computed 'pixel_w' & "pixel_h' are relative to the bottom left corner of the map
@@ -71,6 +70,13 @@ public class LaunchPad
         float pixel_h = (0.5f - Mathf.Asin(worldPos.y) / Mathf.PI) * xy_mapSize.y;
 
         return new Vector2(pixel_w, pixel_h);
+    }
+
+    public static Vector3d LatitudeLongitude_to_3DWorldUNITPoint(double latitude, double longitude, Vector3d northPoleAxis, Vector3d longitudeZeroAxis)
+    {
+        // Convert lat & long to a 3D point on a unit sphere
+        Vector3d worldPos = (Quaterniond.AngleAxis(longitude, northPoleAxis) * Quaterniond.AngleAxis(latitude, longitudeZeroAxis) * new Vector3d(0,0,1));
+        return worldPos;
     }
 
     public Vector2 Get_Lat_Long()

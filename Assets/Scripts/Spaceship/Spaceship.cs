@@ -111,19 +111,12 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         // FOR DEBUG PURPOSES
         if(GameObject.Find("DEBUG") == null) { return; }
 
+        settings = SpaceshipSettingsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_settings);
+
         DebugGameObject debugGO = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
         if(GameObject.Find("UniverseRunner") != null && orbitalParams == null && !debugGO.loadShipDataFromUIDiskFile)
         {
-            //==============================================================================================================================
-            //==============================================================================================================================
-            //=======================TO-DO==================================================================================================
-            // LOAD HERE THE DATA FROM 'shipToLoad_settings.json' & 'shipToLoad_OrbitalParams.json'
-            // MODIFY AND CALL 'DEBUG_LOAD_DATA_TO_SCRIPTABLE_OBJS()'
-            // SO THAT DISREGARDING IF WE USE THE UI OR DIRECTLY THE EDITOR, DATA WILL BE LOADED FROM THE SAVED FILES (real case scenario)
-            //==============================================================================================================================
-            //==============================================================================================================================
-            //==============================================================================================================================
-            //Debug.Log(Filepaths.DEBUG_shipOrbitalParams_0 + gameObject.name + Filepaths.DEBUG_shipOrbitalParams_2);
+            // Will load only the orbitalParams from JSON disk File
             orbitalParams = Resources.Load<OrbitalParams>(Filepaths.DEBUG_shipOrbitalParams_0 + gameObject.name + Filepaths.DEBUG_shipOrbitalParams_2);
             if(orbitalParams.orbitedBodyName.Equals("None"))
             {
@@ -132,7 +125,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
         else
         {
-            DEBUG_LOAD_DATA_TO_SCRIPTABLE_OBJS();
+            // Will load only the orbitalParams from JSON disk File
+            DEBUG_LOAD_ORBITALPARAMS_TO_SCRIPTABLE_OBJ();
             orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
         }
     }
@@ -157,7 +151,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         return orbitedBodyRelativeVel.magnitude;
     }
 
-    public void DEBUG_LOAD_DATA_TO_SCRIPTABLE_OBJS()
+    public void DEBUG_LOAD_ORBITALPARAMS_TO_SCRIPTABLE_OBJ()
     {
         if(GameObject.Find("DEBUG") != null)
         {
@@ -166,7 +160,6 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
             if(needToLoadJSONFiles)
             {
                 // Reading & Copying the JSON files to the right Scriptable Objects of the spaceship
-                settings = SpaceshipSettingsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_settings);
                 orbitalParams = OrbitalParamsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams);
             }
         }

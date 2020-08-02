@@ -2,8 +2,19 @@
 using UnityEngine;
 using Mathd_Lib;
 
-public static class FlyingObj
+public class FlyingObj
 {
+    private UniverseRunner universe;
+    //==============
+    public FlyingObj(UniverseRunner universeRunnerInstance)
+    {
+        universe = universeRunnerInstance;
+    }
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
     public static T GetObjectSettings<T>(UnityEngine.Object body)
     {
         // 'T' is either SpaceshipSettings or CelestialBodySettings
@@ -50,9 +61,12 @@ public static class FlyingObj
             return (T)(dynamic)celestialBody;
         }
     }
-
-    //==========================
-    public static void InitializeFlyingObj<T1, T2>(UnityEngine.Object body)
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
+    public void InitializeFlyingObj<T1, T2>(UnityEngine.Object body)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         T1 castBody = CastObjectToType<T1>(body);
@@ -67,15 +81,15 @@ public static class FlyingObj
             if(shipSettings.startFromGround)
             {
                 // Init position of the ship and return == do not init any orbit
-                FlyingObj.InitializeBodyPosition<T1, T2>(body);
+                InitializeBodyPosition<T1, T2>(body);
                 return;
             }
         }
 
-        FlyingObj.InitializeOrbit<T1, T2>(body);
-        FlyingObj.InitializeBodyPosition<T1, T2>(body);
-        FlyingObj.InitializeOrbitalSpeed<T1, T2>(body);
-        FlyingObj.InitializeDirVecLineRenderers<T1, T2>(body);
+        InitializeOrbit<T1, T2>(body);
+        InitializeBodyPosition<T1, T2>(body);
+        InitializeOrbitalSpeed<T1, T2>(body);
+        InitializeDirVecLineRenderers<T1, T2>(body);
 
         // Init Axial Tilt for CelestialBody
         UniverseRunner.goTags starTag = UniverseRunner.goTags.Star;
@@ -94,7 +108,7 @@ public static class FlyingObj
     /// T2: The type of the body Settings variable: either 'SpaceshipSettings' or 'CelestialBodySettings'
     /// </summary>
     /// <param name="body">The object of type T1: either 'Spaceship' or 'CelestialBody'</param>
-    public static void InitializeOrbit<T1, T2>(UnityEngine.Object body)
+    public void InitializeOrbit<T1, T2>(UnityEngine.Object body)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         if(body is T1)
@@ -114,7 +128,7 @@ public static class FlyingObj
     /// T2: The type of the body Settings variable: either 'SpaceshipSettings' or 'CelestialBodySettings'
     /// </summary>
     /// <param name="body">The object of type T1: either 'Spaceship' or 'CelestialBody'</param>
-    public static void InitializeBodyPosition<T1, T2>(UnityEngine.Object body)
+    public void InitializeBodyPosition<T1, T2>(UnityEngine.Object body)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         if(body is T1)
@@ -129,7 +143,9 @@ public static class FlyingObj
                 if(shipSettings.startFromGround)
                 {
                     // A spaceship with planetary surface init
-                    bodyRelatedPos = castBody.orbitalParams.orbitedBody.GetWorldPositionFromGroundStart();
+                    double latitude = shipSettings.groundStartLatLong.x;
+                    double longitude = shipSettings.groundStartLatLong.y;
+                    bodyRelatedPos = castBody.orbitalParams.orbitedBody.GetWorldPositionFromGroundStart(latitude, longitude);
                 }
                 else {
                     // A spaceship with in orbit init
@@ -147,7 +163,7 @@ public static class FlyingObj
         }
     }
 
-    public static void InitializeOrbitalSpeed<T1, T2>(UnityEngine.Object body)
+    public void InitializeOrbitalSpeed<T1, T2>(UnityEngine.Object body)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         T1 castBody = CastObjectToType<T1>(body);
@@ -175,7 +191,7 @@ public static class FlyingObj
         }
     }
 
-    public static void InitializeSpaceshipRotation<T1>(T1 shipBody, Vector3 directionVector)
+    public void InitializeSpaceshipRotation<T1>(T1 shipBody, Vector3 directionVector)
     where T1: FlyingObjCommonParams
     {
         // The y-axis of the spaceship will be aligned with the passed 'directionVector'
@@ -188,7 +204,7 @@ public static class FlyingObj
     /// T2: The type of the body Settings variable: either 'SpaceshipSettings' or 'CelestialBodySettings'
     /// </summary>
     /// <param name="body">The object of type T1: either 'Spaceship' or 'CelestialBody'</param>
-    public static void InitializeDirVecLineRenderers<T1, T2>(UnityEngine.Object body)
+    public void InitializeDirVecLineRenderers<T1, T2>(UnityEngine.Object body)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         if(body is T1)
@@ -225,8 +241,74 @@ public static class FlyingObj
         }
     }
 
-    //==========================
-    public static void GravitationalUpdate<T1 ,T2>(CelestialBody pullingBody, T1 orbitingBody)
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
+    public void GravitationalStep()
+    {
+        // First computing the acceleration updates for each Star, Planet or Spaceship 
+        foreach(Transform obj in universe.physicsObjArray)
+        {
+            ComputeNewPosition(obj, obj.tag);
+        }
+
+        // Once everything has been computed, apply the new accelerations at every objects
+        foreach(Transform obj in universe.physicsObjArray)
+        {
+            ApplyNewPosition(obj, obj.tag);
+        }
+    }
+
+    public void ComputeNewPosition(Transform obj, string objTag)
+    {
+        // Compute acceleration, velocity and the new position of either a Planet or a Spaceship, due to gravitational pull
+        CelestialBody orbitedBody;
+        switch(UsefulFunctions.CastStringToGoTags(objTag))
+        {
+            case UniverseRunner.goTags.Star:
+                // Do nothing for now
+                break;
+
+            case UniverseRunner.goTags.Planet:
+                CelestialBody celestBody = obj.GetComponent<CelestialBody>();
+                if(celestBody.orbitalParams.orbitedBody != null)
+                {
+                    orbitedBody = celestBody.orbitalParams.orbitedBody.GetComponent<CelestialBody>();
+                    GravitationalUpdate<CelestialBody, CelestialBodySettings>(orbitedBody, celestBody);
+                }
+                break;
+            
+            case UniverseRunner.goTags.Spaceship:
+                Spaceship ship = obj.GetComponent<Spaceship>();
+                orbitedBody = ship.orbitalParams.orbitedBody.GetComponent<CelestialBody>();
+                GravitationalUpdate<Spaceship, SpaceshipSettings>(orbitedBody, ship);
+                break;
+        }
+    }
+
+    public void ApplyNewPosition(Transform obj, string objTag)
+    {
+        // Move the rigidbody of a Planet or a Spaceship to its new position due to gravitational pull
+        switch(UsefulFunctions.CastStringToGoTags(objTag))
+        {
+            case UniverseRunner.goTags.Planet:
+                CelestialBody celestBody = obj.GetComponent<CelestialBody>();
+                ApplyRigbidbodyAccUpdate<CelestialBody, CelestialBodySettings>(celestBody, celestBody.settings);
+                break;
+            
+            case UniverseRunner.goTags.Spaceship:
+                Spaceship ship = obj.GetComponent<Spaceship>();
+                ApplyRigbidbodyAccUpdate<Spaceship, SpaceshipSettings>(ship, ship.settings);
+                break;
+        }
+    }
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
+    public void GravitationalUpdate<T1 ,T2>(CelestialBody pullingBody, T1 orbitingBody)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         if(orbitingBody is T1 && pullingBody != null)
@@ -246,7 +328,7 @@ public static class FlyingObj
     /// </summary>
     /// <param name="pullingBody">A CelestialBody that is pulling the orbiting body</param>
     /// <param name="orbitingBody">The orbiting body, either a 'Spaceship' or a 'CelestialBody'</param>
-    public static void ComputeGravitationalAcc<T1, T2>(CelestialBody pullingBody, T1 orbitingBody, T2 settings)
+    public void ComputeGravitationalAcc<T1, T2>(CelestialBody pullingBody, T1 orbitingBody, T2 settings)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         Vector3d pullinBodyPos = new Vector3d(pullingBody.transform.position);
@@ -274,21 +356,21 @@ public static class FlyingObj
         }
     }
 
-    public static void ComputeUpdatedVelocity<T1, T2>(T1 orbitingBody, T2 settings)
+    public void ComputeUpdatedVelocity<T1, T2>(T1 orbitingBody, T2 settings)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         orbitingBody.orbitedBodyRelativeVelIncr = Time.fixedDeltaTime * orbitingBody.orbitedBodyRelativeAcc;
         orbitingBody.orbitedBodyRelativeVel += orbitingBody.orbitedBodyRelativeVelIncr;
     }
 
-    public static void ComputeUpdatedPosition<T1, T2>(T1 castBody, T2 settings)
+    public void ComputeUpdatedPosition<T1, T2>(T1 castBody, T2 settings)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         Vector3d updatedPos = Time.fixedDeltaTime * castBody.distanceScaleFactor * castBody.orbitedBodyRelativeVel;
         castBody.realPosition += updatedPos;
     }
 
-    public static void ApplyRigbidbodyAccUpdate<T1, T2>(T1 castBody, T2 settings)
+    public void ApplyRigbidbodyAccUpdate<T1, T2>(T1 castBody, T2 settings)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
@@ -305,8 +387,12 @@ public static class FlyingObj
         } 
         rb.velocity = (Vector3)(castBody.orbitedBodyRelativeVel*scaleFactor + orbitedBodyVel*UniCsts.m2km2au2u);
     }
-
-    public static Vector3d GetAbsoluteVelocity<T1>(T1 castBody)
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
+    public Vector3d GetAbsoluteVelocity<T1>(T1 castBody)
     where T1 : FlyingObjCommonParams
     {
         // Returns a Vector3d of the absolute velocity of the passed flyingObjBody: either a Spaceship or a CelestialBody

@@ -52,7 +52,7 @@ public class CelestialBodyEditor : Editor
 
         serializedOrbitalParams.Update();
         EditorGUI.BeginChangeCheck();
-
+        EditorGUILayout.Separator();
         EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("orbitedBodyName"));
 
         if(CelestialBody.CelestialBodyHasTagName(celestBody, "Planet"))

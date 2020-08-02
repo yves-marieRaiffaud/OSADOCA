@@ -545,4 +545,12 @@ public static class UsefulFunctions
         return filepath;
     }
 
+    public static string WriteToFileSimulationSettingsSaveData(SimulationEnvSaveData data)
+    {
+        // Save the file and returns the filepath
+        string filepath = Application.persistentDataPath + Filepaths.simulation_settings;
+        File.WriteAllText(filepath, JsonUtility.ToJson(data, true));
+        return filepath;
+    }
+
 }

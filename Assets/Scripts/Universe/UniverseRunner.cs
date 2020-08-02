@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
 
-[DisallowMultipleComponent]
+[DisallowMultipleComponent, System.Serializable]
 public class UniverseRunner : MonoBehaviour
 {
     [HideInInspector] public SimulationEnv simEnv;
-    //public SimulationEnv simulationEnv;
+    [HideInInspector] public FlyingObj flyingObjInst;
 
     public Spaceship activeSpaceship;
     public GameObject playerCamera; // Camera attached to the debugging spacecraft
@@ -29,6 +29,7 @@ public class UniverseRunner : MonoBehaviour
     void Awake()
     {
         InitializePhysicsTime();
+        flyingObjInst = new FlyingObj(this);
         universeOffset = new Vector3(0f, 0f, 0f);
         physicsObjGO = UsefulFunctions.CreateAssignGameObject(folderNames.PhysicsObjs.ToString());
         
@@ -40,6 +41,8 @@ public class UniverseRunner : MonoBehaviour
     }
 
     private void InitializePhysicsTime() {
+        simEnv = SimulationEnvSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.simulation_settings);
+
         if(simEnv.useTargetFrameRate) {
             Application.targetFrameRate = simEnv.targetFrameRate;
         }
@@ -139,7 +142,7 @@ public class UniverseRunner : MonoBehaviour
                     if(GameObject.FindGameObjectsWithTag(goTags.Star.ToString()).Length > 0)
                     {
                         celestBody.AwakeCelestialBody(UniCsts.planetsDict[celestBody.settings.chosenPredifinedPlanet]);
-                        FlyingObj.InitializeFlyingObj<CelestialBody, CelestialBodySettings>(celestBody);
+                        flyingObjInst.InitializeFlyingObj<CelestialBody, CelestialBodySettings>(celestBody);
                     }
                     else {
                         celestBody.transform.position = Vector3.zero;
@@ -149,7 +152,7 @@ public class UniverseRunner : MonoBehaviour
                 
                 case goTags.Spaceship:
                     Spaceship ship = obj.GetComponent<Spaceship>();
-                    FlyingObj.InitializeFlyingObj<Spaceship, SpaceshipSettings>(ship);
+                    flyingObjInst.InitializeFlyingObj<Spaceship, SpaceshipSettings>(ship);
                     break;
             }
         }
@@ -159,68 +162,9 @@ public class UniverseRunner : MonoBehaviour
     {
         if(simEnv.simulateGravity)
         {
-            GravitationalStep();
+            flyingObjInst.GravitationalStep();
         }
         updateFloatingOrigin();
-    }
-
-    private void GravitationalStep()
-    {
-        // First computing the acceleration updates for each Star, Planet or Spaceship 
-        foreach(Transform obj in physicsObjArray)
-        {
-            ComputeNewPosition(obj, obj.tag);
-        }
-
-        // Once everything has been computed, apply the new accelerations at every objects
-        foreach(Transform obj in physicsObjArray)
-        {
-            ApplyNewPosition(obj, obj.tag);
-        }
-    }
-
-    private void ComputeNewPosition(Transform obj, string objTag)
-    {
-        // Compute acceleration, velocity and the new position of either a Planet or a Spaceship, due to gravitational pull
-        CelestialBody orbitedBody;
-        switch(UsefulFunctions.CastStringToGoTags(objTag))
-        {
-            case goTags.Star:
-                // Do nothing for now
-                break;
-
-            case goTags.Planet:
-                CelestialBody celestBody = obj.GetComponent<CelestialBody>();
-                if(celestBody.orbitalParams.orbitedBody != null)
-                {
-                    orbitedBody = celestBody.orbitalParams.orbitedBody.GetComponent<CelestialBody>();
-                    FlyingObj.GravitationalUpdate<CelestialBody, CelestialBodySettings>(orbitedBody, celestBody);
-                }
-                break;
-            
-            case goTags.Spaceship:
-                Spaceship ship = obj.GetComponent<Spaceship>();
-                orbitedBody = ship.orbitalParams.orbitedBody.GetComponent<CelestialBody>();
-                FlyingObj.GravitationalUpdate<Spaceship, SpaceshipSettings>(orbitedBody, ship);
-                break;
-        }
-    }
-
-    private void ApplyNewPosition(Transform obj, string objTag)
-    {
-        // Move the rigidbody of a Planet or a Spaceship to its new position due to gravitational pull
-        switch(UsefulFunctions.CastStringToGoTags(objTag))
-        {
-            case goTags.Planet:
-                CelestialBody celestBody = obj.GetComponent<CelestialBody>();
-                FlyingObj.ApplyRigbidbodyAccUpdate<CelestialBody, CelestialBodySettings>(celestBody, celestBody.settings);
-                break;
-            
-            case goTags.Spaceship:
-                Spaceship ship = obj.GetComponent<Spaceship>();
-                FlyingObj.ApplyRigbidbodyAccUpdate<Spaceship, SpaceshipSettings>(ship, ship.settings);
-                break;
-        }
     }
 
     private void updateFloatingOrigin()
@@ -250,7 +194,6 @@ public class UniverseRunner : MonoBehaviour
             universeOffset += originOffset;
         }
     }
-
 
     void LateUpdate()
     {

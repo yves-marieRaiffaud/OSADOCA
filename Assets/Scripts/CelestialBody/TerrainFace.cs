@@ -510,12 +510,19 @@ public class Chunk
                 pixel_w = (pixel_w-pixelWidthOffset) < 0f ? initialBumpMap.width + (pixel_w-pixelWidthOffset) : pixel_w-pixelWidthOffset;
                 pixel_w = pixel_w > initialBumpMap.width ? (pixel_w-initialBumpMap.width) : pixel_w;
                 
-                Color[] surroundingPixels = initialBumpMap.GetPixels((int)Mathf.Floor(pixel_w), (int)Mathf.Floor(pixel_h), 3, 3);
-                float p1 = surroundingPixels[0].grayscale; // bottom left
-                float p2 = surroundingPixels[2].grayscale; // bottom right
-                float p3 = surroundingPixels[6].grayscale; // top left
-                float p4 = surroundingPixels[8].grayscale; // top right
-                float medianGrayVal = (p1+p2+p3+p4)/4;
+                float medianGrayVal;
+                if(pixel_w + 3 > initialBumpMap.width || pixel_h + 3 > initialBumpMap.height)
+                {
+                    medianGrayVal = initialBumpMap.GetPixel((int)pixel_w, (int)pixel_h).grayscale;
+                }
+                else {
+                    Color[] surroundingPixels = initialBumpMap.GetPixels((int)Mathf.Floor(pixel_w), (int)Mathf.Floor(pixel_h), 3, 3);
+                    float p1 = surroundingPixels[0].grayscale; // bottom left
+                    float p2 = surroundingPixels[2].grayscale; // bottom right
+                    float p3 = surroundingPixels[6].grayscale; // top left
+                    float p4 = surroundingPixels[8].grayscale; // top right
+                    medianGrayVal = (p1+p2+p3+p4)/4;
+                }
 
                 // First value is minimum grayscale value: 0 == black
                 // Second value is the coorepsonding elevation for minimum grayscale value: 0 == ocean floor
