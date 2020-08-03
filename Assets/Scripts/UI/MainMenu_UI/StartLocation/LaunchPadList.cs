@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public static class LaunchPadList
 {
     private static Dictionary<LaunchPad.launchPadParams, string> kourouDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+        { LaunchPad.launchPadParams.isCustomLP, "0" },
         { LaunchPad.launchPadParams.refPlanet, "Earth" },
         { LaunchPad.launchPadParams.name, "Kourou" },
         { LaunchPad.launchPadParams.country, "French Guiana" },
@@ -15,6 +16,7 @@ public static class LaunchPadList
     };
 
     private static Dictionary<LaunchPad.launchPadParams, string> wenchangDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+        { LaunchPad.launchPadParams.isCustomLP, "0" },
         { LaunchPad.launchPadParams.refPlanet, "Earth" },
         { LaunchPad.launchPadParams.name, "Whenchang Satellite Launch Center" },
         { LaunchPad.launchPadParams.country, "China" },
@@ -25,6 +27,7 @@ public static class LaunchPadList
     };
 
     private static Dictionary<LaunchPad.launchPadParams, string> sohaeDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+        { LaunchPad.launchPadParams.isCustomLP, "0" },
         { LaunchPad.launchPadParams.refPlanet, "Earth" },
         { LaunchPad.launchPadParams.name, "Sohae" },
         { LaunchPad.launchPadParams.country, "North Korea" },
@@ -35,6 +38,7 @@ public static class LaunchPadList
     };
 
     private static Dictionary<LaunchPad.launchPadParams, string> semnanDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+        { LaunchPad.launchPadParams.isCustomLP, "0" },
         { LaunchPad.launchPadParams.refPlanet, "Earth" },
         { LaunchPad.launchPadParams.name, "Semnan" },
         { LaunchPad.launchPadParams.country, "Iran" },
@@ -45,6 +49,7 @@ public static class LaunchPadList
     };
 
     private static Dictionary<LaunchPad.launchPadParams, string> yasnyDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+        { LaunchPad.launchPadParams.isCustomLP, "0" },
         { LaunchPad.launchPadParams.refPlanet, "Earth" },
         { LaunchPad.launchPadParams.name, "Yasni Cosmodrome" },
         { LaunchPad.launchPadParams.country, "Russia" },
@@ -55,6 +60,7 @@ public static class LaunchPadList
     };
 
     private static Dictionary<LaunchPad.launchPadParams, string> esrangeDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+        { LaunchPad.launchPadParams.isCustomLP, "0" },
         { LaunchPad.launchPadParams.refPlanet, "Earth" },
         { LaunchPad.launchPadParams.name, "Esrange" },
         { LaunchPad.launchPadParams.country, "Sweden" },
@@ -65,6 +71,7 @@ public static class LaunchPadList
     };
 
     private static Dictionary<LaunchPad.launchPadParams, string> capeCanaveralDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+        { LaunchPad.launchPadParams.isCustomLP, "0" },
         { LaunchPad.launchPadParams.refPlanet, "Earth" },
         { LaunchPad.launchPadParams.name, "Cape Canaveral Air Force Station" },
         { LaunchPad.launchPadParams.country, "USA" },
@@ -75,6 +82,7 @@ public static class LaunchPadList
     };
 
     private static Dictionary<LaunchPad.launchPadParams, string> vanderbergDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+        { LaunchPad.launchPadParams.isCustomLP, "0" },
         { LaunchPad.launchPadParams.refPlanet, "Earth" },
         { LaunchPad.launchPadParams.name, "Vandenberg Air Force Base" },
         { LaunchPad.launchPadParams.country, "USA" },
@@ -85,6 +93,7 @@ public static class LaunchPadList
     };
 
     private static Dictionary<LaunchPad.launchPadParams, string> kennedyDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+        { LaunchPad.launchPadParams.isCustomLP, "0" },
         { LaunchPad.launchPadParams.refPlanet, "Earth" },
         { LaunchPad.launchPadParams.name, "Kennedy Space Center" },
         { LaunchPad.launchPadParams.country, "USA" },
@@ -95,6 +104,7 @@ public static class LaunchPadList
     };
 
     private static Dictionary<LaunchPad.launchPadParams, string> mojaveDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+        { LaunchPad.launchPadParams.isCustomLP, "0" },
         { LaunchPad.launchPadParams.refPlanet, "Earth" },
         { LaunchPad.launchPadParams.name, "Mojave Air and Space Port" },
         { LaunchPad.launchPadParams.country, "USA" },
@@ -105,6 +115,7 @@ public static class LaunchPadList
     };
 
     private static Dictionary<LaunchPad.launchPadParams, string> whiteSandDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+        { LaunchPad.launchPadParams.isCustomLP, "0" },
         { LaunchPad.launchPadParams.refPlanet, "Earth" },
         { LaunchPad.launchPadParams.name, "White Sands Missile Range" },
         { LaunchPad.launchPadParams.country, "USA" },

@@ -104,6 +104,28 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
             _orbitedBodyRelativeVel=value;
         }
     }
+    
+    private Vector3d[] _gravPullValuesList;
+    public Vector3d[] gravPullValuesList
+    {
+        get {
+            return _gravPullValuesList;
+        }
+        set {
+            _gravPullValuesList=value;
+        }
+    }
+
+    private string[] _gravPullBodyNamesList;
+    public string[] gravPullBodyNamesList
+    {
+        get {
+            return _gravPullBodyNamesList;
+        }
+        set {
+            _gravPullBodyNamesList=value;
+        }
+    }
     //=========================================
     
     void Awake()
@@ -114,7 +136,9 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         settings = SpaceshipSettingsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_settings);
 
         DebugGameObject debugGO = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
-        if(GameObject.Find("UniverseRunner") != null && orbitalParams == null && !debugGO.loadShipDataFromUIDiskFile)
+        
+        GameObject universeGO = GameObject.Find("UniverseRunner");
+        if(universeGO != null && orbitalParams == null && !debugGO.loadShipDataFromUIDiskFile)
         {
             // Will load only the orbitalParams from JSON disk File
             orbitalParams = Resources.Load<OrbitalParams>(Filepaths.DEBUG_shipOrbitalParams_0 + gameObject.name + Filepaths.DEBUG_shipOrbitalParams_2);
@@ -128,6 +152,13 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
             // Will load only the orbitalParams from JSON disk File
             DEBUG_LOAD_ORBITALPARAMS_TO_SCRIPTABLE_OBJ();
             orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
+        }
+
+        if(universeGO != null)
+        {
+            UniverseRunner universe = universeGO.GetComponent<UniverseRunner>();
+            gravPullBodyNamesList = new string[universe.simEnv.NBODYSIM_NB_BODY];
+            gravPullValuesList = new Vector3d[universe.simEnv.NBODYSIM_NB_BODY];
         }
     }
 

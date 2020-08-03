@@ -175,7 +175,7 @@ namespace Mathd_Lib {
       __Boxed<double> local2 = (ValueType) this.y;
       objArray[index2] = (object) local2;
       */
-            return "not implemented";
+            return "(" + this.x + " - " + this.y + ")";
         }
 
         public string ToString(string format) {

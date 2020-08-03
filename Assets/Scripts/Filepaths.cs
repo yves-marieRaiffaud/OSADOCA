@@ -21,4 +21,6 @@ public static class Filepaths
     public const string shipToLoad_orbitalParams = "/shipToLoad_orbitalParams.json"; 
     public const string shipToLoad_settings = "/shipToLoad_settings.json"; 
     public const string simulation_settings = "/simulation_settings.json";
+
+    public const string userAdded_launchPads = "/custom_launchPads.json";
 }

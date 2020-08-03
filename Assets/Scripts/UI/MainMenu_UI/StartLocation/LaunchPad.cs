@@ -7,7 +7,8 @@ using System.Globalization;
 
 public class LaunchPad
 {
-    public enum launchPadParams { refPlanet, name, country, operationalDate, supervision, longitude, latitude, eastwardBoost };
+    public static string newLaunchPadDefaultName = "New LaunchPad";
+    public enum launchPadParams { isCustomLP, refPlanet, name, country, operationalDate, supervision, longitude, latitude, eastwardBoost };
 
     private Vector2 lp_XYMapPos; // Position on the map of the planet of the launch pad (x & y coordinate)
     public Dictionary<launchPadParams, string> launchPadParamsDict;
@@ -16,37 +17,49 @@ public class LaunchPad
     {
         launchPadParamsDict = ref_launchPadParamsDict;
         string planetName = launchPadParamsDict[launchPadParams.refPlanet];
-        if(!launchPadParamsDict.ContainsKey(launchPadParams.eastwardBoost))
+
+        if(!launchPadParamsDict.ContainsKey(launchPadParams.eastwardBoost)
+            && launchPadParamsDict[launchPadParams.latitude] != ""
+            && launchPadParamsDict[launchPadParams.longitude] != "")
         {
-            ComputeEastwardBoost(UniCsts.planetsDict[UsefulFunctions.CastStringTo_Unicsts_Planets(planetName)]);
+            ComputeEastwardBoost();
         }
     }
 
-    private double ComputeEastwardBoost(Dictionary<string, double> refPlanetDict)
+    public double ComputeEastwardBoost()
     {
         // Eastward boost (effet de fronde) is useful when launching satellites to an equatorial orbit (such as GEO)
         // Eastward boost computed in m/s
+        string planetName = launchPadParamsDict[launchPadParams.refPlanet];
+        double equaRadius = UniCsts.planetsDict[UsefulFunctions.CastStringTo_Unicsts_Planets(planetName)][CelestialBodyParamsBase.planetaryParams.radius.ToString()];
+        double polarRadius = UniCsts.planetsDict[UsefulFunctions.CastStringTo_Unicsts_Planets(planetName)][CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()];
+
         double lat;
         UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.latitude], out lat);
         lat *= UniCsts.deg2rad;
 
         // First compute the geocentric radius depending on the latitude of the launch pad
-        double geocentricRadius = ComputeGeocentricRadius(refPlanetDict, lat);
+        double geocentricRadius = ComputeGeocentricRadius(equaRadius, polarRadius, lat);
         geocentricRadius *= UniCsts.km2m;
 
         // Finally compute the eastward boost
         double eastward_boost = Mathd.Cos(lat) * 2d * Mathd.PI * geocentricRadius / 86400d; // in m/s
-        launchPadParamsDict.Add(launchPadParams.eastwardBoost, eastward_boost.ToString("G", CultureInfo.InvariantCulture));
+        
+        // Adding the value to the dictionary, or modifying the existing key
+        if(launchPadParamsDict.ContainsKey(launchPadParams.eastwardBoost))
+        {
+            launchPadParamsDict[launchPadParams.eastwardBoost] = eastward_boost.ToString("G", CultureInfo.InvariantCulture);
+        }
+        else {
+            launchPadParamsDict.Add(launchPadParams.eastwardBoost, eastward_boost.ToString("G", CultureInfo.InvariantCulture));
+        }
         return eastward_boost;
     }
 
-    private double ComputeGeocentricRadius(Dictionary<string, double> refPlanetDict, double lat)
+    private double ComputeGeocentricRadius(double equa_radius, double polar_radius, double lat)
     {
         // equatorialRadius & polarRadius in km 
         // Latitude in radian
-        double equa_radius = refPlanetDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
-        double polar_radius = refPlanetDict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()];
-
         double numerator = Mathd.Pow(equa_radius*equa_radius * Mathd.Cos(lat), 2) + Mathd.Pow(polar_radius*polar_radius * Mathd.Sin(lat), 2);
         double denominator = Mathd.Pow(equa_radius * Mathd.Cos(lat), 2) + Mathd.Pow(polar_radius * Mathd.Sin(lat), 2);
         double geocentric_radius = Mathd.Sqrt(numerator / denominator);
@@ -92,5 +105,56 @@ public class LaunchPad
     {
         Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>> dict = LaunchPadList.launchPadsDict[planetOfTheLaunchPad];
         return new LaunchPad(dict[launchPadName]);
+    }
+
+    public static Vector2d XY_2_LatitudeLongitude(Vector2 xymousePosVec, Vector2 xy_mapSize)
+    {
+        double latitude = (double)(xymousePosVec.y * 2f / xy_mapSize.y) * 90d;
+        // LONGITUDE IS NOT VERY ACCURATE, SHOULD DIG THIS FORMULA
+        double longitude = (double)(xymousePosVec.x * 2f / xy_mapSize.x) * 180d;
+        return new Vector2d(latitude, longitude);
+    }
+
+    public static Dictionary<launchPadParams, string> GetEmptyLaunchPadDict(string planetName)
+    {
+        Dictionary<LaunchPad.launchPadParams, string> templateDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+            { LaunchPad.launchPadParams.isCustomLP, "1" },
+            { LaunchPad.launchPadParams.refPlanet, planetName },
+            { LaunchPad.launchPadParams.name, newLaunchPadDefaultName },
+            { LaunchPad.launchPadParams.country, "" },
+            { LaunchPad.launchPadParams.operationalDate, "" },
+            { LaunchPad.launchPadParams.supervision, "" },
+            { LaunchPad.launchPadParams.latitude, "0" },
+            { LaunchPad.launchPadParams.longitude, "0" },
+            { LaunchPad.launchPadParams.eastwardBoost, "" }
+        };
+        return templateDict;
+    }
+
+    public string GetJSONLaunchPadPropertyName()
+    {
+        // Returns the string of the LaunchPad property Name that is used in the JSON file to save the custom user added launchPads
+        return launchPadParamsDict[launchPadParams.name] + "_" + launchPadParamsDict[launchPadParams.refPlanet];
+    } 
+
+    public string LaunchPadDataToString()
+    {
+        string output = "";
+
+        // Addign the first line of the new JSON object: the name of its property is its launchPad name and the name of the refPlanet
+        string propertyName = GetJSONLaunchPadPropertyName();
+        output += "\n\t\"" + propertyName + "\" : \n\t{\n";
+        
+        int count = 0;
+        foreach(KeyValuePair<launchPadParams, string> keyValuePair in launchPadParamsDict)
+        {
+            if(count != 0) {
+                output += ",\n";
+            }
+            output +=  "\t\t\"" + keyValuePair.Key.ToString() + "\" : \"" + keyValuePair.Value.ToString() + "\"";
+            count++;
+        }
+        output += "\n\t}\n";
+        return output;
     }
 }

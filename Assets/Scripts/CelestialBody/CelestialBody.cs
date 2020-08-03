@@ -105,6 +105,28 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             _orbitedBodyRelativeVel=value;
         }
     }
+    
+    private Vector3d[] _gravPullValuesList;
+    public Vector3d[] gravPullValuesList
+    {
+        get {
+            return _gravPullValuesList;
+        }
+        set {
+            _gravPullValuesList=value;
+        }
+    }
+
+    private string[] _gravPullBodyNamesList;
+    public string[] gravPullBodyNamesList
+    {
+        get {
+            return _gravPullBodyNamesList;
+        }
+        set {
+            _gravPullBodyNamesList=value;
+        }
+    }
     //=========================================
     public bool spawnAsSimpleSphere = false; // For the UI, will spawn a simple sphere (no LOD, culling etc.). For the simlation, will spawn the complex one
     //=========================================
@@ -141,6 +163,8 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
         else {
             universeRunner = GameObject.Find("UniverseRunner").GetComponent<UniverseRunner>();
+            gravPullBodyNamesList = new string[universeRunner.simEnv.NBODYSIM_NB_BODY];
+            gravPullValuesList = new Vector3d[universeRunner.simEnv.NBODYSIM_NB_BODY];
         }
 
         // FOR DEBUG PURPOSES

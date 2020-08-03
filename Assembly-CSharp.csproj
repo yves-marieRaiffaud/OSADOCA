@@ -80,6 +80,7 @@
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UIStartLoc_Panel.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UI_Image_OrbitPreview_Script.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UI_OrbitPreview_MouseOrbit.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UI_planetMap_PointerEvents.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\UIMainMenu.cs" />
      <Compile Include="Assets\Scripts\UI\Simulation_UI\simUI.cs" />
      <Compile Include="Assets\Scripts\Universe\SimulationEnv.cs" />
