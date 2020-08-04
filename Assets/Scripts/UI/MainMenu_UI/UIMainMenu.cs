@@ -46,7 +46,7 @@ public class UIMainMenu : MonoBehaviour
         btn_Fly.onClick.AddListener(onFLYBtnClick);
 
         // On Start, by default, start on the StartLocation menu
-        //onStartLocationBtnClick();
+        onStartLocationBtnClick();
     }
 
     private void onStartLocationBtnClick()

@@ -62,8 +62,11 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         Init_LaunchPad_Sprites();
 
         // By default, display the last launchPad in the array
-        launchPadGOs.ElementAt(launchPadGOs.Count-1).GetComponent<Button>().Select();
-        OnLaunchPadClick(launchPadInstances.ElementAt(launchPadInstances.Count-1));
+        if(launchPadGOs.Count > 0 && launchPadInstances.Count > 0)
+        {
+            launchPadGOs.ElementAt(launchPadGOs.Count-1).GetComponent<Button>().Select();
+            OnLaunchPadClick(launchPadInstances.ElementAt(launchPadInstances.Count-1));
+        }
     }
 
     public void ClearAllInfoValues()

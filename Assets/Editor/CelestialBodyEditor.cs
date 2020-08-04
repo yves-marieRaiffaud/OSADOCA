@@ -41,6 +41,7 @@ public class CelestialBodyEditor : Editor
 
     public override void OnInspectorGUI()
     {
+        serializedOrbitalParams = new SerializedObject(serializedObject.FindProperty("_orbitalParams").objectReferenceValue);
         if (!EditorGUIUtility.wideMode)
         {
             EditorGUIUtility.wideMode = true;

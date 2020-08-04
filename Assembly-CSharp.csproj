@@ -74,6 +74,7 @@
      <Compile Include="Assets\Scripts\Spaceship\Spaceship.cs" />
      <Compile Include="Assets\Scripts\Spaceship\SpaceshipSettings.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\ControlBarCheck.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\ToggleSwitch.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\UI_SimSettings_Panel.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\LaunchPad.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\LaunchPadList.cs" />
@@ -291,6 +292,9 @@
     </Reference>
     <Reference Include="UnityEditor">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data/Managed/UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTween">
+        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Assets/Plugins/Demigiant/DOTween/DOTween.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>

@@ -85,7 +85,7 @@ public class UniverseRunnerEditor : Editor
         EditorGUILayout.Separator();
 
         param.physicsUpdateRate.value = EditorGUILayout.IntSlider("Physics update rate", param.physicsUpdateRate.value, 1, 100);
-        param.timeScale.value = EditorGUILayout.IntField("Time scale", param.timeScale.value);
+        param.timeScale.value = EditorGUILayout.FloatField("Time scale", param.timeScale.value);
 
         EditorGUILayout.Separator();
 

@@ -89,6 +89,13 @@ public static class UsefulFunctions
         return result;
     }
 
+    public static string FloatToSignificantDigits(float value, int significant_digits)
+    {
+        string format1 = "G" + significant_digits.ToString();
+        string result = value.ToString(format1, CultureInfo.InvariantCulture);
+        return result;
+    }
+
     public static string DoubleToString(double value)
     {
         string result = value.ToString("G", CultureInfo.InvariantCulture);
@@ -110,6 +117,18 @@ public static class UsefulFunctions
         }
         else {
             result = double.NaN;
+            return false;
+        }
+    }
+
+    public static bool ParseStringToFloat(string stringToCheck, out float result)
+    {
+        bool operationRes = float.TryParse(stringToCheck, DOUBLE_PARSE_STYLES, DOUBLE_PARSE_FORMAT, out result);
+        if(operationRes) {
+            return true;
+        }
+        else {
+            result = float.NaN;
             return false;
         }
     }
