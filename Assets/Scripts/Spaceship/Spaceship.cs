@@ -157,8 +157,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         if(universeGO != null)
         {
             UniverseRunner universe = universeGO.GetComponent<UniverseRunner>();
-            gravPullBodyNamesList = new string[universe.simEnv.NBODYSIM_NB_BODY];
-            gravPullValuesList = new Vector3d[universe.simEnv.NBODYSIM_NB_BODY];
+            gravPullBodyNamesList = new string[universe.simEnv.NBODYSIM_NB_BODY.value];
+            gravPullValuesList = new Vector3d[universe.simEnv.NBODYSIM_NB_BODY.value];
         }
     }
 

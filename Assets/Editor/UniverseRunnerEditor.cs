@@ -30,7 +30,7 @@ public class UniverseRunnerEditor : Editor
             universe.simEnv = newInstance;
         }
         else {
-            universe.simEnv = SimulationEnvSaveData.LoadObjectFromJSON(simSettingsFilePath);
+            JsonUtility.FromJsonOverwrite(File.ReadAllText(simSettingsFilePath), universe.simEnv);
         }
     }
 
@@ -74,54 +74,27 @@ public class UniverseRunnerEditor : Editor
 
     private void CreateUniverseRunnerSettingsEditor(SimulationEnv param)
     {
-        param.simulateGravity = EditorGUILayout.Toggle("Simulate gravity", param.simulateGravity);
+        param.simulateGravity.value = EditorGUILayout.Toggle("Simulate gravity", param.simulateGravity.value);
         EditorGUILayout.Separator();
 
         EditorGUILayout.LabelField("FPS Targetting", EditorStyles.boldLabel);
-        param.useTargetFrameRate = EditorGUILayout.Toggle("Enable FPS targetting", param.useTargetFrameRate);
-        EditorGUI.BeginDisabledGroup(param.useTargetFrameRate);
-        param.targetFrameRate = EditorGUILayout.IntField("Target FPS", param.targetFrameRate);
+        param.useTargetFrameRate.value = EditorGUILayout.Toggle("Enable FPS targetting", param.useTargetFrameRate.value);
+        EditorGUI.BeginDisabledGroup(param.useTargetFrameRate.value);
+        param.targetFrameRate.value = EditorGUILayout.IntField("Target FPS", param.targetFrameRate.value);
         EditorGUI.EndDisabledGroup();
         EditorGUILayout.Separator();
 
-        param.physicsUpdateRate = EditorGUILayout.IntSlider("Physics update rate", param.physicsUpdateRate, 1, 100);
-        param.timeScale = EditorGUILayout.IntField("Time scale", param.timeScale);
+        param.physicsUpdateRate.value = EditorGUILayout.IntSlider("Physics update rate", param.physicsUpdateRate.value, 1, 100);
+        param.timeScale.value = EditorGUILayout.IntField("Time scale", param.timeScale.value);
 
         EditorGUILayout.Separator();
 
-        param.NBODYSIM_NB_BODY = EditorGUILayout.IntSlider("NBody sim NB Body", param.NBODYSIM_NB_BODY, 1, 5);
+        param.NBODYSIM_NB_BODY.value = EditorGUILayout.IntSlider("NBody sim NB Body", param.NBODYSIM_NB_BODY.value, 1, 5);
 
         if(GUI.changed)
         {
-            SimulationEnvSaveData dataToWrite = GatherSimSettingsDataToWriteToFile();
-            string filepath = UsefulFunctions.WriteToFileSimulationSettingsSaveData(dataToWrite);
+            string filepath = UsefulFunctions.WriteToFileSimuSettingsSaveData(param);
             Debug.Log("SimulationSettingsSaveData successfully saved at: '" + simSettingsFilePath + "'.");
         }
-    }
-
-    private SimulationEnvSaveData GatherSimSettingsDataToWriteToFile()
-    {
-        /*
-        public bool simulateGravity=false;
-
-        public bool useTargetFrameRate=false;
-        public int targetFrameRate = 60; //fps
-        public int physicsUpdateRate = 50; //Hz, default value at 50 Hz
-        public int timeScale = 1;
-
-        // Number of celestialBodies to compute the gravitational acc for each celestialBody
-        public int NBODYSIM_NB_BODY;
-        */
-        SimulationEnv env = universe.simEnv;
-
-        string[] simSettinsToSave = new string[SimulationEnvSaveData.NB_PARAMS];
-        simSettinsToSave[0] = env.simulateGravity ? "1" : "0";
-        simSettinsToSave[1] = env.useTargetFrameRate ? "1" : "0";
-        simSettinsToSave[2] = env.targetFrameRate.ToString();
-        simSettinsToSave[3] = env.physicsUpdateRate.ToString();
-        simSettinsToSave[4] = env.timeScale.ToString();
-        simSettinsToSave[5] = env.NBODYSIM_NB_BODY.ToString();
-
-        return new SimulationEnvSaveData(simSettinsToSave);
     }
 }

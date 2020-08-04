@@ -44,6 +44,7 @@
      <Compile Include="Assets\SampleScenes\Scripts\ParticleSceneControls.cs" />
      <Compile Include="Assets\SampleScenes\Scripts\PlaceTargetWithMouse.cs" />
      <Compile Include="Assets\SampleScenes\Scripts\SlowMoButton.cs" />
+     <Compile Include="Assets\Scripts\ALibs\JsonHelper.cs" />
      <Compile Include="Assets\Scripts\ALibs\Mathd.cs" />
      <Compile Include="Assets\Scripts\ALibs\Quaterniond.cs" />
      <Compile Include="Assets\Scripts\ALibs\UsefulFunctions.cs" />
@@ -73,6 +74,7 @@
      <Compile Include="Assets\Scripts\Spaceship\Spaceship.cs" />
      <Compile Include="Assets\Scripts\Spaceship\SpaceshipSettings.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\ControlBarCheck.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\UI_SimSettings_Panel.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\LaunchPad.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\LaunchPadList.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UIStartLoc_InitOrbit.cs" />

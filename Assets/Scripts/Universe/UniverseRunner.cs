@@ -41,13 +41,13 @@ public class UniverseRunner : MonoBehaviour
     }
 
     private void InitializePhysicsTime() {
-        simEnv = SimulationEnvSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.simulation_settings);
+        //simEnv = SimulationEnvSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.simulation_settings);
 
-        if(simEnv.useTargetFrameRate) {
-            Application.targetFrameRate = simEnv.targetFrameRate;
+        if(simEnv.useTargetFrameRate.value) {
+            Application.targetFrameRate = simEnv.targetFrameRate.value;
         }
-        Time.fixedDeltaTime = 1f/simEnv.physicsUpdateRate;
-        Time.timeScale = simEnv.timeScale;
+        Time.fixedDeltaTime = 1f/simEnv.physicsUpdateRate.value;
+        Time.timeScale = simEnv.timeScale.value;
     }
 
     private void InitFolders()
@@ -160,7 +160,7 @@ public class UniverseRunner : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(simEnv.simulateGravity)
+        if(simEnv.simulateGravity.value)
         {
             flyingObjInst.GravitationalStep();
         }

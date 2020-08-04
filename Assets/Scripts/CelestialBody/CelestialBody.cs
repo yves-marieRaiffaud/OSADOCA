@@ -163,8 +163,8 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
         else {
             universeRunner = GameObject.Find("UniverseRunner").GetComponent<UniverseRunner>();
-            gravPullBodyNamesList = new string[universeRunner.simEnv.NBODYSIM_NB_BODY];
-            gravPullValuesList = new Vector3d[universeRunner.simEnv.NBODYSIM_NB_BODY];
+            gravPullBodyNamesList = new string[universeRunner.simEnv.NBODYSIM_NB_BODY.value];
+            gravPullValuesList = new Vector3d[universeRunner.simEnv.NBODYSIM_NB_BODY.value];
         }
 
         // FOR DEBUG PURPOSES

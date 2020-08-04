@@ -16,6 +16,12 @@ public class UIMainMenu : MonoBehaviour
     [Header("Control Bar Script")]
     public ControlBarCheck controlBarCheckScript;
 
+    [Header("Panel for the 5 Main Menus")]
+    [Tooltip("GameObject named 'Panel_StartLoc' located under the 'Submenus_PanelContent' GameObject")]
+    public GameObject panel_StartLoc;
+    [Tooltip("GameObject named 'Panel_SimSettings' located under the 'Submenus_PanelContent' GameObject")]
+    public GameObject panel_SimSettings;
+
     // Int that represent which menu is currently selected/displayed
     // 0 : Start location panel
     // 1 : Spacecraft panel
@@ -40,59 +46,63 @@ public class UIMainMenu : MonoBehaviour
         btn_Fly.onClick.AddListener(onFLYBtnClick);
 
         // On Start, by default, start on the StartLocation menu
-        onStartLocationBtnClick();
+        //onStartLocationBtnClick();
     }
 
     private void onStartLocationBtnClick()
     {
         currentSelectedMenuInt = 0;
+
+        panel_StartLoc.SetActive(true);
+        panel_SimSettings.SetActive(false);
         
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_startLoc_Img, controlBarCheckScript.color_selectedPanel);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Spacecraft_Img, controlBarCheckScript.color_isSetUp);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_FLY_Img, controlBarCheckScript.color_isNOTSetUp);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.color_isSetUp);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_SimSettings_Img, controlBarCheckScript.color_isNOTSetUp);
-
-        Debug.Log("Click on start location btn");
     }
 
     private void onSpacecraftBtnClick()
     {
         currentSelectedMenuInt = 1;
 
+        panel_StartLoc.SetActive(false);
+        panel_SimSettings.SetActive(false);
+
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_startLoc_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Spacecraft_Img, controlBarCheckScript.color_selectedPanel);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_FLY_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_SimSettings_Img, controlBarCheckScript.color_default);
-
-        Debug.Log("Click on spacecraft btn");
     }
 
     private void onMatlabBtnClick()
     {
         currentSelectedMenuInt = 3;
 
+        panel_StartLoc.SetActive(false);
+        panel_SimSettings.SetActive(false);
+
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_startLoc_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Spacecraft_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_FLY_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.color_selectedPanel);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_SimSettings_Img, controlBarCheckScript.color_default);
-
-        Debug.Log("Click on Matlab btn");
     }
 
     private void onSimSettingsBtnClick()
     {
         currentSelectedMenuInt = 4;
 
+        panel_StartLoc.SetActive(false);
+        panel_SimSettings.SetActive(true);
+
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_startLoc_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Spacecraft_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_FLY_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_SimSettings_Img, controlBarCheckScript.color_selectedPanel);
-
-        Debug.Log("Click on sim settings btn");
     }
 
     private void onFLYBtnClick()
@@ -105,8 +115,6 @@ public class UIMainMenu : MonoBehaviour
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_SimSettings_Img, controlBarCheckScript.color_default);
 
-        Debug.Log("Click on FLY btn");
-
         DebugGameObject scriptInst = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
         if(scriptInst.loadShipDataFromUIDiskFile)
         {
@@ -118,8 +126,4 @@ public class UIMainMenu : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Loading the simulation scene
     }
 
-    void OnGUI()
-    {
-
-    }
 }
