@@ -22,6 +22,4 @@ public class ControlBarCheck : MonoBehaviour
     {
         spriteToChange.color = newColor;
     }
-
-
 }

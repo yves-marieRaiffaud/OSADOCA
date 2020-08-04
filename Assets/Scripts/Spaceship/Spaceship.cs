@@ -105,25 +105,14 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
     }
     
-    private Vector3d[] _gravPullValuesList;
-    public Vector3d[] gravPullValuesList
+    public CelestialBodyPullForce[] _gravPullList;
+    public CelestialBodyPullForce[] gravPullList
     {
         get {
-            return _gravPullValuesList;
+            return _gravPullList;
         }
         set {
-            _gravPullValuesList=value;
-        }
-    }
-
-    private string[] _gravPullBodyNamesList;
-    public string[] gravPullBodyNamesList
-    {
-        get {
-            return _gravPullBodyNamesList;
-        }
-        set {
-            _gravPullBodyNamesList=value;
+            _gravPullList=value;
         }
     }
     //=========================================
@@ -157,8 +146,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         if(universeGO != null)
         {
             UniverseRunner universe = universeGO.GetComponent<UniverseRunner>();
-            gravPullBodyNamesList = new string[universe.simEnv.NBODYSIM_NB_BODY.value];
-            gravPullValuesList = new Vector3d[universe.simEnv.NBODYSIM_NB_BODY.value];
+            gravPullList = new CelestialBodyPullForce[universe.simEnv.NBODYSIM_NB_BODY.value];
         }
     }
 

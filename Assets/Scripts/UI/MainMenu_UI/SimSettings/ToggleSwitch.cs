@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using DG.Tweening;
@@ -12,12 +10,10 @@ public class ToggleSwitch : MonoBehaviour, IPointerDownHandler
     private bool _isOn = false;
     public bool isOn
     {
-        get
-        {
+        get {
             return _isOn;
         }
-        set
-        {
+        set {
             _isOn=value;
             Toggle(!_isOn);
             Toggle(!_isOn);
@@ -40,6 +36,10 @@ public class ToggleSwitch : MonoBehaviour, IPointerDownHandler
 
     public UnityEvent onValueChanged;
 
+    private void OnEnable() {
+        Toggle(isOn);    
+    }
+
     void Awake()
     {
         if(onValueChanged == null)
@@ -47,10 +47,6 @@ public class ToggleSwitch : MonoBehaviour, IPointerDownHandler
 
         offX = toggleIndicator.anchoredPosition.x;
         onX = offX + 80f;
-    }
-
-    private void OnEnable() {
-        Toggle(isOn);    
     }
 
     public void Toggle(bool value)

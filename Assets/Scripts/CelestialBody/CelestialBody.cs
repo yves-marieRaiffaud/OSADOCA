@@ -106,25 +106,14 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
     
-    private Vector3d[] _gravPullValuesList;
-    public Vector3d[] gravPullValuesList
+    public CelestialBodyPullForce[] _gravPullList;
+    public CelestialBodyPullForce[] gravPullList
     {
         get {
-            return _gravPullValuesList;
+            return _gravPullList;
         }
         set {
-            _gravPullValuesList=value;
-        }
-    }
-
-    private string[] _gravPullBodyNamesList;
-    public string[] gravPullBodyNamesList
-    {
-        get {
-            return _gravPullBodyNamesList;
-        }
-        set {
-            _gravPullBodyNamesList=value;
+            _gravPullList=value;
         }
     }
     //=========================================
@@ -163,8 +152,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
         else {
             universeRunner = GameObject.Find("UniverseRunner").GetComponent<UniverseRunner>();
-            gravPullBodyNamesList = new string[universeRunner.simEnv.NBODYSIM_NB_BODY.value];
-            gravPullValuesList = new Vector3d[universeRunner.simEnv.NBODYSIM_NB_BODY.value];
+            gravPullList = new CelestialBodyPullForce[universeRunner.simEnv.NBODYSIM_NB_BODY.value];
         }
 
         // FOR DEBUG PURPOSES
@@ -593,3 +581,20 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     }
 
 }
+
+[System.Serializable]
+public struct CelestialBodyPullForce
+{
+    // Struct used to store the celestialBody and its gravitational attraction force on either a CelestialBody or a Spaceship 
+    public CelestialBody celestBody;
+    public Vector3d gravForce;
+    public CelestialBodyPullForce(CelestialBody _celestBody, Vector3d _gravForce) {
+        celestBody = _celestBody;
+        gravForce = _gravForce;
+    }
+
+    public override string ToString()
+    {
+        return "[" + celestBody.name + "; " + gravForce.ToString() + "]";
+    }
+};

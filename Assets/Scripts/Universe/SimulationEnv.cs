@@ -7,8 +7,6 @@ public enum SimSettingCategory { UI, NBodyEngine, Physics };
 public class SimulationEnv : ScriptableObject
 {
     public static string[] simSettingCategoryLabels = new string[] {"UI", "NBody Simulator Engine", "Physics"};
-    //========================
-    [NonSerialized] public bool simulationEnvFoldout=true; // For custom editor, won't be saved as not included in the 'SimulationEnvSaveData' struct
     //=============================================
     //=============================================
     //=============================================

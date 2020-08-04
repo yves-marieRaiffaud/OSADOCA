@@ -422,5 +422,13 @@ namespace Mathd_Lib {
             if(!IsValid(a) || IsZero(a)) { return true; }
             else { return false; }
         }
+
+        public static Vector3d SumOfVector3d(params Vector3d[] values) {
+            Vector3d output = new Vector3d();
+            foreach(Vector3d vec in values) {
+                output += vec;
+            }
+            return output;
+        }
     }
 }

@@ -18,7 +18,7 @@ public class UniverseRunnerEditor : Editor
         CheckCreateSimEnvSettingsFile();
         simEnvSerializedObjs = new SerializedObject(serializedObject.FindProperty("simEnv").objectReferenceValue);
 
-        simEnvFoldoutBool = simEnvSerializedObjs.FindProperty("simulationEnvFoldout").boolValue;
+        simEnvFoldoutBool = universe.simulationEnvFoldout;
     }
 
     private void CheckCreateSimEnvSettingsFile()

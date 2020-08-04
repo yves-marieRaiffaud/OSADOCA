@@ -1,12 +1,11 @@
 // Class that gathers every filepaths needed in the code
 public static class Filepaths
 {
-    //=====================DEBUG CONSTANTS============================================
     //================================================================================
     //================================================================================
     // RELATIVE TO THE 'resources' FOLDER. TO USE WITH 'Resources.Load<>()'
     public const string DEBUG_shipOrbitalParams_0 = "Spaceship/Rocket/"; // part 0 of the string
-    public const string DEBUG_shipOrbitalParams_2 = "_OrbitalParams.asset";             // part 2 of the string
+    public const string DEBUG_shipOrbitalParams_2 = "_OrbitalParams.asset"; // part 2 of the string
 
     public const string DEBUG_planetOrbitalParams_0 = "CelestialBody/OrbitalParams/";
     public const string DEBUG_planetOrbitalParams_2 = ".asset";
@@ -14,7 +13,8 @@ public static class Filepaths
     public const string DEBUG_defaultHeightMap = "CelestialBody/default_heightMap";
 
     public const string DEBUG_orbitMaterial = "OrbitalMechanics/OrbitMaterial";
-    public const string DEBUG_UIPlanetaryMaps = "CelestialBody/UIPlanetary_Maps/"; // with the name of the planet afterwards
+    // with the name of the planet afterwards for 'DEBUG_UIPlanetaryMaps'
+    public const string DEBUG_UIPlanetaryMaps = "CelestialBody/UIPlanetary_Maps/";
     //================================================================================
     //================================================================================
     //================================================================================

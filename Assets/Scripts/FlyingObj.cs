@@ -1,6 +1,9 @@
 ﻿using System;
 using UnityEngine;
 using Mathd_Lib;
+using System.Collections.Generic;
+using Funcs = UsefulFunctions;
+using Verse = UniverseRunner;
 
 public class FlyingObj
 {
@@ -315,8 +318,8 @@ public class FlyingObj
         {
             T2 settings = GetObjectSettings<T1, T2>(orbitingBody);
 
-            //ComputeGravitationalAcc<T1, T2>(pullingBody, orbitingBody, settings);
-            ComputeGravitationalAccNBODY<T1, T2>(pullingBody, orbitingBody, settings);
+            //ComputeGravitationalAcc<T1, T2>(pullingBody, orbitingBody, settings, true);
+            ComputeGravitationalAccNBODY<T1, T2>(orbitingBody, settings, true);
             
             ComputeUpdatedVelocity<T1, T2>(orbitingBody, settings);
             ComputeUpdatedPosition<T1, T2>(orbitingBody, settings);
@@ -330,7 +333,7 @@ public class FlyingObj
     /// </summary>
     /// <param name="pullingBody">A CelestialBody that is pulling the orbiting body</param>
     /// <param name="orbitingBody">The orbiting body, either a 'Spaceship' or a 'CelestialBody'</param>
-    public void ComputeGravitationalAcc<T1, T2>(CelestialBody pullingBody, T1 orbitingBody, T2 settings)
+    public Vector3d ComputeGravitationalAcc<T1, T2>(CelestialBody pullingBody, T1 orbitingBody, T2 settings, bool saveAccToOrbitingBodyParam)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         Vector3d pullinBodyPos = new Vector3d(pullingBody.transform.position);
@@ -338,7 +341,9 @@ public class FlyingObj
 
         Vector3d r = new Vector3d(castOrbitingBodyTr.position) - pullinBodyPos;
         double scalingFactor = UniCsts.u2au * UniCsts.au2km; // km, for planets
-        if(orbitingBody.orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree)
+
+        if(orbitingBody.orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree &&
+            orbitingBody.orbitalParams.orbitedBodyName == pullingBody.name)
         {
             scalingFactor = UniCsts.u2pl; // km, for spaceships
         }
@@ -351,39 +356,102 @@ public class FlyingObj
         if(!Vector3d.IsValid(acc) || UsefulFunctions.DoublesAreEqual(dstPow3, 0d))
         {
             Debug.LogError("Acc is not valid or distance between the pulling body and the target body is null");
-            orbitingBody.orbitedBodyRelativeAcc = Vector3d.positiveInfinity;
+            acc = Vector3d.positiveInfinity;
         }
-        else {
+        if(saveAccToOrbitingBodyParam) {
             orbitingBody.orbitedBodyRelativeAcc = acc;
+        }
+        return acc;
+    }
+
+    public void InitGravitationalPullLists()
+    {
+        // Looping through every object in the 'universeRunner.physicsObjArray'
+        for(int i = 0; i < universe.physicsObjArray.Count; i++)
+        {
+            if(Funcs.GoTagAndStringAreEqual(Verse.goTags.Planet, universe.physicsObjArray[i].tag))
+            {
+                CelestialBody celestBody = universe.physicsObjArray[i].GetComponent<CelestialBody>();
+                GetSortedGravPullListForBody<CelestialBody, CelestialBodySettings>(celestBody, celestBody.settings);
+            }
+            else if(Funcs.GoTagAndStringAreEqual(Verse.goTags.Spaceship, universe.physicsObjArray[i].tag))
+            {
+                Spaceship ship = universe.physicsObjArray[i].GetComponent<Spaceship>();
+                GetSortedGravPullListForBody<Spaceship, SpaceshipSettings>(ship, ship.settings);
+            }
         }
     }
 
-    public void ComputeGravitationalAccNBODY<T1, T2>(CelestialBody pullingBody, T1 orbitingBody, T2 settings)
+    private void GetSortedGravPullListForBody<T1, T2>(T1 orbitingBody, T2 settings)
+    where T1 : FlyingObjCommonParams where T2 : FlyingObjSettings
+    {
+        // Returns the array of length[universe.simEnv.NBODYSIM_NB_BODY.value] containing the CelestialBodies
+        // from the one applying strongest gravitational pull to the one applying the lowest gravitational pull while in the NBODYSIM_NB_BODY value
+        List<Transform> physicObjArr = universe.physicsObjArray;
+        List<CelestialBodyPullForce> bodiesGravPull_ALL = new List<CelestialBodyPullForce>();
+        //==============================================
+        //==============================================
+        //==============================================
+        for(int i = 0; i < physicObjArr.Count; i++)
+        {
+            if(!Funcs.StringIsOneOfTheTwoTags(Verse.goTags.Star, Verse.goTags.Planet, physicObjArr[i].tag)) {
+                // If the picked item is not a Planet CelestialBody, we skip this round as we won't be able to assign it as the orbitedBody
+                continue;
+            }
+            if(physicObjArr[i].name.Equals(orbitingBody.orbitalParams.name)) { continue; }
+            
+            CelestialBody orbitedBody = physicObjArr[i].GetComponent<CelestialBody>();
+            Vector3d gravForce = ComputeGravitationalAcc<T1, T2>(orbitedBody, orbitingBody, settings, false);
+            bodiesGravPull_ALL.Add(new CelestialBodyPullForce(orbitedBody, gravForce));
+        }
+        
+        // Sorting the list with index 0 as the weakest grav force (as magnitude)
+        bodiesGravPull_ALL.Sort(delegate(CelestialBodyPullForce x, CelestialBodyPullForce y) {
+            return x.gravForce.magnitude.CompareTo(y.gravForce.magnitude);
+        });
+        // Reversing the list to get index 0 as the strongest grav force magnitude
+        bodiesGravPull_ALL.Reverse();
+        //==============================================
+        //==============================================
+        //==============================================
+        // Retaining only the 'NBODYSIM_NB_BODY' first values
+        if(universe.simEnv.NBODYSIM_NB_BODY.value > bodiesGravPull_ALL.Count) {
+            Debug.LogWarning("WARNING ! The specified SimSetting 'NBODYSIM_NB_BODY' is partially applied as its value is greater than the total number of CelestialBodies in the universe. Thus, 'NBODYSIM_NB_BODY' has been automatically set to the greatest value possible : " + bodiesGravPull_ALL.Count + ".");
+        }
+        int nbItemsToRetain = Mathf.Min(universe.simEnv.NBODYSIM_NB_BODY.value, bodiesGravPull_ALL.Count);
+
+        if(orbitingBody.gravPullList.Length != nbItemsToRetain) {
+            orbitingBody.gravPullList = new CelestialBodyPullForce[nbItemsToRetain];
+        }
+        
+        for(int j = 0; j < nbItemsToRetain; j++)
+        {
+            orbitingBody.gravPullList[j] = bodiesGravPull_ALL[j];
+        }
+        //==============================================
+        //==============================================
+        //==============================================
+        Debug.Log(orbitingBody.orbitalParams.name);
+        Debug.Log(string.Join(Environment.NewLine, orbitingBody.gravPullList));
+        Debug.Log("===================");
+    }
+
+    public Vector3d ComputeGravitationalAccNBODY<T1, T2>(T1 orbitingBody, T2 settings, bool saveAccToOrbitingBodyParam)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
-        Vector3d pullinBodyPos = new Vector3d(pullingBody.transform.position);
-        Transform castOrbitingBodyTr = orbitingBody._gameObject.transform; // Spaceship Tr or CelestialBody Tr
-
-        Vector3d r = new Vector3d(castOrbitingBodyTr.position) - pullinBodyPos;
-        double scalingFactor = UniCsts.u2au * UniCsts.au2km; // km, for planets
-        if(orbitingBody.orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree)
+        GetSortedGravPullListForBody<T1, T2>(orbitingBody, settings);
+        Vector3d acc = new Vector3d();
+        foreach(CelestialBodyPullForce item in orbitingBody.gravPullList)
         {
-            scalingFactor = UniCsts.u2pl; // km, for spaceships
+            acc += item.gravForce;
+            Debug.Log("adding " + item.gravForce);
         }
+        Debug.Log("Total Acc = " + acc);
 
-        r *= scalingFactor; // km
-        double dstPow3 = Mathd.Pow(r.magnitude, 3); // km^3
-        double mu = pullingBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()];
-        Vector3d acc =  - Mathd.Pow(10,7) * mu * r / dstPow3; // m.s-2
-
-        if(!Vector3d.IsValid(acc) || UsefulFunctions.DoublesAreEqual(dstPow3, 0d))
-        {
-            Debug.LogError("Acc is not valid or distance between the pulling body and the target body is null");
-            orbitingBody.orbitedBodyRelativeAcc = Vector3d.positiveInfinity;
-        }
-        else {
+        if(saveAccToOrbitingBodyParam) {
             orbitingBody.orbitedBodyRelativeAcc = acc;
         }
+        return acc;
     }
 
     public void ComputeUpdatedVelocity<T1, T2>(T1 orbitingBody, T2 settings)

@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
+using System.IO;
 
 [DisallowMultipleComponent, System.Serializable]
 public class UniverseRunner : MonoBehaviour
 {
+    //======
+    [HideInInspector] public bool simulationEnvFoldout=true; // For universeRunner custom editor
+    //======
     [HideInInspector] public SimulationEnv simEnv;
     [HideInInspector] public FlyingObj flyingObjInst;
 
@@ -28,7 +32,7 @@ public class UniverseRunner : MonoBehaviour
     //=========================================
     void Awake()
     {
-        InitializePhysicsTime();
+        InitializeSimulationEnv();
         flyingObjInst = new FlyingObj(this);
         universeOffset = new Vector3(0f, 0f, 0f);
         physicsObjGO = UsefulFunctions.CreateAssignGameObject(folderNames.PhysicsObjs.ToString());
@@ -40,9 +44,13 @@ public class UniverseRunner : MonoBehaviour
         FillFolders();
     }
 
-    private void InitializePhysicsTime() {
-        //simEnv = SimulationEnvSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.simulation_settings);
-
+    private void InitializeSimulationEnv() {
+        if(simEnv == null) {
+            simEnv = ScriptableObject.CreateInstance<SimulationEnv>();
+        }
+        string simEnvFilepath = Application.persistentDataPath + Filepaths.simulation_settings;
+        JsonUtility.FromJsonOverwrite(File.ReadAllText(simEnvFilepath), simEnv);
+        
         if(simEnv.useTargetFrameRate.value) {
             Application.targetFrameRate = simEnv.targetFrameRate.value;
         }
@@ -156,6 +164,7 @@ public class UniverseRunner : MonoBehaviour
                     break;
             }
         }
+        flyingObjInst.InitGravitationalPullLists();
     }
 
     void FixedUpdate()

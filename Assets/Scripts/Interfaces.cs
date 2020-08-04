@@ -10,23 +10,21 @@ public interface FlyingObjCommonParams
     Orbit orbit {get; set;}
     OrbitalPredictor predictor {get; set;}
     OrbitalParams orbitalParams {get; set;}
-
+    //================
     double distanceScaleFactor {get; set;} // Either 'UniCsts.m2km2au2u' if the orbit is defined in AU, or 'UniCsts.m2km2pl2u' if the orbit is defined in km
     Vector3d orbitedBodyRelativeAcc {get; set;}
     Vector3d orbitedBodyRelativeVelIncr {get; set;}
     Vector3d orbitedBodyRelativeVel {get; set;}
     Vector3d realPosition {get; set;}
-
+    //================
     // Ordered List (descending order, from the strongest grav pull force to the weakest) of the gravitational forces 
-    Vector3d[] gravPullValuesList {get; set;}
-    // Cooresponding list of CelestialBody names, from the celestialBody with the strongest pulling force, to the one with the weakest force (while respecting the 'NBODYSIM_NB_BODY' int value of the simEnv) 
-    string[] gravPullBodyNamesList {get; set;}
-
+    CelestialBodyPullForce[] gravPullList {get; set;}
+    //================
     double SetDistanceScaleFactor(); // To set the Scaling factor to convert meters to unity units, depending if the orbit is defined in 'km' or in 'AU' 
     Vector3d GetRelativeRealWorldPosition();
     Vector3d GetRelativeVelocity();
     double GetRelativeVelocityMagnitude();
-
+    //================
     GameObject _gameObject {get; set;}
 }
 
