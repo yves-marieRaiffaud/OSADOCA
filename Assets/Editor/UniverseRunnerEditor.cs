@@ -77,20 +77,32 @@ public class UniverseRunnerEditor : Editor
         param.simulateGravity.value = EditorGUILayout.Toggle("Simulate gravity", param.simulateGravity.value);
         EditorGUILayout.Separator();
 
+        if(!param.simulateGravity.value)
+        {
+            EditorGUI.BeginDisabledGroup(true);
+            param.useNBodySimulation.value = false;
+            param.useNBodySimulation.value = EditorGUILayout.Toggle("Use N-Body Simulation", param.useNBodySimulation.value);
+            param.NBODYSIM_NB_BODY.value = EditorGUILayout.IntSlider("NBody sim NB Body", param.NBODYSIM_NB_BODY.value, 1, 5);
+            EditorGUI.EndDisabledGroup();
+        }
+        else {
+            param.useNBodySimulation.value = EditorGUILayout.Toggle("Use N-Body Simulation", param.useNBodySimulation.value);
+            EditorGUI.BeginDisabledGroup(!param.useNBodySimulation.value);
+            param.NBODYSIM_NB_BODY.value = EditorGUILayout.IntSlider("NBody sim NB Body", param.NBODYSIM_NB_BODY.value, 1, 5);
+            EditorGUI.EndDisabledGroup();
+        }
+
+        EditorGUILayout.Separator();
         EditorGUILayout.LabelField("FPS Targetting", EditorStyles.boldLabel);
         param.useTargetFrameRate.value = EditorGUILayout.Toggle("Enable FPS targetting", param.useTargetFrameRate.value);
-        EditorGUI.BeginDisabledGroup(param.useTargetFrameRate.value);
+        EditorGUI.BeginDisabledGroup(!param.useTargetFrameRate.value);
         param.targetFrameRate.value = EditorGUILayout.IntField("Target FPS", param.targetFrameRate.value);
         EditorGUI.EndDisabledGroup();
         EditorGUILayout.Separator();
 
         param.physicsUpdateRate.value = EditorGUILayout.IntSlider("Physics update rate", param.physicsUpdateRate.value, 1, 100);
         param.timeScale.value = EditorGUILayout.FloatField("Time scale", param.timeScale.value);
-
-        EditorGUILayout.Separator();
-
-        param.NBODYSIM_NB_BODY.value = EditorGUILayout.IntSlider("NBody sim NB Body", param.NBODYSIM_NB_BODY.value, 1, 5);
-
+        
         if(GUI.changed)
         {
             string filepath = UsefulFunctions.WriteToFileSimuSettingsSaveData(param);

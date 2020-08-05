@@ -19,8 +19,8 @@ MonoBehaviour:
   orbParamsUnits: 0
   orbitRealPredType: 0
   selectedVectorsDir: 256
-  drawOrbit: 1
-  drawDirections: 1
+  drawOrbit: 0
+  drawDirections: 0
   orbitDrawingResolution: 500
   ra: 6578
   rp: 6578

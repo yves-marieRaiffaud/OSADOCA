@@ -235,7 +235,6 @@ public class FlyingObj
                             castBody.orbit.DrawDirection(vectorDir, lineLength);
                         }
                     }
-                    castBody.orbit.DrawVector(castBody.orbitalParams.orbitPlane.normal, "NormalUp");
                 }
             }
         }
@@ -314,12 +313,18 @@ public class FlyingObj
     public void GravitationalUpdate<T1 ,T2>(CelestialBody pullingBody, T1 orbitingBody)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
+        // 'pullingBody' is the CelestialBody with the strongest attraction force on the orbitingBody (Spaceship or CelestialBody)
         if(orbitingBody is T1 && pullingBody != null)
         {
             T2 settings = GetObjectSettings<T1, T2>(orbitingBody);
-
-            //ComputeGravitationalAcc<T1, T2>(pullingBody, orbitingBody, settings, true);
-            ComputeGravitationalAccNBODY<T1, T2>(orbitingBody, settings, true);
+            
+            if(universe.simEnv.useNBodySimulation.value)
+            {
+                ComputeGravitationalAccNBODY<T1, T2>(orbitingBody, settings, true);
+            }
+            else {
+                ComputeGravitationalAcc<T1, T2>(pullingBody, orbitingBody, settings, true);
+            }
             
             ComputeUpdatedVelocity<T1, T2>(orbitingBody, settings);
             ComputeUpdatedPosition<T1, T2>(orbitingBody, settings);
@@ -363,7 +368,8 @@ public class FlyingObj
         }
         return acc;
     }
-
+    //=====================================================
+    //=====================================================
     public void InitGravitationalPullLists()
     {
         // Looping through every object in the 'universeRunner.physicsObjArray'
@@ -389,9 +395,7 @@ public class FlyingObj
         // from the one applying strongest gravitational pull to the one applying the lowest gravitational pull while in the NBODYSIM_NB_BODY value
         List<Transform> physicObjArr = universe.physicsObjArray;
         List<CelestialBodyPullForce> bodiesGravPull_ALL = new List<CelestialBodyPullForce>();
-        //==============================================
-        //==============================================
-        //==============================================
+        //==================
         for(int i = 0; i < physicObjArr.Count; i++)
         {
             if(!Funcs.StringIsOneOfTheTwoTags(Verse.goTags.Star, Verse.goTags.Planet, physicObjArr[i].tag)) {
@@ -411,9 +415,7 @@ public class FlyingObj
         });
         // Reversing the list to get index 0 as the strongest grav force magnitude
         bodiesGravPull_ALL.Reverse();
-        //==============================================
-        //==============================================
-        //==============================================
+        //===============
         // Retaining only the 'NBODYSIM_NB_BODY' first values
         if(universe.simEnv.NBODYSIM_NB_BODY.value > bodiesGravPull_ALL.Count) {
             Debug.LogWarning("WARNING ! The specified SimSetting 'NBODYSIM_NB_BODY' is partially applied as its value is greater than the total number of CelestialBodies in the universe. Thus, 'NBODYSIM_NB_BODY' has been automatically set to the greatest value possible : " + bodiesGravPull_ALL.Count + ".");
@@ -428,25 +430,22 @@ public class FlyingObj
         {
             orbitingBody.gravPullList[j] = bodiesGravPull_ALL[j];
         }
-        //==============================================
-        //==============================================
-        //==============================================
-        Debug.Log(orbitingBody.orbitalParams.name);
-        Debug.Log(string.Join(Environment.NewLine, orbitingBody.gravPullList));
-        Debug.Log("===================");
+        //=============
+        //Debug.Log(orbitingBody.orbitalParams.name);
+        //Debug.Log(string.Join(Environment.NewLine, orbitingBody.gravPullList));
+        //Debug.Log("===================");
     }
-
-    public Vector3d ComputeGravitationalAccNBODY<T1, T2>(T1 orbitingBody, T2 settings, bool saveAccToOrbitingBodyParam)
+    //=====================================================
+    //=====================================================
+    private Vector3d ComputeGravitationalAccNBODY<T1, T2>(T1 orbitingBody, T2 settings, bool saveAccToOrbitingBodyParam)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
-        GetSortedGravPullListForBody<T1, T2>(orbitingBody, settings);
+        UpdateBodyGravPullList<T1, T2>(orbitingBody, settings);
         Vector3d acc = new Vector3d();
         foreach(CelestialBodyPullForce item in orbitingBody.gravPullList)
         {
             acc += item.gravForce;
-            Debug.Log("adding " + item.gravForce);
         }
-        Debug.Log("Total Acc = " + acc);
 
         if(saveAccToOrbitingBodyParam) {
             orbitingBody.orbitedBodyRelativeAcc = acc;
@@ -454,6 +453,18 @@ public class FlyingObj
         return acc;
     }
 
+    private void UpdateBodyGravPullList<T1, T2>(T1 orbitingBody, T2 settings)
+    where T1 : FlyingObjCommonParams where T2 : FlyingObjSettings
+    {
+        for(int i = 0; i < orbitingBody.gravPullList.Length; i++)
+        {
+            Vector3d acc = ComputeGravitationalAcc<T1, T2>(orbitingBody.gravPullList[i].celestBody, orbitingBody, settings, false);
+            orbitingBody.gravPullList[i].gravForce = acc;
+        }
+    }
+    //===============================================================================
+    //===============================================================================
+    //===============================================================================
     public void ComputeUpdatedVelocity<T1, T2>(T1 orbitingBody, T2 settings)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {

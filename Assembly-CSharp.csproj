@@ -158,6 +158,7 @@
      <Compile Include="Assets\Scripts\Filepaths.cs" />
      <Compile Include="Assets\Scripts\FlyingObj.cs" />
      <Compile Include="Assets\Scripts\Interfaces.cs" />
+     <Compile Include="Assets\Scripts\Object2Terrain.cs" />
      <Compile Include="Assets\Scripts\OrbitalMechanics\Orbit.cs" />
      <Compile Include="Assets\Scripts\OrbitalMechanics\OrbitPlane.cs" />
      <Compile Include="Assets\Scripts\OrbitalMechanics\OrbitalParam.cs" />

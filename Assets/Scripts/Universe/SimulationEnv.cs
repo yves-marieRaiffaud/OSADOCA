@@ -12,6 +12,7 @@ public class SimulationEnv : ScriptableObject
     //=============================================
     // Class containing every variables needed to define the simulation environment
     public SimSettingBool simulateGravity = new SimSettingBool(true, true, "Simulate gravity", SimSettingCategory.NBodyEngine, SimSettings_InfoList.simulateGravity);
+    public SimSettingBool useNBodySimulation = new SimSettingBool(true, true, "Enable N-Body Simulation", SimSettingCategory.NBodyEngine);
     // Number of celestialBodies to compute the gravitational acc for each celestialBody
     public SimSettingInt NBODYSIM_NB_BODY = new SimSettingInt(3, 3, "Number of body to consider for the N-Body sim computations", SimSettingCategory.NBodyEngine, 1, 10);
     //=============================================

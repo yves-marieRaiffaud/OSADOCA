@@ -389,77 +389,104 @@ public class UI_SimSettings_Panel : MonoBehaviour
         if(simSettingObj is SimSettingFloat)
         {
             SimSettingFloat setting = (SimSettingFloat)simSettingObj;
-            //====================
             string paramsDetails = "<i>default value = " + Fncs.FloatToSignificantDigits(setting.default_value, 4) + "\n" +
                                     "type = " + setting.type + "\n" + 
                                     "min value = " + Fncs.FloatToSignificantDigits(setting.minValue, 4) + "\n" +
                                     "max value = " + Fncs.FloatToSignificantDigits(setting.maxValue, 4) + "</i>";
-            Vector3 pos = moreInfoSetting_Panel.transform.position - new Vector3(moreInfoSetting_Panel.rect.width/2f, 50f, 0f);
 
-            GameObject horizontalSepTop = GameObject.Instantiate(prefab_moreInfo_horizontalSep, pos+new Vector3(0f, 5f, 0f), Quaternion.identity, moreInfoSetting_Panel);
-            GameObject paramsDetailsGO = GameObject.Instantiate(prefab_moreInfo_text, pos, Quaternion.identity, moreInfoSetting_Panel);
-            TMPro.TMP_Text paramsDetailsTxt = paramsDetailsGO.GetComponent<TMPro.TMP_Text>();
-            paramsDetailsTxt.fontSize = 14f;
-            paramsDetailsTxt.text = paramsDetails;
-            
-            RectTransform rt = paramsDetailsGO.GetComponent<RectTransform>();
-            pos = paramsDetailsGO.transform.position - new Vector3(0f, (int)(paramsDetailsTxt.preferredHeight), 0f);
-            GameObject horizontalSepBot = GameObject.Instantiate(prefab_moreInfo_horizontalSep, pos-new Vector3(0f, 5f, 0f), Quaternion.identity, moreInfoSetting_Panel);
-            //====================
-            if(setting.simSettings_Info == null) { return; }
-            Dictionary<string, bool> infoStrings = setting.simSettings_Info.text_strings;
-            GameObject lastSpawnedGO = null;
-            TEXDraw lastFormulaTxt = null;
-            TMPro.TMP_Text lastTMPTxt = null;
-            bool lastSpawedWasFormula = false;
-            bool isIndex0 = true;
-            Vector3 interCompSpacing = new Vector3(0f, 10f, 0f);
-            foreach(KeyValuePair<string, bool> pair in infoStrings)
-            {
-                if(isIndex0) {
-                    pos = horizontalSepBot.transform.position - interCompSpacing;
-                }
-                else {
-                    if(lastSpawedWasFormula) {
-                        pos = lastSpawnedGO.transform.position - new Vector3(0f, (int)(lastFormulaTxt.preferredHeight), 0f) - interCompSpacing;
-                    }
-                    else {
-                        pos = lastSpawnedGO.transform.position - new Vector3(0f, (int)(lastTMPTxt.preferredHeight), 0f) - interCompSpacing;
-                    }
-                }
-
-                if(pair.Value)
-                {
-                    // It is a formula
-                    lastSpawnedGO = GameObject.Instantiate(prefab_moreInfo_formula, pos, Quaternion.identity, moreInfoSetting_Panel);
-                    lastFormulaTxt = lastSpawnedGO.GetComponent<TEXDraw>();
-                    lastFormulaTxt.text = pair.Key;
-                    // End of the section
-                    isIndex0 = false;
-                    lastSpawedWasFormula = true;
-                }
-                else {
-                    // It is some (rich) text
-                    lastSpawnedGO = GameObject.Instantiate(prefab_moreInfo_text, pos, Quaternion.identity, moreInfoSetting_Panel);
-                    lastTMPTxt = lastSpawnedGO.GetComponent<TMPro.TMP_Text>();
-                    lastTMPTxt.text = pair.Key;
-                    // End of the section
-                    isIndex0 = false;
-                    lastSpawedWasFormula = false;
-                }
-            }
-            //====================
+            (Vector3, Vector3) result = AddSimSettings_Info_HorizontalSeparators(paramsDetails);
+            AddSimSettings_Info_Texts<T1, T2>(simSettingObj, result.Item1, result.Item2);
         }
         else if(simSettingObj is SimSettingInt)
         {
             SimSettingInt setting = (SimSettingInt)simSettingObj;
+            string paramsDetails = "<i>default value = " + Fncs.FloatToSignificantDigits(setting.default_value, 4) + "\n" +
+                                    "type = " + setting.type + "\n" + 
+                                    "min value = " + setting.minValue.ToString() + "\n" +
+                                    "max value = " + setting.maxValue.ToString() + "</i>";
+
+            (Vector3, Vector3) result = AddSimSettings_Info_HorizontalSeparators(paramsDetails);
+            AddSimSettings_Info_Texts<T1, T2>(simSettingObj, result.Item1, result.Item2);
         }
         else if(simSettingObj is SimSettingBool)
         {
             SimSettingBool setting = (SimSettingBool)simSettingObj;
+            string paramsDetails = "<i>default value = " + setting.default_value.ToString() + "\n" +
+                                    "type = " + setting.type + "</i>";
+
+            (Vector3, Vector3) result = AddSimSettings_Info_HorizontalSeparators(paramsDetails);
+            AddSimSettings_Info_Texts<T1, T2>(simSettingObj, result.Item1, result.Item2);
         }
     }
 
+    private (Vector3, Vector3) AddSimSettings_Info_HorizontalSeparators(string paramsDetails)
+    {
+        Vector3 pos = moreInfoSetting_Panel.transform.position - new Vector3(moreInfoSetting_Panel.rect.width/2f, 50f, 0f);
+
+        GameObject horizontalSepTop = GameObject.Instantiate(prefab_moreInfo_horizontalSep, pos+new Vector3(0f, 5f, 0f), Quaternion.identity, moreInfoSetting_Panel);
+        GameObject paramsDetailsGO = GameObject.Instantiate(prefab_moreInfo_text, pos, Quaternion.identity, moreInfoSetting_Panel);
+        TMPro.TMP_Text paramsDetailsTxt = paramsDetailsGO.GetComponent<TMPro.TMP_Text>();
+        paramsDetailsTxt.fontSize = 14f;
+        paramsDetailsTxt.text = paramsDetails;
+        
+        RectTransform rt = paramsDetailsGO.GetComponent<RectTransform>();
+        pos = paramsDetailsGO.transform.position - new Vector3(0f, (int)(paramsDetailsTxt.preferredHeight), 0f);
+        GameObject horizontalSepBot = GameObject.Instantiate(prefab_moreInfo_horizontalSep, pos-new Vector3(0f, 5f, 0f), Quaternion.identity, moreInfoSetting_Panel);
+
+        return (pos, horizontalSepBot.transform.position);
+    }
+
+    private void AddSimSettings_Info_Texts<T1, T2>(object simSettingObj, Vector3 pos, Vector3 horizontalSepBotPos)
+    where T1 : SimSettingInterface<T2>
+    {
+        T1 setting = (T1)(dynamic)simSettingObj;
+        if(setting.simSettings_Info == null) { return; }
+        Dictionary<string, bool> infoStrings = setting.simSettings_Info.text_strings;
+        GameObject lastSpawnedGO = null;
+        TEXDraw lastFormulaTxt = null;
+        TMPro.TMP_Text lastTMPTxt = null;
+        bool lastSpawedWasFormula = false;
+        bool isIndex0 = true;
+        Vector3 interCompSpacing = new Vector3(0f, 10f, 0f);
+        foreach(KeyValuePair<string, bool> pair in infoStrings)
+        {
+            if(isIndex0) {
+                pos = horizontalSepBotPos - interCompSpacing;
+            }
+            else {
+                if(lastSpawedWasFormula) {
+                    pos = lastSpawnedGO.transform.position - new Vector3(0f, (int)(lastFormulaTxt.preferredHeight), 0f) - interCompSpacing;
+                }
+                else {
+                    pos = lastSpawnedGO.transform.position - new Vector3(0f, (int)(lastTMPTxt.preferredHeight), 0f) - interCompSpacing;
+                }
+            }
+
+            if(pair.Value)
+            {
+                // It is a formula
+                lastSpawnedGO = GameObject.Instantiate(prefab_moreInfo_formula, pos, Quaternion.identity, moreInfoSetting_Panel);
+                lastFormulaTxt = lastSpawnedGO.GetComponent<TEXDraw>();
+                lastFormulaTxt.text = pair.Key;
+                // End of the section
+                isIndex0 = false;
+                lastSpawedWasFormula = true;
+            }
+            else {
+                // It is some (rich) text
+                lastSpawnedGO = GameObject.Instantiate(prefab_moreInfo_text, pos, Quaternion.identity, moreInfoSetting_Panel);
+                lastTMPTxt = lastSpawnedGO.GetComponent<TMPro.TMP_Text>();
+                lastTMPTxt.text = pair.Key;
+                // End of the section
+                isIndex0 = false;
+                lastSpawedWasFormula = false;
+            }
+        }
+    }
+    //=============================================================================================
+    //=============================================================================================
+    //=============================================================================================
+    //=============================================================================================
     private void OnRevert_BtnClick<T>(T defaultValue, params object[] objToChange)
     {
         if(defaultValue is bool)
