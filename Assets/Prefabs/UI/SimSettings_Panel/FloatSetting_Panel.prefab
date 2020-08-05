@@ -480,7 +480,7 @@ GameObject:
   - component: {fileID: 2339071260426050258}
   - component: {fileID: 2339071260426050257}
   m_Layer: 5
-  m_Name: Int_Slider
+  m_Name: Float_Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1256,7 +1256,7 @@ GameObject:
   - component: {fileID: 4445999310238052698}
   - component: {fileID: 4445999310238052699}
   m_Layer: 5
-  m_Name: Int_InputField
+  m_Name: Float_InputField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

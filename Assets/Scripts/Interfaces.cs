@@ -32,3 +32,13 @@ public interface FlyingObjSettings
 {
     // Either 'SpaceshipSettings' or 'CelestialBodySettings'
 }
+
+public interface SimSettingInterface<T1>
+{
+    T1 value {get; set;}
+    T1 default_value {get; set;}
+    string type {get; set;}
+    string displayName {get; set;}
+    SimSettingCategory category {get; set;}
+    SimSettings_Info simSettings_Info {get; set;}
+}

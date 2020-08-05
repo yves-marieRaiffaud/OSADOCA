@@ -36,6 +36,19 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\Additional\TEXDraw\Core\Editor\EditorObjectPool.cs" />
+     <Compile Include="Assets\Additional\TEXDraw\Core\Editor\EditorTEXFontSwapper.cs" />
+     <Compile Include="Assets\Additional\TEXDraw\Core\Editor\EditorTEXUIQuickEditors.cs" />
+     <Compile Include="Assets\Additional\TEXDraw\Core\Editor\MiniThumbDrawer.cs" />
+     <Compile Include="Assets\Additional\TEXDraw\Core\Editor\TEXBoxHighlighting.cs" />
+     <Compile Include="Assets\Additional\TEXDraw\Core\Editor\TEXDraw3DEditor.cs" />
+     <Compile Include="Assets\Additional\TEXDraw\Core\Editor\TEXDrawEditor.cs" />
+     <Compile Include="Assets\Additional\TEXDraw\Core\Editor\TEXEditorMenus.cs" />
+     <Compile Include="Assets\Additional\TEXDraw\Core\Editor\TEXPreferenceEditor.cs" />
+     <Compile Include="Assets\Additional\TEXDraw\Core\Editor\TEXSDFImporter.cs" />
+     <Compile Include="Assets\Additional\TEXDraw\Core\Editor\TEXSharedEditor.cs" />
+     <Compile Include="Assets\Additional\TEXDraw\Core\Editor\TEXSupplementEditor.cs" />
+     <Compile Include="Assets\Additional\TEXDraw\Core\Editor\TexConfigurationEditor.cs" />
      <Compile Include="Assets\Editor\CelestialBodyEditor.cs" />
      <Compile Include="Assets\Editor\SpaceshipEditor.cs" />
      <Compile Include="Assets\Editor\UniverseRunnerEditor.cs" />
