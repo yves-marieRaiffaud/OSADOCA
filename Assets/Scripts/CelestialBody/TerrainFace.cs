@@ -14,6 +14,8 @@ public class TerrainFace
     CelestialBody celestialBody;
     public Chunk parentChunk;
     public List<Chunk> visibleChildren = new List<Chunk>();
+    public List<float> visibleChildrenDist = new List<float>();
+    int chunkIDXMinDistance=-1;
     
     // These will be filled with the generated data
     public List<Vector3> vertices = new List<Vector3>();
@@ -53,6 +55,8 @@ public class TerrainFace
         borderVertices.Clear();
         borderTriangles.Clear();
         visibleChildren.Clear();
+        visibleChildrenDist.Clear();
+        chunkIDXMinDistance=-1; // -1 as initialization value, meaning that the visibleChildrenDist List is null/empty
 
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32; // Extend the resolution capabilities of the mesh
         
@@ -64,6 +68,7 @@ public class TerrainFace
         int triangleOffset = 0;
         int borderTriangleOffset = 0;
         parentChunk.GetVisibleChildren();
+        chunkIDXMinDistance = UsefulFunctions.ListFloatArgMin(visibleChildrenDist);
         foreach (Chunk child in visibleChildren)
         {
             child.GetNeighbourLOD();
@@ -95,6 +100,7 @@ public class TerrainFace
         borderVertices.Clear();
         borderTriangles.Clear();
         visibleChildren.Clear();
+        visibleChildrenDist.Clear();
         edgefanIndex.Clear();
 
         parentChunk.UpdateChunk();
@@ -103,6 +109,13 @@ public class TerrainFace
         int triangleOffset = 0;
         int borderTriangleOffset = 0;
         parentChunk.GetVisibleChildren();
+
+        if(visibleChildrenDist.Count > 0)
+        {
+            chunkIDXMinDistance = UsefulFunctions.ListFloatArgMin(visibleChildrenDist);
+        }
+
+        int idxCounter = 0;
         foreach (Chunk child in visibleChildren)
         {
             child.GetNeighbourLOD();
@@ -120,6 +133,40 @@ public class TerrainFace
                 verticesAndTriangles = (child.vertices, child.GetTrianglesWithOffset(triangleOffset), child.GetBorderTrianglesWithOffset(borderTriangleOffset, triangleOffset), child.borderVertices, child.normals);
             }
 
+            if(chunkIDXMinDistance == idxCounter)
+            {
+                GameObject groundGO;
+                if(celestialBody.transform.Find("ground"))
+                {
+                    groundGO = celestialBody.transform.Find("ground").gameObject;
+                }
+                else {
+                    groundGO = new GameObject("ground", typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer));
+                    groundGO.transform.parent = celestialBody.transform;
+                    groundGO.transform.localRotation = Quaternion.identity;
+                    
+                    float flatenningVal = (float)celestialBodySettingsScript.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()];
+                    flatenningVal = 1f - 1f/flatenningVal;
+                    groundGO.transform.localPosition = (flatenningVal*child.position).normalized;
+                    
+                    groundGO.layer = 9;
+                    MeshRenderer meshRenderer = groundGO.GetComponent<MeshRenderer>();
+                    meshRenderer.material = Resources.Load<Material>("Ground");
+                }
+
+                MeshFilter meshFilter = groundGO.GetComponent<MeshFilter>();
+                Mesh tmpMesh = new Mesh();
+                tmpMesh.name = "closestChunk";
+                tmpMesh.vertices = verticesAndTriangles.Item1;
+                tmpMesh.triangles = child.triangles;
+                tmpMesh.normals = verticesAndTriangles.Item5;
+                meshFilter.mesh = tmpMesh;
+                MeshCollider meshCollider = groundGO.GetComponent<MeshCollider>();
+                meshCollider.convex = true;
+                meshCollider.sharedMesh = tmpMesh;
+                Debug.Log(string.Join(System.Environment.NewLine, verticesAndTriangles.Item1));
+            }
+
             vertices.AddRange(verticesAndTriangles.Item1);
             triangles.AddRange(verticesAndTriangles.Item2);
             borderTriangles.AddRange(verticesAndTriangles.Item3);
@@ -129,6 +176,8 @@ public class TerrainFace
             // Increase offset to accurately point to the next slot in the lists
             triangleOffset += (Presets.quadRes + 1) * (Presets.quadRes + 1);
             borderTriangleOffset += verticesAndTriangles.Item4.Length;
+            //===============
+            idxCounter++;
         }
 
         Vector2[] uvs = new Vector2[vertices.Count];
@@ -211,11 +260,27 @@ public class Chunk
         this.hasDefaultHeightmap = isDefaultHeightMapBool;
     }
 
+    public Vector3[] TransformVertices(Vector3[] verticesArray)
+    {
+        Vector3[] arr = new Vector3[verticesArray.Length];
+        int counter = 0;
+        foreach(Vector3 item in verticesArray)
+        {
+            arr[counter] = item - position;
+            counter++;
+        }
+        return arr;
+    }
+
     public void GenerateChildren()
     {
         // If the detail level is under max level and above 0. Max level depends on how many detail levels are defined in planets and needs to be changed manually.
         if (detailLevel <= celestialBodySettingsScript.detailLevelDistances.Length - 1 && detailLevel >= 0)
         {
+            /*Debug.Log("normalizedPos = " + normalizedPos + " ; normalizedPos * (float)celestialBodySettingsScript.radiusU = " + (normalizedPos * (float)celestialBodySettingsScript.radiusU));
+            Debug.Log("worldPos vertex = " + (celestialBody.transform.TransformDirection(normalizedPos * (float)celestialBodySettingsScript.radiusU) + celestialBody.transform.position));
+            Debug.LogFormat("detailLevel = {0}", detailLevel);
+            Debug.Log("===============");*/
             if (Vector3.Distance(celestialBody.transform.TransformDirection(normalizedPos * (float)celestialBodySettingsScript.radiusU) + celestialBody.transform.position, universePlayerCamera.position) <= celestialBodySettingsScript.detailLevelDistances[detailLevel])
             {
                 // Assign the children of the quad (grandchildren not included). 
@@ -242,7 +307,10 @@ public class Chunk
     public void UpdateChunk()
     {
         float distanceToPlayer = Vector3.Distance(celestialBody.transform.TransformDirection(normalizedPos * (float)celestialBodySettingsScript.radiusU) + celestialBody.transform.position, universePlayerCamera.position);
-        //Debug.LogFormat("distance = {0} - detailLevel = {1}", distanceToPlayer, detailLevel);
+        /*Debug.Log("normalizedPos = " + normalizedPos + " ; normalizedPos * (float)celestialBodySettingsScript.radiusU = " + (normalizedPos * (float)celestialBodySettingsScript.radiusU));
+        Debug.Log("worldPos vertex = " + (celestialBody.transform.TransformDirection(normalizedPos * (float)celestialBodySettingsScript.radiusU) + celestialBody.transform.position));
+        Debug.LogFormat("distance = {0} - detailLevel = {1}", distanceToPlayer, detailLevel);
+        Debug.Log("===============");*/
         if (detailLevel <= celestialBodySettingsScript.detailLevelDistances.Length - 1)
         {
             if (distanceToPlayer > celestialBodySettingsScript.detailLevelDistances[detailLevel])
@@ -285,6 +353,7 @@ public class Chunk
                 celestialBody.distanceToPlayerPow2) / (2 * (float)celestialBodySettingsScript.radiusU * b)) > celestialBodySettingsScript.cullingMinAngle)
             {
                 terrainFace.visibleChildren.Add(this);
+                terrainFace.visibleChildrenDist.Add(b);
             }
         }
     }
@@ -393,6 +462,19 @@ public class Chunk
         for (int i = 0; i < triangles.Length; i++)
         {
             newTriangles[i] = triangles[i] + triangleOffset;
+        }
+
+        return newTriangles;
+    }
+
+    // Return triangles without the offset
+    public int[] GetTrianglesWithoutOffset(int triangleOffset)
+    {
+        int[] newTriangles = new int[triangles.Length];
+
+        for (int i = 0; i < triangles.Length; i++)
+        {
+            newTriangles[i] = triangles[i] - triangleOffset;
         }
 
         return newTriangles;

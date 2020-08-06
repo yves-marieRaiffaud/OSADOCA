@@ -140,6 +140,7 @@
      <Compile Include="Assets\SampleScenes\Scripts\SlowMoButton.cs" />
      <Compile Include="Assets\Scripts\ALibs\JsonHelper.cs" />
      <Compile Include="Assets\Scripts\ALibs\Mathd.cs" />
+     <Compile Include="Assets\Scripts\ALibs\Obj2Terrain.cs" />
      <Compile Include="Assets\Scripts\ALibs\Quaterniond.cs" />
      <Compile Include="Assets\Scripts\ALibs\UsefulFunctions.cs" />
      <Compile Include="Assets\Scripts\ALibs\Vector2d.cs" />
@@ -158,7 +159,6 @@
      <Compile Include="Assets\Scripts\Filepaths.cs" />
      <Compile Include="Assets\Scripts\FlyingObj.cs" />
      <Compile Include="Assets\Scripts\Interfaces.cs" />
-     <Compile Include="Assets\Scripts\Object2Terrain.cs" />
      <Compile Include="Assets\Scripts\OrbitalMechanics\Orbit.cs" />
      <Compile Include="Assets\Scripts\OrbitalMechanics\OrbitPlane.cs" />
      <Compile Include="Assets\Scripts\OrbitalMechanics\OrbitalParam.cs" />

@@ -133,7 +133,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     TerrainFace[] terrainFaces;
     //=========================================
     private IEnumerator planetGenerationCoroutine;
-    [HideInInspector] public bool planetGenerationCoroutineIsRunning = false;
+    public bool planetGenerationCoroutineIsRunning = false;
     private float nonLODTransitionDistance; // in unity units, using the 'pl2u' scaling factor
     string sphereTemplateCelestBodyName = "sphereTemplate";
     public bool addMeshColliders = true;
@@ -390,7 +390,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     {
         // 'spawnAsSimpleSphere' only refers to the UI SimpleSphere, not the NON-LOD sphere 
         if(spawnAsSimpleSphere) { return; }
-
         GetDistancesToCamera();
         CheckUpdate_LOD_NonLOD_System();
 

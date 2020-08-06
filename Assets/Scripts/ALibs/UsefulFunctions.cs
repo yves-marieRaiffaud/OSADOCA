@@ -579,4 +579,27 @@ public static class UsefulFunctions
         return result;
     }
 
+    public static int ListFloatArgMin(List<float> floatList)
+    {
+        if(floatList.Count < 1) {
+            throw new System.ArgumentException("The specified list has length 0", "floatList");
+        }
+
+        int minValue_idx = 0;
+        float minValue = floatList[0];
+        Boolean assigned = false;
+
+        int counter = 0;
+        foreach(float floatVal in floatList)
+        {
+            if ((floatVal < minValue) || (!assigned)) {
+                assigned = true;
+                minValue = floatVal;
+                minValue_idx = counter;
+            }
+            counter++;
+        }
+        return minValue_idx;
+    }
+
 }

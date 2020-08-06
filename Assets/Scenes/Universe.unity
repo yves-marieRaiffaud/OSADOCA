@@ -244,7 +244,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: velocity
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -315,8 +315,8 @@ MonoBehaviour:
     textComponent: {fileID: 552432930}
     characterCount: 8
     spriteCount: 0
-    spaceCount: 1
-    wordCount: 2
+    spaceCount: 0
+    wordCount: 1
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -554,7 +554,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: altitude
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -625,8 +625,8 @@ MonoBehaviour:
     textComponent: {fileID: 999454575}
     characterCount: 8
     spriteCount: 0
-    spaceCount: 1
-    wordCount: 2
+    spaceCount: 0
+    wordCount: 1
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -1757,10 +1757,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Earth
       objectReference: {fileID: 0}
+    - target: {fileID: 7958574682498467459, guid: 228e9b75980ca5c4c9d5ccc2a859c51c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7958574682498467468, guid: 228e9b75980ca5c4c9d5ccc2a859c51c,
         type: 3}
       propertyPath: addMeshColliders
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7958574682498467468, guid: 228e9b75980ca5c4c9d5ccc2a859c51c,
         type: 3}
@@ -1771,6 +1776,11 @@ PrefabInstance:
         type: 3}
       propertyPath: forceNonLODSphere
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7958574682498467468, guid: 228e9b75980ca5c4c9d5ccc2a859c51c,
+        type: 3}
+      propertyPath: forceLODSphere
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7958574682498467471, guid: 228e9b75980ca5c4c9d5ccc2a859c51c,
         type: 3}
