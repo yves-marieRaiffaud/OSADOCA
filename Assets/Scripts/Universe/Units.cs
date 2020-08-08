@@ -11,8 +11,8 @@ public static class PlanetsFunctions
     public static Dictionary<chosenFunction, TFunc> earthFcnsDict = new Dictionary<chosenFunction, TFunc>() {
         { chosenFunction.pressureEvolution, (surfPressure, inputAlt) => {return EarthPressureEvolution(surfPressure, inputAlt);} }
     };
-    //=================
-    //=================
+    //======
+    //======
     public static Pressure EarthPressureEvolution(Pressure surfacePressure, double inputAltitude) {
         // inputAltitude is the altitude in km from the surface of the planet
         double pressureAtAlt = surfacePressure.value / (Mathd.Pow(2, (inputAltitude/5d)));

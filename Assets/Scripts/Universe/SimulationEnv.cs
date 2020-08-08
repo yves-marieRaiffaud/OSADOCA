@@ -1,12 +1,14 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using System;
 
-public enum SimSettingCategory { UI, NBodyEngine, Physics };
+public enum SimSettingCategory { UI, NBodyEngine, Physics, Perturbations };
 
 [CreateAssetMenu(), Serializable]
 public class SimulationEnv : ScriptableObject
 {
-    public static string[] simSettingCategoryLabels = new string[] {"UI", "NBody Simulator Engine", "Physics"};
+    public static string[] simSettingCategoryLabels = new string[] {"UI", "NBody Simulator Engine", "Physics", "Perturbations"};
     //=============================================
     //=============================================
     //=============================================
@@ -22,6 +24,11 @@ public class SimulationEnv : ScriptableObject
     public SimSettingInt targetFrameRate = new SimSettingInt(60, 60, "Target FPS value", SimSettingCategory.Physics, 1, 100);
     public SimSettingInt physicsUpdateRate = new SimSettingInt(50, 50, "Physics update frequency", SimSettingCategory.Physics, 1, 100);
     public SimSettingFloat timeScale = new SimSettingFloat(1f, 1f, "Time scale", SimSettingCategory.Physics, 0.1f, 10f, SimSettings_InfoList.simulateGravity);
+    //=============================================
+    //=============================================
+    //=============================================
+    private static string[] perturbations = new string[] {"Jn", "Lift/Drag", "Solar Pressure"};
+    public SimSettingEnum perturbationsToCompute = new SimSettingEnum(perturbations, perturbations, "Perturbations", SimSettingCategory.Perturbations);
     //=============================================
     //=============================================
     //=============================================
@@ -113,6 +120,7 @@ public class SimSettingGeneric<T1> : SimSettingInterface<T1>
         }
     }
 
+    public SimSettingGeneric() {}
     public SimSettingGeneric(T1 variableValue, T1 default_value, string nameToDisplay, SimSettingCategory settingCategory,
                              SimSettings_Info _simSettings_Info=null)
     {
@@ -158,4 +166,35 @@ public class SimSettingBool : SimSettingGeneric<bool>, SimSettingInterface<bool>
     public SimSettingBool(bool variableValue, bool defaultValue, string nameToDisplay, SimSettingCategory settingCategory,
                           SimSettings_Info _simSettings_Info=null)
                           : base(variableValue, defaultValue, nameToDisplay, settingCategory, _simSettings_Info) { }
+}
+
+[Serializable]
+public struct SimSettingEnumDictionary
+{
+    [SerializeField]
+    public Dictionary<int, string> enumDict;
+    public SimSettingEnumDictionary(string[] stringValues)
+    {
+        enumDict = new Dictionary<int, string>();
+        int counter = 0;
+        foreach(string val in stringValues)
+        {
+            enumDict.Add(counter, val);
+            counter++;
+        }
+    }
+}
+
+[Serializable]
+public class SimSettingEnum : SimSettingGeneric<SimSettingEnumDictionary>, SimSettingInterface<SimSettingEnumDictionary>
+{
+    public SimSettingEnum(string[] variableValue, string[] defaultValue, string nameToDisplay,
+                          SimSettingCategory settingCategory, SimSettings_Info _simSettings_Info=null) : base()
+    {
+        this.value = new SimSettingEnumDictionary(variableValue);
+        this.default_value = new SimSettingEnumDictionary(defaultValue);
+        this.displayName = nameToDisplay;
+        this.category = settingCategory;
+        this.simSettings_Info = _simSettings_Info;
+    }
 }

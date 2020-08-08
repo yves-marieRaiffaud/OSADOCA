@@ -70,7 +70,7 @@ public class UI_SimSettings_Panel : MonoBehaviour
                 else if(!justAddedCategoryTitle && addLeft) {
                     yPosition -= 80;
                 }
-                if(addRight) {
+                if(addLeft) {
                     // Add vertical separator between two settings on the same line
                     AddSeparator(yPosition, prefab_verticalSeparator);
                 }
@@ -104,7 +104,7 @@ public class UI_SimSettings_Panel : MonoBehaviour
                 else if(!justAddedCategoryTitle && addLeft) {
                     yPosition -= 80;
                 }
-                if(addRight) {
+                if(addLeft) {
                     // Add vertical separator between two settings on the same line
                     AddSeparator(yPosition, prefab_verticalSeparator);
                 }
