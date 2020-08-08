@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.IO;
+using Mathd_Lib;
 
 public class simUI : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class simUI : MonoBehaviour
     public TMPro.TMP_Text velocityVal;
     public TMPro.TMP_Text altitudeVal;
 
+    public bool saveOrbitalDataToText=false;
     string fileName = "dataOrbit.txt";
     StreamWriter sr;
 
@@ -14,6 +16,7 @@ public class simUI : MonoBehaviour
     {
         if(universeRunner == null) { Debug.LogError("The UniverseRunner instance has not been set in the editor."); return; }
 
+        if(!saveOrbitalDataToText) { return; }
         if (File.Exists(fileName))
         {
             Debug.Log(fileName+" already exists.");
@@ -24,16 +27,20 @@ public class simUI : MonoBehaviour
     void LateUpdate()
     {
         string velocity = UsefulFunctions.DoubleToSignificantDigits(universeRunner.activeSpaceship.GetRelativeVelocityMagnitude(), UniCsts.UI_SIGNIFICANT_DIGITS);
-        string altitude = UsefulFunctions.DoubleToSignificantDigits(universeRunner.activeSpaceship.GetAltitude(), UniCsts.UI_SIGNIFICANT_DIGITS);
+        string altitude = UsefulFunctions.DoubleToSignificantDigits(universeRunner.activeSpaceship.GetShipAltitude(), UniCsts.UI_SIGNIFICANT_DIGITS);
 
         velocityVal.text = velocity + " m/s";
         altitudeVal.text = altitude + " km";
-    
+
+        if(!saveOrbitalDataToText) { return; }
         sr.WriteLine (velocity + ";" + altitude);
     }
 
+    
+
     void OnApplicationQuit()
     {
+        if(!saveOrbitalDataToText) { return; }
         sr.Close();
     }
 }

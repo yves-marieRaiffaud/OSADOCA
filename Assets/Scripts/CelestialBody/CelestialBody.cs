@@ -181,7 +181,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         
     }
 
-    public void AwakeCelestialBody(Dictionary<string,double> refDictOrbParams)
+    public void AwakeCelestialBody(Dictionary<string, UnitInterface> refDictOrbParams)
     {
         AssignRefDictOrbitalParams(refDictOrbParams);
         if(spawnAsSimpleSphere) { 
@@ -231,7 +231,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     private void ApplyFlatenningScale()
     {
         // Apply oblateness to the planet
-        float flatenningVal = (float)settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()];
+        float flatenningVal = (float)settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()].value;
         float flatenningScale = 1f;
         if(!UsefulFunctions.FloatsAreEqual(flatenningVal, 0f))
         {
@@ -244,10 +244,10 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     private void InitializeBodyParameters()
     {
         // RadiusU
-        settings.radiusU = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()] * UniCsts.pl2u; // km
+        settings.radiusU = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value * UniCsts.pl2u; // km
 
         // Rotation Speed
-        double siderealPeriod = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()];
+        double siderealPeriod = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()].value;
         if(!UsefulFunctions.DoublesAreEqual(siderealPeriod, 0d))
         {
             settings.rotationSpeed = (double)Time.fixedDeltaTime * 360d / siderealPeriod; // in °.s-1
@@ -298,7 +298,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         if(!settings.planetBaseParamsDict.ContainsKey(CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()))
         {
             // Set variable to a default key
-            settings.planetBaseParamsDict.Add(CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString(), 0f);
+            settings.planetBaseParamsDict.Add(CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString(), new DoubleNoDim(0d));
         }
         settings.heightMap = UsefulFunctions.RotateTexture180(settings.heightMap);
 
@@ -361,7 +361,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     //=========================================
     public void InitializeAxialTilt()
     {
-        float axialTitleAngle = (float)settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()];
+        float axialTitleAngle = (float)settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()].value;
         // Rotation vector is in the orbital plane and perpendicular to the radial vector
         Vector3 tangentialVec = (Vector3)orbit.ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.tangentialVec);
 
@@ -471,7 +471,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         gameObject.transform.rotation = Quaternion.AngleAxis((float)-settings.rotationSpeed, positivePoleVec) * transform.rotation;  // Sign "-" for the prograde rotation
     }
     //=========================================
-    private void AssignRefDictOrbitalParams(Dictionary<string,double> refDictOrbParams)
+    private void AssignRefDictOrbitalParams(Dictionary<string, UnitInterface> refDictOrbParams)
     {
         settings.planetBaseParamsDict = refDictOrbParams;
         if(settings.usePredifinedPlanets)
@@ -491,12 +491,12 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         orbitalParams.orbParamsUnits = OrbitalTypes.orbitalParamsUnits.AU_degree;
         orbitalParams.bodyPosType = OrbitalTypes.bodyPositionType.nu;
 
-        orbitalParams.ra = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.aphelion.ToString()];
-        orbitalParams.rp = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.perihelion.ToString()];
-        orbitalParams.i = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.i.ToString()];
-        orbitalParams.lAscN = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()];
-        orbitalParams.omega = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()];
-        orbitalParams.nu = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()];
+        orbitalParams.ra = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.aphelion.ToString()].value;
+        orbitalParams.rp = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.perihelion.ToString()].value;
+        orbitalParams.i = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.i.ToString()].value;
+        orbitalParams.lAscN = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()].value;
+        orbitalParams.omega = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()].value;
+        orbitalParams.nu = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()].value;
     }
 
     public void InitializeOrbitalPredictor()

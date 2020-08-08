@@ -115,13 +115,9 @@ public class UIMainMenu : MonoBehaviour
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_SimSettings_Img, controlBarCheckScript.color_default);
 
-        DebugGameObject scriptInst = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
-        if(scriptInst.loadShipDataFromUIDiskFile)
-        {
-            // Gathering the orbitalParams/PlanetarySurface data
-            UIStartLoc_Panel startLocPanelScript = gameObject.GetComponent<UIStartLoc_Panel>();
-            startLocPanelScript.On_FLY_click_GatherOrbitalParams();
-        }
+        // Gathering the orbitalParams/PlanetarySurface data
+        UIStartLoc_Panel startLocPanelScript = gameObject.GetComponent<UIStartLoc_Panel>();
+        startLocPanelScript.On_FLY_click_GatherOrbitalParams();
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Loading the simulation scene
     }

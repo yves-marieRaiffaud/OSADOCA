@@ -83,7 +83,7 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
     public void UpdatePlanetaryMap()
     {
         UniCsts.planets currPlanet = UsefulFunctions.CastStringTo_Unicsts_Planets(currPlanetSelectedName);
-        double currBodyIsRocky = UniCsts.planetsDict[currPlanet][CelestialBodyParamsBase.otherParams.isRockyBody.ToString()];
+        double currBodyIsRocky = UniCsts.planetsDict[currPlanet][CelestialBodyParamsBase.otherParams.isRockyBody.ToString()].value;
 
         if(currBodyIsRocky == 1d)
         {

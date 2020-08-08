@@ -9,7 +9,7 @@ using System.Threading;
 public class UDPReceiver : MonoBehaviour
 {
     public string IP = "127.0.0.1";
-    public int Port;
+    public int port;
     private UdpClient _ReceiveClient;
     private Thread _ReceiveThread;
     private IReceiverObserver _Observer;
@@ -41,8 +41,7 @@ public class UDPReceiver : MonoBehaviour
     /// </summary>
     private void ReceiveData()
     {
-        _ReceiveClient = new UdpClient(Port);
-
+        _ReceiveClient = new UdpClient(port);
         while (true)
         {
             try
@@ -56,7 +55,7 @@ public class UDPReceiver : MonoBehaviour
                 if (_Observer != null)
                     _Observer.OnDataReceived(values);
 
-                Debug.Log(">>>>");
+                Debug.Log(">>>> " + string.Join(";",values));
             }
             catch (Exception err)
             {

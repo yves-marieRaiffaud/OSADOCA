@@ -31,8 +31,8 @@ public class LaunchPad
         // Eastward boost (effet de fronde) is useful when launching satellites to an equatorial orbit (such as GEO)
         // Eastward boost computed in m/s
         string planetName = launchPadParamsDict[launchPadParams.refPlanet];
-        double equaRadius = UniCsts.planetsDict[UsefulFunctions.CastStringTo_Unicsts_Planets(planetName)][CelestialBodyParamsBase.planetaryParams.radius.ToString()];
-        double polarRadius = UniCsts.planetsDict[UsefulFunctions.CastStringTo_Unicsts_Planets(planetName)][CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()];
+        double equaRadius = UniCsts.planetsDict[UsefulFunctions.CastStringTo_Unicsts_Planets(planetName)][CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
+        double polarRadius = UniCsts.planetsDict[UsefulFunctions.CastStringTo_Unicsts_Planets(planetName)][CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value;
 
         double lat;
         UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.latitude], out lat);

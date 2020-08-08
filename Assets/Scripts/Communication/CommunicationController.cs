@@ -4,14 +4,26 @@ using UnityEngine;
 
 public class CommunicationController : MonoBehaviour, IReceiverObserver
 {
-    UDPReceiver _UdpReceiver;
-    UDPTransmitter _Udpransmitter;
-
+    private UDPReceiver _UdpReceiver;
+    private TCPReceiver _TcpReceiver;
+    private UDPTransmitter _UdpTransmitter;
+    public bool receiveUsingUDP;
+    //===============================
     private void Awake()
     {
-        _UdpReceiver = GetComponent<UDPReceiver>();
-        _UdpReceiver.SetObserver(this);
-        _Udpransmitter = GetComponent<UDPTransmitter>();
+        if(receiveUsingUDP)
+        {
+            _UdpReceiver = GetComponent<UDPReceiver>();
+            _UdpReceiver.SetObserver(this);
+            _TcpReceiver = null;
+        }
+        else {
+            _TcpReceiver = GetComponent<TCPReceiver>();
+            _TcpReceiver.SetObserver(this);
+            _UdpReceiver = null;
+        }
+
+        _UdpTransmitter = GetComponent<UDPTransmitter>();
     }
 
     /// <summary>
@@ -20,6 +32,6 @@ public class CommunicationController : MonoBehaviour, IReceiverObserver
     /// <param name="val"></param>
     void IReceiverObserver.OnDataReceived(double[] val)
     {
-        _Udpransmitter.Send(val);
+        _UdpTransmitter.Send(val);
     }
 }

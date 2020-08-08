@@ -203,7 +203,7 @@ public class SpaceshipEditor: Editor
             return new string[] {};
         }
         else {
-            double isRocky = UniCsts.planetsDict[selectedPlanet][CelestialBodyParamsBase.otherParams.isRockyBody.ToString()];
+            double isRocky = UniCsts.planetsDict[selectedPlanet][CelestialBodyParamsBase.otherParams.isRockyBody.ToString()].value;
             if(isRocky == 0d) {
                 return new string[] {};
             }

@@ -239,51 +239,51 @@ public class CelestialBodyEditor : Editor
     }
 
 
-    public Dictionary<string, double> InitNewPlanetBaseParamsDict()
+    public Dictionary<string, UnitInterface> InitNewPlanetBaseParamsDict()
     {
-        return new Dictionary<string, double> {
-            { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 0d },
-            { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()             , 0d },
-            { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 0d },
-            { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 0d },
-            { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 0d },
-            { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 0d },
-            { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , 0d },
+        return new Dictionary<string, UnitInterface> {
+            { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(0d, Units.distance.km) },
+            { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(0d, Units.distance.km) },
+            { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(0d) },
+            { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , new Distance(0d, Units.distance.km) },
+            { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(0d, Units.angle.degree) },
+            { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(0d, Units.time.s) },
+            { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(0d) },
 
-            { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , 0d },
-            { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , 0d },
-            { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , 0d },
-            { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , 0d },
-            { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , 0d },
-            { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , 0d },
+            { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(0d, Units.distance.AU) },
+            { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(0d, Units.distance.AU) },
+            { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , new Angle(0d, Units.angle.degree) },
+            { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , new Angle(0d, Units.angle.degree) },
+            { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , new Angle(0d, Units.angle.degree) },
+            { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , new Angle(0d, Units.angle.degree) },
 
-            { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , 0d },
-            { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , 0d },
-            { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , 0d },
-            { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , 0d },
+            { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , new Pressure(0d, Units.pressure.atm) },
+            { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , new DoubleNoDim(0d) },
+            { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , new Temperature(0d, Units.temperature.degree_C) },
+            { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , new DoubleNoDim(0d) },
 
-            { CelestialBodyParamsBase.jnParams.j2.ToString()                        , 0d },
-            { CelestialBodyParamsBase.jnParams.j3.ToString()                        , 0d },
-            { CelestialBodyParamsBase.jnParams.j4.ToString()                        , 0d },
-            { CelestialBodyParamsBase.jnParams.j5.ToString()                        , 0d },
-            { CelestialBodyParamsBase.jnParams.j6.ToString()                        , 0d },
+            { CelestialBodyParamsBase.jnParams.j2.ToString()                        , new DoubleNoDim(0d) },
+            { CelestialBodyParamsBase.jnParams.j3.ToString()                        , new DoubleNoDim(0d) },
+            { CelestialBodyParamsBase.jnParams.j4.ToString()                        , new DoubleNoDim(0d) },
+            { CelestialBodyParamsBase.jnParams.j5.ToString()                        , new DoubleNoDim(0d) },
+            { CelestialBodyParamsBase.jnParams.j6.ToString()                        , new DoubleNoDim(0d) },
 
-            { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , 0d }
+            { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(0d) }
         };
     }
 
-    public void CreateOrbitalParametersEditor(Dictionary<string, double> dict)
+    public void CreateOrbitalParametersEditor(Dictionary<string, UnitInterface> dict)
     {
         // Dictionary Filling
         EditorGUILayout.LabelField("Planetary Params", EditorStyles.boldLabel);
-        dict[CelestialBodyParamsBase.planetaryParams.radius.ToString()] = EditorGUILayout.DoubleField("Equatorial radius", dict[CelestialBodyParamsBase.planetaryParams.radius.ToString()]);
-        dict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()] = EditorGUILayout.DoubleField("Polar radius", dict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()]);
-        dict[CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()] = EditorGUILayout.DoubleField("Inverse flattening", dict[CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()]);
-        dict[CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()] = EditorGUILayout.DoubleField("SOI Radius", dict[CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()]);
-        dict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()] = EditorGUILayout.DoubleField("Axial tilt", dict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()]);
-        dict[CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()] = EditorGUILayout.DoubleField("Sidereal Rot period", dict[CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()]);
-        dict[CelestialBodyParamsBase.planetaryParams.mu.ToString()] = EditorGUILayout.DoubleField("µ", dict[CelestialBodyParamsBase.planetaryParams.mu.ToString()]);
-        dict[CelestialBodyParamsBase.otherParams.isRockyBody.ToString()] = EditorGUILayout.DoubleField("Rocky planet ?", dict[CelestialBodyParamsBase.otherParams.isRockyBody.ToString()]);
+        dict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value = EditorGUILayout.DoubleField("Equatorial radius", dict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value);
+        dict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value = EditorGUILayout.DoubleField("Polar radius", dict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value);
+        dict[CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()].value = EditorGUILayout.DoubleField("Inverse flattening", dict[CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()].value);
+        dict[CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()].value = EditorGUILayout.DoubleField("SOI Radius", dict[CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()].value);
+        dict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()].value = EditorGUILayout.DoubleField("Axial tilt", dict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()].value);
+        dict[CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()].value = EditorGUILayout.DoubleField("Sidereal Rot period", dict[CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()].value);
+        dict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value = EditorGUILayout.DoubleField("µ", dict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value);
+        dict[CelestialBodyParamsBase.otherParams.isRockyBody.ToString()].value = EditorGUILayout.DoubleField("Rocky planet ?", dict[CelestialBodyParamsBase.otherParams.isRockyBody.ToString()].value);
 
         EditorGUILayout.Separator();
         // ORBITAL PARAMETERS
@@ -328,18 +328,18 @@ public class CelestialBodyEditor : Editor
 
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("Biome Parameters", EditorStyles.boldLabel);
-        dict[CelestialBodyParamsBase.biomeParams.surfPressure.ToString()] = EditorGUILayout.DoubleField("Surface pressure", dict[CelestialBodyParamsBase.biomeParams.surfPressure.ToString()]);
-        dict[CelestialBodyParamsBase.biomeParams.surfDensity.ToString()] = EditorGUILayout.DoubleField("Surface density", dict[CelestialBodyParamsBase.biomeParams.surfDensity.ToString()]);
-        dict[CelestialBodyParamsBase.biomeParams.surfTemp.ToString()] = EditorGUILayout.DoubleField("Surface temperature", dict[CelestialBodyParamsBase.biomeParams.surfTemp.ToString()]);
-        dict[CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()] = EditorGUILayout.DoubleField("Max atmo height", dict[CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()]);
+        dict[CelestialBodyParamsBase.biomeParams.surfPressure.ToString()].value = EditorGUILayout.DoubleField("Surface pressure", dict[CelestialBodyParamsBase.biomeParams.surfPressure.ToString()].value);
+        dict[CelestialBodyParamsBase.biomeParams.surfDensity.ToString()].value = EditorGUILayout.DoubleField("Surface density", dict[CelestialBodyParamsBase.biomeParams.surfDensity.ToString()].value);
+        dict[CelestialBodyParamsBase.biomeParams.surfTemp.ToString()].value = EditorGUILayout.DoubleField("Surface temperature", dict[CelestialBodyParamsBase.biomeParams.surfTemp.ToString()].value);
+        dict[CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()].value = EditorGUILayout.DoubleField("Max atmo height", dict[CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()].value);
 
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("Jn Parameters", EditorStyles.boldLabel);
-        dict[CelestialBodyParamsBase.jnParams.j2.ToString()] = EditorGUILayout.DoubleField("J2", dict[CelestialBodyParamsBase.jnParams.j2.ToString()]);
-        dict[CelestialBodyParamsBase.jnParams.j3.ToString()] = EditorGUILayout.DoubleField("J3", dict[CelestialBodyParamsBase.jnParams.j3.ToString()]);
-        dict[CelestialBodyParamsBase.jnParams.j4.ToString()] = EditorGUILayout.DoubleField("J4", dict[CelestialBodyParamsBase.jnParams.j4.ToString()]);
-        dict[CelestialBodyParamsBase.jnParams.j5.ToString()] = EditorGUILayout.DoubleField("J5", dict[CelestialBodyParamsBase.jnParams.j5.ToString()]);
-        dict[CelestialBodyParamsBase.jnParams.j6.ToString()] = EditorGUILayout.DoubleField("J6", dict[CelestialBodyParamsBase.jnParams.j6.ToString()]);
+        dict[CelestialBodyParamsBase.jnParams.j2.ToString()].value = EditorGUILayout.DoubleField("J2", dict[CelestialBodyParamsBase.jnParams.j2.ToString()].value);
+        dict[CelestialBodyParamsBase.jnParams.j3.ToString()].value = EditorGUILayout.DoubleField("J3", dict[CelestialBodyParamsBase.jnParams.j3.ToString()].value);
+        dict[CelestialBodyParamsBase.jnParams.j4.ToString()].value = EditorGUILayout.DoubleField("J4", dict[CelestialBodyParamsBase.jnParams.j4.ToString()].value);
+        dict[CelestialBodyParamsBase.jnParams.j5.ToString()].value = EditorGUILayout.DoubleField("J5", dict[CelestialBodyParamsBase.jnParams.j5.ToString()].value);
+        dict[CelestialBodyParamsBase.jnParams.j6.ToString()].value = EditorGUILayout.DoubleField("J6", dict[CelestialBodyParamsBase.jnParams.j6.ToString()].value);
         // End of Dictionary Filling
 
         ShowOrbitInfoPanel();

@@ -30,7 +30,7 @@ public class OrbitalPredictor
         double liberationSpeed = Mathd.Sqrt(2d) * circularSpeed;
         // Calculate orbital speed and compare it to the one needed to reach a circular orbit
 
-        double µ = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()];
+        double µ = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value;
         Vector3d rVec = bodyToPredict.GetRelativeRealWorldPosition()*UniCsts.km2m;
         double r = rVec.magnitude;
         Vector3d velocityVec = bodyToPredict.GetRelativeVelocity();

@@ -99,7 +99,7 @@ public class UIStartLoc_Panel : MonoBehaviour
     private void Init_startLocPlanetSelectorDropdown()
     {
         UniCsts.planets lastBody = UsefulFunctions.CastStringTo_Unicsts_Planets(lastSelectedPlanetName);
-        double lastSelectedBodyIsRocky = UniCsts.planetsDict[lastBody][CelestialBodyParamsBase.otherParams.isRockyBody.ToString()];
+        double lastSelectedBodyIsRocky = UniCsts.planetsDict[lastBody][CelestialBodyParamsBase.otherParams.isRockyBody.ToString()].value;
         int dropdownIdxToSet = 0;
         int bodyIndex = 0;
 
@@ -126,9 +126,9 @@ public class UIStartLoc_Panel : MonoBehaviour
             case 1:
                 // 'Planetary surface' init
                 // Taking only the rocky bodies for planetary surface init
-                foreach(KeyValuePair<UniCsts.planets, Dictionary<string, double>> body_KV_Pair in UniCsts.planetsDict)
+                foreach(KeyValuePair<UniCsts.planets, Dictionary<string, UnitInterface>> body_KV_Pair in UniCsts.planetsDict)
                 {
-                    if(body_KV_Pair.Value[CelestialBodyParamsBase.otherParams.isRockyBody.ToString()] == 1d)
+                    if(body_KV_Pair.Value[CelestialBodyParamsBase.otherParams.isRockyBody.ToString()].value == 1d)
                     {
                         // Body is rocky
                         string bodyNameToAdd = body_KV_Pair.Key.ToString();

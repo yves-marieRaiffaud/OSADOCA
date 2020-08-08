@@ -56,6 +56,9 @@ public class UniverseRunner : MonoBehaviour
         }
         Time.fixedDeltaTime = 1f/simEnv.physicsUpdateRate.value;
         Time.timeScale = simEnv.timeScale.value;
+        
+        if(GameObject.Find("missionTimer") != null)
+            simEnv.missionTimer = GameObject.Find("missionTimer").GetComponent<StopWatch>();
     }
 
     private void InitFolders()
@@ -140,8 +143,8 @@ public class UniverseRunner : MonoBehaviour
                     CelestialBody starBody = obj.GetComponent<CelestialBody>();
 
                     // Modifying the radius of the sun, else it will be too large to be rendered
-                    UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet][CelestialBodyParamsBase.planetaryParams.radius.ToString()] = 8_000d;
-                    UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet][CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()] = 8_000d;
+                    UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet][CelestialBodyParamsBase.planetaryParams.radius.ToString()].value = 8_000d;
+                    UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet][CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value = 8_000d;
                     starBody.AwakeCelestialBody(UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet]);
                     break;
 
@@ -165,6 +168,9 @@ public class UniverseRunner : MonoBehaviour
             }
         }
         flyingObjInst.InitGravitationalPullLists();
+        //==============================
+        if(simEnv.missionTimer != null)
+            simEnv.missionTimer.StartStopwatch();
     }
 
     void FixedUpdate()
@@ -173,6 +179,7 @@ public class UniverseRunner : MonoBehaviour
         {
             flyingObjInst.GravitationalStep();
         }
+        Debug.Log(activeSpaceship.GetOrbitedBodyAtmospherePressure().ConvertTo(Units.pressure.atm));
         updateFloatingOrigin();
     }
 

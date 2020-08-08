@@ -153,6 +153,7 @@
      <Compile Include="Assets\Scripts\CelestialBody\TerrainFace.cs" />
      <Compile Include="Assets\Scripts\Communication\CommunicationController.cs" />
      <Compile Include="Assets\Scripts\Communication\IReceiverObserver.cs" />
+     <Compile Include="Assets\Scripts\Communication\TCPReceiver.cs" />
      <Compile Include="Assets\Scripts\Communication\UDPReceiver.cs" />
      <Compile Include="Assets\Scripts\Communication\UDPTransmitter.cs" />
      <Compile Include="Assets\Scripts\DebugGameObject.cs" />
@@ -183,7 +184,9 @@
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\UIMainMenu.cs" />
      <Compile Include="Assets\Scripts\UI\Simulation_UI\simUI.cs" />
      <Compile Include="Assets\Scripts\Universe\SimulationEnv.cs" />
+     <Compile Include="Assets\Scripts\Universe\StopWatch.cs" />
      <Compile Include="Assets\Scripts\Universe\UniCsts.cs" />
+     <Compile Include="Assets\Scripts\Universe\Units.cs" />
      <Compile Include="Assets\Scripts\Universe\UniverseRunner.cs" />
      <Compile Include="Assets\Scripts\Universe\UniverseTestCelestialBody.cs" />
      <None Include="Assets\Additional\TEXDraw\Script\Shaders\TEXShaderBump4Pass.shader" />

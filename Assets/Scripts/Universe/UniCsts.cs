@@ -1,7 +1,14 @@
 ﻿using System.Collections;
-using UnityEngine;
 using System.Collections.Generic;
+using System;
+using UnityEngine;
 using Mathd_Lib;
+using pressure = Units.pressure;
+using temperature = Units.temperature;
+using angle = Units.angle;
+using time = Units.time;
+using distance = Units.distance;
+using TFunc = System.Func<dynamic, dynamic, dynamic>;
 
 public static class UniCsts
 {
@@ -31,11 +38,11 @@ public static class UniCsts
     public const double m2km2pl2u = m2km * pl2u; // To convert meters to unity units for SPACESHIPS
 
     // u2au = 1000 ==> 1000 unity units == 1 AU
-    public const double au2u = 60_000d; // 1 AU (150M km) translated into the unity coordinates system. 1au == 1000f
+    public const double au2u = 100_000d; // 1 AU (150M km) translated into the unity coordinates system. 1au == 1000f
     public const double u2au = 1d/au2u;
 
     // u2pl=2f ==> 1 unity unit == 2km of the radius of a planet
-    public const double u2pl = 20d; // Conversion between the planetary scale and the unit coordinate system.
+    public const double u2pl = 2d; // Conversion between the planetary scale and the unit coordinate system.
     public const double pl2u = 1d/u2pl;
 
     // Only 6 levels in this array as the first distance is '+infinity' for level 0
@@ -45,8 +52,8 @@ public static class UniCsts
     public static float[] ratioCelestBodiesLODDistances = new float[] { 0.8f, 0.3f, 0.05f, 0.005f, 0.0007f, 0.00015f };
     public const string sphereNoLODTemplate_GO = "Sphere_noLOD_Template";
 
-    // u2sh=1f ==> 1 unity unit == 1 m of the spaceship
-    public const double u2sh = 1d;
+    // u2sh=0.005 ==> 1 unity unit == 10 m of the spaceship (with u2pl == 2d == 2km)
+    public const double u2sh = 10d / (u2pl * km2m);
     public const double sh2u = 1d/u2sh;
 
     // m2real=1000f ==> 1 mass unit == 1000f kg in real data
@@ -77,291 +84,300 @@ public static class UniCsts
     
     // All distance in AU or degrees
     // i is inclination with respect to the Sun's equator
+    public static Dictionary<string, UnitInterface> sunBaseParams = new Dictionary<string, UnitInterface> {
+        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(695_700d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(695_700d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(20_000d) },
+        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , new Distance(100_000d, distance.km) }, //TO CHANGE
+        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(0d, angle.degree) },
+        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(2_192_832d, time.s) },
+        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(13_271_244.0018d) },
 
-    public static Dictionary<string, double> sunBaseParams = new Dictionary<string, double> {
-        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 695_700d },
-        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 695_700d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 20_000d },
-        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 100_000d }, //TO CHANGE
-        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 0d },
-        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 2_192_832d },
-        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , 13_271_244.0018d },
+        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(0d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(0d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , new Angle(0d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , new Angle(0d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , new Angle(0d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , new Angle(0d, angle.degree) }, // TO CHANGE
 
-        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , 0d },
-        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , 0d },
-        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , 0d },
-        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , 0d },
-        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , 0d },
-        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , 0d }, // TO CHANGE
+        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , new Pressure(0d, pressure.atm) },
+        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , new Temperature(0d, temperature.degree_C) },
+        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , 0d },
-        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , 0d },
+        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , new DoubleNoDim(0d) }, // x10^(-6)
+        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , 0d }, // x10^(-6)
-        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , 0d },
-
-        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , 0d }
+        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(0d) }
     };
 
-    public static Dictionary<string, double> mercuryBaseParams = new Dictionary<string, double> {
-        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 2_439.7d },
-        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 2_439.7d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 0d },
-        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 100_000d }, //TO CHANGE
-        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 0.034d },
-        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 5_065_560d },
-        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , 2.2032d },
+    public static Dictionary<string, UnitInterface> mercuryBaseParams = new Dictionary<string, UnitInterface> {
+        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(2_439.7d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(2_439.7d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , new Distance(100_000d, distance.km) }, //TO CHANGE
+        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(0.034d, angle.degree) },
+        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(5_065_560d, time.s) },
+        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(2.2032d) },
 
-        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , 0.466697d },
-        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , 0.307499d },
-        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , 3.38d },
-        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , 48.331d },
-        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , 29.124d },
-        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , 0d }, // TO CHANGE
+        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(0.466697d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(0.307499d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , new Angle(3.38d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , new Angle(48.331d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , new Angle(29.124d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , new Angle(0d, angle.degree) }, // TO CHANGE
 
-        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , 0d },
-        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , 0d },
+        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , new Pressure(0d, pressure.atm) },
+        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , new Temperature(0d, temperature.degree_C) },
+        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , 50.3d }, // x10^(-6)
-        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , 0d },
+        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , new DoubleNoDim(50.3d) }, // x10^(-6)
+        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , 1d }
+        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(1d) }
     };
 
-    public static Dictionary<string, double> venusBaseParams = new Dictionary<string, double> {
-        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 6_051.8d },
-        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 6_051.8d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 0d },
-        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 0d },
-        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 2.64d },
-        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , -20_997_360d },
-        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , 32.4859d },
+    public static Dictionary<string, UnitInterface> venusBaseParams = new Dictionary<string, UnitInterface> {
+        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(6_051.8d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(6_051.8d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , new Distance(0d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(2.64d, angle.degree) },
+        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(-20_997_360d, time.s) },
+        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(32.4859d) },
 
-        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , 0.728213d },
-        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , 0.718440d },
-        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , 3.39d },
-        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , 76.680d },
-        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , 54.884d },
-        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , 0d }, // TO MODIFY
+        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(0.728213d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(0.718440d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , new Angle(3.39d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , new Angle(76.680d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , new Angle(54.884d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , new Angle(0d, angle.degree) }, // TO MODIFY
 
-        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , 0d },
-        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , 0d },
+        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , new Pressure(0d, pressure.atm) },
+        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , new Temperature(0d, temperature.degree_C) },
+        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , 0d },
+        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , 1d }
+        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(1d) }
     };
 
-    public static Dictionary<string, double> earthBaseParams = new Dictionary<string, double> {
-        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 6_378.137d },
-        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 6_356.752d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 298.257223563d },
-        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 120_000d }, // TO CHANNGE
-        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 23.4392811d },
-        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 86_164.09d }, // Indicate a positive value for a rotation of the planet in prograde rotation. A negative value for a retrograde rotation
-        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , 39.86004418d },
+    public static Dictionary<string, UnitInterface> earthBaseParams = new Dictionary<string, UnitInterface> {
+        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(6_378.137d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(6_356.752d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(298.257223563d) },
+        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , new Distance(120_000d, distance.km) }, // TO CHANNGE
+        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(23.4392811d, angle.degree) },
+        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(86_164.09d, time.s) }, // Indicate a positive value for a rotation of the planet in prograde rotation. A negative value for a retrograde rotation
+        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(39.86004418d) },
 
-        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , 1.067d },
-        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , 0.92329d },
-        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , 7.155d },
-        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , 174.9d },
-        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , 288.1d },
-        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , 0d }, // TO CHANGE
+        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(1.067d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(0.92329d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , new Angle(7.155d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , new Angle(174.9d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , new Angle(288.1d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , new Angle(0d, angle.degree) }, // TO CHANGE
 
-        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , 1_015d }, // hPa
-        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , 1.217d }, // kg.m-3
-        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , 288d }, // Average temp, in K
-        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , 100d }, // Karman line, in km
-        { CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()         , 8.848d }, // for the height map, in km
+        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , new Pressure(1_015d, Units.pressure.hPa) }, // hPa
+        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , new DoubleNoDim(1.217d) }, // kg.m-3
+        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , new Temperature(288d, temperature.degree_K) }, // Average temp, in K
+        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , new DoubleNoDim(100d) }, // Karman line, in km
+        { CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()         , new DoubleNoDim(8.848d) }, // for the height map, in km
 
-        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , 1_082.63d }, // x10^(-6)
-        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , 0d },
+        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , new DoubleNoDim(1_082.63d) }, // x10^(-6)
+        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , 1d }
+        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(1d) }
     };
 
-    public static Dictionary<string, double> marsBaseParams = new Dictionary<string, double> {
-        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 3396.2d },
-        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 3376.2d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 16.9779d },
-        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 0d },
-        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 25.19d },
-        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 88_642.44d },
-        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , 4.282837d },
+    public static Dictionary<string, UnitInterface> marsBaseParams = new Dictionary<string, UnitInterface> {
+        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(3396.2d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(3376.2d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(16.9779d) },
+        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , new Distance(0d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(25.19d, angle.degree) },
+        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(88_642.44d, time.s) },
+        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(4.282837d) },
 
-        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , 1.666d },
-        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , 1.382d },
-        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , 1.85d },
-        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , 49.558d },
-        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , 286.502d },
-        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , 0d }, // TO MODIFY
+        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(1.666d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(1.382d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , new Angle(1.85d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , new Angle(49.558d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , new Angle(286.502d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , new Angle(0d, angle.degree) }, // TO MODIFY
 
-        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , 0d },
-        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , 0d },
+        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , new Pressure(0d, pressure.atm) },
+        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , new Temperature(0d, temperature.degree_C) },
+        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , 0d },
+        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , 1d }
+        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(1d) }
     };
 
-    public static Dictionary<string, double> jupiterBaseParams = new Dictionary<string, double> {
-        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 71_492d },
-        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 66_854d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 15.4154d },
-        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 0d },
-        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 3.13d },
-        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 35_730d },
-        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , 12_668.6534d },
+    public static Dictionary<string, UnitInterface> jupiterBaseParams = new Dictionary<string, UnitInterface> {
+        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(71_492d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(66_854d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(15.4154d) },
+        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , new Distance(0d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(3.13d, angle.degree) },
+        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(35_730d, time.s) },
+        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(12_668.6534d) },
 
-        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , 5.4588d },
-        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , 4.9501d },
-        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , 1.304d },
-        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , 100.464d },
-        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , 273.867d },
-        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , 0d }, // TO MODIFY
+        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(5.4588d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(4.9501d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , new Angle(1.304d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , new Angle(100.464d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , new Angle(273.867d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , new Angle(0d, angle.degree) }, // TO MODIFY
 
-        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , 0d },
-        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , 0d },
+        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , new Pressure(0d, pressure.atm) },
+        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , new Temperature(0d, temperature.degree_C) },
+        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , 0d },
+        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , 0d }
+        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(0d) }
     };
 
-    public static Dictionary<string, double> saturnBaseParams = new Dictionary<string, double> {
-        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 60_268d },
-        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 54_364d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 10.2082d },
-        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 0d },
-        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 26.73d },
-        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 38_361.6d },
-        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , 3_793.1187d },
+    public static Dictionary<string, UnitInterface> saturnBaseParams = new Dictionary<string, UnitInterface> {
+        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(60_268d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(54_364d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(10.2082d) },
+        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , new Distance(0d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(26.73d, angle.degree) },
+        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(38_361.6d, time.s) },
+        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(3_793.1187d) },
 
-        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , 10.1238d },
-        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , 9.0412d },
-        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , 2.485d },
-        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , 113.665d },
-        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , 339.392d },
-        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , 0d }, // TO MODIFY
+        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(10.1238d ,distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(9.0412d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , new Angle(2.485d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , new Angle(113.665d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , new Angle(339.392d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , new Angle(0d, angle.degree) }, // TO MODIFY
 
-        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , 0d },
-        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , 0d },
+        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           ,  new Pressure(0d, pressure.atm) },
+        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , new Temperature(0d, temperature.degree_C) },
+        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , 0d },
+        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , 0d }
+        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(0d) }
     };
 
-    public static Dictionary<string, double> uranusBaseParams = new Dictionary<string, double> {
-        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 25_559d },
-        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 24_973d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 43.61098d },
-        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 0d },
-        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 82.33d },
-        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , -62_064d },
-        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , 579.3939d },
+    public static Dictionary<string, UnitInterface> uranusBaseParams = new Dictionary<string, UnitInterface> {
+        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(25_559d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(24_973d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(43.61098d) },
+        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , new Distance(0d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(82.33d, angle.degree) },
+        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(-62_064d, time.s) },
+        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(579.3939d) },
 
-        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , 20.11d },
-        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , 18.33d },
-        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , 0.772d },
-        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , 74.006d },
-        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , 96.998857d },
-        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , 0d }, // TO MODIFY
+        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(20.11d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(18.33d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , new Angle(0.772d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , new Angle(74.006d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , new Angle(96.998857d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , new Angle(0d, angle.degree) }, // TO MODIFY
 
-        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , 0d },
-        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , 0d },
+        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , new Pressure(0d, pressure.atm) },
+        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , new Temperature(0d, temperature.degree_C) },
+        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , 0d },
+        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , 0d }
+        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(0d) }
     };
 
-    public static Dictionary<string, double> neptuneBaseParams = new Dictionary<string, double> {
-        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , 24_764d },
-        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , 24_341d },
-        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , 58.54808d },
-        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , 0d },
-        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , 28.32d },
-        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , 57_996d },
-        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , 683.6529d },
+    public static Dictionary<string, UnitInterface> neptuneBaseParams = new Dictionary<string, UnitInterface> {
+        { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(24_764d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(24_341d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(58.54808d) },
+        { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , new Distance(0d, distance.km) },
+        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(28.32d, angle.degree) },
+        { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(57_996d, time.s) },
+        { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(683.6529d) },
 
-        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , 30.33d },
-        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , 29.81d },
-        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , 0.0113d },
-        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , 131.784d },
-        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , 276.336d },
-        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , 0d }, // TO MODIFY
+        { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(30.33d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(29.81d, distance.AU) },
+        { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , new Angle(0.0113d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()    , new Angle(131.784d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()        , new Angle(276.336d, angle.degree) },
+        { CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()          , new Angle(0d, angle.degree) }, // TO MODIFY
 
-        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , 0d },
-        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , 0d },
-        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , 0d },
+        { CelestialBodyParamsBase.biomeParams.surfPressure.ToString()           , new Pressure(0d, pressure.atm) },
+        { CelestialBodyParamsBase.biomeParams.surfDensity.ToString()            , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.biomeParams.surfTemp.ToString()               , new Temperature(0d, temperature.degree_C) },
+        { CelestialBodyParamsBase.biomeParams.maxAtmoHeight.ToString()          , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , 0d },
-        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , 0d },
+        { CelestialBodyParamsBase.jnParams.j2.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j3.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j4.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j5.ToString()                        , new DoubleNoDim(0d) },
+        { CelestialBodyParamsBase.jnParams.j6.ToString()                        , new DoubleNoDim(0d) },
 
-        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , 0d }
+        { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(0d) }
     };
 
-    public static readonly Dictionary <planets, Dictionary<string, double>> planetsDict = new Dictionary<planets, Dictionary<string, double>>
+    public static readonly Dictionary <planets, Dictionary<string, UnitInterface>> planetsDict = new Dictionary<planets, Dictionary<string, UnitInterface>>
     {
-        { planets.Sun, sunBaseParams },
-        { planets.Mercury, mercuryBaseParams },
-        { planets.Venus,   venusBaseParams },
-        { planets.Earth,   earthBaseParams },
-        { planets.Mars,    marsBaseParams },
-        { planets.Jupiter, jupiterBaseParams },
-        { planets.Saturn,  saturnBaseParams },
-        { planets.Uranus,  uranusBaseParams },
-        { planets.Neptune, neptuneBaseParams }
+        { planets.Sun      , sunBaseParams },
+        { planets.Mercury  , mercuryBaseParams },
+        { planets.Venus    , venusBaseParams },
+        { planets.Earth    , earthBaseParams },
+        { planets.Mars     , marsBaseParams },
+        { planets.Jupiter  , jupiterBaseParams },
+        { planets.Saturn   , saturnBaseParams },
+        { planets.Uranus   , uranusBaseParams },
+        { planets.Neptune  , neptuneBaseParams }
     };
 
-
-
+    public static readonly Dictionary <planets, Dictionary<PlanetsFunctions.chosenFunction, TFunc>> planetsFncsDict = new Dictionary<planets, Dictionary<PlanetsFunctions.chosenFunction, TFunc>>
+    {
+        { planets.Sun      , null },
+        { planets.Mercury  , null },
+        { planets.Venus    , null },
+        { planets.Earth    , PlanetsFunctions.earthFcnsDict },
+        { planets.Mars     , null },
+        { planets.Jupiter  , null },
+        { planets.Saturn   , null },
+        { planets.Uranus   , null },
+        { planets.Neptune  , null }
+    };
 }

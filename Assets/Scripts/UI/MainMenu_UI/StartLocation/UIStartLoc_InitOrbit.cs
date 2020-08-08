@@ -209,7 +209,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         // Can only do so IF the excentricity e > 0 (if e=0, there is no aphelion nor perihelion as orbit is circular)
         if(previewedOrbit.param.e > 0d)
         {
-            double bodyRadius = previewedOrbit.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
+            double bodyRadius = previewedOrbit.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
             if((previewedOrbit.param.rp - bodyRadius) > 0d)
             {
                 ShowPinpoint(perihelionPinpoint);
@@ -316,8 +316,8 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 UsefulFunctions.ParseStringToDouble(orbitShape_p2_field.text, out orbitalParams.rp);
 
                 // Converting entered altitude to a proper distance with respect to the planet centre
-                orbitalParams.ra += scaleFactor*orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
-                orbitalParams.rp += scaleFactor*orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
+                orbitalParams.ra += scaleFactor*orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
+                orbitalParams.rp += scaleFactor*orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
                 if(orbitalParams.ra < orbitalParams.rp || orbitalParams.ra < Mathd.Epsilon) {
                     ORBITAL_PARAMS_VALID = false;
                 }
@@ -325,7 +325,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
             case 1:
                 // rpe
                 UsefulFunctions.ParseStringToDouble(orbitShape_p1_field.text, out orbitalParams.rp);
-                orbitalParams.rp += scaleFactor*orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
+                orbitalParams.rp += scaleFactor*orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
                 UsefulFunctions.ParseStringToDouble(orbitShape_p2_field.text, out orbitalParams.e);
                 if(orbitalParams.e < 0d) {
                     ORBITAL_PARAMS_VALID = false;

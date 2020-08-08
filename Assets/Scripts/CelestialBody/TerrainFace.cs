@@ -68,7 +68,11 @@ public class TerrainFace
         int triangleOffset = 0;
         int borderTriangleOffset = 0;
         parentChunk.GetVisibleChildren();
-        chunkIDXMinDistance = UsefulFunctions.ListFloatArgMin(visibleChildrenDist);
+        if(visibleChildrenDist.Count > 0)
+        {
+            chunkIDXMinDistance = UsefulFunctions.ListFloatArgMin(visibleChildrenDist);
+        }
+        
         foreach (Chunk child in visibleChildren)
         {
             child.GetNeighbourLOD();
@@ -133,7 +137,7 @@ public class TerrainFace
                 verticesAndTriangles = (child.vertices, child.GetTrianglesWithOffset(triangleOffset), child.GetBorderTrianglesWithOffset(borderTriangleOffset, triangleOffset), child.borderVertices, child.normals);
             }
 
-            if(chunkIDXMinDistance == idxCounter)
+            /*if(chunkIDXMinDistance == idxCounter)
             {
                 GameObject groundGO;
                 if(celestialBody.transform.Find("ground"))
@@ -165,7 +169,7 @@ public class TerrainFace
                 meshCollider.convex = true;
                 meshCollider.sharedMesh = tmpMesh;
                 Debug.Log(string.Join(System.Environment.NewLine, verticesAndTriangles.Item1));
-            }
+            }*/
 
             vertices.AddRange(verticesAndTriangles.Item1);
             triangles.AddRange(verticesAndTriangles.Item2);
@@ -253,7 +257,7 @@ public class Chunk
         this.normalizedPos = position.normalized;
 
         this.initialBumpMap = bumpMapTexture;
-        this.MAX_ALTITUDE = (float)UniCsts.pl2u*(float)celestialBodySettingsScript.planetBaseParamsDict[CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()];
+        this.MAX_ALTITUDE = (float)UniCsts.pl2u*(float)celestialBodySettingsScript.planetBaseParamsDict[CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString()].value;
         this.pixelWidthOffset = initialBumpMap.width - (0.5f + Mathf.Atan2(1f, 0f) / (2f*Mathf.PI)) * initialBumpMap.width;
 
         this.universePlayerCamera = activeCamera;

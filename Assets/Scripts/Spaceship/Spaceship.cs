@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
+using UseFnc = UsefulFunctions;
 
 public class Spaceship : MonoBehaviour, FlyingObjCommonParams
 {
@@ -201,16 +202,48 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         return distance; // distance in km
     }
 
-    public double GetAltitude()
+    public double GetPivotPointAltitude()
     {
         // Returns the altitude in real world (in km) from the spaceship position to the surface of the orbited body
-        return Get_R() - orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
+        return Get_R() - orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
     }
 
-    public double GetAltitude(Vector3d shipPosition)
+    public double GetPivotPointAltitude(Vector3d shipPosition)
     {
         // Returns the altitude in real world (in km) from the spaceship position to the surface of the orbited body
-        return Get_R(shipPosition) - orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()];
+        return Get_R(shipPosition) - orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
+    }
+
+    public double GetUnityAltitude(Vector3d shipPosition)
+    {
+        return (shipPosition - new Vector3d(orbitalParams.orbitedBody.transform.position)).magnitude;
+    }
+
+    public double GetUnityAltitude()
+    {
+        return new Vector3d(transform.position - orbitalParams.orbitedBody.transform.position).magnitude;
+    }
+
+    public double GetShipAltitude()
+    {
+        double pivotAltitude = GetUnityAltitude();
+        
+        BoxCollider shipCollider = gameObject.GetComponent<BoxCollider>();
+        Vector3 centerPos = shipCollider.bounds.center;
+        double centerAltitude = GetUnityAltitude(new Vector3d(centerPos));
+
+        double altitudeVal = (centerAltitude*UniCsts.u2pl + (pivotAltitude - centerAltitude)*UniCsts.u2sh) - orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
+
+        return altitudeVal;
+    }
+
+    public Pressure GetOrbitedBodyAtmospherePressure()
+    {
+        double currAltitude = GetShipAltitude();
+
+        Pressure surfacePressure = orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.biomeParams.surfPressure.ToString()] as Pressure;
+        Pressure currentPressure = UniCsts.planetsFncsDict[UseFnc.CastStringTo_Unicsts_Planets(orbitalParams.orbitedBodyName)][PlanetsFunctions.chosenFunction.pressureEvolution](surfacePressure, currAltitude);
+        return currentPressure;
     }
 
     public double SetDistanceScaleFactor()

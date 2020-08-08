@@ -11,7 +11,7 @@ public class CelestialBodySettings : ScriptableObject, FlyingObjSettings
     public bool usePredifinedPlanets;
 
     public UniCsts.planets chosenPredifinedPlanet;
-    public Dictionary<string, double> planetBaseParamsDict;
+    public Dictionary<string, UnitInterface> planetBaseParamsDict;
 
     public double radiusU; // Rendered radius in unity, == radius * UniCsts.pl2u
     public OrbitPlane equatorialPlane; // Equatorial plane represented by two vector (forward & right) and a point on the plane
