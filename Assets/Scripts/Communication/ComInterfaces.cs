@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using System;
 
 namespace Matlab_Communication
@@ -15,4 +16,7 @@ namespace Matlab_Communication
     {
         void OnDataReceived(double[] val);
     }
+
+    [Serializable]
+    public class OnDataReceivedEvent : UnityEvent<byte[]> {}
 }

@@ -5,6 +5,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Text;
 
 namespace Matlab_Communication
 {
@@ -30,58 +31,61 @@ namespace Matlab_Communication
                 _port=value;
             }
         }
-
+        //========
         private IPEndPoint _RemoteEndPoint;
         private UdpClient _TransmitClient;
-
-        /// <summary>
-        /// Create a new UDPTransmitter object
-        /// </summary>
+        //=======================
+        //=======================
         public UDPSender(string _ip, int _port)
         {
             IP = _ip;
             port = _port;
-            if(IP.Equals("")) { return; }
             _RemoteEndPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
             _TransmitClient = new UdpClient();
         }
-
-        /// <summary>
-        /// Sends a double value to target port and ip.
-        /// </summary>
-        /// <param name="val"></param>
+        //=======================
+        //=======================
+        public void Send(byte[] val)
+        {
+            try
+            {
+                _TransmitClient.Send(val, val.Length, _RemoteEndPoint);
+            }
+            catch (Exception err)
+            {
+                Debug.Log("<color=red>" + err.Message + "</color>");
+            }
+        }
+        
         public void Send(double val)
         {
-            try
-            {
-                // Convert string message to byte array.  
-                byte[] serverMessageAsByteArray = BitConverter.GetBytes(val);
-
-                _TransmitClient.Send(serverMessageAsByteArray, serverMessageAsByteArray.Length, _RemoteEndPoint);
-            }
-            catch (Exception err)
-            {
-                Debug.Log("<color=red>" + err.Message + "</color>");
-            }
+            byte[] data = BitConverter.GetBytes(val);
+            Send(data);
         }
 
-        /// <summary>
-        /// Sends a double array to target port and ip.
-        /// </summary>
-        /// <param name="val"></param>
         public void Send(double[] val)
         {
-            try
+            foreach(double doubleItem in val)
             {
-                for (int i = 0; i < val.Length; i++)
-                    Send(val[i]);
-            }
-            catch (Exception err)
-            {
-                Debug.Log("<color=red>" + err.Message + "</color>");
+                Send(doubleItem);
             }
         }
 
+        public void Send(string val)
+        {
+            byte[] data = Encoding.ASCII.GetBytes(val);
+            Send(data);
+        }
+
+        public void Send(string[] val)
+        {
+            foreach(string stringVal in val)
+            {
+                Send(stringVal);
+            }
+        }
+        //=======================
+        //=======================
         /// <summary>
         /// Close the UDP client connection, ensuring there will be no issue when restarting the app 
         /// </summary>

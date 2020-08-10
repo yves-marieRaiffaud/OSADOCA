@@ -37,10 +37,6 @@ namespace Matlab_Communication
             _UdpTransmitter = GetComponent<UDPTransmitter>();*/
         }
 
-        /// <summary>
-        /// Send data immediately after receiving it.
-        /// </summary>
-        /// <param name="val"></param>
         void IReceiverObserver.OnDataReceived(double[] val)
         {
             //_UdpTransmitter.Send(val);

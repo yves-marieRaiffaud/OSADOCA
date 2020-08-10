@@ -4,7 +4,6 @@ using System.IO;
 using System.Collections.Generic;
 using Fncs = UsefulFunctions;
 using Matlab_Communication;
-using System.Text.RegularExpressions;
 
 public class UI_Matlab_Panel : MonoBehaviour
 {
@@ -67,7 +66,7 @@ public class UI_Matlab_Panel : MonoBehaviour
     where T : SenderReceiverBaseChannel
     {
         channel.ip_address = ipField.text;
-        if(!IP_AddressIsValid(channel.ip_address))
+        if(!Fncs.IP_AddressIsValid(channel.ip_address))
             return;
         int parsedPort;
         if(int.TryParse(portField.text, out parsedPort))
@@ -77,16 +76,27 @@ public class UI_Matlab_Panel : MonoBehaviour
         }
     }
 
-    private bool IP_AddressIsValid(string IP_toCheck)
-    {
-        string ipv4_REGEX = "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
-        return Regex.IsMatch(IP_toCheck, ipv4_REGEX);
-    }
-
     private void OnTestConnectionClick<T>(MatlabComChannel<T> channelToTest)
     where T : SenderReceiverBaseChannel
     {
-        // Do something here
-        Debug.Log(channelToTest.connectionType);
+        if(typeof(T) == typeof(UDPSender))
+        {
+            UDPSender sender = channelToTest.channelObj as UDPSender;
+            sender.Send("TEST");
+        }
+        else if(typeof(T) == typeof(UDPReceiver))
+        {
+            UDPReceiver sender = channelToTest.channelObj as UDPReceiver;
+            //sender.
+        }
+        else if(typeof(T) == typeof(TCPSender))
+        {
+            TCPSender sender = channelToTest.channelObj as TCPSender;
+            sender.Send("TEST");
+        }
+        else if(typeof(T) == typeof(TCPReceiver))
+        {
+            TCPReceiver sender = channelToTest.channelObj as TCPReceiver;
+        }
     }
 }

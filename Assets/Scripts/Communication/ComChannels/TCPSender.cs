@@ -5,6 +5,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Text;
 
 namespace Matlab_Communication
 {
@@ -31,71 +32,41 @@ namespace Matlab_Communication
             }
         }
         
-        private TcpListener server;
         private Thread _serverThread;
-        private IReceiverObserver _Observer;
         private TcpClient client;
+        private NetworkStream stream;
+        private bool connectionIsOpen;
 
         public TCPSender(string _ip, int _port)
         {
             IP = _ip;
             port = _port;
-            _serverThread = new Thread(new ThreadStart(ReceiveData));
-            _serverThread.IsBackground = true;
-            _serverThread.Start();
+            connectionIsOpen = false;
+            if(UsefulFunctions.IP_AddressIsValid(IP) && port > 0)
+                OpenConnection();
         }
 
-        public void SetObserver(IReceiverObserver observer)
-        {
-            _Observer = observer;
-        }
-
-        /// <summary>
-        /// Receive data with pooling.
-        /// </summary>
-        private void ReceiveData()
+        public void OpenConnection()
         {
             try
             {
-                server = new TcpListener(IPAddress.Parse(IP), port);
-                server.Start();
-
-                Byte[] bytes = new Byte[256];
-                //String data = null;
-
-                while(true)
-                {
-                    // Perform a blocking call to accept requests.
-                    // You could also use server.AcceptSocket() here.
-                    client = server.AcceptTcpClient();
-                    Console.WriteLine("Connected!");
-                    //data = null;
-                    // Get a stream object for reading and writing
-                    NetworkStream stream = client.GetStream();
-
-                    int i;
-                    // Loop to receive all the data sent by the client.
-                    while((i = stream.Read(bytes, 0, bytes.Length))!=0)
-                    {
-                        double[] values = new double[bytes.Length / 8];
-                        Buffer.BlockCopy(bytes, 0, values, 0, values.Length * 8);
-                        if (_Observer != null)
-                            _Observer.OnDataReceived(values);
-                        Debug.Log(">>>>");
-
-                        // Translate data bytes to a ASCII string.
-                        //data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                        //Console.WriteLine("Received: {0}", data);
-
-                        // Process the data sent by the client.
-                        //data = data.ToUpper();
-
-                        /*byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
-                        // Send back a response.
-                        stream.Write(msg, 0, msg.Length);
-                        Console.WriteLine("Sent: {0}", data);*/
-                    }
-                }
+                client = new TcpClient(new IPEndPoint(IPAddress.Parse(IP), port));
+                stream = client.GetStream();
+                connectionIsOpen = true;
+            }
+            catch(SocketException e)
+            {
+                Console.WriteLine("SocketException: {0}", e);
+            }
+        }
+        //=====================
+        //=====================
+        public void Send(byte[] val)
+        {
+            try
+            {
+                if(connectionIsOpen)
+                    stream.Write(val, 0, val.Length);
             }
             catch(SocketException e)
             {
@@ -103,17 +74,44 @@ namespace Matlab_Communication
             }
         }
 
+        public void Send(string val)
+        {
+            byte[] data = Encoding.ASCII.GetBytes(val);
+            Send(data);
+        }
+
+        public void Send(string[] val)
+        {
+            foreach(string stringItem in val)
+            {
+                byte[] data = Encoding.ASCII.GetBytes(stringItem);
+                Send(data);
+            }
+        }
+
+        public void Send(double val)
+        {
+            byte[] data = BitConverter.GetBytes(val);
+            Send(data);
+        }
+
+        public void Send(double[] val)
+        {
+            foreach(double doubleItem in val)
+            {
+                Send(doubleItem);
+            }
+        }
+        //======================
+        //======================
         /// <summary>
-        /// Close the UDP client connection, ensuring there will be no issue when restarting the app 
+        /// Close the TCP client connection, ensuring there will be no issue when restarting the app 
         /// </summary>
         private void Terminate()
         {
             try
             {
-                _serverThread.Abort();
-                _serverThread = null;
                 client.Close();
-                server.Stop();
             }
             catch (Exception err)
             {

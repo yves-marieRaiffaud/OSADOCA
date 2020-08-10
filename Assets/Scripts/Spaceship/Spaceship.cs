@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
 using UseFnc = UsefulFunctions;
+using Matlab_Communication;
 
 public class Spaceship : MonoBehaviour, FlyingObjCommonParams
 {
@@ -149,6 +150,21 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
             UniverseRunner universe = universeGO.GetComponent<UniverseRunner>();
             gravPullList = new CelestialBodyPullForce[universe.simEnv.NBODYSIM_NB_BODY.value];
         }
+        InitComHandlerTCPReceiver();
+    }
+
+    private void InitComHandlerTCPReceiver()
+    {
+        GameObject comHandlerGO = GameObject.Find("MatlabCom_Handler");
+        MatlabComHandler comHandlerInstance = comHandlerGO.GetComponent<MatlabComHandler>();
+        comHandlerInstance.controlAlgoReceiverChannel.channelObj.onDataReceivedEvent.AddListener(On_New_Control_Orders_Received);
+        Debug.Log("GameObject " + name + " has added a listener to the 'controlAlgoReceiverChannel' with the 'onDataReceivedEvent'");
+    }
+
+    private void On_New_Control_Orders_Received(byte[] receivedData)
+    {
+        Debug.Log("New orders have been received from the TCP/IP receiver");
+        Debug.Log("ReceivedData : " + string.Join(System.Environment.NewLine, receivedData));
     }
 
     public void InitializeOrbitalPredictor()
