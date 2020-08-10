@@ -151,11 +151,13 @@
      <Compile Include="Assets\Scripts\CelestialBody\CelestialBodySettings.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\Presets.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\TerrainFace.cs" />
-     <Compile Include="Assets\Scripts\Communication\CommunicationController.cs" />
-     <Compile Include="Assets\Scripts\Communication\IReceiverObserver.cs" />
-     <Compile Include="Assets\Scripts\Communication\TCPReceiver.cs" />
-     <Compile Include="Assets\Scripts\Communication\UDPReceiver.cs" />
-     <Compile Include="Assets\Scripts\Communication\UDPTransmitter.cs" />
+     <Compile Include="Assets\Scripts\Communication\ComChannels\TCPReceiver.cs" />
+     <Compile Include="Assets\Scripts\Communication\ComChannels\TCPSender.cs" />
+     <Compile Include="Assets\Scripts\Communication\ComChannels\UDPReceiver.cs" />
+     <Compile Include="Assets\Scripts\Communication\ComChannels\UDPSender.cs" />
+     <Compile Include="Assets\Scripts\Communication\ComInterfaces.cs" />
+     <Compile Include="Assets\Scripts\Communication\MatlabComChannel.cs" />
+     <Compile Include="Assets\Scripts\Communication\MatlabComHandler.cs" />
      <Compile Include="Assets\Scripts\DebugGameObject.cs" />
      <Compile Include="Assets\Scripts\Filepaths.cs" />
      <Compile Include="Assets\Scripts\FlyingObj.cs" />
@@ -172,6 +174,7 @@
      <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSButton.cs" />
      <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSDropdown.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\ControlBarCheck.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\MatlabConnection\UI_Matlab_Panel.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\SimSettings_Info.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\ToggleSwitch.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\UI_SimSettings_Panel.cs" />
@@ -190,7 +193,6 @@
      <Compile Include="Assets\Scripts\Universe\UniCsts.cs" />
      <Compile Include="Assets\Scripts\Universe\Units.cs" />
      <Compile Include="Assets\Scripts\Universe\UniverseRunner.cs" />
-     <Compile Include="Assets\Scripts\Universe\UniverseTestCelestialBody.cs" />
      <None Include="Assets\Additional\TEXDraw\Script\Shaders\TEXShaderBump4Pass.shader" />
      <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
      <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />

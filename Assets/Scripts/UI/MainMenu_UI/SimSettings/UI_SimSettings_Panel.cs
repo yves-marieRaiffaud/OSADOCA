@@ -9,6 +9,8 @@ public class UI_SimSettings_Panel : MonoBehaviour
 {
     // This script is attached to the 'Content' GameObject, right under the 'Viewport' GameObject of the Sim_Setting Scrollview
     //=========================================================================================================================
+    [Header("Content Rect Transform of the Scrollview")]
+    public Transform scrollviewContentTR;
     [Header("Prefabs for the Settings Panel")]
     public GameObject prefabSection_Title;
     public GameObject prefabSimSetting_int;
@@ -35,7 +37,7 @@ public class UI_SimSettings_Panel : MonoBehaviour
         // At start, hide the 'moreInfoPanel' as no settings has been selected for more info
         moreInfoSetting_Panel.gameObject.SetActive(false);
 
-        rectTransform = gameObject.GetComponent<RectTransform>();
+        rectTransform = scrollviewContentTR.GetComponent<RectTransform>();
 
         currCategoryBeingDrawn = -1;
         int initialTopMargin = -30;
@@ -201,7 +203,7 @@ public class UI_SimSettings_Panel : MonoBehaviour
     //=============================================================================================
     private void AddSeparator(int newYPosition, GameObject prefabGO)
     {
-        GameObject verticalSepGO = GameObject.Instantiate(prefabGO, new Vector3(0f, 0f, 0f), Quaternion.identity, transform);
+        GameObject verticalSepGO = GameObject.Instantiate(prefabGO, new Vector3(0f, 0f, 0f), Quaternion.identity, scrollviewContentTR);
         RectTransform rectTransform = verticalSepGO.GetComponent<RectTransform>();
         verticalSepGO.transform.SetAsFirstSibling();
         rectTransform.anchorMin = new Vector2(0.5f, 1f);
@@ -212,7 +214,7 @@ public class UI_SimSettings_Panel : MonoBehaviour
     
     private GameObject SpawnPosition_NewSimSettingPrefab(GameObject prefabToSpaw, int newYPosition, bool addLeft)
     {
-        GameObject section_Panel = GameObject.Instantiate(prefabToSpaw, Vector3.zero, Quaternion.identity, transform);
+        GameObject section_Panel = GameObject.Instantiate(prefabToSpaw, Vector3.zero, Quaternion.identity, scrollviewContentTR);
         RectTransform rectTransform = section_Panel.GetComponent<RectTransform>();
 
         int xPosition = 30; // Padding of the prefab
@@ -272,7 +274,7 @@ public class UI_SimSettings_Panel : MonoBehaviour
     //=============================================================================================
     private void UIAddNewCategoryTitle(int categoryEnumIntToDraw, int newYPosition)
     {
-        GameObject title = GameObject.Instantiate(prefabSection_Title, new Vector3(0f, 0f, 0f), Quaternion.identity, transform);
+        GameObject title = GameObject.Instantiate(prefabSection_Title, new Vector3(0f, 0f, 0f), Quaternion.identity, scrollviewContentTR);
         RectTransform rectTransform = title.GetComponent<RectTransform>();
         rectTransform.anchorMin = new Vector2(0.5f, 1f);
         rectTransform.anchorMax = new Vector2(0.5f, 1f);
