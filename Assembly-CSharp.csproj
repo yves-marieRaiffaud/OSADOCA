@@ -169,6 +169,8 @@
      <Compile Include="Assets\Scripts\Spaceship\SimRocketCam_MouseOrbit.cs" />
      <Compile Include="Assets\Scripts\Spaceship\Spaceship.cs" />
      <Compile Include="Assets\Scripts\Spaceship\SpaceshipSettings.cs" />
+     <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSButton.cs" />
+     <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSDropdown.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\ControlBarCheck.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\SimSettings_Info.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\ToggleSwitch.cs" />

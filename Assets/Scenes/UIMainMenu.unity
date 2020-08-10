@@ -28896,6 +28896,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loadShipDataFromUIDiskFile: 1
+  simUIScript: {fileID: 0}
+  saveOrbitalParamsData: 0
 --- !u!4 &1936713944
 Transform:
   m_ObjectHideFlags: 0
@@ -31077,6 +31079,8 @@ MonoBehaviour:
   prefabSimSetting_float: {fileID: 2339071261718301768, guid: 4cc2d04e47aa3b449b2ff3e1773da338,
     type: 3}
   prefabSimSetting_bool: {fileID: 846056237100722911, guid: 25cb84e54a04bcc4b94d775035c2c334,
+    type: 3}
+  prefabSimSetting_enum: {fileID: 419212062154385433, guid: 95ac0c66704fe2d4192e20dac3a51824,
     type: 3}
   prefab_verticalSeparator: {fileID: 3996722594195662883, guid: ec3d5f8b60642174f9c1f0e3710236d9,
     type: 3}

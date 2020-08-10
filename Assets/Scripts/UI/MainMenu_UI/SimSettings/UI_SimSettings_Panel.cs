@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using System.Collections.Generic;
+using MSDropdown = MSDropdownNamespace.MSDropdown;
 using Fncs = UsefulFunctions;
 
 public class UI_SimSettings_Panel : MonoBehaviour
@@ -13,6 +14,7 @@ public class UI_SimSettings_Panel : MonoBehaviour
     public GameObject prefabSimSetting_int;
     public GameObject prefabSimSetting_float;
     public GameObject prefabSimSetting_bool;
+    public GameObject prefabSimSetting_enum;
     public GameObject prefab_verticalSeparator;
     public GameObject prefab_horizontalSeparator;
     [Header("Prefabs for the More Info Panel")]
@@ -41,7 +43,10 @@ public class UI_SimSettings_Panel : MonoBehaviour
 
         simulationEnv = ScriptableObject.CreateInstance<SimulationEnv>();
         simSettingJSONPath = Application.persistentDataPath + Filepaths.simulation_settings;
-        JsonUtility.FromJsonOverwrite(File.ReadAllText(simSettingJSONPath), simulationEnv);
+        if(File.Exists(simSettingJSONPath))
+            JsonUtility.FromJsonOverwrite(File.ReadAllText(simSettingJSONPath), simulationEnv);
+        else
+            simulationEnv = new SimulationEnv();
 
         int settingCounter = 0;
         bool addLeft = true; // Start by adding to the left
@@ -138,12 +143,46 @@ public class UI_SimSettings_Panel : MonoBehaviour
                 else if(!justAddedCategoryTitle && addLeft) {
                     yPosition -= 80;
                 }
-                if(addRight) {
+                if(addLeft) {
                     // Add vertical separator between two settings on the same line
                     AddSeparator(yPosition, prefab_verticalSeparator);
                 }
                 // Adding the setting prefab
                 UIAddNewSimSetting_Float(setting, yPosition, addLeft);
+                //===============
+                addLeft = !addLeft;
+                addRight = !addRight;
+                currCategoryBeingDrawn = (int)setting.category;
+                settingCounter++;
+            }
+
+            else if(property.GetValue(simulationEnv) is SimSettingEnum)
+            {
+                SimSettingEnum setting = (SimSettingEnum) property.GetValue(simulationEnv);
+                if(currCategoryBeingDrawn == -1 || (int)setting.category != currCategoryBeingDrawn)
+                {
+                    if(currCategoryBeingDrawn != -1) {
+                        // Add horizontal separator at the end of the previous category
+                        AddSeparator(yPosition-100, prefab_horizontalSeparator);
+                    }
+                    // Need to add the Subsection label
+                    if(yPosition != initialTopMargin) { yPosition -= 120; }
+                    UIAddNewCategoryTitle((int)setting.category, yPosition);
+                    justAddedCategoryTitle = true;
+                    addLeft = true;
+                    addRight = false;
+                }
+
+                if(justAddedCategoryTitle) { yPosition -= 80; }
+                else if(!justAddedCategoryTitle && addLeft) {
+                    yPosition -= 80;
+                }
+                if(addLeft) {
+                    // Add vertical separator between two settings on the same line
+                    AddSeparator(yPosition, prefab_verticalSeparator);
+                }
+                // Adding the setting prefab
+                UIAddNewSimSetting_Enum(setting, yPosition, addLeft);
                 //===============
                 addLeft = !addLeft;
                 addRight = !addRight;
@@ -164,7 +203,7 @@ public class UI_SimSettings_Panel : MonoBehaviour
     {
         GameObject verticalSepGO = GameObject.Instantiate(prefabGO, new Vector3(0f, 0f, 0f), Quaternion.identity, transform);
         RectTransform rectTransform = verticalSepGO.GetComponent<RectTransform>();
-        
+        verticalSepGO.transform.SetAsFirstSibling();
         rectTransform.anchorMin = new Vector2(0.5f, 1f);
         rectTransform.anchorMax = new Vector2(0.5f, 1f);
         rectTransform.pivot = new Vector2(0.5f, 1f);
@@ -335,6 +374,28 @@ public class UI_SimSettings_Panel : MonoBehaviour
         });
 
         Init_InfoBtn<SimSettingFloat, float>(floatSectionPanel, setting);
+    }
+
+    private void UIAddNewSimSetting_Enum(SimSettingEnum setting, int newYPosition, bool addLeft)
+    {
+        GameObject enumSectionPanel = SpawnPosition_NewSimSettingPrefab(prefabSimSetting_enum, newYPosition, addLeft);
+        //=================
+        TMPro.TMP_Text setting_txt = enumSectionPanel.transform.Find("Setting_txt").GetComponent<TMPro.TMP_Text>();
+        setting_txt.text = setting.displayName;
+
+        MSDropdown dropdown = enumSectionPanel.transform.Find("MS_Dropdown").GetComponent<MSDropdown>();
+        dropdown.SetOptions(setting.value.enumList);
+
+        dropdown.OnValueChanged.AddListener(delegate{
+            SaveSettingsToFile();
+        });
+
+        Button revert_btn = enumSectionPanel.transform.Find("Revert_btn").GetComponent<Button>();
+        revert_btn.onClick.AddListener(delegate{
+            OnRevert_BtnClick<SimSettingEnumDictionary>(setting.default_value, dropdown);
+        });
+
+        Init_InfoBtn<SimSettingEnum, SimSettingEnumDictionary>(enumSectionPanel, setting);
     }
     //=============================================================================================
     //=============================================================================================
@@ -512,6 +573,14 @@ public class UI_SimSettings_Panel : MonoBehaviour
             intSlider.value = val;
             TMPro.TMP_InputField inputField = (TMPro.TMP_InputField)(dynamic)objToChange[1];
             inputField.text = defaultValue.ToString();
+        }
+        else if(defaultValue is SimSettingEnumDictionary)
+        {
+            // For int, first obj is the MSDropdown
+            SimSettingEnumDictionary val = (SimSettingEnumDictionary)(dynamic)defaultValue;
+            MSDropdown dropdown = (MSDropdown)(dynamic)objToChange[0];
+            dropdown.ClearOptions();
+            dropdown.SetOptions(val.enumList);
         }
     }
     //=============================================================================================

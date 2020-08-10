@@ -27,8 +27,12 @@ public class SimulationEnv : ScriptableObject
     //=============================================
     //=============================================
     //=============================================
-    private static string[] perturbations = new string[] {"Jn", "Lift/Drag", "Solar Pressure"};
-    public SimSettingEnum perturbationsToCompute = new SimSettingEnum(perturbations, perturbations, "Perturbations", SimSettingCategory.Perturbations);
+    private static List<stringBoolStruct> perturbations = new List<stringBoolStruct>() {
+        { new stringBoolStruct("Jn"              , false) },
+        { new stringBoolStruct("Lift/Drag"       , true) },
+        { new stringBoolStruct("Solar Pressure"  , false) }
+    };
+    public SimSettingEnum perturbationsToCompute = new SimSettingEnum(perturbations, perturbations, "Perturbations to compute", SimSettingCategory.Perturbations);
     //=============================================
     //=============================================
     //=============================================
@@ -168,19 +172,32 @@ public class SimSettingBool : SimSettingGeneric<bool>, SimSettingInterface<bool>
                           : base(variableValue, defaultValue, nameToDisplay, settingCategory, _simSettings_Info) { }
 }
 
+[System.Serializable]
+public struct stringBoolStruct
+{
+    public string optionString;
+    public bool optionIsSelected;
+    public stringBoolStruct(string _optionString, bool _optionIsSelected) {
+        optionString = _optionString;
+        optionIsSelected = _optionIsSelected;
+    }
+    public override string ToString()
+    {
+        return "Option: " + optionString + "; Bool value: " + optionIsSelected; 
+    }
+}
 [Serializable]
 public struct SimSettingEnumDictionary
 {
+    //public Dictionary<string, bool> enumDict;
     [SerializeField]
-    public Dictionary<int, string> enumDict;
-    public SimSettingEnumDictionary(string[] stringValues)
+    public List<stringBoolStruct> enumList;
+    public SimSettingEnumDictionary(List<stringBoolStruct> stringValues)
     {
-        enumDict = new Dictionary<int, string>();
-        int counter = 0;
-        foreach(string val in stringValues)
+        enumList = new List<stringBoolStruct>();
+        foreach(stringBoolStruct item in stringValues)
         {
-            enumDict.Add(counter, val);
-            counter++;
+            enumList.Add(new stringBoolStruct(item.optionString, item.optionIsSelected));
         }
     }
 }
@@ -188,7 +205,7 @@ public struct SimSettingEnumDictionary
 [Serializable]
 public class SimSettingEnum : SimSettingGeneric<SimSettingEnumDictionary>, SimSettingInterface<SimSettingEnumDictionary>
 {
-    public SimSettingEnum(string[] variableValue, string[] defaultValue, string nameToDisplay,
+    public SimSettingEnum(List<stringBoolStruct> variableValue, List<stringBoolStruct> defaultValue, string nameToDisplay,
                           SimSettingCategory settingCategory, SimSettings_Info _simSettings_Info=null) : base()
     {
         this.value = new SimSettingEnumDictionary(variableValue);
