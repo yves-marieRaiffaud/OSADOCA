@@ -34,22 +34,35 @@ namespace Matlab_Communication
         //========
         private IPEndPoint _RemoteEndPoint;
         private UdpClient _TransmitClient;
+        public bool channelIsOpen
+        {
+            get {
+                return _TransmitClient.Client.Connected;
+            }
+        }
         //=======================
         //=======================
         public UDPSender(string _ip, int _port)
         {
             IP = _ip;
             port = _port;
+            Debug.Log("IP = " + IP + "; port = " + port);
             _RemoteEndPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
-            _TransmitClient = new UdpClient();
+            _TransmitClient = new UdpClient(_RemoteEndPoint);
+            _TransmitClient.Connect(_RemoteEndPoint);
+            Debug.Log("UDP is connected: " + _TransmitClient.Client.Connected);
         }
         //=======================
         //=======================
         public void Send(byte[] val)
         {
+            if(!channelIsOpen) {
+                Debug.LogWarning("Channel of type UDPSender at IP:" + IP + " and port: " + port + " is closed. The 'Send' method can not be used while the channel is closed.");
+                return;
+            }
             try
             {
-                _TransmitClient.Send(val, val.Length, _RemoteEndPoint);
+                _TransmitClient.Send(val, val.Length);
             }
             catch (Exception err)
             {
@@ -65,10 +78,9 @@ namespace Matlab_Communication
 
         public void Send(double[] val)
         {
-            foreach(double doubleItem in val)
-            {
-                Send(doubleItem);
-            }
+            byte[] blockData = new byte[val.Length * sizeof(double)];
+            Buffer.BlockCopy(val, 0, blockData, 0, blockData.Length);
+            Send(blockData);
         }
 
         public void Send(string val)
@@ -79,10 +91,21 @@ namespace Matlab_Communication
 
         public void Send(string[] val)
         {
-            foreach(string stringVal in val)
+            List<byte> byteList = new List<byte>();
+            byte[] spaceASCIIBytes = Encoding.ASCII.GetBytes(" ");
+
+            foreach(string stringItem in val)
             {
-                Send(stringVal);
+                foreach(byte byteItem in Encoding.ASCII.GetBytes(stringItem))
+                    byteList.Add(byteItem);
+                // Add a space ' ' between each sent string
+                foreach(byte byteItem in spaceASCIIBytes)
+                    byteList.Add(byteItem);
             }
+
+            byte[] blockData = byteList.ToArray();
+            //Buffer.BlockCopy(val, 0, blockData, 0, blockData.Length);
+            Send(blockData);
         }
         //=======================
         //=======================

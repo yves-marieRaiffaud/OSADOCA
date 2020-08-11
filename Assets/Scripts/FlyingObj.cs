@@ -12,6 +12,7 @@ public class FlyingObj
     public FlyingObj(UniverseRunner universeRunnerInstance)
     {
         universe = universeRunnerInstance;
+        
     }
     //===============================================================================
     //===============================================================================
@@ -20,6 +21,7 @@ public class FlyingObj
     //===============================================================================
     public static T GetObjectSettings<T>(UnityEngine.Object body)
     {
+        
         // 'T' is either SpaceshipSettings or CelestialBodySettings
         if(body is Spaceship)
         {

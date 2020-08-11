@@ -35,9 +35,8 @@ namespace Matlab_Communication
         private Thread _serverThread;
         private TcpClient client;
         //=====
-        //private IReceiverObserver _Observer;
         public OnDataReceivedEvent onDataReceivedEvent;
-
+        //=====
         public TCPReceiver(string _ip, int _port)
         {
             IP = _ip;
@@ -47,11 +46,6 @@ namespace Matlab_Communication
             _serverThread.Start();
             onDataReceivedEvent = new OnDataReceivedEvent();
         }
-
-        /*public void SetObserver(IReceiverObserver observer)
-        {
-            _Observer = observer;
-        }*/
 
         /// <summary>
         /// Receive data with pooling.
@@ -74,8 +68,6 @@ namespace Matlab_Communication
                         //double[] values = new double[bytes.Length / 8];
                         //Buffer.BlockCopy(bytes, 0, values, 0, values.Length * 8);
                         //==========
-                        //if (_Observer != null)
-                            //_Observer.OnDataReceived(values);
                         if(onDataReceivedEvent != null)
                             onDataReceivedEvent.Invoke(bytes);
                     }
@@ -90,13 +82,14 @@ namespace Matlab_Communication
         /// <summary>
         /// Close the UDP client connection, ensuring there will be no issue when restarting the app 
         /// </summary>
-        private void Terminate()
+        public void Terminate()
         {
             try
             {
                 _serverThread.Abort();
                 _serverThread = null;
-                client.Close();
+                if(client != null)
+                    client.Close();
                 server.Stop();
             }
             catch (Exception err)

@@ -12,11 +12,6 @@ namespace Matlab_Communication
         int port {get; set;}
     }
 
-    public interface IReceiverObserver
-    {
-        void OnDataReceived(double[] val);
-    }
-
     [Serializable]
     public class OnDataReceivedEvent : UnityEvent<byte[]> {}
 }

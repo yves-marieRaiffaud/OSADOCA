@@ -13,43 +13,51 @@ namespace Matlab_Communication
         public MatlabConectionType connectionType;
 
         // T is either the 'UDPReceiver', 'UDPSender', 'TCPReceiver' or 'TCPSender' object
-        public T _channelObj;
+        private T _channelObj;
         public T channelObj
         {
             get {
                 return _channelObj;
             }
-            set {
+            private set {
                 _channelObj=value;
             }
         }
 
-        public string ip_address;
+        public string IP;
         public int port;
 
-        public MatlabComChannel(MatlabConectionType _coType, string _ip="", int _port=-1)
+        public string defaultIP;
+        public int defaultPort;
+
+        public MatlabComChannel(MatlabConectionType _coType, int _port=-1, int _defaultPort=5000, string _ip="", string _defaultIP="127.0.0.1")
         {
             connectionType = _coType;
-            ip_address = _ip;
+            IP = _ip;
             port = _port;
+            defaultIP = _defaultIP;
+            defaultPort = _defaultPort;
 
-            if(!_ip.Equals("") && _port != -1)
+            if((!Fncs.IP_AddressIsValid(IP) && port > -1) || typeof(T) == typeof(TCPServer))
                 InitChannelObj();
         }
 
         public void InitChannelObj()
         {
             if(typeof(T) == typeof(UDPSender))
-                channelObj = (T)Convert.ChangeType(new UDPSender(ip_address, port), typeof(T));
+                channelObj = (T)Convert.ChangeType(new UDPSender(IP, port), typeof(T));
 
             else if(typeof(T) == typeof(UDPReceiver))
-                channelObj = (T)Convert.ChangeType(new UDPReceiver(ip_address, port), typeof(T));
+                channelObj = (T)Convert.ChangeType(new UDPReceiver(IP, port), typeof(T));
 
             else if(typeof(T) == typeof(TCPSender))
-                channelObj = (T)Convert.ChangeType(new TCPSender(ip_address, port), typeof(T));
+                channelObj = (T)Convert.ChangeType(new TCPSender(IP, port), typeof(T));
 
             else if(typeof(T) == typeof(TCPReceiver))
-                channelObj = (T)Convert.ChangeType(new TCPReceiver(ip_address, port), typeof(T));
+                channelObj = (T)Convert.ChangeType(new TCPReceiver(IP, port), typeof(T));
+
+            else if(typeof(T) == typeof(TCPServer))
+                channelObj = (T)Convert.ChangeType(new TCPServer(port), typeof(T));
         }
     }
 }

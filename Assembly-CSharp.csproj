@@ -153,6 +153,7 @@
      <Compile Include="Assets\Scripts\CelestialBody\TerrainFace.cs" />
      <Compile Include="Assets\Scripts\Communication\ComChannels\TCPReceiver.cs" />
      <Compile Include="Assets\Scripts\Communication\ComChannels\TCPSender.cs" />
+     <Compile Include="Assets\Scripts\Communication\ComChannels\TCPServer.cs" />
      <Compile Include="Assets\Scripts\Communication\ComChannels\UDPReceiver.cs" />
      <Compile Include="Assets\Scripts\Communication\ComChannels\UDPSender.cs" />
      <Compile Include="Assets\Scripts\Communication\ComInterfaces.cs" />
@@ -170,6 +171,7 @@
      <Compile Include="Assets\Scripts\Spaceship\MainNozzle_Control.cs" />
      <Compile Include="Assets\Scripts\Spaceship\SimRocketCam_MouseOrbit.cs" />
      <Compile Include="Assets\Scripts\Spaceship\Spaceship.cs" />
+     <Compile Include="Assets\Scripts\Spaceship\SpaceshipController.cs" />
      <Compile Include="Assets\Scripts\Spaceship\SpaceshipSettings.cs" />
      <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSButton.cs" />
      <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSDropdown.cs" />
@@ -205,6 +207,7 @@
      <None Include="Assets\SampleScenes\Shaders\Skybox-Procedural.shader" />
      <None Include="Assets\Additional\TEXDraw\Script\Shaders\TEXShaderLit4Pass.shader" />
      <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
+     <None Include="Assets\JsonDotNet\link.xml" />
      <None Include="Assets\Additional\TEXDraw\Script\Shaders\TEXShaderGrad3Pass.shader" />
      <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface.shader" />
      <None Include="Assets\Additional\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
@@ -409,6 +412,9 @@
     </Reference>
     <Reference Include="UnityEditor">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data/Managed/UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Assets/JsonDotNet/Assemblies/Standalone/Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="DOTween">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Assets/Plugins/Demigiant/DOTween/DOTween.dll</HintPath>

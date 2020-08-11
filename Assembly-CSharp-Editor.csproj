@@ -250,6 +250,9 @@
     <Reference Include="UnityEditor.Android.Extensions">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Assets/JsonDotNet/Assemblies/Standalone/Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="DOTween">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Assets/Plugins/Demigiant/DOTween/DOTween.dll</HintPath>
     </Reference>

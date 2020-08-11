@@ -60,13 +60,17 @@ public class UI_Matlab_Panel : MonoBehaviour
         dataVisuTest_btn.onClick.AddListener(delegate{OnTestConnectionClick(comHandler.dataVisSenderChannel);});
         simEnvTest_btn.onClick.AddListener(delegate{OnTestConnectionClick(comHandler.simEnvSenderChannel);});
         controlAlgoTest_btn.onClick.AddListener(delegate{OnTestConnectionClick(comHandler.controlAlgoReceiverChannel);});
+
+        dataVisuRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.dataVisSenderChannel, ipDataVisuInputField, portDataVisuInputField);});
+        simEnvRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.simEnvSenderChannel, ipSimEnvInputField, portSimEnvInputField);});
+        controlAlgoRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.controlAlgoReceiverChannel, ipControlAlgoInputField, portControlAlgoInputField);});
     }
 
     private void UpdateConnectionChannel<T>(MatlabComChannel<T> channel, TMPro.TMP_InputField ipField, TMPro.TMP_InputField portField)
     where T : SenderReceiverBaseChannel
     {
-        channel.ip_address = ipField.text;
-        if(!Fncs.IP_AddressIsValid(channel.ip_address))
+        channel.IP = ipField.text;
+        if(!Fncs.IP_AddressIsValid(channel.IP))
             return;
         int parsedPort;
         if(int.TryParse(portField.text, out parsedPort))
@@ -76,13 +80,23 @@ public class UI_Matlab_Panel : MonoBehaviour
         }
     }
 
+    private void OnRevertBtnClick<T>(MatlabComChannel<T> channel, TMPro.TMP_InputField fieldIP, TMPro.TMP_InputField fieldPort)
+    where T : SenderReceiverBaseChannel
+    {
+        fieldIP.text = channel.defaultIP;
+        fieldPort.text = channel.defaultPort.ToString();
+    }
+
     private void OnTestConnectionClick<T>(MatlabComChannel<T> channelToTest)
     where T : SenderReceiverBaseChannel
     {
         if(typeof(T) == typeof(UDPSender))
         {
             UDPSender sender = channelToTest.channelObj as UDPSender;
-            sender.Send("TEST");
+            //sender.Send(new double[]{10d, 20d, 30d, 40d, 50d, 60d, 70d, 80d, 90d, 100d, 110d});
+            //sender.Send("TEST");
+            sender.Send("this is a ship and it has a ship control");
+            Debug.Log("A test message has been sent using UDP at IP: " + sender.IP + " and port: " + sender.port + ". Channel open status is " + sender.channelIsOpen);
         }
         else if(typeof(T) == typeof(UDPReceiver))
         {

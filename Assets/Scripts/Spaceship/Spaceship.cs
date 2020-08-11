@@ -2,17 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
+using System.Text;
 using UseFnc = UsefulFunctions;
 using Matlab_Communication;
+using Newtonsoft.Json;
 
 public class Spaceship : MonoBehaviour, FlyingObjCommonParams
 {
-    [HideInInspector] public bool foldoutFlyingObjInfoPanel;
-
+    [HideInInspector] public SpaceshipController spaceshipController {get; private set;}
     [HideInInspector] public SpaceshipSettings settings;
-    //=========================================
-    public GameObject _gameObject { get{return this.gameObject;} set{_gameObject=this.gameObject;} }
-
+    //=======
+    [HideInInspector] public bool foldoutFlyingObjInfoPanel;
+    //=======
+    public GameObject _gameObject
+    { 
+        get {
+            return this.gameObject;
+        }
+        set {
+            _gameObject=this.gameObject;
+        }
+    }
+    
     [HideInInspector]
     private Orbit _orbit;
     public Orbit orbit
@@ -157,14 +168,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     {
         GameObject comHandlerGO = GameObject.Find("MatlabCom_Handler");
         MatlabComHandler comHandlerInstance = comHandlerGO.GetComponent<MatlabComHandler>();
-        comHandlerInstance.controlAlgoReceiverChannel.channelObj.onDataReceivedEvent.AddListener(On_New_Control_Orders_Received);
-        Debug.Log("GameObject " + name + " has added a listener to the 'controlAlgoReceiverChannel' with the 'onDataReceivedEvent'");
-    }
-
-    private void On_New_Control_Orders_Received(byte[] receivedData)
-    {
-        Debug.Log("New orders have been received from the TCP/IP receiver");
-        Debug.Log("ReceivedData : " + string.Join(System.Environment.NewLine, receivedData));
+        spaceshipController = new SpaceshipController(this, comHandlerInstance.controlAlgoReceiverChannel);
     }
 
     public void InitializeOrbitalPredictor()

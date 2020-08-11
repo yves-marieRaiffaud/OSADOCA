@@ -4,42 +4,40 @@ using UnityEngine;
 
 namespace Matlab_Communication
 {
-    public class MatlabComHandler : MonoBehaviour, IReceiverObserver
+    public class MatlabComHandler : MonoBehaviour
     {
         public MatlabComChannel<UDPSender> dataVisSenderChannel;
+
+        public MatlabComChannel<TCPServer> simEnvTCPServer;
         public MatlabComChannel<TCPSender> simEnvSenderChannel;
+
+        public MatlabComChannel<TCPServer> controlAlgoTCPServer;
         public MatlabComChannel<TCPReceiver> controlAlgoReceiverChannel;
-        //================
-        /*private UDPReceiver _UdpReceiver;
-        private TCPReceiver _TcpReceiver;
-        private UDPSender _UdpTransmitter;
-        public bool receiveUsingUDP;*/
-        //===============================
+        //=============
+        //=============
         void Awake()
         {
             DontDestroyOnLoad(this);
+            //======
+            dataVisSenderChannel = new MatlabComChannel<UDPSender>(MatlabConectionType.dataVisualization, 25010, 25010, "127.0.0.1");
 
-            dataVisSenderChannel = new MatlabComChannel<UDPSender>(MatlabConectionType.dataVisualization);
-            simEnvSenderChannel = new MatlabComChannel<TCPSender>(MatlabConectionType.simulationEnv);
-            controlAlgoReceiverChannel = new MatlabComChannel<TCPReceiver>(MatlabConectionType.shipControlOrders);
-            /*if(receiveUsingUDP)
-            {
-                _UdpReceiver = GetComponent<UDPReceiver>();
-                _UdpReceiver.SetObserver(this);
-                _TcpReceiver = null;
-            }
-            else {
-                _TcpReceiver = GetComponent<TCPReceiver>();
-                _TcpReceiver.SetObserver(this);
-                _UdpReceiver = null;
-            }
+            simEnvTCPServer = new MatlabComChannel<TCPServer>(MatlabConectionType.simulationEnv, 25011);
+            simEnvSenderChannel = new MatlabComChannel<TCPSender>(MatlabConectionType.simulationEnv, 25011, 25011, "127.0.0.1");
 
-            _UdpTransmitter = GetComponent<UDPTransmitter>();*/
+            controlAlgoTCPServer = new MatlabComChannel<TCPServer>(MatlabConectionType.simulationEnv, 25012);
+            controlAlgoReceiverChannel = new MatlabComChannel<TCPReceiver>(MatlabConectionType.shipControlOrders, 25012, 25012, "127.0.0.1");
         }
 
-        void IReceiverObserver.OnDataReceived(double[] val)
+        void OnApplicationQuit()
         {
-            //_UdpTransmitter.Send(val);
+            // Close every sender/receiver connections
+            dataVisSenderChannel.channelObj.Terminate();
+            simEnvSenderChannel.channelObj.Terminate();
+            controlAlgoReceiverChannel.channelObj.Terminate();
+            //===============
+            // Terminate TCP servers
+            simEnvTCPServer.channelObj.StopServer();
+            controlAlgoTCPServer.channelObj.StopServer();
         }
     }
 }

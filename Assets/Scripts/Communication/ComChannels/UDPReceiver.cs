@@ -34,14 +34,15 @@ namespace Matlab_Communication
         private UdpClient _ReceiveClient;
         private Thread _ReceiveThread;
         //=======
-        //private IReceiverObserver _Observer;
         public OnDataReceivedEvent onDataReceivedEvent;
+        public bool isListening {get; private set;}
         //==================
         //==================
         public UDPReceiver(string _ip, int _port)
         {
             IP = _ip;
             port = _port;
+            isListening = false;
             _ReceiveThread = new Thread(new ThreadStart(ReceiveData));
             _ReceiveThread.IsBackground = true;
             _ReceiveThread.Start();
@@ -50,14 +51,10 @@ namespace Matlab_Communication
         }
         //===================
         //===================
-        /*public void SetObserver(IReceiverObserver observer)
-        {
-            _Observer = observer;
-        }*/
-
         private void ReceiveData()
         {
             _ReceiveClient = new UdpClient(port);
+            isListening = true;
             while (true)
             {
                 try
@@ -68,13 +65,12 @@ namespace Matlab_Communication
                     //double[] values = new double[data.Length / 8];
                     //Buffer.BlockCopy(data, 0, values, 0, values.Length * 8);
                     //======
-                    //if (_Observer != null)
-                        //_Observer.OnDataReceived(values);
                     if(onDataReceivedEvent != null)
                         onDataReceivedEvent.Invoke(data);
                 }
                 catch (Exception err)
                 {
+                    isListening = false;
                     Debug.Log("<color=red>" + err.Message + "</color>");
                 }
             }
@@ -91,6 +87,7 @@ namespace Matlab_Communication
                 _ReceiveThread.Abort();
                 _ReceiveThread = null;
                 _ReceiveClient.Close();
+                isListening = false;
             }
             catch (Exception err)
             {
