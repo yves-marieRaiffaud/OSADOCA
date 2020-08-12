@@ -41,29 +41,29 @@ public class UI_Matlab_Panel : MonoBehaviour
         });
         //===========
         //===========
-        ipSimEnvInputField.onValueChanged.AddListener(delegate{
+        /*ipSimEnvInputField.onValueChanged.AddListener(delegate{
             UpdateConnectionChannel(comHandler.simEnvSenderChannel, ipSimEnvInputField, portSimEnvInputField);
         });
         portSimEnvInputField.onValueChanged.AddListener(delegate{
             UpdateConnectionChannel(comHandler.simEnvSenderChannel, ipSimEnvInputField, portSimEnvInputField);
-        });
+        });*/
         //===========
         //===========
-        ipControlAlgoInputField.onValueChanged.AddListener(delegate{
-            UpdateConnectionChannel(comHandler.controlAlgoReceiverChannel, ipControlAlgoInputField, portControlAlgoInputField);
+        /*ipControlAlgoInputField.onValueChanged.AddListener(delegate{
+            UpdateConnectionChannel(comHandler.controlAlgoTCPServer, ipControlAlgoInputField, portControlAlgoInputField);
         });
         portControlAlgoInputField.onValueChanged.AddListener(delegate{
-            UpdateConnectionChannel(comHandler.controlAlgoReceiverChannel, ipControlAlgoInputField, portControlAlgoInputField);
-        });
+            UpdateConnectionChannel(comHandler.controlAlgoTCPServer, ipControlAlgoInputField, portControlAlgoInputField);
+        });*/
         //===========
         //===========
         dataVisuTest_btn.onClick.AddListener(delegate{OnTestConnectionClick(comHandler.dataVisSenderChannel);});
-        simEnvTest_btn.onClick.AddListener(delegate{OnTestConnectionClick(comHandler.simEnvSenderChannel);});
-        controlAlgoTest_btn.onClick.AddListener(delegate{OnTestConnectionClick(comHandler.controlAlgoReceiverChannel);});
+        simEnvTest_btn.onClick.AddListener(delegate{OnTestConnectionClick(comHandler.simEnvTCPServer);});
+        controlAlgoTest_btn.onClick.AddListener(delegate{OnTestConnectionClick(comHandler.controlAlgoTCPServer);});
 
         dataVisuRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.dataVisSenderChannel, ipDataVisuInputField, portDataVisuInputField);});
-        simEnvRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.simEnvSenderChannel, ipSimEnvInputField, portSimEnvInputField);});
-        controlAlgoRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.controlAlgoReceiverChannel, ipControlAlgoInputField, portControlAlgoInputField);});
+        //simEnvRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.simEnvSenderChannel, ipSimEnvInputField, portSimEnvInputField);});
+        //controlAlgoRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.controlAlgoReceiverChannel, ipControlAlgoInputField, portControlAlgoInputField);});
     }
 
     private void UpdateConnectionChannel<T>(MatlabComChannel<T> channel, TMPro.TMP_InputField ipField, TMPro.TMP_InputField portField)
@@ -85,6 +85,7 @@ public class UI_Matlab_Panel : MonoBehaviour
     {
         fieldIP.text = channel.defaultIP;
         fieldPort.text = channel.defaultPort.ToString();
+        UpdateConnectionChannel(channel, fieldIP, fieldPort);
     }
 
     private void OnTestConnectionClick<T>(MatlabComChannel<T> channelToTest)
@@ -93,24 +94,20 @@ public class UI_Matlab_Panel : MonoBehaviour
         if(typeof(T) == typeof(UDPSender))
         {
             UDPSender sender = channelToTest.channelObj as UDPSender;
-            //sender.Send(new double[]{10d, 20d, 30d, 40d, 50d, 60d, 70d, 80d, 90d, 100d, 110d});
-            //sender.Send("TEST");
-            sender.Send("this is a ship and it has a ship control");
+            if(sender == null)
+                Debug.LogWarning("UDPSender 'sender' is null. Can not send 'TEST' message to target.");
+            sender.Send("TEST");
             Debug.Log("A test message has been sent using UDP at IP: " + sender.IP + " and port: " + sender.port + ". Channel open status is " + sender.channelIsOpen);
         }
         else if(typeof(T) == typeof(UDPReceiver))
         {
-            UDPReceiver sender = channelToTest.channelObj as UDPReceiver;
-            //sender.
+            UDPReceiver receiver = channelToTest.channelObj as UDPReceiver;
         }
-        else if(typeof(T) == typeof(TCPSender))
+        else if(typeof(T) == typeof(TCPServer))
         {
-            TCPSender sender = channelToTest.channelObj as TCPSender;
-            sender.Send("TEST");
-        }
-        else if(typeof(T) == typeof(TCPReceiver))
-        {
-            TCPReceiver sender = channelToTest.channelObj as TCPReceiver;
+            TCPServer server = channelToTest.channelObj as TCPServer;
+            server.Send("TEST");
+            Debug.Log("A test message has been sent using TCP/IP at IP: " + server.IP + " and port: " + server.port);
         }
     }
 }

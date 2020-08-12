@@ -5,7 +5,7 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class MainNozzle_Control : MonoBehaviour
 {
-    float nozzleThrust = 1000;
+    float nozzleThrust = 1;
     float nozzleLowerBound = -10;
     float nozzleUpperBound = 10;
 

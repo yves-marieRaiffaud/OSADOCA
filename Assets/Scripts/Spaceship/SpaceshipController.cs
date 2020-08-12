@@ -7,7 +7,7 @@ using Matlab_Communication;
 public class SpaceshipController
 {
     public Spaceship ship {get; private set;}
-    public MatlabComChannel<TCPReceiver> ordersComReceiver
+    public MatlabComChannel<TCPServer> ordersComReceiver
     {
         get {
             return ordersComReceiver;
@@ -26,7 +26,8 @@ public class SpaceshipController
         ordersComReceiver = null;
         lastReceivedOrders = null;
     }
-    public SpaceshipController(Spaceship _ship, MatlabComChannel<TCPReceiver> _ordersComReceiver)
+    
+    public SpaceshipController(Spaceship _ship, MatlabComChannel<TCPServer> _ordersComReceiver)
     {
         ship = _ship;
         ordersComReceiver = _ordersComReceiver;

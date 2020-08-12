@@ -1,42 +1,75 @@
 using UnityEngine;
 using System.IO;
 using Mathd_Lib;
+using System.Collections;
+using System.Collections.Generic;
 
 public class simUI : MonoBehaviour
 {
     public UniverseRunner universeRunner;
     public TMPro.TMP_Text velocityVal;
     public TMPro.TMP_Text altitudeVal;
-
+    //=================
     public bool saveOrbitalDataToText=false;
     string fileName = "dataOrbit.txt";
     StreamWriter sr;
-
+    //=================
+    private Distance altitude_tMinus;
+    //=================
+    private float uiUpdateValues_period = 0.2f; // in s
+    private bool delayCoroutine;
+    //=================
     void Start()
     {
+        delayCoroutine = true;
         if(universeRunner == null) { Debug.LogError("The UniverseRunner instance has not been set in the editor."); return; }
-
-        if(!saveOrbitalDataToText) { return; }
-        if (File.Exists(fileName))
+        //=====
+        if(saveOrbitalDataToText)
         {
-            Debug.Log(fileName+" already exists.");
+            if (File.Exists(fileName))
+                Debug.Log(fileName+" already exists.");
+            sr = File.CreateText(fileName);
         }
-        sr = File.CreateText(fileName);
+        //=====
+        StartCoroutine(UpdateUICoroutine());
     }
 
-    void LateUpdate()
+    private IEnumerator UpdateUICoroutine()
     {
-        string velocity = UsefulFunctions.DoubleToSignificantDigits(universeRunner.activeSpaceship.GetRelativeVelocityMagnitude(), UniCsts.UI_SIGNIFICANT_DIGITS);
-        string altitude = UsefulFunctions.DoubleToSignificantDigits(universeRunner.activeSpaceship.GetShipAltitude(), UniCsts.UI_SIGNIFICANT_DIGITS);
+        while (true)
+        {
+            if(delayCoroutine)
+            {
+                delayCoroutine = false;
+                // Waiting 2 seconds for the Spaceship to correctly initialized and for the first FixedUpdate to be done
+                // Then, not having any issue when computing the spaceship 'GetShipAltitude()'
+                yield return new WaitForSeconds(2);
+                altitude_tMinus = new Distance(universeRunner.activeSpaceship.GetShipAltitude(), Units.distance.km);
+            }
+            UpdateUIValues();
+            yield return new WaitForSeconds(uiUpdateValues_period);
+        }
+    }
+
+    private void UpdateUIValues()
+    {
+        if(altitude_tMinus == null)
+            altitude_tMinus = new Distance(universeRunner.activeSpaceship.GetShipAltitude(), Units.distance.km);
+
+        Distance currAltitude = new Distance(universeRunner.activeSpaceship.GetShipAltitude(), Units.distance.km);
+        Velocity currVelocity = new Velocity((Mathd.Abs(currAltitude.value-altitude_tMinus.value) / uiUpdateValues_period), Units.velocity.km_s);
+        
+        string velocity = UsefulFunctions.DoubleToSignificantDigits(currVelocity.ConvertTo(Units.velocity.m_s).value, UniCsts.UI_SIGNIFICANT_DIGITS);
+        string altitude = UsefulFunctions.DoubleToSignificantDigits(currAltitude.value, UniCsts.UI_SIGNIFICANT_DIGITS);
 
         velocityVal.text = velocity + " m/s";
         altitudeVal.text = altitude + " km";
 
+        altitude_tMinus = currAltitude;
+
         if(!saveOrbitalDataToText) { return; }
         sr.WriteLine (velocity + ";" + altitude);
     }
-
-    
 
     void OnApplicationQuit()
     {

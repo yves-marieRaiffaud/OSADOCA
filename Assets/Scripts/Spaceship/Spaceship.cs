@@ -7,6 +7,8 @@ using UseFnc = UsefulFunctions;
 using Matlab_Communication;
 using Newtonsoft.Json;
 
+using UnityEngine.UI;
+
 public class Spaceship : MonoBehaviour, FlyingObjCommonParams
 {
     [HideInInspector] public SpaceshipController spaceshipController {get; private set;}
@@ -128,8 +130,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
             _gravPullList=value;
         }
     }
-    //=========================================
-    
+    //=========================================    
     void Awake()
     {
         // FOR DEBUG PURPOSES
@@ -168,7 +169,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     {
         GameObject comHandlerGO = GameObject.Find("MatlabCom_Handler");
         MatlabComHandler comHandlerInstance = comHandlerGO.GetComponent<MatlabComHandler>();
-        spaceshipController = new SpaceshipController(this, comHandlerInstance.controlAlgoReceiverChannel);
+        if(comHandlerInstance.controlAlgoTCPServer != null)
+            spaceshipController = new SpaceshipController(this, comHandlerInstance.controlAlgoTCPServer);
     }
 
     public void InitializeOrbitalPredictor()

@@ -46,11 +46,10 @@ namespace Matlab_Communication
         {
             IP = _ip;
             port = _port;
-            Debug.Log("IP = " + IP + "; port = " + port);
             _RemoteEndPoint = new IPEndPoint(IPAddress.Parse(_ip), _port);
-            _TransmitClient = new UdpClient(_RemoteEndPoint);
+            _TransmitClient = new UdpClient();
             _TransmitClient.Connect(_RemoteEndPoint);
-            Debug.Log("UDP is connected: " + _TransmitClient.Client.Connected);
+            Debug.Log("UDP is connected: " + _TransmitClient.Client.Connected + " at IP: " + IP + " and port: " + port);
         }
         //=======================
         //=======================

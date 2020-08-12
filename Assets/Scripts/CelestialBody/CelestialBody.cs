@@ -373,8 +373,8 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     {
         while (true)
         {
-            yield return new WaitForSeconds(settings.planetRefreshPeriod);
             UpdatePlanet();
+            yield return new WaitForSeconds(settings.planetRefreshPeriod);
         }
     }
 

@@ -151,8 +151,6 @@
      <Compile Include="Assets\Scripts\CelestialBody\CelestialBodySettings.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\Presets.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\TerrainFace.cs" />
-     <Compile Include="Assets\Scripts\Communication\ComChannels\TCPReceiver.cs" />
-     <Compile Include="Assets\Scripts\Communication\ComChannels\TCPSender.cs" />
      <Compile Include="Assets\Scripts\Communication\ComChannels\TCPServer.cs" />
      <Compile Include="Assets\Scripts\Communication\ComChannels\UDPReceiver.cs" />
      <Compile Include="Assets\Scripts\Communication\ComChannels\UDPSender.cs" />

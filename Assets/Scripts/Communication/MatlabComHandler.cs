@@ -7,37 +7,31 @@ namespace Matlab_Communication
     public class MatlabComHandler : MonoBehaviour
     {
         public MatlabComChannel<UDPSender> dataVisSenderChannel;
-
         public MatlabComChannel<TCPServer> simEnvTCPServer;
-        public MatlabComChannel<TCPSender> simEnvSenderChannel;
-
         public MatlabComChannel<TCPServer> controlAlgoTCPServer;
-        public MatlabComChannel<TCPReceiver> controlAlgoReceiverChannel;
         //=============
         //=============
         void Awake()
         {
             DontDestroyOnLoad(this);
             //======
-            dataVisSenderChannel = new MatlabComChannel<UDPSender>(MatlabConectionType.dataVisualization, 25010, 25010, "127.0.0.1");
-
-            simEnvTCPServer = new MatlabComChannel<TCPServer>(MatlabConectionType.simulationEnv, 25011);
-            simEnvSenderChannel = new MatlabComChannel<TCPSender>(MatlabConectionType.simulationEnv, 25011, 25011, "127.0.0.1");
-
-            controlAlgoTCPServer = new MatlabComChannel<TCPServer>(MatlabConectionType.simulationEnv, 25012);
-            controlAlgoReceiverChannel = new MatlabComChannel<TCPReceiver>(MatlabConectionType.shipControlOrders, 25012, 25012, "127.0.0.1");
+            //dataVisSenderChannel = new MatlabComChannel<UDPSender>(MatlabConectionType.dataVisualization, MatlabSendReceiveType.classExplicit, 25010, 25010);
+            //simEnvTCPServer = new MatlabComChannel<TCPServer>(MatlabConectionType.simulationEnv, MatlabSendReceiveType.sendOnly, 25011, 25011);
+            //controlAlgoTCPServer = new MatlabComChannel<TCPServer>(MatlabConectionType.simulationEnv, MatlabSendReceiveType.receiveOnly, 25012, 25012);
         }
 
         void OnApplicationQuit()
         {
-            // Close every sender/receiver connections
-            dataVisSenderChannel.channelObj.Terminate();
-            simEnvSenderChannel.channelObj.Terminate();
-            controlAlgoReceiverChannel.channelObj.Terminate();
+            // Close UDP Sender Connection
+            if(dataVisSenderChannel.channelObj != null)
+                dataVisSenderChannel.channelObj.Terminate();
             //===============
             // Terminate TCP servers
-            simEnvTCPServer.channelObj.StopServer();
-            controlAlgoTCPServer.channelObj.StopServer();
+            if(simEnvTCPServer.channelObj != null)
+                simEnvTCPServer.channelObj.StopServer();
+
+            if(controlAlgoTCPServer.channelObj != null)
+                controlAlgoTCPServer.channelObj.StopServer();
         }
     }
 }

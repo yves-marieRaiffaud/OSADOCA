@@ -370,7 +370,7 @@ GameObject:
   - component: {fileID: 20900981}
   - component: {fileID: 20900980}
   m_Layer: 5
-  m_Name: Senders_Panel
+  m_Name: UDP_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -389,14 +389,13 @@ RectTransform:
   m_Children:
   - {fileID: 715146947}
   - {fileID: 1102352915}
-  - {fileID: 1018775651}
   m_Father: {fileID: 1322678183}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -75}
-  m_SizeDelta: {x: 1000, y: 340}
+  m_SizeDelta: {x: 480, y: 340}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &20900980
 MonoBehaviour:
@@ -6618,7 +6617,7 @@ GameObject:
   - component: {fileID: 280196502}
   - component: {fileID: 280196501}
   m_Layer: 5
-  m_Name: Receivers_Panel
+  m_Name: TCPIP_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6636,6 +6635,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1627657015}
+  - {fileID: 1018775651}
   - {fileID: 1567546004}
   m_Father: {fileID: 1322678183}
   m_RootOrder: 1
@@ -6643,7 +6643,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -500}
-  m_SizeDelta: {x: 500, y: 340}
+  m_SizeDelta: {x: 900, y: 340}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &280196501
 MonoBehaviour:
@@ -14407,7 +14407,7 @@ GameObject:
   - component: {fileID: 715146949}
   - component: {fileID: 715146948}
   m_Layer: 5
-  m_Name: Sender_Title
+  m_Name: UDP_Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14451,7 +14451,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Senders
+  m_text: UDP Channel
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -14520,10 +14520,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 715146948}
-    characterCount: 7
+    characterCount: 11
     spriteCount: 0
-    spaceCount: 0
-    wordCount: 1
+    spaceCount: 1
+    wordCount: 2
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -21226,7 +21226,7 @@ GameObject:
   - component: {fileID: 1018775653}
   - component: {fileID: 1018775652}
   m_Layer: 5
-  m_Name: Panel_Sender_SimEnvData
+  m_Name: Panel_TCPIP_SimEnvData
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21248,12 +21248,12 @@ RectTransform:
   - {fileID: 1469868777}
   - {fileID: 438072108}
   - {fileID: 1536512935}
-  m_Father: {fileID: 20900979}
-  m_RootOrder: 2
+  m_Father: {fileID: 280196500}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 557, y: -30}
+  m_AnchoredPosition: {x: 30, y: -30}
   m_SizeDelta: {x: 380, y: 235}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1018775652
@@ -22753,7 +22753,7 @@ GameObject:
   - component: {fileID: 1102352917}
   - component: {fileID: 1102352916}
   m_Layer: 5
-  m_Name: Panel_Sender_DataViz
+  m_Name: Panel_UDP_DataViz
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22778,11 +22778,11 @@ RectTransform:
   m_Father: {fileID: 20900979}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 57, y: -30}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -20}
   m_SizeDelta: {x: 380, y: 235}
-  m_Pivot: {x: 0, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1102352916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30425,7 +30425,7 @@ GameObject:
   - component: {fileID: 1567546006}
   - component: {fileID: 1567546005}
   m_Layer: 5
-  m_Name: Panel_Receiver_ControlAlgo
+  m_Name: Panel_TCPIP_ControlAlgo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30448,13 +30448,13 @@ RectTransform:
   - {fileID: 829485728}
   - {fileID: 1410386983}
   m_Father: {fileID: 280196500}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -30}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -30, y: -30}
   m_SizeDelta: {x: 380, y: 235}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &1567546005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31348,7 +31348,7 @@ GameObject:
   - component: {fileID: 1627657017}
   - component: {fileID: 1627657016}
   m_Layer: 5
-  m_Name: Receiver_Title
+  m_Name: TCPIP_Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31392,7 +31392,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Receivers
+  m_text: TCP/IP Channels
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -31461,10 +31461,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1627657016}
-    characterCount: 9
+    characterCount: 15
     spriteCount: 0
-    spaceCount: 0
-    wordCount: 1
+    spaceCount: 1
+    wordCount: 3
     linkCount: 0
     lineCount: 1
     pageCount: 1
