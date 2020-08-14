@@ -50,7 +50,8 @@ public static class UniCsts
     // level 0 is +infinity and will not be modified
     // Order of the array's ratios : 'level1', 'level2', 'level3', 'level4', 'level5', 'level6'
     // Values corresponds to the radiusU. New distance is ths 'radiusU * ratio'
-    public static float[] ratioCelestBodiesLODDistances = new float[] { 0.8f, 0.3f, 0.05f, 0.005f, 0.0007f, 0.00015f };
+    //0.8f, 0.3f, 0.05f, 0.005f, 0.0007f, 0.00015f
+    public static float[] ratioCelestBodiesLODDistances = new float[] { 0.8f, 0.3f, 0.05f, 0.025f, 0.01f, 0.0025f };
     public const string sphereNoLODTemplate_GO = "Sphere_noLOD_Template";
 
     // u2sh=0.005 ==> 1 unity unit == 10 m of the spaceship (with u2pl == 2d == 2km)

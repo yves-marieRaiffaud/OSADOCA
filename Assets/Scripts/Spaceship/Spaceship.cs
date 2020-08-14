@@ -5,9 +5,6 @@ using Mathd_Lib;
 using System.Text;
 using UseFnc = UsefulFunctions;
 using Matlab_Communication;
-using Newtonsoft.Json;
-
-using UnityEngine.UI;
 
 public class Spaceship : MonoBehaviour, FlyingObjCommonParams
 {
