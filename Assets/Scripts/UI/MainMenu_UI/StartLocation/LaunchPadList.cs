@@ -125,6 +125,17 @@ public static class LaunchPadList
         { LaunchPad.launchPadParams.longitude, "-106.35908" }
     };
 
+    private static Dictionary<LaunchPad.launchPadParams, string> originPointDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+        { LaunchPad.launchPadParams.isCustomLP, "0" },
+        { LaunchPad.launchPadParams.refPlanet, "Earth" },
+        { LaunchPad.launchPadParams.name, "Origin (0°,0°)" },
+        { LaunchPad.launchPadParams.country, "-" },
+        { LaunchPad.launchPadParams.operationalDate, "-" },
+        { LaunchPad.launchPadParams.supervision, "-" },
+        { LaunchPad.launchPadParams.latitude, "0.0" },
+        { LaunchPad.launchPadParams.longitude, "0.0" }
+    };
+
     private static Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>> earth_launchPads = new Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>>() {
         { "Kourou", kourouDict },
         { "Whenchang", wenchangDict },
@@ -136,7 +147,8 @@ public static class LaunchPadList
         { "Vandeberg", vanderbergDict },
         { "Kennedy", kennedyDict },
         { "Mojave", mojaveDict },
-        { "White Sands", whiteSandDict }
+        { "White Sands", whiteSandDict },
+        { "Origin Point (0°,0°)", originPointDict }
     };
     //======================================================================================================================
     //======================================================================================================================

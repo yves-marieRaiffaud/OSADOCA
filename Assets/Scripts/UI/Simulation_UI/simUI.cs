@@ -43,7 +43,7 @@ public class simUI : MonoBehaviour
                 delayCoroutine = false;
                 // Waiting 2 seconds for the Spaceship to correctly initialized and for the first FixedUpdate to be done
                 // Then, not having any issue when computing the spaceship 'GetShipAltitude()'
-                yield return new WaitForSeconds(2);
+                yield return new WaitForSeconds(1);
                 altitude_tMinus = new Distance(universeRunner.activeSpaceship.GetShipAltitude(), Units.distance.km);
             }
             UpdateUIValues();

@@ -248,21 +248,43 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
 
     public double GetShipAltitude()
     {
+        // Returns the altitude in km of the SHIP's CENTER POINT
+        //==============================================
         double pivotAltitude = GetUnityAltitude();
-        
+        //=======
         BoxCollider shipCollider = gameObject.GetComponent<BoxCollider>();
         Vector3 centerPos = shipCollider.bounds.center;
         double centerAltitude = GetUnityAltitude(new Vector3d(centerPos));
-
-        double altitudeVal = (centerAltitude*UniCsts.u2pl + (pivotAltitude - centerAltitude)*UniCsts.u2sh) - orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
-
+        //=======
+        double geocentricRad = GetGeocentricRadiusFromShipPos();
+        double altitudeVal = (centerAltitude*UniCsts.u2pl + (pivotAltitude - centerAltitude)*UniCsts.u2sh) - geocentricRad;
+        //=======
         return altitudeVal;
+    }
+
+    public double GetProjectedLatitudeFromShipPos(double polarRadius)
+    {
+        Vector3d shipPosInPlanetAxis = new Vector3d(orbitalParams.orbitedBody.transform.InverseTransformPoint(transform.position));
+        //=====
+        double ratioAboveNullLong = shipPosInPlanetAxis.y * UniCsts.u2pl / polarRadius;
+        ratioAboveNullLong = Mathd.Clamp(ratioAboveNullLong, -1d, 1d);
+        return 90d - Mathd.Acos(ratioAboveNullLong)*UniCsts.rad2deg;
+    }
+
+    public double GetGeocentricRadiusFromShipPos()
+    {
+        // Returns the Geocentric Radius in km of the current projected position of the spaceship on the CelestialBody it is orbiting 
+        double equaRad = orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
+        double polarRad = orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value;
+        double latitude = GetProjectedLatitudeFromShipPos(polarRad);
+        //=============
+        return LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude);
     }
 
     public Pressure GetOrbitedBodyAtmospherePressure()
     {
         double currAltitude = GetShipAltitude();
-
+        //=============
         Pressure surfacePressure = orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.biomeParams.surfPressure.ToString()] as Pressure;
         Pressure currentPressure = UniCsts.planetsFncsDict[UseFnc.CastStringTo_Unicsts_Planets(orbitalParams.orbitedBodyName)][PlanetsFunctions.chosenFunction.pressureEvolution](surfacePressure, currAltitude);
         return currentPressure;

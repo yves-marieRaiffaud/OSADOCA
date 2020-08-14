@@ -54,6 +54,12 @@ namespace Mathd_Lib
 			this.w = w;
 		}
 
+		public Quaterniond(Quaternion quat)
+		{
+			this.xyz = new Vector3d(quat.x, quat.y, quat.z);
+			this.w = quat.w;
+		}
+
 		/// <summary>
 		/// Construct a new Quaternion
 		/// </summary>

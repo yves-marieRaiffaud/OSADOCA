@@ -771,8 +771,14 @@
     <Reference Include="Boo.Lang">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data/MonoBleedingEdge/lib/mono/unityscript/Boo.Lang.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.RenderPipeline.Universal.ShaderLibrary">
+        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/ScriptAssemblies/Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Timeline.Editor">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Shaders">
+        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
@@ -783,8 +789,17 @@
     <Reference Include="Unity.RenderPipelines.Core.Runtime">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.VisualEffectGraph.Runtime">
+        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/ScriptAssemblies/Unity.VisualEffectGraph.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Runtime">
+        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Editor">
+        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
@@ -809,6 +824,9 @@
     </Reference>
     <Reference Include="Unity.Postprocessing.Runtime">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/ScriptAssemblies/Unity.Postprocessing.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.VisualEffectGraph.Editor">
+        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/ScriptAssemblies/Unity.VisualEffectGraph.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.ShaderGraph.Editor">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA/Library/ScriptAssemblies/Unity.ShaderGraph.Editor.dll</HintPath>

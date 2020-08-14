@@ -179,7 +179,7 @@ public class UniverseRunner : MonoBehaviour
         {
             flyingObjInst.GravitationalStep();
         }
-        Debug.Log(activeSpaceship.GetOrbitedBodyAtmospherePressure().ConvertTo(Units.pressure.atm));
+        //Debug.Log(activeSpaceship.GetOrbitedBodyAtmospherePressure().ConvertTo(Units.pressure.atm));
         updateFloatingOrigin();
     }
 

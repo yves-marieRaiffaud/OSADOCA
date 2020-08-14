@@ -545,12 +545,15 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     public Vector3d GetWorldPositionFromGroundStart(double latitude, double longitude)
     {
-        Vector3d northPoleAxis = new Vector3d(Vector3.Cross(transform.right,transform.forward));
-        Vector3d rightAxis = new Vector3d(transform.right);
-        // SOMETHING WRONG HERE, need to fix the latitude position when the axial tilt of the planet is not null
-        Vector3d sphereUnitPos = LaunchPad.LatitudeLongitude_to_3DWorldUNITPoint(latitude, longitude, northPoleAxis, -rightAxis);
-        Quaterniond rot = Quaterniond.AngleAxis(-90d, northPoleAxis);
-        return  rot*sphereUnitPos * settings.radiusU;
+        // Substracting 180° to the longitude as the function considers the CelestialBody local +X axis as longitude 0, while longitude 0 is along local axis -X
+        Vector3d sphereUnitPos = LaunchPad.LatitudeLongitude_to_3DWorldUNITPoint(latitude, longitude-180d);
+        //=======
+        double equaRad = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
+        double polarRad = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value;
+        //=======
+        double geocentricRad = LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude) * UniCsts.pl2u;
+        Vector3d worldPos = new Quaterniond(transform.rotation) * (sphereUnitPos * geocentricRad);
+        return worldPos;
     }
 
     public void InitMeshColliders(GameObject faceGO)
