@@ -4,26 +4,155 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using Mathd_Lib;
 using System.Globalization;
+using System.IO;
 
+[System.Serializable]
 public class LaunchPad
 {
+    //========================
+    public bool _isCustomLP;
+    public bool isCustomLP
+    {
+        get {
+            return _isCustomLP;
+        }
+    }
+
+    public string _name;
+    public string name
+    {
+        get {
+            return _name;
+        }
+    }
+
+    public string _planet;
+    public string planet
+    {
+        get {
+            return _planet;
+        }
+    }
+
+    public string _country;
+    public string country
+    {
+        get {
+            return _country;
+        }
+    }
+
+    public string _operationalDate;
+    public string operationalDate
+    {
+        get {
+            return _operationalDate;
+        }
+    }
+    
+    public string _supervision;
+    public string supervision
+    {
+        get {
+            return _supervision;
+        }
+    }
+    
+    public double _latitude;
+    public double latitude
+    {
+        get {
+            return _latitude;
+        }
+    }
+
+    public double _longitude;
+    public double longitude
+    {
+        get {
+            return _longitude;
+        }
+    }
+    
+    public double _eastwardBoost;
+    public double eastwardBoost
+    {
+        get {
+            return _eastwardBoost;
+        }
+    }
+    //========================
+    //========================
     public static string newLaunchPadDefaultName = "New LaunchPad";
     public enum launchPadParams { isCustomLP, refPlanet, name, country, operationalDate, supervision, longitude, latitude, eastwardBoost };
-
+    //========
     private Vector2 lp_XYMapPos; // Position on the map of the planet of the launch pad (x & y coordinate)
     public Dictionary<launchPadParams, string> launchPadParamsDict;
-
+    //=====================================
+    //=====================================
     public LaunchPad(Dictionary<launchPadParams, string> ref_launchPadParamsDict)
     {
+        // Constructor used when data is created from the passed dictionary
+        // The variables and properties are assigned thanks to the values of the dictionary
         launchPadParamsDict = ref_launchPadParamsDict;
-        string planetName = launchPadParamsDict[launchPadParams.refPlanet];
+        InitVariables();
+        UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.latitude], out _latitude);
+        UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.longitude], out _longitude);
+        ComputeEastwardBoost();
+    }
 
-        if(!launchPadParamsDict.ContainsKey(launchPadParams.eastwardBoost)
-            && launchPadParamsDict[launchPadParams.latitude] != ""
-            && launchPadParamsDict[launchPadParams.longitude] != "")
-        {
-            ComputeEastwardBoost();
-        }
+    public LaunchPad()
+    {
+        // Constructor used when data is loaded from the JSON
+        // The variables and properties are initialized, and then the dictionary is rebuilt from these values
+        RebuildDict();
+        UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.latitude], out _latitude);
+        UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.longitude], out _longitude);
+    }
+    //=====================================
+    //=====================================
+    public void RebuildDict()
+    {
+        if(launchPadParamsDict == null)
+            launchPadParamsDict = GetEmptyLaunchPadDict(_planet);
+        launchPadParamsDict[launchPadParams.country] = _country;
+        launchPadParamsDict[launchPadParams.isCustomLP] = _isCustomLP.ToString();
+        launchPadParamsDict[launchPadParams.latitude] = UsefulFunctions.DoubleToString(_latitude);
+        launchPadParamsDict[launchPadParams.longitude] = UsefulFunctions.DoubleToString(_longitude);
+        launchPadParamsDict[launchPadParams.name] = _name;
+        launchPadParamsDict[launchPadParams.operationalDate] = _operationalDate;
+        launchPadParamsDict[launchPadParams.refPlanet] = _planet;
+        launchPadParamsDict[launchPadParams.supervision] = _supervision;
+        launchPadParamsDict[launchPadParams.eastwardBoost] = UsefulFunctions.DoubleToString(_eastwardBoost);
+    }
+
+    public void InitVariables()
+    {
+        _name = launchPadParamsDict[launchPadParams.name];
+        _planet = launchPadParamsDict[launchPadParams.refPlanet];
+        _country = launchPadParamsDict[launchPadParams.country];
+        _operationalDate = launchPadParamsDict[launchPadParams.operationalDate];
+        _supervision = launchPadParamsDict[launchPadParams.supervision];
+        //=====
+        if(launchPadParamsDict[launchPadParams.isCustomLP].Equals("1"))
+            _isCustomLP = true;
+        else
+            _isCustomLP = false;
+        //=====
+        double lat = double.NaN;
+        bool parseOk = UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.latitude], out lat);
+        if(parseOk)
+            _latitude = lat;
+        else
+            _latitude = double.NaN;
+        //=====
+        double longi = double.NaN;
+        bool parseOkLong = UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.longitude], out longi);
+        if(parseOkLong)
+            _longitude = longi;
+        else
+            _longitude = double.NaN;
+        //=====
     }
 
     public double ComputeEastwardBoost()
@@ -34,9 +163,7 @@ public class LaunchPad
         double equaRadius = UniCsts.planetsDict[UsefulFunctions.CastStringTo_Unicsts_Planets(planetName)][CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
         double polarRadius = UniCsts.planetsDict[UsefulFunctions.CastStringTo_Unicsts_Planets(planetName)][CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value;
 
-        double lat;
-        UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.latitude], out lat);
-        lat *= UniCsts.deg2rad;
+        double lat = _latitude * UniCsts.deg2rad;
 
         // First compute the geocentric radius depending on the latitude of the launch pad
         double geocentricRadius = ComputeGeocentricRadius(equaRadius, polarRadius, lat);
@@ -44,6 +171,7 @@ public class LaunchPad
 
         // Finally compute the eastward boost
         double eastward_boost = Mathd.Cos(lat) * 2d * Mathd.PI * geocentricRadius / 86400d; // in m/s
+        _eastwardBoost = eastward_boost;
         
         // Adding the value to the dictionary, or modifying the existing key
         if(launchPadParamsDict.ContainsKey(launchPadParams.eastwardBoost))
@@ -113,10 +241,38 @@ public class LaunchPad
         return new Vector2((float)latitude, (float)longitude);
     }
 
-    public static LaunchPad GetLaunchPadFromName(string launchPadName, UniCsts.planets planetOfTheLaunchPad)
+    public static (LaunchPad,bool) GetLaunchPadFromName(string launchPadName, UniCsts.planets planetOfTheLaunchPad, bool alsoSearchInCustomLaunchPads)
     {
+        // 'Item1' is the returned LaunchPad (or null if it does not exist)
+        // 'Item2' is the boolean indicating if the returned LaunchPad is a customOne (thus loaded from the customLaunchPads JSON)
+        //==================================
+        if(!LaunchPadList.launchPadsDict.ContainsKey(planetOfTheLaunchPad))
+        {
+            // The specified planet has NOT a dictionary of launchPads
+            return (null, false);
+        }
         Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>> dict = LaunchPadList.launchPadsDict[planetOfTheLaunchPad];
-        return new LaunchPad(dict[launchPadName]);
+        if(dict.ContainsKey(launchPadName))
+        {
+            return (new LaunchPad(dict[launchPadName]), false);
+        }
+        else {
+            if(alsoSearchInCustomLaunchPads)
+            {
+                // Checking custom launchPads
+                string filepath = Application.persistentDataPath + Filepaths.userAdded_launchPads;
+                if(!File.Exists(filepath)) { return (null, false); }
+
+                LaunchPad[] loadedLPs = JsonHelper.FromJson<LaunchPad>(File.ReadAllText(filepath));
+                foreach(LaunchPad lp in loadedLPs)
+                {
+                    if(lp.name.Equals(launchPadName))
+                        return (lp, false);
+                }
+            }
+        }
+        // Could not find the desired launchPad
+        return (null, false);
     }
 
     public static Vector2d XY_2_LatitudeLongitude(Vector2 xymousePosVec, Vector2 xy_mapSize)
@@ -141,32 +297,5 @@ public class LaunchPad
             { LaunchPad.launchPadParams.eastwardBoost, "" }
         };
         return templateDict;
-    }
-
-    public string GetJSONLaunchPadPropertyName()
-    {
-        // Returns the string of the LaunchPad property Name that is used in the JSON file to save the custom user added launchPads
-        return launchPadParamsDict[launchPadParams.name] + "_" + launchPadParamsDict[launchPadParams.refPlanet];
-    } 
-
-    public string LaunchPadDataToString()
-    {
-        string output = "";
-
-        // Addign the first line of the new JSON object: the name of its property is its launchPad name and the name of the refPlanet
-        string propertyName = GetJSONLaunchPadPropertyName();
-        output += "\n\t\"" + propertyName + "\" : \n\t{\n";
-        
-        int count = 0;
-        foreach(KeyValuePair<launchPadParams, string> keyValuePair in launchPadParamsDict)
-        {
-            if(count != 0) {
-                output += ",\n";
-            }
-            output +=  "\t\t\"" + keyValuePair.Key.ToString() + "\" : \"" + keyValuePair.Value.ToString() + "\"";
-            count++;
-        }
-        output += "\n\t}\n";
-        return output;
     }
 }

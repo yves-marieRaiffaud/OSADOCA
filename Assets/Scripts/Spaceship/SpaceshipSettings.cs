@@ -23,11 +23,12 @@ public class SpaceshipSettings : ScriptableObject, FlyingObjSettings
 public struct SpaceshipSettingsSaveData
 {
     //=========================================
-    public const int NB_PARAMS=3; // Won't be serialized and won't be saved. Used only to set the size of the array passed in the constructor
+    public const int NB_PARAMS=4; // Won't be serialized and won't be saved. Used only to set the size of the array passed in the constructor
     //=========================================
-    [SerializeField] private string massDouble;
-    [SerializeField] private string startFromGroundInt; // Bool
-    [SerializeField] private string groundStartLatLongVec2; // Vector2
+    public string massDouble; // double
+    public string startFromGroundInt; // Bool
+    public string groundStartLatLongVec2; // Vector2
+    public string startLaunchPadName; // string
 
     public SpaceshipSettingsSaveData(params string[] values)
     {
@@ -37,18 +38,20 @@ public struct SpaceshipSettingsSaveData
         this.massDouble             = values[0];
         this.startFromGroundInt     = values[1];
         this.groundStartLatLongVec2 = values[2];
+        this.startLaunchPadName     = values[3];
     }
 
     //========================================================================
     public static SpaceshipSettings LoadObjectFromJSON(string filepath)
     {
         SpaceshipSettingsSaveData loadedData = JsonUtility.FromJson<SpaceshipSettingsSaveData>(File.ReadAllText(filepath));
-        
+        //==========
         SpaceshipSettings output = (SpaceshipSettings)ScriptableObject.CreateInstance<SpaceshipSettings>();
         UsefulFunctions.ParseStringToDouble(loadedData.massDouble, out output.mass);
         output.startFromGround = System.Convert.ToBoolean(int.Parse(loadedData.startFromGroundInt));
         output.groundStartLatLong = UsefulFunctions.StringToVector2(loadedData.groundStartLatLongVec2);
-        
+        output.startLaunchPadName = loadedData.startLaunchPadName;
+        //===========
         return output;
     }
 }

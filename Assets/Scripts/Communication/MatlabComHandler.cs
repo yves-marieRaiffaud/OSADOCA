@@ -23,15 +23,21 @@ namespace Matlab_Communication
         void OnApplicationQuit()
         {
             // Close UDP Sender Connection
-            if(dataVisSenderChannel.channelObj != null)
-                dataVisSenderChannel.channelObj.Terminate();
+            if(dataVisSenderChannel != null) {
+                if(dataVisSenderChannel.channelObj != null)
+                    dataVisSenderChannel.channelObj.Terminate();
+            }
             //===============
             // Terminate TCP servers
-            if(simEnvTCPServer.channelObj != null)
-                simEnvTCPServer.channelObj.StopServer();
+            if(simEnvTCPServer != null) {
+                if(simEnvTCPServer.channelObj != null)
+                    simEnvTCPServer.channelObj.StopServer();
+            }
 
-            if(controlAlgoTCPServer.channelObj != null)
-                controlAlgoTCPServer.channelObj.StopServer();
+            if(controlAlgoTCPServer != null) {
+                if(controlAlgoTCPServer.channelObj != null)
+                    controlAlgoTCPServer.channelObj.StopServer();
+            }
         }
     }
 }

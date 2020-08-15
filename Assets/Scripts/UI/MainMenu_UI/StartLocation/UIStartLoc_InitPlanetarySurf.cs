@@ -155,69 +155,16 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
 
     private void LoadCustomLaunchPads()
     {
-        // Load launchPads that have been added by the user
-        string filepath = Application.persistentDataPath + Filepaths.userAdded_launchPads;
-        if(!File.Exists(filepath)) { return; }
-
-        string[] loadedData = File.ReadAllLines(filepath);
-        int nbLinesBetweenPropertiesName = (1 + 1 + 2 + Enum.GetNames(typeof(LaunchPad.launchPadParams)).Length);
-        int nbPropertiesInFile = Mathf.FloorToInt(loadedData.Length / nbLinesBetweenPropertiesName);
-
-        int lineIdxOfNextLPProperty = 2; // Properties starts at line 3, so index is 2
-        for(int count = 0; count < nbPropertiesInFile; count++)
+        LaunchPad[] readLaunchPads = UsefulFunctions.ReadCustomLaunchPadsFromJSON();
+        if(readLaunchPads == null)
+            return;
+        foreach(LaunchPad lp in readLaunchPads)
         {
-            string[] refPlanetLine = loadedData[lineIdxOfNextLPProperty + 3].Split(':');
-            string refPlanetName = refPlanetLine[1].Substring(2, refPlanetLine[1].Length-4);
-            if(!refPlanetName.Equals(currPlanetSelectedName))
+            if(lp.planet.Equals(currPlanetSelectedName))
             {
-                lineIdxOfNextLPProperty += nbLinesBetweenPropertiesName;
-                continue;
+                lp.RebuildDict();
+                AddLaunchPad(lp, true);
             }
-
-            string propertyLine = loadedData[lineIdxOfNextLPProperty];
-            Dictionary<LaunchPad.launchPadParams, string> lp_dict = LaunchPad.GetEmptyLaunchPadDict(currPlanetSelectedName);
-
-            // property[0] is the key with '\t' in front
-            // property[1] is the value with the ',' if it's not the last param in the class instance
-            string[] stringArr = loadedData[lineIdxOfNextLPProperty + 2].Split(':');
-            string stringVal = stringArr[1].Substring(2, stringArr[1].Length-3); // removing the comma and the '"' character
-            lp_dict[LaunchPad.launchPadParams.isCustomLP] = stringVal;
-
-            //stringArr = loadedData[lineIdxOfNextLPProperty + 3].Split(':');
-            //stringVal = stringArr[1].Substring(2, stringArr[1].Length-4); // removing the comma
-            lp_dict[LaunchPad.launchPadParams.refPlanet] = refPlanetName;
-
-            stringArr = loadedData[lineIdxOfNextLPProperty + 4].Split(':');
-            stringVal = stringArr[1].Substring(2, stringArr[1].Length-4); // removing the comma
-            lp_dict[LaunchPad.launchPadParams.name] = stringVal;
-
-            stringArr = loadedData[lineIdxOfNextLPProperty + 5].Split(':');
-            stringVal = stringArr[1].Substring(2, stringArr[1].Length-4); // removing the comma
-            lp_dict[LaunchPad.launchPadParams.country] = stringVal;
-
-            stringArr = loadedData[lineIdxOfNextLPProperty + 6].Split(':');
-            stringVal = stringArr[1].Substring(2, stringArr[1].Length-4); // removing the comma
-            lp_dict[LaunchPad.launchPadParams.operationalDate] = stringVal;
-
-            stringArr = loadedData[lineIdxOfNextLPProperty + 7].Split(':');
-            stringVal = stringArr[1].Substring(2, stringArr[1].Length-4); // removing the comma
-            lp_dict[LaunchPad.launchPadParams.supervision] = stringVal;
-
-            stringArr = loadedData[lineIdxOfNextLPProperty + 8].Split(':');
-            stringVal = stringArr[1].Substring(2, stringArr[1].Length-4); // removing the comma
-            lp_dict[LaunchPad.launchPadParams.latitude] = stringVal;
-
-            stringArr = loadedData[lineIdxOfNextLPProperty + 9].Split(':');
-            stringVal = stringArr[1].Substring(2, stringArr[1].Length-4); // removing the comma
-            lp_dict[LaunchPad.launchPadParams.longitude] = stringVal;
-
-            stringArr = loadedData[lineIdxOfNextLPProperty + 10].Split(':');
-            stringVal = stringArr[1].Substring(2, stringArr[1].Length-3); // there is no commo here
-            lp_dict[LaunchPad.launchPadParams.eastwardBoost] = stringVal;
-
-            AddLaunchPad(lp_dict, true);
-
-            lineIdxOfNextLPProperty += nbLinesBetweenPropertiesName;
         }
     }
 
@@ -232,6 +179,30 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         lp_longitude_val.text = UsefulFunctions.StringToSignificantDigits(clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.longitude], UniCsts.UI_SIGNIFICANT_DIGITS) + " °";
         lp_latitude_val.text = UsefulFunctions.StringToSignificantDigits(clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.latitude], UniCsts.UI_SIGNIFICANT_DIGITS) + " °";
         lp_eastwardBoost_val.text = UsefulFunctions.StringToSignificantDigits(clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.eastwardBoost], UniCsts.UI_SIGNIFICANT_DIGITS) + " m/s";
+    }
+
+    private void AddLaunchPad(LaunchPad launchPad, bool addAsCustomLaunchPad)
+    {
+        Vector2 launchPad_XY_Pos = launchPad.LatitudeLongitude_2_XY(mapSize);
+        Vector3 launchPadPos = new Vector3(launchPad_XY_Pos.x, launchPad_XY_Pos.y) + mapBottomLeftCorner;
+
+        GameObject launchPad_GO;
+        if(addAsCustomLaunchPad)
+        {
+            launchPad_GO = Instantiate(launchPadPrefabCustom, launchPadPos, Quaternion.identity);
+        }
+        else {
+            launchPad_GO = Instantiate(launchPadPrefab, launchPadPos, Quaternion.identity);
+        }
+        
+        launchPad_GO.name = launchPad.name;
+        launchPad_GO.transform.parent = planetMap.gameObject.transform;
+
+        Button launchPad_btn = launchPad_GO.GetComponent<Button>();
+        launchPad_btn.onClick.AddListener(delegate { OnLaunchPadClick(launchPad); });
+
+        launchPadGOs.Add(launchPad_GO);
+        launchPadInstances.Add(launchPad);
     }
 
     private void AddLaunchPad(Dictionary<LaunchPad.launchPadParams, string> lp_dict, bool addAsCustomLaunchPad)
@@ -317,8 +288,9 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         lp.launchPadParamsDict[LaunchPad.launchPadParams.country] = lp_country_input.text;
         lp.launchPadParamsDict[LaunchPad.launchPadParams.supervision] = lp_supervision_input.text;
         lp.launchPadParamsDict[LaunchPad.launchPadParams.operationalDate] = lp_operationDate_input.text;
+        lp.InitVariables();
 
-        bool ok_to_writeToJSON = AddNewLaunchPadCheckBeforeSaving(lp.GetJSONLaunchPadPropertyName());
+        bool ok_to_writeToJSON = AddNewLaunchPadCheckBeforeSaving(lp.name);
         if(!ok_to_writeToJSON)
         {
             Debug.Log("A launchPad with the same name and for planet" + currPlanetSelectedName + " has already been defined. Change the launchPad's name or the planet");
@@ -339,55 +311,36 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
 
     private bool AddNewLaunchPadCheckBeforeSaving(string launchPadNameToCheck)
     {
-        string filepath = Application.persistentDataPath + Filepaths.userAdded_launchPads;
-        if(!File.Exists(filepath)) { return true; }
-
-        string[] loadedData = File.ReadAllLines(filepath);
-        int nbLinesBetweenPropertiesName = (1 + 1 + 2 + Enum.GetNames(typeof(LaunchPad.launchPadParams)).Length);
-        int nbPropertiesInFile = Mathf.FloorToInt(loadedData.Length / nbLinesBetweenPropertiesName);
-
-        int lineIdxOfNextLPProperty = 2; // Properties starts at line 3, so index is 2
-        for(int count = 0; count < nbPropertiesInFile; count++)
+        foreach(UniCsts.planets planetToCheck in Enum.GetValues(typeof(UniCsts.planets)))
         {
-            string line = loadedData[lineIdxOfNextLPProperty];
-            string[] property = line.Split('\"');
-            // property[0] is the '\t' (tab) character
-            // property[1] is the desired propertyName
-            // property[2] is the ':' after the property name
-            if(property.Length > 1)
-            {
-                if(launchPadNameToCheck.Equals(property[1]))
-                {
-                    return false;
-                }
-            }
-            lineIdxOfNextLPProperty += nbLinesBetweenPropertiesName;
+            // Checking custom LaunchPads and default ones at the same time
+            // Lots of extra work as for each planet, it will check every custom LaunchPads (regardless of the planet)
+            (LaunchPad,bool) output = LaunchPad.GetLaunchPadFromName(launchPadNameToCheck, planetToCheck, true);
+            if(output.Item2)
+                return false;
         }
         return true;
     }
 
     private string AddLaunchPadDataToJSON(LaunchPad lauchPadToAdd)
     {
-        string filepath = Application.persistentDataPath + Filepaths.userAdded_launchPads;
-
-        string[] previousTxtNoEndBracket = new string[] { "{\n" };
-        string previousText;
-        if(!File.Exists(filepath))
+        LaunchPad[] arrayToWrite;
+        LaunchPad[] prevLPs = UsefulFunctions.ReadCustomLaunchPadsFromJSON();
+        if(prevLPs == null)
+            arrayToWrite = new LaunchPad[1]; // There is only the new data to append to a new file
+        else
         {
-            FileStream fs = File.Create(filepath);
-            fs.Close();
-            previousText = string.Join("", previousTxtNoEndBracket);
+            arrayToWrite = new LaunchPad[prevLPs.Length + 1];
+            // Copying previous launchPads to the array that will be written
+            for(int i = 0; i < prevLPs.Length; i++)
+            {
+                arrayToWrite[i] = prevLPs[i];
+            }
         }
-        else {
-            string[] tmp = File.ReadAllLines(filepath);
-            previousTxtNoEndBracket = UsefulFunctions.GetSubArray(tmp, 0, tmp.Length-2);
-            previousText = string.Join("\n", previousTxtNoEndBracket) + ",\n";
-        }
-
-        string newLPTxt = lauchPadToAdd.LaunchPadDataToString();
-
-        string newJSONTxt = previousText + newLPTxt + "\n}";
-        File.WriteAllText(filepath, newJSONTxt);
+        // Adding the new launchPad to the array
+        arrayToWrite[arrayToWrite.Length-1] = lauchPadToAdd;
+        string filepath = Application.persistentDataPath + Filepaths.userAdded_launchPads;
+        File.WriteAllText(filepath, JsonHelper.ToJson(arrayToWrite, true));
         return filepath;
     }
 

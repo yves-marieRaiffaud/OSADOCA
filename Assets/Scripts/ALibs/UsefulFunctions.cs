@@ -573,6 +573,15 @@ public static class UsefulFunctions
         return filepath;
     }
 
+    public static LaunchPad[] ReadCustomLaunchPadsFromJSON()
+    {
+        string filepath = Application.persistentDataPath + Filepaths.userAdded_launchPads;
+        if(!File.Exists(filepath)) {
+            return null;
+        }
+        return JsonHelper.FromJson<LaunchPad>(File.ReadAllText(filepath));
+    }
+
     public static T[] GetSubArray<T>(this T[] array, int offset, int length)
     {
         T[] result = new T[length];

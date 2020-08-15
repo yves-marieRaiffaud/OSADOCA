@@ -151,6 +151,23 @@ public class FlyingObj
                     double latitude = shipSettings.groundStartLatLong.x;
                     double longitude = shipSettings.groundStartLatLong.y;
                     bodyRelatedPos = castBody.orbitalParams.orbitedBody.GetWorldPositionFromGroundStart(latitude, longitude);
+                    //=================
+                    // Because we start from ground, we must also init the ship's rigidbody velocity
+                    // Init the ship's rb velocity as the planet absolute velocity (the 'orbitedBodyRelativeVel' is 0 m/s)
+                    // + the eastward boost
+                    Vector3d speedOfOrbitedBody = Vector3d.zero;
+                    if(!castBody.orbitalParams.orbitedBodyName.Equals("None")) {
+                        CelestialBody orbitedBody = castBody.orbitalParams.orbitedBody;
+                        speedOfOrbitedBody = orbitedBody.orbitedBodyRelativeVel; // in m.s
+                    }
+                    Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
+                    Vector3d absoluteScaledVelocity = speedOfOrbitedBody*UniCsts.m2km2au2u;
+                    rb.velocity = (Vector3)absoluteScaledVelocity;
+                    //=================
+                    // Init the rotation of the spaceship to make it stand up on the ground
+                    // ????????????
+                    // ????????????
+                    // ????????????
                 }
                 else {
                     // A spaceship with in orbit init
@@ -162,7 +179,7 @@ public class FlyingObj
                 // A celestialBody with in orbit init
                 bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit, OrbitalTypes.bodyPositionType.nu);
             }
-
+            //===================
             castBody.realPosition = UsefulFunctions.AlignPositionVecWithParentPos(bodyRelatedPos, castBody.orbitalParams.orbitedBody.transform.position);
             castBody._gameObject.transform.position = (Vector3)castBody.realPosition;
         }
@@ -171,18 +188,25 @@ public class FlyingObj
     public void InitializeOrbitalSpeed<T1, T2>(UnityEngine.Object body)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
+        //====================================
+        //====================================
+        //====================================
+        // ADD EASTWARD BOOST ??????==========
+        //====================================
+        //====================================
+        //====================================
         T1 castBody = CastObjectToType<T1>(body);
         T2 bodySettings = GetObjectSettings<T2>(body);
 
         // Init orbital speed
         Vector3d tangentialVec = castBody.orbit.ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.tangentialVec);
         double orbitalSpeed = castBody.orbit.GetOrbitalSpeedFromOrbit();
-        castBody.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed;
+        castBody.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed; // in m.s
 
         Vector3d speedOfOrbitedBody = Vector3d.zero;
         if(!castBody.orbitalParams.orbitedBodyName.Equals("None")) {
             CelestialBody orbitedBody = castBody.orbitalParams.orbitedBody;
-            speedOfOrbitedBody = orbitedBody.orbitedBodyRelativeVel;
+            speedOfOrbitedBody = orbitedBody.orbitedBodyRelativeVel; // in m.s
         } 
 
         // Init orbital speed of the Rigidbody

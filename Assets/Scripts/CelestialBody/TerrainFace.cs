@@ -152,9 +152,11 @@ public class TerrainFace
                 mustRemovethisChild = true;
                 //===================================
                 GameObject groundGO;
+                MeshCollider meshCollider;
                 if(celestialBody.transform.Find("ground"))
                 {
                     groundGO = celestialBody.transform.Find("ground").gameObject;
+                    meshCollider = groundGO.GetComponent<MeshCollider>();
                 }
                 else {
                     groundGO = new GameObject("ground", typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer));
@@ -165,6 +167,17 @@ public class TerrainFace
                     groundGO.layer = 9;
                     MeshRenderer meshRenderer = groundGO.GetComponent<MeshRenderer>();
                     meshRenderer.material = Resources.Load<Material>("Ground");
+                    //================
+                    PhysicMaterial colliderMaterial = new PhysicMaterial("MeshColliderMaterial");
+                    colliderMaterial.bounceCombine = PhysicMaterialCombine.Minimum;
+                    colliderMaterial.bounciness = 0.01f;
+                    colliderMaterial.dynamicFriction = 1f;
+                    colliderMaterial.frictionCombine = PhysicMaterialCombine.Multiply;
+                    colliderMaterial.staticFriction = 1f;
+                    //======
+                    meshCollider = groundGO.GetComponent<MeshCollider>();
+                    meshCollider.convex = true;
+                    meshCollider.material = colliderMaterial;
                 }
 
                 MeshFilter meshFilter = groundGO.GetComponent<MeshFilter>();
@@ -174,15 +187,6 @@ public class TerrainFace
                 tmpMesh.triangles = child.triangles;
                 tmpMesh.normals = verticesAndTriangles.Item5;
                 meshFilter.mesh = tmpMesh;
-                MeshCollider meshCollider = groundGO.GetComponent<MeshCollider>();
-                meshCollider.convex = true;
-                PhysicMaterial colliderMaterial = new PhysicMaterial("MeshColliderMaterial");
-                colliderMaterial.bounceCombine = PhysicMaterialCombine.Minimum;
-                colliderMaterial.bounciness = 0.01f;
-                colliderMaterial.dynamicFriction = 1f;
-                colliderMaterial.frictionCombine = PhysicMaterialCombine.Multiply;
-                colliderMaterial.staticFriction = 1f;
-                meshCollider.material = colliderMaterial;
                 meshCollider.sharedMesh = tmpMesh;
             }
 

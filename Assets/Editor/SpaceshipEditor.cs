@@ -15,6 +15,10 @@ public class SpaceshipEditor: Editor
         spaceship = (Spaceship)target;
         CheckCreateOrbitalParamsAsset();
         serializedOrbitalParams = new SerializedObject(serializedObject.FindProperty("_orbitalParams").objectReferenceValue);
+        //============
+        string filepath = Application.persistentDataPath + Filepaths.shipToLoad_settings;
+        SpaceshipSettings dataLoadedFromJsonFile = SpaceshipSettingsSaveData.LoadObjectFromJSON(filepath);
+        spaceship.settings.startFromGround = dataLoadedFromJsonFile.startFromGround;
     }
 
     private void CheckCreateOrbitalParamsAsset()
@@ -99,7 +103,7 @@ public class SpaceshipEditor: Editor
     public void CreateOrbitalParametersEditor()
     {
         spaceship.settings.startFromGround = EditorGUILayout.Toggle("Start from ground", spaceship.settings.startFromGround);
-
+        //=======================
         if(spaceship.settings.startFromGround)
         {
             string[] launchPadOptions = GetStartingLaunchPadOptions(serializedOrbitalParams.FindProperty("orbitedBodyName").stringValue);
@@ -220,9 +224,10 @@ public class SpaceshipEditor: Editor
     private SpaceshipSettingsSaveData GatherSpaceshipDataToWriteToFile()
     {
         /*
-        string massDouble;
+        string massDouble; // Double
         string startFromGroundInt; // Bool
-        string groundStartLatLongVec2;
+        string groundStartLatLongVec2; // Vector2
+        string startLaunchPadName; // string
         */
         string[] shipDataToSave = new string[SpaceshipSettingsSaveData.NB_PARAMS];
         shipDataToSave[0] = UsefulFunctions.DoubleToString(spaceship.settings.mass);
@@ -230,13 +235,24 @@ public class SpaceshipEditor: Editor
         {
             shipDataToSave[1] = "1";
             UniCsts.planets orbitedPlanet = UsefulFunctions.CastStringTo_Unicsts_Planets(serializedOrbitalParams.FindProperty("orbitedBodyName").stringValue);
-            Vector2 lp_latLong = LaunchPad.GetLaunchPadFromName(spaceship.settings.startLaunchPadName, orbitedPlanet).Get_Lat_Long();
-            shipDataToSave[2] = lp_latLong.ToString();
+            LaunchPad lp = LaunchPad.GetLaunchPadFromName(spaceship.settings.startLaunchPadName, orbitedPlanet, true).Item1;
+            if(lp != null)
+            {
+                Vector2 lp_latLong = lp.Get_Lat_Long();
+                shipDataToSave[2] = lp_latLong.ToString();
+                shipDataToSave[3] = spaceship.settings.startLaunchPadName;
+            }
+            else {
+                // Could not the launchPad by its name. Fallback on the default launchPad which is the origin point (0°,0°)
+                shipDataToSave[2] = new Vector2(0f, 0f).ToString();
+                shipDataToSave[3] = "Origin (0°,0°)";
+            }
         }
         else
         {
             shipDataToSave[1] = "0";
             shipDataToSave[2] = new Vector2(float.NaN, float.NaN).ToString();
+            shipDataToSave[3] = "";
         }
         return new SpaceshipSettingsSaveData(shipDataToSave);
     }

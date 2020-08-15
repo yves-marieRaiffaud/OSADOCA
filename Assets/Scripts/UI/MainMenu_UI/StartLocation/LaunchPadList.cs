@@ -4,6 +4,23 @@ using System.Collections.Generic;
 
 public static class LaunchPadList
 {
+    public static Dictionary<LaunchPad.launchPadParams, string> GetOriginLaunchPadDict(string planetName)
+    {
+        Dictionary<LaunchPad.launchPadParams, string> originPointDict = new Dictionary<LaunchPad.launchPadParams, string>() {
+            { LaunchPad.launchPadParams.isCustomLP, "0" },
+            { LaunchPad.launchPadParams.refPlanet, planetName },
+            { LaunchPad.launchPadParams.name, "Origin (0°,0°)" },
+            { LaunchPad.launchPadParams.country, "-" },
+            { LaunchPad.launchPadParams.operationalDate, "-" },
+            { LaunchPad.launchPadParams.supervision, "-" },
+            { LaunchPad.launchPadParams.latitude, "0.0" },
+            { LaunchPad.launchPadParams.longitude, "0.0" }
+        };
+        return originPointDict;
+    }
+    //==============================================================================
+    //==============================================================================
+    //==============================================================================
     private static Dictionary<LaunchPad.launchPadParams, string> kourouDict = new Dictionary<LaunchPad.launchPadParams, string>() {
         { LaunchPad.launchPadParams.isCustomLP, "0" },
         { LaunchPad.launchPadParams.refPlanet, "Earth" },
@@ -125,17 +142,6 @@ public static class LaunchPadList
         { LaunchPad.launchPadParams.longitude, "-106.35908" }
     };
 
-    private static Dictionary<LaunchPad.launchPadParams, string> originPointDict = new Dictionary<LaunchPad.launchPadParams, string>() {
-        { LaunchPad.launchPadParams.isCustomLP, "0" },
-        { LaunchPad.launchPadParams.refPlanet, "Earth" },
-        { LaunchPad.launchPadParams.name, "Origin (0°,0°)" },
-        { LaunchPad.launchPadParams.country, "-" },
-        { LaunchPad.launchPadParams.operationalDate, "-" },
-        { LaunchPad.launchPadParams.supervision, "-" },
-        { LaunchPad.launchPadParams.latitude, "0.0" },
-        { LaunchPad.launchPadParams.longitude, "0.0" }
-    };
-
     private static Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>> earth_launchPads = new Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>>() {
         { "Kourou", kourouDict },
         { "Whenchang", wenchangDict },
@@ -148,14 +154,14 @@ public static class LaunchPadList
         { "Kennedy", kennedyDict },
         { "Mojave", mojaveDict },
         { "White Sands", whiteSandDict },
-        { "Origin Point (0°,0°)", originPointDict }
+        { "Origin (0°,0°)", GetOriginLaunchPadDict(UniCsts.planets.Earth.ToString()) }
     };
     //======================================================================================================================
     //======================================================================================================================
     //======================================================================================================================
     //======================================================================================================================
     private static Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>> mercury_launchPads = new Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>>() {
-        
+        { "Origin (0°,0°)", GetOriginLaunchPadDict(UniCsts.planets.Mercury.ToString()) }
     };
     //======================================================================================================================
     //======================================================================================================================
@@ -163,7 +169,7 @@ public static class LaunchPadList
     //======================================================================================================================
 
     private static Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>> venus_launchPads = new Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>>() {
-        
+        { "Origin (0°,0°)", GetOriginLaunchPadDict(UniCsts.planets.Venus.ToString()) }
     };
     //======================================================================================================================
     //======================================================================================================================
@@ -171,7 +177,7 @@ public static class LaunchPadList
     //======================================================================================================================
 
     private static Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>> mars_launchPads = new Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>>() {
-        
+        { "Origin (0°,0°)", GetOriginLaunchPadDict(UniCsts.planets.Mars.ToString()) }
     };
     //======================================================================================================================
     //======================================================================================================================
