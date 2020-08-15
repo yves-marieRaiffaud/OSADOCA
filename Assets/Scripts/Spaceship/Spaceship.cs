@@ -277,6 +277,25 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         //=============
         return LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude);
     }
+    //===========
+    //===========
+    public static double GetProjectedLatitudeFromShipPos(double polarRadius, CelestialBody body, Vector3 shipPos)
+    {
+        Vector3d shipPosInPlanetAxis = new Vector3d(body.transform.InverseTransformPoint(shipPos));
+        //=====
+        double ratioAboveNullLong = shipPosInPlanetAxis.y * UniCsts.u2pl / polarRadius;
+        ratioAboveNullLong = Mathd.Clamp(ratioAboveNullLong, -1d, 1d);
+        return 90d - Mathd.Acos(ratioAboveNullLong)*UniCsts.rad2deg;
+    }
+    public static double GetGeocentricRadiusFromShipPos(CelestialBody body, Vector3 shipPos)
+    {
+        // Returns the Geocentric Radius in km of the current projected position of the spaceship on the CelestialBody it is orbiting 
+        double equaRad = body.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
+        double polarRad = body.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value;
+        double latitude = GetProjectedLatitudeFromShipPos(polarRad, body, shipPos);
+        //=============
+        return LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude);
+    }
 
     public Pressure GetOrbitedBodyAtmospherePressure()
     {

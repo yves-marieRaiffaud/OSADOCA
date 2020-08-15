@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
+using Mathd_Lib;
 
 public class TerrainFace
 {
@@ -121,7 +122,7 @@ public class TerrainFace
             chunkIDXMinDistance = UsefulFunctions.ListFloatArgMin(visibleChildrenDist);
         }*/
 
-        int idxCounter = 0;
+        //int idxCounter = 0;
         foreach (Chunk child in visibleChildren)
         {
             child.GetNeighbourLOD();
@@ -139,7 +140,7 @@ public class TerrainFace
                 verticesAndTriangles = (child.vertices, child.GetTrianglesWithOffset(triangleOffset), child.GetBorderTrianglesWithOffset(borderTriangleOffset, triangleOffset), child.borderVertices, child.normals);
             }
 
-            /*if(chunkIDXMinDistance == idxCounter)
+            if(child.detailLevel == 7)
             {
                 GameObject groundGO;
                 if(celestialBody.transform.Find("ground"))
@@ -151,10 +152,11 @@ public class TerrainFace
                     groundGO.transform.parent = celestialBody.transform;
                     groundGO.transform.localRotation = Quaternion.identity;
                     
-                    float flatenningVal = (float)celestialBodySettingsScript.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()];
-                    flatenningVal = 1f - 1f/flatenningVal;
-                    groundGO.transform.localPosition = (flatenningVal*child.position).normalized;
-                    
+                    double equaRad = celestialBodySettingsScript.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
+                    double geocentricRad = Spaceship.GetGeocentricRadiusFromShipPos(celestialBody, activeShip.transform.position);
+                    Vector3d groundGOPos_tmp = new Vector3d(child.position).normalized * equaRad;
+                    groundGO.transform.localPosition = (Vector3) ((groundGOPos_tmp * (1 - (equaRad-geocentricRad)/equaRad)).normalized);
+                    // GROUNDGO GAMEOBEJCT NOT WELL POSITIONED : POSITIONED AT 20 KM IN THE SKY...
                     groundGO.layer = 9;
                     MeshRenderer meshRenderer = groundGO.GetComponent<MeshRenderer>();
                     meshRenderer.material = Resources.Load<Material>("Ground");
@@ -169,9 +171,15 @@ public class TerrainFace
                 meshFilter.mesh = tmpMesh;
                 MeshCollider meshCollider = groundGO.GetComponent<MeshCollider>();
                 meshCollider.convex = true;
+                PhysicMaterial colliderMaterial = new PhysicMaterial("MeshColliderMaterial");
+                colliderMaterial.bounceCombine = PhysicMaterialCombine.Average;
+                colliderMaterial.bounciness = 0.01f;
+                colliderMaterial.dynamicFriction = 0.6f;
+                colliderMaterial.frictionCombine = PhysicMaterialCombine.Average;
+                colliderMaterial.staticFriction = 0.8f;
+                meshCollider.material = colliderMaterial;
                 meshCollider.sharedMesh = tmpMesh;
-                Debug.Log(string.Join(System.Environment.NewLine, verticesAndTriangles.Item1));
-            }*/
+            }
 
             vertices.AddRange(verticesAndTriangles.Item1);
             triangles.AddRange(verticesAndTriangles.Item2);
@@ -183,7 +191,6 @@ public class TerrainFace
             triangleOffset += (Presets.quadRes + 1) * (Presets.quadRes + 1);
             borderTriangleOffset += verticesAndTriangles.Item4.Length;
             //===============
-            idxCounter++;
         }
 
         Vector2[] uvs = new Vector2[vertices.Count];
