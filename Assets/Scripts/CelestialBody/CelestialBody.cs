@@ -546,7 +546,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     public Vector3d GetWorldPositionFromGroundStart(double latitude, double longitude)
     {
         // Substracting 180° to the longitude as the function considers the CelestialBody local +X axis as longitude 0, while longitude 0 is along local axis -X
-        Vector3d sphereUnitPos = LaunchPad.LatitudeLongitude_to_3DWorldUNITPoint(latitude, longitude-180d);
+        Vector3d sphereUnitPos = LaunchPad.LatitudeLongitude_to_3DWorldUNITPoint(latitude-90d, longitude-180d);
         //=======
         double equaRad = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
         double polarRad = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value;

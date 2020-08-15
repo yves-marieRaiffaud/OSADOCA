@@ -121,14 +121,15 @@ public class TerrainFace
         {
             chunkIDXMinDistance = UsefulFunctions.ListFloatArgMin(visibleChildrenDist);
         }
-
+        //=====================================
         int idxCounter = 0;
         int idxOfChildToRemove = 0; // index in the visibleChildren list of the child that is replaced by the ground prefab for colliding with the ship
         bool mustRemovethisChild = false;
+        //=====================================
         foreach (Chunk child in visibleChildren)
         {
             mustRemovethisChild = false;
-            //==========================
+            //====================
             child.GetNeighbourLOD();
             (Vector3[], int[], int[], Vector3[], Vector3[]) verticesAndTriangles = (new Vector3[0], new int[0], new int[0], new Vector3[0], new Vector3[0]);
             if (child.vertices == null)
@@ -159,10 +160,6 @@ public class TerrainFace
                     groundGO = new GameObject("ground", typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer));
                     groundGO.transform.parent = celestialBody.transform;
                     groundGO.transform.localRotation = Quaternion.identity;
-                    
-                    double equaRad = celestialBodySettingsScript.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
-                    double geocentricRad = Spaceship.GetGeocentricRadiusFromShipPos(celestialBody, activeShip.transform.position);
-                    Vector3d groundGOPos_tmp = new Vector3d(child.position).normalized * equaRad;
                     groundGO.transform.localPosition = Vector3.zero;
                     //================
                     groundGO.layer = 9;
@@ -204,8 +201,10 @@ public class TerrainFace
             //===============
             idxCounter++;
         }
+        // Removing the child that is replaced by the ground collider from the 'visibleChildren' List<Chunk>
         visibleChildren.RemoveAt(idxOfChildToRemove);
-
+        //===============================================
+        //===============================================
         Vector2[] uvs = new Vector2[vertices.Count];
 
         float planetScriptSizeDivide = (1 / (float)celestialBodySettingsScript.radiusU);
@@ -219,7 +218,8 @@ public class TerrainFace
 
             uvs[i] = new Vector2(u, v);
         }
-
+        //===========
+        //===========
         // Reset mesh and apply new data
         mesh.Clear();
         mesh.vertices = vertices.ToArray();

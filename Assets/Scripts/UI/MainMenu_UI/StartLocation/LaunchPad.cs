@@ -74,11 +74,15 @@ public class LaunchPad
         double lat, longitude;
         bool latSuccess = UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.latitude], out lat);
         bool longSuccess = UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.longitude], out longitude);
-
-        Vector3 worldPos = (Vector3)LaunchPad.LatitudeLongitude_to_3DWorldUNITPoint((float)lat, (float)longitude);
-
+        //=========
+        Vector3 worldPos = (Vector3)LaunchPad.LatitudeLongitude_to_3DWorldUNITPoint(lat+90d, longitude);
+        //=========
         // Convert the 3D point on the map
         // Computed 'pixel_w' & "pixel_h' are relative to the bottom left corner of the map
+        float tmpPos = worldPos.z;
+        worldPos.z = worldPos.x;
+        worldPos.x = tmpPos;
+        //=========
         float pixel_w = (0.5f + Mathf.Atan2(worldPos.x, worldPos.z) / (2f*Mathf.PI)) * xy_mapSize.x;
         float pixel_h = (0.5f - Mathf.Asin(worldPos.y) / Mathf.PI) * xy_mapSize.y;
 
@@ -87,10 +91,11 @@ public class LaunchPad
 
     public static Vector3d LatitudeLongitude_to_3DWorldUNITPoint(double latitude, double longitude)
     {
-        // Convert lat & long to a 3D point on a unit 
+        // Convert lat & long to a 3D point on a unit
+        // Latitude and longitude passed in degrees
         // First converting angles to radians
-        latitude = (latitude - 90d) * UniCsts.deg2rad;
-        longitude = longitude * UniCsts.deg2rad;
+        latitude *= UniCsts.deg2rad;
+        longitude *= UniCsts.deg2rad;
         //======
         Vector3d worldPos;
         worldPos.x = Mathd.Sin(latitude) * Mathd.Cos(longitude);

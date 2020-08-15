@@ -23,7 +23,7 @@ MonoBehaviour:
   drawDirections: 0
   orbitDrawingResolution: 500
   ra: 10000
-  rp: 10000
+  rp: 6478
   p: 9685.486926866237
   e: 0.5157256536566881
   a: 13195
