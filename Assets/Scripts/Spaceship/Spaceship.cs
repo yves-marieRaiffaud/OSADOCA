@@ -127,7 +127,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
             _gravPullList=value;
         }
     }
-    //=========================================    
+    //===============================
+    //===============================
     void Awake()
     {
         // FOR DEBUG PURPOSES
@@ -161,7 +162,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
         InitComHandlerTCPReceiver();
     }
-
+    //===============================
+    //===============================
     private void InitComHandlerTCPReceiver()
     {
         GameObject comHandlerGO = GameObject.Find("MatlabCom_Handler");
@@ -174,7 +176,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     {
         predictor = new OrbitalPredictor(this, orbitalParams.orbitedBody.GetComponent<CelestialBody>(), orbit);
     }
-
+    //===============================
+    //===============================
     public Vector3d GetRelativeRealWorldPosition()
     {
         return new Vector3d(transform.position - orbitalParams.orbitedBody.transform.position) * UniCsts.u2pl;
@@ -204,7 +207,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
         // don't need to do anything if we want to use the Scriptables objects set up in the Unity Editor Inspector
     }
-
+    //===============================
+    //===============================
     public double Get_R()
     {
         // Returns the distance in real world (in km) from the spaceship position to the centre of the orbited body
@@ -277,8 +281,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         //=============
         return LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude);
     }
-    //===========
-    //===========
+    //===============================
+    //===============================
     public static double GetProjectedLatitudeFromShipPos(double polarRadius, CelestialBody body, Vector3 shipPos)
     {
         Vector3d shipPosInPlanetAxis = new Vector3d(body.transform.InverseTransformPoint(shipPos));
@@ -287,6 +291,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         ratioAboveNullLong = Mathd.Clamp(ratioAboveNullLong, -1d, 1d);
         return 90d - Mathd.Acos(ratioAboveNullLong)*UniCsts.rad2deg;
     }
+
     public static double GetGeocentricRadiusFromShipPos(CelestialBody body, Vector3 shipPos)
     {
         // Returns the Geocentric Radius in km of the current projected position of the spaceship on the CelestialBody it is orbiting 
@@ -297,6 +302,17 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         return LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude);
     }
 
+    public Vector3d GetEasternDirection(double longitude)
+    {
+        // Returns a vector3d of the normalized eastern direction at equator latitude at the passed longitude
+        // The returned vector3d is in WORLD SPACE (the direction vector is in world space)
+        // To be multiplied by the spaceship launchPad's eastward boost to init its ground velocity
+        Quaterniond planetRot = new Quaterniond(orbitalParams.orbitedBody.transform.rotation);
+        Vector3d spherePos = (planetRot*LaunchPad.LatitudeLongitude_to_3DWorldUNITPoint(0d-90d, longitude-180d)).normalized;
+        Vector3d localUp = new Vector3d(orbitalParams.orbitedBody.transform.TransformDirection(Vector3.up)).normalized;
+        return Vector3d.Cross(spherePos, localUp).normalized;
+    }
+
     public Pressure GetOrbitedBodyAtmospherePressure()
     {
         double currAltitude = GetShipAltitude();
@@ -305,7 +321,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         Pressure currentPressure = UniCsts.planetsFncsDict[UseFnc.CastStringTo_Unicsts_Planets(orbitalParams.orbitedBodyName)][PlanetsFunctions.chosenFunction.pressureEvolution](surfacePressure, currAltitude);
         return currentPressure;
     }
-
+    //===============================
+    //===============================
     public double SetDistanceScaleFactor()
     {
         if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree)

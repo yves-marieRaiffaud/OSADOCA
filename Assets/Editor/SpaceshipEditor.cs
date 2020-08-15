@@ -200,10 +200,9 @@ public class SpaceshipEditor: Editor
     private string[] GetStartingLaunchPadOptions(string startBodyName)
     {
         if(startBodyName.Equals("None")) { return new string[] {}; }
-
+        //================
         UniCsts.planets selectedPlanet = UsefulFunctions.CastStringTo_Unicsts_Planets(startBodyName);
-        if(selectedPlanet.Equals(UniCsts.planets.None))
-        {
+        if(selectedPlanet.Equals(UniCsts.planets.None)) {
             return new string[] {};
         }
         else {
@@ -212,13 +211,8 @@ public class SpaceshipEditor: Editor
                 return new string[] {};
             }
         }
-
-        Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>> dict = LaunchPadList.launchPadsDict[selectedPlanet];
-        
-        if(dict.Count < 1) { return new string[] {}; }
-
-        List<string> keyList = new List<string>(dict.Keys);
-        return keyList.ToArray();
+        //================
+        return LaunchPad.GetEveryLaunchPadsNamesOfPlanet(selectedPlanet, true);
     }
 
     private SpaceshipSettingsSaveData GatherSpaceshipDataToWriteToFile()

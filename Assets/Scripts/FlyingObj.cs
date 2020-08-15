@@ -145,6 +145,7 @@ public class FlyingObj
             if(body is Spaceship)
             {
                 SpaceshipSettings shipSettings = (SpaceshipSettings)(dynamic)settings;
+                Spaceship ship = (Spaceship)(dynamic)castBody;
                 if(shipSettings.startFromGround)
                 {
                     // A spaceship with planetary surface init
@@ -160,14 +161,24 @@ public class FlyingObj
                         CelestialBody orbitedBody = castBody.orbitalParams.orbitedBody;
                         speedOfOrbitedBody = orbitedBody.orbitedBodyRelativeVel; // in m.s
                     }
+                    UniCsts.planets planet = UsefulFunctions.CastStringTo_Unicsts_Planets(castBody.orbitalParams.orbitedBodyName);
+                    (LaunchPad,bool) lpOut = LaunchPad.GetLaunchPadFromName(shipSettings.startLaunchPadName, planet, true);
+                    LaunchPad startLP;
+                    if(lpOut.Item2)
+                        startLP = lpOut.Item1; // Found the desired launchPad
+                    else
+                        startLP = castBody.orbitalParams.orbitedBody.GetDefaultLaunchPad(); // Default at origin (0°,0°) if not found
                     Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
-                    Vector3d absoluteScaledVelocity = speedOfOrbitedBody*UniCsts.m2km2au2u;
+                    Vector3d eastwardBoosDir = startLP.eastwardBoost * ship.GetEasternDirection(longitude); // in m/s
+                    castBody.orbitedBodyRelativeVel = eastwardBoosDir;
+
+                    Vector3d absoluteScaledVelocity = speedOfOrbitedBody*UniCsts.m2km2au2u + eastwardBoosDir*UniCsts.pl2u;
                     rb.velocity = (Vector3)absoluteScaledVelocity;
                     //=================
                     // Init the rotation of the spaceship to make it stand up on the ground
-                    // ????????????
-                    // ????????????
-                    // ????????????
+                    Quaternion planetRot = ship.orbitalParams.orbitedBody.transform.rotation;
+                    Vector3 spherePos = planetRot*(Vector3)LaunchPad.LatitudeLongitude_to_3DWorldUNITPoint(0d-90d, longitude-180d);
+                    ship.transform.rotation = Quaternion.FromToRotation(ship.transform.up, spherePos)*ship.transform.rotation;
                 }
                 else {
                     // A spaceship with in orbit init

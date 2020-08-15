@@ -552,10 +552,15 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         double polarRad = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value;
         //=======
         double geocentricRad = LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude) * UniCsts.pl2u;
-        Debug.Log("geocentricRad = " + geocentricRad);
-        Debug.Log("sphereUnitPos: " + sphereUnitPos);
+        //Debug.Log("geocentricRad = " + geocentricRad);
+        //Debug.Log("sphereUnitPos: " + sphereUnitPos);
         Vector3d worldPos = new Quaterniond(transform.rotation) * (sphereUnitPos * geocentricRad);
         return worldPos;
+    }
+
+    public LaunchPad GetDefaultLaunchPad()
+    {
+        return new LaunchPad(LaunchPadList.GetOriginLaunchPadDict(name));
     }
 
     public void InitMeshColliders(GameObject faceGO)

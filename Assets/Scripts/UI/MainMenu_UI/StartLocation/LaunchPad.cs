@@ -246,33 +246,100 @@ public class LaunchPad
         // 'Item1' is the returned LaunchPad (or null if it does not exist)
         // 'Item2' is the boolean indicating if the returned LaunchPad is a customOne (thus loaded from the customLaunchPads JSON)
         //==================================
-        if(!LaunchPadList.launchPadsDict.ContainsKey(planetOfTheLaunchPad))
+        if(alsoSearchInCustomLaunchPads)
+        {
+            // Checking custom launchPads
+            string filepath = Application.persistentDataPath + Filepaths.userAdded_launchPads;
+            if(!File.Exists(filepath)) { return (null, false); }
+
+            LaunchPad[] loadedLPs = JsonHelper.FromJson<LaunchPad>(File.ReadAllText(filepath));
+            foreach(LaunchPad lp in loadedLPs)
+            {
+                if(lp.name.Equals(launchPadName))
+                    return (lp, false);
+            }
+        }
+        if(!LaunchPadList.launchPadsDict.ContainsKey(planetOfTheLaunchPad) && !alsoSearchInCustomLaunchPads)
         {
             // The specified planet has NOT a dictionary of launchPads
             return (null, false);
         }
+
         Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>> dict = LaunchPadList.launchPadsDict[planetOfTheLaunchPad];
         if(dict.ContainsKey(launchPadName))
         {
             return (new LaunchPad(dict[launchPadName]), false);
         }
-        else {
-            if(alsoSearchInCustomLaunchPads)
-            {
-                // Checking custom launchPads
-                string filepath = Application.persistentDataPath + Filepaths.userAdded_launchPads;
-                if(!File.Exists(filepath)) { return (null, false); }
+        // Could not find the desired launchPad
+        return (null, false);
+    }
 
+    public static LaunchPad[] GetEveryLaunchPadsOfPlanet(UniCsts.planets planetOfTheLaunchPad, bool includeCustomLaunchPads)
+    {
+        // Returns an array of launchPads included in the specified planet
+        //==================================
+        List<LaunchPad> lpList = new List<LaunchPad>();
+        //=======
+        if(includeCustomLaunchPads)
+        {
+            // Checking custom launchPads
+            string filepath = Application.persistentDataPath + Filepaths.userAdded_launchPads;
+            if(!File.Exists(filepath)) {}
+            else
+            {
                 LaunchPad[] loadedLPs = JsonHelper.FromJson<LaunchPad>(File.ReadAllText(filepath));
                 foreach(LaunchPad lp in loadedLPs)
                 {
-                    if(lp.name.Equals(launchPadName))
-                        return (lp, false);
+                    if(lp.planet.Equals(planetOfTheLaunchPad.ToString()))
+                        lpList.Add(lp);
                 }
             }
         }
-        // Could not find the desired launchPad
-        return (null, false);
+
+        if(!LaunchPadList.launchPadsDict.ContainsKey(planetOfTheLaunchPad)) {
+            // The specified planet has NOT a dictionary of launchPads
+            return lpList.ToArray();
+        }
+        Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>> dict = LaunchPadList.launchPadsDict[planetOfTheLaunchPad];
+        foreach(Dictionary<LaunchPad.launchPadParams, string> lpDict in dict.Values)
+        {
+            lpList.Add(new LaunchPad(lpDict));
+        }
+        return lpList.ToArray();
+    }
+
+    public static string[] GetEveryLaunchPadsNamesOfPlanet(UniCsts.planets planetOfTheLaunchPad, bool includeCustomLaunchPads)
+    {
+        // Returns an array of launchPads included in the specified planet
+        //==================================
+        List<string> lpList = new List<string>();
+        //=======
+        if(includeCustomLaunchPads)
+        {
+            // Checking custom launchPads
+            string filepath = Application.persistentDataPath + Filepaths.userAdded_launchPads;
+            if(!File.Exists(filepath)) {}
+            else
+            {
+                LaunchPad[] loadedLPs = JsonHelper.FromJson<LaunchPad>(File.ReadAllText(filepath));
+                foreach(LaunchPad lp in loadedLPs)
+                {
+                    if(lp.planet.Equals(planetOfTheLaunchPad.ToString()))
+                        lpList.Add(lp.name);
+                }
+            }
+        }
+
+        if(!LaunchPadList.launchPadsDict.ContainsKey(planetOfTheLaunchPad)) {
+            // The specified planet has NOT a dictionary of launchPads
+            return lpList.ToArray();
+        }
+        Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>> dict = LaunchPadList.launchPadsDict[planetOfTheLaunchPad];
+        foreach(Dictionary<LaunchPad.launchPadParams, string> lpDict in dict.Values)
+        {
+            lpList.Add(lpDict[launchPadParams.name]);
+        }
+        return lpList.ToArray();
     }
 
     public static Vector2d XY_2_LatitudeLongitude(Vector2 xymousePosVec, Vector2 xy_mapSize)
