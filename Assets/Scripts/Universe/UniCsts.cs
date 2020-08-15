@@ -51,7 +51,7 @@ public static class UniCsts
     // Order of the array's ratios : 'level1', 'level2', 'level3', 'level4', 'level5', 'level6'
     // Values corresponds to the radiusU. New distance is ths 'radiusU * ratio'
     //0.8f, 0.3f, 0.05f, 0.005f, 0.0007f, 0.00015f
-    public static float[] ratioCelestBodiesLODDistances = new float[] { 0.8f, 0.3f, 0.05f, 0.025f, 0.01f, 0.0025f };
+    public static float[] ratioCelestBodiesLODDistances = new float[] { 1f, 0.4f, 0.2f, 0.1f, 0.05f, 0.015f };
     public const string sphereNoLODTemplate_GO = "Sphere_noLOD_Template";
 
     // u2sh=0.005 ==> 1 unity unit == 10 m of the spaceship (with u2pl == 2d == 2km)
@@ -63,7 +63,7 @@ public static class UniCsts
     public const double real2massU = 1d/massU2real;
 
     // Max distance before offseting every object to bring the camera back at the origin
-    public const double dstThreshold = 300d;
+    public const double dstThreshold = 3_000d;
 
     // Vernal Point, very high value on x so that it is located at the infinity
     public static readonly  Vector3d pv = new Vector3d(1e100d, 0d, 0d); // SHOULD BE CHANGED TO SOMETHING ELSE

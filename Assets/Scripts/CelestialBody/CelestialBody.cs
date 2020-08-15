@@ -320,7 +320,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
                 meshObj.layer = 9;
                 meshObj.SetActive(false);
             }
-            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this, settings.heightMap, hasDefaultHeightMap, universePlayerCamera);
+            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this, settings.heightMap, hasDefaultHeightMap, universeRunner.activeSpaceship.transform, universeRunner.playerCamera.transform);
         }
 
         // Finally, create an additional gameobject to hold the sphere template when the celestialBody is super far from the activeCamera

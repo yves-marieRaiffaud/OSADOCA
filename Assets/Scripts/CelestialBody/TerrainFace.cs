@@ -27,10 +27,11 @@ public class TerrainFace
 
     Texture2D bumpMap;
     bool isDefaultHeightMap;
+    Transform activeShip;
     Transform activeCamera;
 
     // Constructor
-    public TerrainFace(Mesh mesh, Vector3 localUp, CelestialBody celestialBody, Texture2D bumpMapTexture, bool isDefaultHeightMapBool, Transform playerActiveCamera)
+    public TerrainFace(Mesh mesh, Vector3 localUp, CelestialBody celestialBody, Texture2D bumpMapTexture, bool isDefaultHeightMapBool, Transform playerActiveShip, Transform activeCamera)
     {
         this.mesh = mesh;
         this.localUp = localUp;
@@ -39,7 +40,8 @@ public class TerrainFace
         this.radius = (float)celestialBody.settings.radiusU;
         this.bumpMap = bumpMapTexture;
         this.isDefaultHeightMap = isDefaultHeightMapBool;
-        this.activeCamera = playerActiveCamera;
+        this.activeShip = playerActiveShip;
+        this.activeCamera = activeCamera;
 
         axisA = new Vector3(localUp.y, localUp.z, localUp.x);
         axisB = Vector3.Cross(localUp, axisA);
@@ -61,7 +63,7 @@ public class TerrainFace
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32; // Extend the resolution capabilities of the mesh
         
         // Generate chunks
-        parentChunk = new Chunk(1, celestialBodySettingsScript, celestialBody, this, null, localUp.normalized * radius, radius, 0, localUp, axisA, axisB, new byte[4], 0, activeCamera, bumpMap, isDefaultHeightMap);
+        parentChunk = new Chunk(1, celestialBodySettingsScript, celestialBody, this, null, localUp.normalized * radius, radius, 0, localUp, axisA, axisB, new byte[4], 0, activeShip, activeCamera, bumpMap, isDefaultHeightMap);
         parentChunk.GenerateChildren();
 
         // Get chunk mesh data
@@ -114,10 +116,10 @@ public class TerrainFace
         int borderTriangleOffset = 0;
         parentChunk.GetVisibleChildren();
 
-        if(visibleChildrenDist.Count > 0)
+        /*if(visibleChildrenDist.Count > 0)
         {
             chunkIDXMinDistance = UsefulFunctions.ListFloatArgMin(visibleChildrenDist);
-        }
+        }*/
 
         int idxCounter = 0;
         foreach (Chunk child in visibleChildren)
@@ -232,6 +234,7 @@ public class Chunk
     public Vector3[] normals;
     
     Transform universePlayerCamera;
+    Transform universePlayerShip;
     Texture2D initialBumpMap;
     bool hasDefaultHeightmap; // Meaning the heightmap is all black (no elevation), so some calculations will not be done
     float MAX_ALTITUDE;
@@ -239,7 +242,7 @@ public class Chunk
 
     public byte[] neighbours = new byte[4]; //East, west, north, south. True if less detailed (Lower LOD)
     // Constructor
-    public Chunk(uint hashvalue, CelestialBodySettings celestialBodySettingsScript, CelestialBody celestialBody, TerrainFace terrainFace, Chunk[] children, Vector3 position, float radius, int detailLevel, Vector3 localUp, Vector3 axisA, Vector3 axisB, byte[] neighbours, byte corner, Transform activeCamera, Texture2D bumpMapTexture, bool isDefaultHeightMapBool)
+    public Chunk(uint hashvalue, CelestialBodySettings celestialBodySettingsScript, CelestialBody celestialBody, TerrainFace terrainFace, Chunk[] children, Vector3 position, float radius, int detailLevel, Vector3 localUp, Vector3 axisA, Vector3 axisB, byte[] neighbours, byte corner, Transform activeShip, Transform activeCamera, Texture2D bumpMapTexture, bool isDefaultHeightMapBool)
     {
         this.hashvalue = hashvalue;
         this.celestialBodySettingsScript = celestialBodySettingsScript;
@@ -261,19 +264,8 @@ public class Chunk
         this.pixelWidthOffset = initialBumpMap.width - (0.5f + Mathf.Atan2(1f, 0f) / (2f*Mathf.PI)) * initialBumpMap.width;
 
         this.universePlayerCamera = activeCamera;
+        this.universePlayerShip = activeShip;
         this.hasDefaultHeightmap = isDefaultHeightMapBool;
-    }
-
-    public Vector3[] TransformVertices(Vector3[] verticesArray)
-    {
-        Vector3[] arr = new Vector3[verticesArray.Length];
-        int counter = 0;
-        foreach(Vector3 item in verticesArray)
-        {
-            arr[counter] = item - position;
-            counter++;
-        }
-        return arr;
     }
 
     public void GenerateChildren()
@@ -285,18 +277,16 @@ public class Chunk
             Debug.Log("worldPos vertex = " + (celestialBody.transform.TransformDirection(normalizedPos * (float)celestialBodySettingsScript.radiusU) + celestialBody.transform.position));
             Debug.LogFormat("detailLevel = {0}", detailLevel);
             Debug.Log("===============");*/
-            if (Vector3.Distance(celestialBody.transform.TransformDirection(normalizedPos * (float)celestialBodySettingsScript.radiusU) + celestialBody.transform.position, universePlayerCamera.position) <= celestialBodySettingsScript.detailLevelDistances[detailLevel])
+            if (Vector3.Distance(celestialBody.transform.TransformDirection(normalizedPos * (float)celestialBodySettingsScript.radiusU) + celestialBody.transform.position, universePlayerShip.position) <= celestialBodySettingsScript.detailLevelDistances[detailLevel])
             {
                 // Assign the children of the quad (grandchildren not included). 
                 // Position is calculated on a cube and based on the fact that each child has 1/2 the radius of its parent
                 // Detail level is increased by 1. This doesn't change anything itself, but rather symbolizes that something HAS been changed (the detail).
                 children = new Chunk[4];
-                float subWidth = initialBumpMap.width / Mathf.Pow(2, detailLevel+1);
-                float subHeight = initialBumpMap.height / Mathf.Pow(2, detailLevel+1);
-                children[0] = new Chunk(hashvalue * 4, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position + axisA * radius * 0.5f - axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 0, universePlayerCamera, initialBumpMap, hasDefaultHeightmap); // TOP LEFT
-                children[1] = new Chunk(hashvalue * 4 + 1, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position + axisA * radius * 0.5f + axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 1, universePlayerCamera, initialBumpMap, hasDefaultHeightmap); // TOP RIGHT
-                children[2] = new Chunk(hashvalue * 4 + 2, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position - axisA * radius * 0.5f + axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 2, universePlayerCamera, initialBumpMap, hasDefaultHeightmap); // BOTTOM RIGHT
-                children[3] = new Chunk(hashvalue * 4 + 3, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position - axisA * radius * 0.5f - axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 3, universePlayerCamera, initialBumpMap, hasDefaultHeightmap); // BOTTOM LEFT
+                children[0] = new Chunk(hashvalue * 4, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position + axisA * radius * 0.5f - axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 0, universePlayerShip, universePlayerCamera, initialBumpMap, hasDefaultHeightmap); // TOP LEFT
+                children[1] = new Chunk(hashvalue * 4 + 1, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position + axisA * radius * 0.5f + axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 1, universePlayerShip, universePlayerCamera, initialBumpMap, hasDefaultHeightmap); // TOP RIGHT
+                children[2] = new Chunk(hashvalue * 4 + 2, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position - axisA * radius * 0.5f + axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 2, universePlayerShip, universePlayerCamera, initialBumpMap, hasDefaultHeightmap); // BOTTOM RIGHT
+                children[3] = new Chunk(hashvalue * 4 + 3, celestialBodySettingsScript, celestialBody, terrainFace, new Chunk[0], position - axisA * radius * 0.5f - axisB * radius * 0.5f, radius * 0.5f, detailLevel + 1, localUp, axisA, axisB, new byte[4], 3, universePlayerShip, universePlayerCamera, initialBumpMap, hasDefaultHeightmap); // BOTTOM LEFT
 
                 // Create grandchildren
                 foreach (Chunk child in children)
@@ -310,7 +300,7 @@ public class Chunk
     // Update the chunk (and maybe its children too)
     public void UpdateChunk()
     {
-        float distanceToPlayer = Vector3.Distance(celestialBody.transform.TransformDirection(normalizedPos * (float)celestialBodySettingsScript.radiusU) + celestialBody.transform.position, universePlayerCamera.position);
+        float distanceToPlayer = Vector3.Distance(celestialBody.transform.TransformDirection(normalizedPos * (float)celestialBodySettingsScript.radiusU) + celestialBody.transform.position, universePlayerShip.position);
         /*Debug.Log("normalizedPos = " + normalizedPos + " ; normalizedPos * (float)celestialBodySettingsScript.radiusU = " + (normalizedPos * (float)celestialBodySettingsScript.radiusU));
         Debug.Log("worldPos vertex = " + (celestialBody.transform.TransformDirection(normalizedPos * (float)celestialBodySettingsScript.radiusU) + celestialBody.transform.position));
         Debug.LogFormat("distance = {0} - detailLevel = {1}", distanceToPlayer, detailLevel);
