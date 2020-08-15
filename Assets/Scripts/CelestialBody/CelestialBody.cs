@@ -203,7 +203,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         // InitializeOrbitalParams cannot be here as the CreateComponent function will not be called at this point. Must be called after the Awake() and Start()
         GetDistancesToCamera();
         GeneratePlanet();
-        ApplyFlatenningScale();
+        //ApplyFlatenningScale();
         CreateAssignSunPointLight();
         UpdateLODDistances();
 

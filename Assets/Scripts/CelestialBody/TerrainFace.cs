@@ -117,14 +117,18 @@ public class TerrainFace
         int borderTriangleOffset = 0;
         parentChunk.GetVisibleChildren();
 
-        /*if(visibleChildrenDist.Count > 0)
+        if(visibleChildrenDist.Count > 0)
         {
             chunkIDXMinDistance = UsefulFunctions.ListFloatArgMin(visibleChildrenDist);
-        }*/
+        }
 
-        //int idxCounter = 0;
+        int idxCounter = 0;
+        int idxOfChildToRemove = 0; // index in the visibleChildren list of the child that is replaced by the ground prefab for colliding with the ship
+        bool mustRemovethisChild = false;
         foreach (Chunk child in visibleChildren)
         {
+            mustRemovethisChild = false;
+            //==========================
             child.GetNeighbourLOD();
             (Vector3[], int[], int[], Vector3[], Vector3[]) verticesAndTriangles = (new Vector3[0], new int[0], new int[0], new Vector3[0], new Vector3[0]);
             if (child.vertices == null)
@@ -140,8 +144,12 @@ public class TerrainFace
                 verticesAndTriangles = (child.vertices, child.GetTrianglesWithOffset(triangleOffset), child.GetBorderTrianglesWithOffset(borderTriangleOffset, triangleOffset), child.borderVertices, child.normals);
             }
 
-            if(child.detailLevel == 7)
+            if(child.detailLevel == 7 && idxCounter == chunkIDXMinDistance)
             {
+                // Removing the current child as it will be replaced with a Ground meshCollider/Box Collider (thus avoiding glitching due to texture superposition)
+                idxOfChildToRemove = idxCounter;
+                mustRemovethisChild = true;
+                //===================================
                 GameObject groundGO;
                 if(celestialBody.transform.Find("ground"))
                 {
@@ -155,8 +163,8 @@ public class TerrainFace
                     double equaRad = celestialBodySettingsScript.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
                     double geocentricRad = Spaceship.GetGeocentricRadiusFromShipPos(celestialBody, activeShip.transform.position);
                     Vector3d groundGOPos_tmp = new Vector3d(child.position).normalized * equaRad;
-                    groundGO.transform.localPosition = (Vector3) ((groundGOPos_tmp * (1 - (equaRad-geocentricRad)/equaRad)).normalized);
-                    // GROUNDGO GAMEOBEJCT NOT WELL POSITIONED : POSITIONED AT 20 KM IN THE SKY...
+                    groundGO.transform.localPosition = Vector3.zero;
+                    //================
                     groundGO.layer = 9;
                     MeshRenderer meshRenderer = groundGO.GetComponent<MeshRenderer>();
                     meshRenderer.material = Resources.Load<Material>("Ground");
@@ -172,26 +180,31 @@ public class TerrainFace
                 MeshCollider meshCollider = groundGO.GetComponent<MeshCollider>();
                 meshCollider.convex = true;
                 PhysicMaterial colliderMaterial = new PhysicMaterial("MeshColliderMaterial");
-                colliderMaterial.bounceCombine = PhysicMaterialCombine.Average;
+                colliderMaterial.bounceCombine = PhysicMaterialCombine.Minimum;
                 colliderMaterial.bounciness = 0.01f;
-                colliderMaterial.dynamicFriction = 0.6f;
-                colliderMaterial.frictionCombine = PhysicMaterialCombine.Average;
-                colliderMaterial.staticFriction = 0.8f;
+                colliderMaterial.dynamicFriction = 1f;
+                colliderMaterial.frictionCombine = PhysicMaterialCombine.Multiply;
+                colliderMaterial.staticFriction = 1f;
                 meshCollider.material = colliderMaterial;
                 meshCollider.sharedMesh = tmpMesh;
             }
 
-            vertices.AddRange(verticesAndTriangles.Item1);
-            triangles.AddRange(verticesAndTriangles.Item2);
-            borderTriangles.AddRange(verticesAndTriangles.Item3);
-            borderVertices.AddRange(verticesAndTriangles.Item4);
-            normals.AddRange(verticesAndTriangles.Item5);
+            if(!mustRemovethisChild)
+            {
+                vertices.AddRange(verticesAndTriangles.Item1);
+                triangles.AddRange(verticesAndTriangles.Item2);
+                borderTriangles.AddRange(verticesAndTriangles.Item3);
+                borderVertices.AddRange(verticesAndTriangles.Item4);
+                normals.AddRange(verticesAndTriangles.Item5);
 
-            // Increase offset to accurately point to the next slot in the lists
-            triangleOffset += (Presets.quadRes + 1) * (Presets.quadRes + 1);
-            borderTriangleOffset += verticesAndTriangles.Item4.Length;
+                // Increase offset to accurately point to the next slot in the lists
+                triangleOffset += (Presets.quadRes + 1) * (Presets.quadRes + 1);
+                borderTriangleOffset += verticesAndTriangles.Item4.Length;
+            }
             //===============
+            idxCounter++;
         }
+        visibleChildren.RemoveAt(idxOfChildToRemove);
 
         Vector2[] uvs = new Vector2[vertices.Count];
 
