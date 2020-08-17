@@ -251,7 +251,7 @@ public class TerrainFace
         {
             Vector3 d = vertices[i] * planetScriptSizeDivide;
             float u = 0.5f + Mathf.Atan2(d.z, d.x) * twoPiDivide;
-            float v = 0.5f - Mathf.Asin(d.y) / Mathf.PI;
+            float v = 0.5f - Mathf.Asin(-d.y) / Mathf.PI; // '-d.y' to have a positive value for the y tilling of the texture
 
             uvs[i] = new Vector2(u, v);
         }

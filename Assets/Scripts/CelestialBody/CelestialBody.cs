@@ -512,7 +512,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             UsefulFunctions.parentObj(sunPointLightGO, gameObject);
             Light sunPointLight = sunPointLightGO.GetComponent<Light>();
             sunPointLight.type = LightType.Point;
-            sunPointLight.range = Mathf.Pow(10, 5);
+            sunPointLight.range = Mathf.Pow(10, 6);
             sunPointLight.color = Color.white;
             sunPointLight.shadows = LightShadows.Soft;
             sunPointLight.cullingMask |= 1 << LayerMask.NameToLayer("Everything");
