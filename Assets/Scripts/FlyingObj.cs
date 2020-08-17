@@ -163,15 +163,15 @@ public class FlyingObj
                     }
                     UniCsts.planets planet = UsefulFunctions.CastStringTo_Unicsts_Planets(castBody.orbitalParams.orbitedBodyName);
                     (LaunchPad,bool) lpOut = LaunchPad.GetLaunchPadFromName(shipSettings.startLaunchPadName, planet, true);
-                    LaunchPad startLP;
-                    if(lpOut.Item2)
-                        startLP = lpOut.Item1; // Found the desired launchPad
-                    else
-                        startLP = castBody.orbitalParams.orbitedBody.GetDefaultLaunchPad(); // Default at origin (0°,0°) if not found
+                    LaunchPad startLP = lpOut.Item1 != null ? lpOut.Item1 : castBody.orbitalParams.orbitedBody.GetDefaultLaunchPad();
+                    //=====
                     Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
+                    //===============================================================
+                    rb.constraints = RigidbodyConstraints.FreezeRotation;//==========
+                    //===============================================================
                     Vector3d eastwardBoosDir = startLP.eastwardBoost * ship.GetEasternDirection(longitude); // in m/s
                     castBody.orbitedBodyRelativeVel = eastwardBoosDir;
-
+                    //====
                     Vector3d absoluteScaledVelocity = speedOfOrbitedBody*UniCsts.m2km2au2u + eastwardBoosDir*UniCsts.pl2u;
                     rb.velocity = (Vector3)absoluteScaledVelocity;
                     //=================

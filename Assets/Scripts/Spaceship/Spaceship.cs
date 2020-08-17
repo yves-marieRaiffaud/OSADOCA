@@ -129,8 +129,22 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     }
     //===============================
     //===============================
+    private bool shipRBConstraints_areOn;
+    //===============================
+    void FixedUpdate()
+    {
+        if(Input.GetKey(KeyCode.Space))
+        {
+            Rigidbody rb = GetComponent<Rigidbody>();
+            rb.constraints = RigidbodyConstraints.None;
+        }
+    }
+    //===============================
+    //===============================
     void Awake()
     {
+        shipRBConstraints_areOn = true;
+        //==================================================
         // FOR DEBUG PURPOSES
         if(GameObject.Find("DEBUG") == null) { return; }
 

@@ -203,7 +203,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         // InitializeOrbitalParams cannot be here as the CreateComponent function will not be called at this point. Must be called after the Awake() and Start()
         GetDistancesToCamera();
         GeneratePlanet();
-        //ApplyFlatenningScale();
+        ApplyFlatenningScale();
         CreateAssignSunPointLight();
         UpdateLODDistances();
 
@@ -552,9 +552,12 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         double polarRad = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value;
         //=======
         double geocentricRad = LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude) * UniCsts.pl2u;
+        double additionalHeight = 50d * UniCsts.m2km * UniCsts.pl2u; 
         //Debug.Log("geocentricRad = " + geocentricRad);
         //Debug.Log("sphereUnitPos: " + sphereUnitPos);
-        Vector3d worldPos = new Quaterniond(transform.rotation) * (sphereUnitPos * geocentricRad);
+        // Direction of the normal to the planet surface of the spawn location (the chosen starting launchPad)
+        Vector3d normalDirection = new Quaterniond(transform.rotation) * sphereUnitPos;
+        Vector3d worldPos = normalDirection * (geocentricRad + additionalHeight);
         return worldPos;
     }
 

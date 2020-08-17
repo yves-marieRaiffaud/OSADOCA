@@ -143,18 +143,18 @@ public static class LaunchPadList
     };
 
     private static Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>> earth_launchPads = new Dictionary<string, Dictionary<LaunchPad.launchPadParams, string>>() {
-        { "Kourou", kourouDict },
-        { "Whenchang", wenchangDict },
-        { "Sohae", sohaeDict },
-        { "Semnan", semnanDict },
-        { "Yasny", yasnyDict },
-        { "Esrange", esrangeDict },
-        { "Cape Canaveral", capeCanaveralDict },
-        { "Vandeberg", vanderbergDict },
-        { "Kennedy", kennedyDict },
-        { "Mojave", mojaveDict },
-        { "White Sands", whiteSandDict },
-        { "Origin (0°,0°)", GetOriginLaunchPadDict(UniCsts.planets.Earth.ToString()) }
+        { "Kourou"                             , kourouDict },
+        { "Whenchang Satellite Launch Center"  , wenchangDict },
+        { "Sohae"                              , sohaeDict },
+        { "Semnan"                             , semnanDict },
+        { "Yasni Cosmodrome"                   , yasnyDict },
+        { "Esrange"                            , esrangeDict },
+        { "Cape Canaveral Air Force Station"   , capeCanaveralDict },
+        { "Vandenberg Air Force Base"          , vanderbergDict },
+        { "Kennedy Space Center"               , kennedyDict },
+        { "Mojave Air and Space Port"          , mojaveDict },
+        { "White Sands Missile Range"          , whiteSandDict },
+        { "Origin (0°,0°)"                     , GetOriginLaunchPadDict(UniCsts.planets.Earth.ToString()) }
     };
     //======================================================================================================================
     //======================================================================================================================

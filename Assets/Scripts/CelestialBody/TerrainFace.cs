@@ -125,6 +125,7 @@ public class TerrainFace
         int idxCounter = 0;
         int idxOfChildToRemove = 0; // index in the visibleChildren list of the child that is replaced by the ground prefab for colliding with the ship
         bool mustRemovethisChild = false;
+        bool hasFoundLOD7Child = false;
         //=====================================
         foreach (Chunk child in visibleChildren)
         {
@@ -150,6 +151,7 @@ public class TerrainFace
                 // Removing the current child as it will be replaced with a Ground meshCollider/Box Collider (thus avoiding glitching due to texture superposition)
                 idxOfChildToRemove = idxCounter;
                 mustRemovethisChild = true;
+                hasFoundLOD7Child = true;
                 //===================================
                 GameObject groundGO;
                 MeshCollider meshCollider;
@@ -162,6 +164,7 @@ public class TerrainFace
                     groundGO = new GameObject("ground", typeof(MeshFilter), typeof(MeshCollider), typeof(MeshRenderer));
                     groundGO.transform.parent = celestialBody.transform;
                     groundGO.transform.localRotation = Quaternion.identity;
+                    // NEED TO TAKE INTO ACCOUNT THE FLATENNING OF THE CELESTIAL BODY FOR THE POSITION
                     groundGO.transform.localPosition = Vector3.zero;
                     //================
                     groundGO.layer = 9;
@@ -188,6 +191,36 @@ public class TerrainFace
                 tmpMesh.normals = verticesAndTriangles.Item5;
                 meshFilter.mesh = tmpMesh;
                 meshCollider.sharedMesh = tmpMesh;
+                //========================================
+                //========================================
+                //===============TEST=====================
+                /*List<Vector3> verticesAndBorderVerticesList = new List<Vector3>();
+                verticesAndBorderVerticesList.AddRange(verticesAndTriangles.Item1); // adding regular vertices
+                verticesAndBorderVerticesList.AddRange(verticesAndTriangles.Item4); // adding border vertices
+                Vector3[] verticesAndBorderVerticesArr = verticesAndBorderVerticesList.ToArray();
+                //===============
+                List<int> trianglesAndBorderTrianglesList = new List<int>();
+                trianglesAndBorderTrianglesList.AddRange(child.triangles); // adding regular triangles
+                int[] tmpBorderTrianglesArr = child.borderTriangles;
+                for(int i = 0; i < tmpBorderTrianglesArr.Length; i++)
+                {
+                    tmpBorderTrianglesArr[i] +=  -child.borderTriangles[0] + child.triangles.Length; // offsetting each triangles index 
+                }
+                Debug.Log("solo arr: \n" + string.Join("\n", tmpBorderTrianglesArr));
+                trianglesAndBorderTrianglesList.AddRange(tmpBorderTrianglesArr); // adding border triangles
+                int[] trianglesAndBorderTrianglesArr = trianglesAndBorderTrianglesList.ToArray();
+                //===============*/
+
+                //========================================
+                //========================================
+                if(celestialBody.name == "Earth")
+                {
+                    Debug.Log("vertices: \n" + string.Join("\n", verticesAndTriangles.Item1));
+                    Debug.Log("triangles: \n" + string.Join("\n", child.triangles));
+                    Debug.Log("borderVertices: \n" + string.Join("\n", verticesAndTriangles.Item4));
+                    Debug.Log("borderTriangles: \n" + string.Join("\n", child.borderTriangles));
+                    Debug.Log("========================");
+                }
             }
 
             if(!mustRemovethisChild)

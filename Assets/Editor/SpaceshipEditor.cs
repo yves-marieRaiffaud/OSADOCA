@@ -19,6 +19,18 @@ public class SpaceshipEditor: Editor
         string filepath = Application.persistentDataPath + Filepaths.shipToLoad_settings;
         SpaceshipSettings dataLoadedFromJsonFile = SpaceshipSettingsSaveData.LoadObjectFromJSON(filepath);
         spaceship.settings.startFromGround = dataLoadedFromJsonFile.startFromGround;
+        //================
+        // Retrieve the launchPad selected from the ship settings JSON file
+        int idx = 0;
+        int foundLPIndex = -1;
+        string[] launchPadOptions = GetStartingLaunchPadOptions(serializedOrbitalParams.FindProperty("orbitedBodyName").stringValue);
+        foreach(string lp in launchPadOptions)
+        {
+            if(dataLoadedFromJsonFile.startLaunchPadName.Equals(lp))
+                foundLPIndex = idx;
+            idx++;
+        }
+        selectedStartLP = foundLPIndex > -1 ? foundLPIndex : 0;
     }
 
     private void CheckCreateOrbitalParamsAsset()
@@ -107,6 +119,7 @@ public class SpaceshipEditor: Editor
         if(spaceship.settings.startFromGround)
         {
             string[] launchPadOptions = GetStartingLaunchPadOptions(serializedOrbitalParams.FindProperty("orbitedBodyName").stringValue);
+
             if(launchPadOptions.Length > 0) {
                 selectedStartLP = EditorGUILayout.Popup("Start LaunchPad", selectedStartLP, launchPadOptions);
                 spaceship.settings.startLaunchPadName = launchPadOptions[selectedStartLP];
@@ -212,7 +225,8 @@ public class SpaceshipEditor: Editor
             }
         }
         //================
-        return LaunchPad.GetEveryLaunchPadsNamesOfPlanet(selectedPlanet, true);
+        string[] lpNamesArray = LaunchPad.GetEveryLaunchPadsNamesOfPlanet(selectedPlanet, true);
+        return lpNamesArray;
     }
 
     private SpaceshipSettingsSaveData GatherSpaceshipDataToWriteToFile()
@@ -237,6 +251,7 @@ public class SpaceshipEditor: Editor
                 shipDataToSave[3] = spaceship.settings.startLaunchPadName;
             }
             else {
+                Debug.LogWarning("SPACESHIP EDITOR WARNING. Could not find LaunchPad named " + spaceship.settings.startLaunchPadName + " both in the default LaunchPads and the custom ones. It has been replaced by the default LaunchPad 'Origin (0°,0°)'");
                 // Could not the launchPad by its name. Fallback on the default launchPad which is the origin point (0°,0°)
                 shipDataToSave[2] = new Vector2(0f, 0f).ToString();
                 shipDataToSave[3] = "Origin (0°,0°)";

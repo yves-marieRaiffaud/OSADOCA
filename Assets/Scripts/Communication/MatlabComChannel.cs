@@ -14,9 +14,11 @@ namespace Matlab_Communication
 
     public class MatlabComChannel<T>
     {
+        //====================
         public MatlabConectionType connectionType;
         public MatlabSendReceiveType sendReceiveType;
-
+        //====================
+        //====================
         // T is either the 'UDPReceiver', 'UDPSender' or 'TCPServer' object
         private T _channelObj;
         public T channelObj
@@ -28,27 +30,67 @@ namespace Matlab_Communication
                 _channelObj=value;
             }
         }
-
-        public string IP;
-        public int port;
-
-        public string defaultIP;
-        public int defaultPort;
-
+        //====
+        private string _IP;
+        public string IP
+        {
+            get {
+                return _IP;
+            }
+            set {
+                _IP=value;
+            }
+        }
+        //====
+        private int _port;
+        public int port
+        {
+            get {
+                return _port;
+            }
+            set {
+                _port=value;
+            }
+        }
+        //====
+        private string _defaultIP;
+        public string defaultIP
+        {
+            get {
+                return _defaultIP;
+            }
+            set {
+                _defaultIP=value;
+            }
+        }
+        //====
+        private int _defaultPort;
+        public int defaultPort
+        {
+            get {
+                return _defaultPort;
+            }
+            set {
+                _defaultPort=value;
+            }
+        }
+        //====================
+        //====================
         // Only for TCP/IP server
         private TcpListener serverToConnectTo;
-
-        public MatlabComChannel(MatlabConectionType _coType, MatlabSendReceiveType _sendReceiveType=MatlabSendReceiveType.classExplicit,
-                                int _port=-1, int _defaultPort=25010, string _ip="", string _defaultIP="127.0.0.1")
+        //====================
+        //====================
+        public MatlabComChannel(ComChannelParams parameters)
         {
-            connectionType = _coType;
-            sendReceiveType = _sendReceiveType;
-            IP = _ip;
-            port = _port;
-            defaultIP = _defaultIP;
-            defaultPort = _defaultPort;
+            IP = parameters.IP;
+            port = parameters.port;
+            defaultIP = parameters.defaultIP;
+            defaultPort = parameters.defaultPort;
+            connectionType = parameters.connectionType;
+            sendReceiveType = parameters.sendReceiveType;
+            //======
             serverToConnectTo = null;
-
+            //======
             if((Fncs.IP_AddressIsValid(IP) && port > -1) || typeof(T) == typeof(TCPServer))
                 InitChannelObj();
         }
@@ -68,4 +110,30 @@ namespace Matlab_Communication
                 
         }
     }
+    //=================================
+    //=================================
+    [Serializable]
+    public struct ComChannelParams
+    {
+        public string defaultIP;
+        public string IP;
+        //========
+        public int defaultPort;
+        public int port;
+        //========
+        public MatlabConectionType connectionType;
+        public MatlabSendReceiveType sendReceiveType;
+        //========
+        public ComChannelParams(string _IP, int _port, MatlabConectionType _coType, MatlabSendReceiveType _sendReceiveType, int _defaultPort, string _defaultIP="127.0.0.1")
+        {
+            this.defaultIP = _defaultIP;
+            this.IP = _IP;
+            this.defaultPort = _defaultPort;
+            this.port = _port;
+            connectionType = _coType;
+            sendReceiveType = _sendReceiveType;
+        }
+    }
+    //=================================
+    //=================================
 }
