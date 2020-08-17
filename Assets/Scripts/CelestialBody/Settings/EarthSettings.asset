@@ -19,34 +19,34 @@ MonoBehaviour:
   radiusU: 3189.0685
   equatorialPlane:
     forwardVec:
-      x: 1
-      y: 0
-      z: 0
+      x: 0.9957897382244818
+      y: 0.09163276542274137
+      z: 0.0024967073915265446
     rightVec:
-      x: 0
-      y: 0
-      z: 1
+      x: 0.033281489468852135
+      y: -0.3867858095684311
+      z: 0.9215688145630949
     point:
       x: 0
       y: 0
       z: 0
     normal:
-      x: 0
-      y: 1
-      z: 0
+      x: -0.085411589995461
+      y: 0.9176056744688724
+      z: 0.388207014976511
   rotationSpeed: 0.00008356149109295368
   cullingMinAngle: 0.199
   planetRefreshPeriod: 0.5
   detailLevelDistances:
   - Infinity
-  - 2551.255
-  - 956.72064
+  - 3189.0686
+  - 1275.6274
+  - 637.8137
+  - 318.90686
   - 159.45343
-  - 15.945343
-  - 2.232348
-  - 0.47836033
+  - 47.83603
   gravBodies: []
-  bodyMaterial: {fileID: 15303, guid: 0000000000000000f000000000000000, type: 0}
-  sphereTemplateMaterial: {fileID: 2100000, guid: 7fcb3a95233147b4a8f0d6e8fafaa102,
+  bodyMaterial: {fileID: 2100000, guid: 2857c249e46edc54daaa9f9a1ba414a3, type: 2}
+  sphereTemplateMaterial: {fileID: 2100000, guid: 2857c249e46edc54daaa9f9a1ba414a3,
     type: 2}
   heightMap: {fileID: 0}

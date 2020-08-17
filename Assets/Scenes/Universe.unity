@@ -726,7 +726,7 @@ GameObject:
   - component: {fileID: 612980555}
   - component: {fileID: 612980554}
   m_Layer: 8
-  m_Name: Flames
+  m_Name: MainNozzleVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -740,8 +740,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 612980552}
   m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: 0, y: -0.23, z: 0}
-  m_LocalScale: {x: 1.5, y: 2, z: 1.5}
+  m_LocalPosition: {x: 0, y: -0.15, z: 0}
+  m_LocalScale: {x: 2.3, y: 4, z: 2.3}
   m_Children: []
   m_Father: {fileID: 7206259411323703464}
   m_RootOrder: 3

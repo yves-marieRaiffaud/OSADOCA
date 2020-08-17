@@ -2,25 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
+using UnityEngine.VFX;
 
 public class MainNozzle_Control : MonoBehaviour
 {
     float nozzleThrust = 1;
     float nozzleLowerBound = -10;
     float nozzleUpperBound = 10;
-
+    //================
     Rigidbody nozzleRigidbody;
     ConfigurableJoint originalfreeFloatingJoint; //Configurable Joint from the Editor
     ConfigurableJoint onlinefreeFloatingJoint; //Configurable Joint that is created and updated in live in 'Update()'
     float yawAngle_min, yawAngle_max;
     float pitchAngle_min, pitchAngle_max;
-
+    //================
+    VisualEffect mainNozzleVFX;
+    //================
     void Start()
     {
         nozzleRigidbody = GetComponent<Rigidbody>();
         originalfreeFloatingJoint = GetComponent<ConfigurableJoint>();
 
         SetLiveConfigurableJoint();
+
+        if(transform.parent.Find("MainNozzleVFX") != null)
+            mainNozzleVFX = transform.parent.Find("MainNozzleVFX").GetComponent<VisualEffect>();
+        else
+            mainNozzleVFX = null;
     }
 
     void FixedUpdate()
@@ -28,6 +36,14 @@ public class MainNozzle_Control : MonoBehaviour
         // Reading raw values from the controller
         float[] raw_inputs_array = getInputAxis();
         float rawThrustValue = raw_inputs_array[2];
+        if(!UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f) && mainNozzleVFX != null)
+        {
+            mainNozzleVFX.Play();
+        }
+        if(UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f) && mainNozzleVFX != null)
+        {
+            mainNozzleVFX.Stop();
+        }
 
         // Tranforming the raw values to the desired rotation angles of the nozzle
         Quaternion targetQuaternion = computeYawPitchAngle(raw_inputs_array[0], raw_inputs_array[1]);
