@@ -119,7 +119,7 @@ public class UniverseRunner : MonoBehaviour
         rb.useGravity = false;
     }
 
-    private void AddGameObjectToPhysicsFolders(GameObject gameObjectToAdd, GameObject parentFolder)
+    public void AddGameObjectToPhysicsFolders(GameObject gameObjectToAdd, GameObject parentFolder)
     {
         // Add the GameObject to all of the physics list (list of Transforms, Rigidbody)
         physicsRigidbodies.Add(gameObjectToAdd.GetComponent<Rigidbody>());
@@ -153,7 +153,7 @@ public class UniverseRunner : MonoBehaviour
                     if(GameObject.FindGameObjectsWithTag(goTags.Star.ToString()).Length > 0)
                     {
                         celestBody.AwakeCelestialBody(UniCsts.planetsDict[celestBody.settings.chosenPredifinedPlanet]);
-                        flyingObjInst.InitializeFlyingObj<CelestialBody, CelestialBodySettings>(celestBody);
+                        flyingObjInst.InitializeFlyingObj<CelestialBody, CelestialBodySettings>(celestBody, false);
                     }
                     else {
                         celestBody.transform.position = Vector3.zero;
@@ -163,14 +163,14 @@ public class UniverseRunner : MonoBehaviour
                 
                 case goTags.Spaceship:
                     Spaceship ship = obj.GetComponent<Spaceship>();
-                    flyingObjInst.InitializeFlyingObj<Spaceship, SpaceshipSettings>(ship);
+                    flyingObjInst.InitializeFlyingObj<Spaceship, SpaceshipSettings>(ship, true);
                     break;
             }
         }
         flyingObjInst.InitGravitationalPullLists();
         //==============================
         if(simEnv.missionTimer != null)
-            simEnv.missionTimer.StartStopwatch();
+            simEnv.missionTimer.Start_Stopwatch();
     }
 
     void FixedUpdate()
@@ -200,7 +200,6 @@ public class UniverseRunner : MonoBehaviour
                         Spaceship ship = t.gameObject.GetComponent<Spaceship>();
                         ship.realPosition -= originOffset;
                         break;
-                    
                     default:
                         CelestialBody celestBody = t.gameObject.GetComponent<CelestialBody>();
                         celestBody.realPosition -= originOffset;
@@ -228,6 +227,8 @@ public class UniverseRunner : MonoBehaviour
                     {
                         ship.orbit.UpdateLineRendererPos();
                     }
+                    if(ship.predictor != null && ship.predictor.predictedOrbit != null)
+                        ship.predictor.predictedOrbit.UpdateLineRendererPos();
                     break;
                 
                 case goTags.Planet:

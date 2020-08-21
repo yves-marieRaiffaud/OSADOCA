@@ -31,13 +31,21 @@ public class SpaceshipController
     {
         ship = _ship;
         ordersComReceiver = _ordersComReceiver;
+        ordersComReceiver.channelObj.onDataReceivedEvent.AddListener(delegate{
+            On_New_Control_Orders_Received(ordersComReceiver.channelObj.lastReceivedData);
+        });
         lastReceivedOrders = null;
     }
     //================
     //================
-    private void On_New_Control_Orders_Received(byte[] receivedData)
+    private void On_New_Control_Orders_Received(string receivedData)
     {
         Debug.Log("New orders have been received from the TCP/IP receiver");
-        Debug.Log("ReceivedData : " + string.Join(System.Environment.NewLine, receivedData));
+        Debug.LogFormat("ReceivedData : {0}", receivedData);
+        MainNozzle_Control nozzleControl = ship.transform.Find("FreeFloating").GetComponent<MainNozzle_Control>();
+        float[] arg1 = {0f,0f};
+        nozzleControl.engineIsActive = true;
+        nozzleControl.FireEngine(arg1, float.Parse(receivedData));
+        nozzleControl.engineIsActive = false;
     }
 }

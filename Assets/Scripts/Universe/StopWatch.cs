@@ -80,12 +80,12 @@ public class StopWatch : MonoBehaviour
         return timeDuration.ToString("g");
     }
 
-    public void StartStopwatch()
+    public void Start_Stopwatch()
     {
         isActive = true;
     }
 
-    public void StopStopwatch()
+    public void Stop_Stopwatch()
     {
         isActive = false;
     }

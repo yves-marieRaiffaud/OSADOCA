@@ -47,6 +47,7 @@ namespace Matlab_Communication
         private NetworkStream matlabStream;
         private Thread serverThread;
         //=========
+        public string lastReceivedData;
         public OnDataReceivedEvent onDataReceivedEvent;
         //=========
         public TCPServer(int _port, MatlabSendReceiveType _sendReceiveType=MatlabSendReceiveType.sendReceive, string _IP="127.0.0.1")
@@ -71,6 +72,7 @@ namespace Matlab_Communication
             try
             {
                 server = new TcpListener(IPAddress.Parse(IP), port);
+                Debug.Log("Started Server listening IP: " + IP);
                 server.Start();
 
                 // Buffer for reading data
@@ -99,10 +101,10 @@ namespace Matlab_Communication
                     {
                         // Translate data bytes to a ASCII string.
                         data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                        Debug.Log("Received Data: " + data);
+                        lastReceivedData = data;
 
                         if(onDataReceivedEvent != null)
-                            onDataReceivedEvent.Invoke(bytes);
+                            onDataReceivedEvent.Invoke(data);
                     }
                     matlabClient.Close();
                 }

@@ -21,11 +21,24 @@ public class OrbitalPredictor
         smartPredictor();
     }
 
+    public void DebugLog_Predictor()
+    {
+        Debug.LogFormat("predictedOrbit\t | linkedOrbit");
+        Debug.LogFormat("orbitedBody: {0}; orbitingBody: {1}", orbitedBody.name, bodyToPredict._gameObject.name);
+        Debug.LogFormat("p: {0}\n e: {1}\n i: {2}\n lAscN: {3}\n omega: {4}\n nu: {5}\n bodyPosType: {6}\n selectedVectorsDir: {7}",
+        predictedOrbit.param.p, predictedOrbit.param.e, predictedOrbit.param.i, predictedOrbit.param.lAscN, predictedOrbit.param.omega, predictedOrbit.param.nu,
+        predictedOrbit.param.bodyPosType, predictedOrbit.param.selectedVectorsDir);
+
+        Debug.LogFormat("p: {0}\n e: {1}\n i: {2}\n lAscN: {3}\n omega: {4}\n nu: {5}\n bodyPosType: {6}\n selectedVectorsDir: {7}",
+        linkedOrbit.param.p, linkedOrbit.param.e, linkedOrbit.param.i, linkedOrbit.param.lAscN, linkedOrbit.param.omega, linkedOrbit.param.nu,
+        linkedOrbit.param.bodyPosType, linkedOrbit.param.selectedVectorsDir);
+    }
+
     public void smartPredictor()
     {
         if(bodyToPredict == null || orbitedBody == null) { return; }
 
-        double speedMagn = bodyToPredict.GetRelativeVelocityMagnitude();
+        double speedMagn = bodyToPredict.orbitedBodyRelativeVel.magnitude;
         double circularSpeed = linkedOrbit.GetCircularOrbitalSpeed();
         double liberationSpeed = Mathd.Sqrt(2d) * circularSpeed;
         // Calculate orbital speed and compare it to the one needed to reach a circular orbit
@@ -33,7 +46,7 @@ public class OrbitalPredictor
         double µ = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value;
         Vector3d rVec = bodyToPredict.GetRelativeRealWorldPosition()*UniCsts.km2m;
         double r = rVec.magnitude;
-        Vector3d velocityVec = bodyToPredict.GetRelativeVelocity();
+        Vector3d velocityVec = bodyToPredict.orbitedBodyRelativeVel;
 
         // Computing semi-major axis length
         double a = r * µ*Mathd.Pow(10,13) / (2*µ*Mathd.Pow(10,13) - r*Mathd.Pow(speedMagn,2)) * UniCsts.m2km;
@@ -41,13 +54,11 @@ public class OrbitalPredictor
         Vector3d h = Vector3d.Cross(rVec, velocityVec);
         // Computing eccentricity vector, pointing from the apoapsis to the periapsis
         Vector3d eVec = Vector3d.Cross(velocityVec, h) / (µ*UniCsts.µExponent) - rVec/r;
-
+        
         double e = eVec.magnitude;
         double p = a*(1-e*e);
         
-        //OrbitalParams predOrbitParams = OrbitalParams.CreateInstance<OrbitalParams>();
-        OrbitalParams predOrbitParams = new OrbitalParams();
-        
+        OrbitalParams predOrbitParams = ScriptableObject.CreateInstance<OrbitalParams>();
         predOrbitParams.orbitRealPredType = OrbitalTypes.typeOfOrbit.predictedOrbit;
         predOrbitParams.orbitDefType = OrbitalTypes.orbitDefinitionType.pe;
 
@@ -69,7 +80,7 @@ public class OrbitalPredictor
         predOrbitParams.omega = linkedOrbit.param.omega;
         predOrbitParams.nu = linkedOrbit.param.nu;
         predOrbitParams.bodyPosType = OrbitalTypes.bodyPositionType.nu;
-        predOrbitParams.orbitDrawingResolution = 300;
+        predOrbitParams.orbitDrawingResolution = 368;
         predOrbitParams.drawOrbit = true;
         predOrbitParams.drawDirections = true;
         predOrbitParams.selectedVectorsDir = (OrbitalTypes.typeOfVectorDir)254;

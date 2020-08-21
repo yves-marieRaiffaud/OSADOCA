@@ -533,16 +533,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         return new Vector3d(transform.position - orbitalParams.orbitedBody.transform.position) * UniCsts.u2pl;
     }
 
-    public Vector3d GetRelativeVelocity()
-    {
-        return orbitedBodyRelativeVel;
-    }
-
-    public double GetRelativeVelocityMagnitude()
-    {
-        return orbitedBodyRelativeVel.magnitude;
-    }
-
     public Vector3d GetWorldPositionFromGroundStart(double latitude, double longitude)
     {
         // Substracting 180° to the longitude as the function considers the CelestialBody local +X axis as longitude 0, while longitude 0 is along local axis -X

@@ -63,11 +63,12 @@ namespace Matlab_Communication
                     IPEndPoint anyIP = new IPEndPoint(IPAddress.Parse(IP), 0);
                     byte[] data = _ReceiveClient.Receive(ref anyIP);
                     //======
+                    string dataString = System.Text.Encoding.Default.GetString(data);
                     //double[] values = new double[data.Length / 8];
                     //Buffer.BlockCopy(data, 0, values, 0, values.Length * 8);
                     //======
                     if(onDataReceivedEvent != null)
-                        onDataReceivedEvent.Invoke(data);
+                        onDataReceivedEvent.Invoke(dataString);
                 }
                 catch (Exception err)
                 {

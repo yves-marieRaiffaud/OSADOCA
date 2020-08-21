@@ -105,7 +105,7 @@ namespace Matlab_Communication
 
             else if(typeof(T) == typeof(TCPServer))
             {
-                channelObj = (T)Convert.ChangeType(new TCPServer(port, sendReceiveType), typeof(T));
+                channelObj = (T)Convert.ChangeType(new TCPServer(port, sendReceiveType, IP), typeof(T));
             }
                 
         }

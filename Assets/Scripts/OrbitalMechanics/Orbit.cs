@@ -12,6 +12,11 @@ public class Orbit
     public double scalingFactor; // Either 'UniCsts.pl2u' or 'UniCsts.au2u'
 
     private GameObject lineRendererGO;
+    public GameObject get_lineRendererGO {
+        get {
+            return lineRendererGO;
+        }
+    }
     public LineRenderer lineRenderer;
     public CelestialBody orbitedBody;
     public GameObject orbitingGO;

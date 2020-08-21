@@ -13,5 +13,5 @@ namespace Matlab_Communication
     }
 
     [Serializable]
-    public class OnDataReceivedEvent : UnityEvent<byte[]> {}
+    public class OnDataReceivedEvent : UnityEvent<string> {}
 }

@@ -71,7 +71,7 @@ public class FlyingObj
     //===============================================================================
     //===============================================================================
     //===============================================================================
-    public void InitializeFlyingObj<T1, T2>(UnityEngine.Object body)
+    public void InitializeFlyingObj<T1, T2>(UnityEngine.Object body, bool initOrbitalPredictor)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         T1 castBody = CastObjectToType<T1>(body);
@@ -87,11 +87,14 @@ public class FlyingObj
             {
                 // Init position of the ship and return == do not init any orbit
                 InitializeBodyPosition<T1, T2>(body);
+                InitializeOrbitalPredictor<T1, T2>(body, initOrbitalPredictor);
                 return;
             }
         }
 
         InitializeOrbit<T1, T2>(body);
+        Debug.Log("initOrbitalPredictor = " + initOrbitalPredictor);
+        InitializeOrbitalPredictor<T1, T2>(body, initOrbitalPredictor);
         InitializeBodyPosition<T1, T2>(body);
         InitializeOrbitalSpeed<T1, T2>(body);
         InitializeDirVecLineRenderers<T1, T2>(body);
@@ -121,6 +124,25 @@ public class FlyingObj
             T1 castBody = CastObjectToType<T1>(body); // Spaceship or CelestialBody
             T2 settings = GetObjectSettings<T2>(body); // SpaceshipSettings or CelestialBodySettings
             castBody.orbit = new Orbit(castBody.orbitalParams, castBody.orbitalParams.orbitedBody.GetComponent<CelestialBody>(), castBody._gameObject);
+        }
+        else {
+            Debug.LogError("Specified UnityEngine.Object is not of the specified generic type.");
+        }
+    }
+
+    public void InitializeOrbitalPredictor<T1, T2>(UnityEngine.Object body, bool initOrbitalPredictor)
+    where T1: FlyingObjCommonParams where T2: FlyingObjSettings
+    {
+        if(body is T1)
+        {
+            T1 castBody = CastObjectToType<T1>(body); // Spaceship or CelestialBody
+            T2 settings = GetObjectSettings<T2>(body); // SpaceshipSettings or CelestialBodySettings
+            if(initOrbitalPredictor)
+            {
+                Debug.Log("init for " + castBody._gameObject.name);
+                castBody.predictor = new OrbitalPredictor(castBody, castBody.orbitalParams.orbitedBody, castBody.orbit);
+                castBody.predictor.DebugLog_Predictor();
+            }
         }
         else {
             Debug.LogError("Specified UnityEngine.Object is not of the specified generic type.");
@@ -340,6 +362,9 @@ public class FlyingObj
             case UniverseRunner.goTags.Spaceship:
                 Spaceship ship = obj.GetComponent<Spaceship>();
                 ApplyRigbidbodyAccUpdate<Spaceship, SpaceshipSettings>(ship, ship.settings);
+                // Update the orbital predictor if it has been defined for the object
+                if(ship.predictor != null)
+                    ship.predictor.smartPredictor();
                 break;
         }
     }

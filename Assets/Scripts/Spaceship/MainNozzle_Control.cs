@@ -10,6 +10,9 @@ public class MainNozzle_Control : MonoBehaviour
     float nozzleLowerBound = -10;
     float nozzleUpperBound = 10;
     //================
+    public bool useKeyboardControl;
+    [HideInInspector] public bool engineIsActive;
+    //================
     Rigidbody nozzleRigidbody;
     ConfigurableJoint originalfreeFloatingJoint; //Configurable Joint from the Editor
     ConfigurableJoint onlinefreeFloatingJoint; //Configurable Joint that is created and updated in live in 'Update()'
@@ -20,6 +23,7 @@ public class MainNozzle_Control : MonoBehaviour
     //================
     void Start()
     {
+        engineIsActive = false;
         nozzleRigidbody = GetComponent<Rigidbody>();
         originalfreeFloatingJoint = GetComponent<ConfigurableJoint>();
 
@@ -33,23 +37,38 @@ public class MainNozzle_Control : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Reading raw values from the controller
-        float[] raw_inputs_array = getInputAxis();
-        float rawThrustValue = raw_inputs_array[2];
-        if(!UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f) && mainNozzleVFX != null)
+        if(useKeyboardControl)
+        {
+            // Reading raw values from the controller
+            float[] raw_inputs_array = getInputAxis();
+            float rawThrustValue = raw_inputs_array[2];
+            if(!UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f) && mainNozzleVFX != null)
+            {
+                engineIsActive = true;
+            }
+            if(UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f) && mainNozzleVFX != null)
+            {
+                engineIsActive = false;
+            }
+            FireEngine(raw_inputs_array, rawThrustValue);
+        }
+    }
+
+    public void FireEngine(float[] raw_inputs_array, float rawThrustValue)
+    {
+        Debug.Log("engineIsActive: " + engineIsActive);
+        if(engineIsActive)
         {
             mainNozzleVFX.Play();
+            // Tranforming the raw values to the desired rotation angles of the nozzle
+            Quaternion targetQuaternion = computeYawPitchAngle(raw_inputs_array[0], raw_inputs_array[1]);
+            RotateNozzle(targetQuaternion);
+            nozzleRigidbody.AddForce(transform.up * nozzleThrust * rawThrustValue, ForceMode.Force);
         }
-        if(UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f) && mainNozzleVFX != null)
-        {
+        else {
             mainNozzleVFX.Stop();
+            engineIsActive = false;
         }
-
-        // Tranforming the raw values to the desired rotation angles of the nozzle
-        Quaternion targetQuaternion = computeYawPitchAngle(raw_inputs_array[0], raw_inputs_array[1]);
-        
-        RotateNozzle(targetQuaternion);
-        nozzleRigidbody.AddForce(transform.up * nozzleThrust * rawThrustValue, ForceMode.Force);
     }
 
     private void SetLiveConfigurableJoint()

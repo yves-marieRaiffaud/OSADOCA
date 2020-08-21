@@ -185,26 +185,11 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         if(comHandlerInstance.controlAlgoTCPServer != null)
             spaceshipController = new SpaceshipController(this, comHandlerInstance.controlAlgoTCPServer);
     }
-
-    public void InitializeOrbitalPredictor()
-    {
-        predictor = new OrbitalPredictor(this, orbitalParams.orbitedBody.GetComponent<CelestialBody>(), orbit);
-    }
     //===============================
     //===============================
     public Vector3d GetRelativeRealWorldPosition()
     {
         return new Vector3d(transform.position - orbitalParams.orbitedBody.transform.position) * UniCsts.u2pl;
-    }
-
-    public Vector3d GetRelativeVelocity()
-    {
-        return orbitedBodyRelativeVel;
-    }
-
-    public double GetRelativeVelocityMagnitude()
-    {
-        return orbitedBodyRelativeVel.magnitude;
     }
 
     public void DEBUG_LOAD_ORBITALPARAMS_TO_SCRIPTABLE_OBJ()
@@ -226,9 +211,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     public double Get_R()
     {
         // Returns the distance in real world (in km) from the spaceship position to the centre of the orbited body
-        double distance = Vector3d.Distance(new Vector3d(gameObject.transform.position), new Vector3d(orbitalParams.orbitedBody.transform.position));
-        distance *= UniCsts.u2pl; // km
-        return distance; // distance in km
+        return Get_R(new Vector3d(gameObject.transform.position));
     }
 
     public double Get_R(Vector3d shipPosition)
@@ -258,7 +241,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
 
     public double GetUnityAltitude()
     {
-        return new Vector3d(transform.position - orbitalParams.orbitedBody.transform.position).magnitude;
+        return GetUnityAltitude(new Vector3d(transform.position));
     }
 
     public double GetShipAltitude()

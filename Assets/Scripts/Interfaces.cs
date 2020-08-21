@@ -22,8 +22,6 @@ public interface FlyingObjCommonParams
     //================
     double SetDistanceScaleFactor(); // To set the Scaling factor to convert meters to unity units, depending if the orbit is defined in 'km' or in 'AU' 
     Vector3d GetRelativeRealWorldPosition();
-    Vector3d GetRelativeVelocity();
-    double GetRelativeVelocityMagnitude();
     //================
     GameObject _gameObject {get; set;}
 }
