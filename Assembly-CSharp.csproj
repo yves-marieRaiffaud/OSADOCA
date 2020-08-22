@@ -178,6 +178,7 @@
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\SimSettings_Info.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\ToggleSwitch.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\UI_SimSettings_Panel.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\Spaceship\UI_Spaceship_Panel.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\LaunchPad.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\LaunchPadList.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UIStartLoc_InitOrbit.cs" />

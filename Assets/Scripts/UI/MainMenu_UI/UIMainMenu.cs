@@ -23,6 +23,8 @@ public class UIMainMenu : MonoBehaviour
     public GameObject panel_SimSettings;
     [Tooltip("GameObject named 'Panel_Matlab' located under the 'Submenus_PanelContent' GameObject")]
     public GameObject panel_Matlab;
+    [Tooltip("GameObject named 'Panel_Spacecraft' located under the 'Submenus_PanelContent' GameObject")]
+    public GameObject panel_Spacecraft;
 
     // Int that represent which menu is currently selected/displayed
     // 0 : Start location panel
@@ -58,6 +60,7 @@ public class UIMainMenu : MonoBehaviour
         panel_StartLoc.SetActive(true);
         panel_SimSettings.SetActive(false);
         panel_Matlab.SetActive(false);
+        panel_Spacecraft.SetActive(false);
         
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_startLoc_Img, controlBarCheckScript.color_selectedPanel);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Spacecraft_Img, controlBarCheckScript.color_isSetUp);
@@ -73,6 +76,7 @@ public class UIMainMenu : MonoBehaviour
         panel_StartLoc.SetActive(false);
         panel_SimSettings.SetActive(false);
         panel_Matlab.SetActive(false);
+        panel_Spacecraft.SetActive(true);
 
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_startLoc_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Spacecraft_Img, controlBarCheckScript.color_selectedPanel);
@@ -88,6 +92,7 @@ public class UIMainMenu : MonoBehaviour
         panel_StartLoc.SetActive(false);
         panel_SimSettings.SetActive(false);
         panel_Matlab.SetActive(true);
+        panel_Spacecraft.SetActive(false);
 
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_startLoc_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Spacecraft_Img, controlBarCheckScript.color_default);
@@ -103,6 +108,7 @@ public class UIMainMenu : MonoBehaviour
         panel_StartLoc.SetActive(false);
         panel_SimSettings.SetActive(true);
         panel_Matlab.SetActive(false);
+        panel_Spacecraft.SetActive(false);
 
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_startLoc_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Spacecraft_Img, controlBarCheckScript.color_default);

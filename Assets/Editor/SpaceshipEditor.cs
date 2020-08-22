@@ -67,6 +67,8 @@ public class SpaceshipEditor: Editor
         EditorGUI.BeginChangeCheck();
 
         CreateFlyingObjCommonParams();
+        if(spaceship.spawnAsUIRocket)
+            return;
         CreateSpaceshipSettingsEditor();
 
         serializedOrbitalParams.ApplyModifiedProperties();
@@ -79,6 +81,8 @@ public class SpaceshipEditor: Editor
     private void CreateFlyingObjCommonParams()
     {
         spaceship.settings = (SpaceshipSettings)EditorGUILayout.ObjectField("Settings", spaceship.settings, typeof(SpaceshipSettings), false);
+        if(spaceship.spawnAsUIRocket)
+            return;
         EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("orbitedBodyName"));
         Show_FlyingObjInfoPanel();
     }

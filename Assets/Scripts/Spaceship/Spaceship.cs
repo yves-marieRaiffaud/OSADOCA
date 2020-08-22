@@ -8,6 +8,7 @@ using Matlab_Communication;
 
 public class Spaceship : MonoBehaviour, FlyingObjCommonParams
 {
+    public bool spawnAsUIRocket; 
     [HideInInspector] public SpaceshipController spaceshipController {get; private set;}
     [HideInInspector] public SpaceshipSettings settings;
     //=======
@@ -143,6 +144,13 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     //===============================
     void Awake()
     {
+        if(spawnAsUIRocket)
+        {
+            transform.Find("Main Camera").gameObject.SetActive(false);
+            transform.Find("CameraBack").gameObject.SetActive(false);
+            return;
+        }
+
         shipRBConstraints_areOn = true;
         //==================================================
         // FOR DEBUG PURPOSES
