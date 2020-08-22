@@ -44,3 +44,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loadShipDataFromUIDiskFile: 0
+  simUIScript: {fileID: 0}
+  saveOrbitalParamsData: 0

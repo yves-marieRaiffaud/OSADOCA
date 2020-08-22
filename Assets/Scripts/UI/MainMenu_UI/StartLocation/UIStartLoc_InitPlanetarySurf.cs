@@ -346,15 +346,16 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
 
     private void UpdateLaunchPadInCreationInfoFields()
     {
-        Dictionary<LaunchPad.launchPadParams, string> lp_paramDict = launchPadInstances.ElementAt(launchPadInstances.Count-1).launchPadParamsDict;
-        lp_longitude_NEWLP_val.text = UsefulFunctions.StringToSignificantDigits(lp_paramDict[LaunchPad.launchPadParams.longitude], UniCsts.UI_SIGNIFICANT_DIGITS);
-        lp_latitude_NEWLP_val.text = UsefulFunctions.StringToSignificantDigits(lp_paramDict[LaunchPad.launchPadParams.latitude], UniCsts.UI_SIGNIFICANT_DIGITS);
+        //Dictionary<LaunchPad.launchPadParams, string> lp_paramDict = launchPadInstances.ElementAt(launchPadInstances.Count-1).launchPadParamsDict;
+        LaunchPad launchPad = launchPadInstances.ElementAt(launchPadInstances.Count-1);
+        lp_longitude_NEWLP_val.text = UsefulFunctions.DoubleToSignificantDigits(launchPad.longitude, UniCsts.UI_SIGNIFICANT_DIGITS);
+        lp_latitude_NEWLP_val.text = UsefulFunctions.DoubleToSignificantDigits(launchPad.latitude, UniCsts.UI_SIGNIFICANT_DIGITS);
         if(lp_latitude_NEWLP_val.text.Equals("90") || lp_latitude_NEWLP_val.text.Equals("-90"))
         {
             lp_eastwardBoost_NEWLP_val.text = "0";
         }
         else {
-            lp_eastwardBoost_NEWLP_val.text = UsefulFunctions.StringToSignificantDigits(lp_paramDict[LaunchPad.launchPadParams.eastwardBoost], UniCsts.UI_SIGNIFICANT_DIGITS);
+            lp_eastwardBoost_NEWLP_val.text = UsefulFunctions.DoubleToSignificantDigits(launchPad.eastwardBoost, UniCsts.UI_SIGNIFICANT_DIGITS);
         }
     }
 
@@ -381,6 +382,7 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         launchPad.launchPadParamsDict[LaunchPad.launchPadParams.latitude] = UsefulFunctions.DoubleToString(latLong.x);
         launchPad.launchPadParamsDict[LaunchPad.launchPadParams.longitude] = UsefulFunctions.DoubleToString(latLong.y);
         launchPad.ComputeEastwardBoost();
+        launchPad.InitVariables();
     }
 
     private void CreateNewEmptyLaunchPad()

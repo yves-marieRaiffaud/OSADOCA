@@ -10,7 +10,7 @@ using System.IO;
 public class LaunchPad
 {
     //========================
-    public bool _isCustomLP;
+    private bool _isCustomLP;
     public bool isCustomLP
     {
         get {
@@ -18,7 +18,7 @@ public class LaunchPad
         }
     }
 
-    public string _name;
+    private string _name;
     public string name
     {
         get {
@@ -26,7 +26,7 @@ public class LaunchPad
         }
     }
 
-    public string _planet;
+    private string _planet;
     public string planet
     {
         get {
@@ -34,7 +34,7 @@ public class LaunchPad
         }
     }
 
-    public string _country;
+    private string _country;
     public string country
     {
         get {
@@ -42,7 +42,7 @@ public class LaunchPad
         }
     }
 
-    public string _operationalDate;
+    private string _operationalDate;
     public string operationalDate
     {
         get {
@@ -50,7 +50,7 @@ public class LaunchPad
         }
     }
     
-    public string _supervision;
+    private string _supervision;
     public string supervision
     {
         get {
@@ -58,7 +58,7 @@ public class LaunchPad
         }
     }
     
-    public double _latitude;
+    private double _latitude;
     public double latitude
     {
         get {
@@ -66,7 +66,7 @@ public class LaunchPad
         }
     }
 
-    public double _longitude;
+    private double _longitude;
     public double longitude
     {
         get {
@@ -74,7 +74,7 @@ public class LaunchPad
         }
     }
     
-    public double _eastwardBoost;
+    private double _eastwardBoost;
     public double eastwardBoost
     {
         get {

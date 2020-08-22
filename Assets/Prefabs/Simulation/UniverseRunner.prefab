@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8a137a34aec9894a853e88d78f10bbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  simulationEnvFoldout: 1
   simEnv: {fileID: 0}
   activeSpaceship: {fileID: 0}
   playerCamera: {fileID: 0}

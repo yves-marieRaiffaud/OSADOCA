@@ -12,9 +12,6 @@ public class DebugGameObject : MonoBehaviour
     public simUI simUIScript;
     public bool saveOrbitalParamsData;
 
-    //[DllImport("Simulink_UDP_Tests_win64")]
-    //private static extern void Simulink_UDP_Tests_step();
-
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -22,6 +19,5 @@ public class DebugGameObject : MonoBehaviour
         {
             simUIScript.saveOrbitalDataToText = saveOrbitalParamsData;
         }
-        //Simulink_UDP_Tests_step();
     }
 }

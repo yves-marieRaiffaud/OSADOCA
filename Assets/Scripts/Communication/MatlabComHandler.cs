@@ -30,14 +30,9 @@ namespace Matlab_Communication
         public float receiverFrequencyControlAlgo; // in s
         [NonSerialized] public MatlabComChannel<TCPServer> controlAlgoTCPServer;
         //=============
-        [Header("UI Button 'Matlab Connection Init'")]
-        public Button matlabCoInit_btn;
-        //=============
         void Awake()
         {
             DontDestroyOnLoad(this);
-            if(matlabCoInit_btn != null)
-                matlabCoInit_btn.onClick.AddListener(MatlabStartSequence);
         }
 
         private string GatherData_simEnv()
@@ -48,22 +43,53 @@ namespace Matlab_Communication
             // value separator = ' ; '
             // Ship acceleration (in m/s^2)
             // Ship velocity (in m/s)
+            // Ship velocity increment (in m/s)
             // Ship world position in the scene (in unity units)
-            // 
+            // Ship Delta Rotation Quaterniond
             //###############.......++++++++++++++.......##############
             string data = "";
             //====
             Vector3d acc = universe.activeSpaceship.orbitedBodyRelativeAcc;
             Vector3d speed = universe.activeSpaceship.orbitedBodyRelativeVel;
+            Vector3d speedIncr = universe.activeSpaceship.orbitedBodyRelativeVelIncr;
             Vector3d worldPos = new Vector3d(universe.activeSpaceship.transform.position);
-            data = Format_Vector3d(acc, 5) + " ; " + Format_Vector3d(speed, 5) + " ; " + Format_Vector3d(worldPos, 5);
-            Debug.Log(data);
+            Quaterniond deltaRotation = universe.activeSpaceship.deltaRotation;
+            //=====
+            List<string> stringsToAssembleList = new List<string>();
+            stringsToAssembleList.Add(Format_Vector3d(acc, 5));
+            stringsToAssembleList.Add(Format_Vector3d(speed, 5));
+            stringsToAssembleList.Add(Format_Vector3d(speedIncr, 5));
+            stringsToAssembleList.Add(Format_Vector3d(worldPos, 5));
+            stringsToAssembleList.Add(Format_Quaterniond(deltaRotation, 5));
+            //=====
+            data = AssembleStringList(stringsToAssembleList);
             return data;
+        }
+
+        private string AssembleStringList(List<string> stringsToAssembleList)
+        {
+            string txt = "";
+            int counter = 0;
+            int listCount = stringsToAssembleList.Count;
+            foreach(string item in stringsToAssembleList)
+            {
+                counter++;
+                if(counter != listCount)
+                    txt += item + " ; ";
+                else
+                    txt += item;
+            }
+            return txt;
         }
 
         private string Format_Vector3d(Vector3d inputVec, int nbDigits)
         {
             return Fncs.DoubleToSignificantDigits(inputVec.x, nbDigits) + " ; " + Fncs.DoubleToSignificantDigits(inputVec.y, nbDigits) + " ; " + Fncs.DoubleToSignificantDigits(inputVec.z, nbDigits);
+        }
+
+        private string Format_Quaterniond(Quaterniond inputVec, int nbDigits)
+        {
+            return Fncs.DoubleToSignificantDigits(inputVec.X, nbDigits) + " ; " + Fncs.DoubleToSignificantDigits(inputVec.Y, nbDigits) + " ; " + Fncs.DoubleToSignificantDigits(inputVec.Z, nbDigits) + " ; " + Fncs.DoubleToSignificantDigits(inputVec.W, nbDigits);
         }
 
         private IEnumerator SimulationEnv_Sending_Coroutine()
@@ -107,14 +133,6 @@ namespace Matlab_Communication
                 MatlabSendReceiveType srType = MatlabSendReceiveType.receiveOnly;
                 ComChannelParams dataParams = new ComChannelParams("169.254.183.22", 25012, coType, srType, 25012);
                 controlAlgoTCPServer = new MatlabComChannel<TCPServer>(dataParams);
-            }
-        }
-
-        private void MatlabStartSequence()
-        {
-            if(simEnvTCPServer != null)
-            {
-                //simEnvTCPServer.
             }
         }
 

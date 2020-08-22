@@ -118,7 +118,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
     }
     
-    public CelestialBodyPullForce[] _gravPullList;
+    private CelestialBodyPullForce[] _gravPullList;
     public CelestialBodyPullForce[] gravPullList
     {
         get {
@@ -129,6 +129,13 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
     }
     //===============================
+    private Quaterniond previousRotation;
+    public Quaterniond deltaRotation
+    {
+        get {
+            return GetDeltaRotation();
+        }
+    }
     //===============================
     private bool shipRBConstraints_areOn;
     //===============================
@@ -140,10 +147,16 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
             rb.constraints = RigidbodyConstraints.None;
         }
     }
+
+    void LateUpdate()
+    {
+        previousRotation = new Quaterniond(transform.rotation);
+    }
     //===============================
     //===============================
     void Awake()
     {
+        previousRotation = new Quaterniond(transform.rotation);
         if(spawnAsUIRocket)
         {
             transform.Find("Main Camera").gameObject.SetActive(false);
@@ -338,5 +351,12 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
             distanceScaleFactor = UniCsts.m2km2au2u; // If the orbit is defined in AU_degree
         }
         return distanceScaleFactor;
+    }
+
+    private Quaterniond GetDeltaRotation()
+    {
+        // Returns the increment of rotation of the rocket
+        // Simulates what the gyrscopes of the IMU would measure
+        return new Quaterniond(transform.rotation) - previousRotation;
     }
 }
