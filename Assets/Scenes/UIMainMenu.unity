@@ -19161,7 +19161,6 @@ MonoBehaviour:
   senderFrequencySimEnv: 0
   enableControlAlgoTCPServer: 0
   receiverFrequencyControlAlgo: 0
-  matlabCoInit_btn: {fileID: 0}
 --- !u!1 &864350268
 GameObject:
   m_ObjectHideFlags: 0
@@ -21837,16 +21836,6 @@ MonoBehaviour:
   lp_Cancel_btn: {fileID: 890682134}
   lp_save_btn: {fileID: 1576857423}
   isAddingNewLaunchPad: 0
-  currSelectedLaunchpad:
-    _isCustomLP: 0
-    _name: 
-    _planet: 
-    _country: 
-    _operationalDate: 
-    _supervision: 
-    _latitude: 0
-    _longitude: 0
-    _eastwardBoost: 0
 --- !u!1 &991496079
 GameObject:
   m_ObjectHideFlags: 0

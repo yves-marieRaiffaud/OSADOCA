@@ -130,10 +130,11 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     }
     //===============================
     private Quaterniond previousRotation;
+    private Quaterniond _deltaRotation;
     public Quaterniond deltaRotation
     {
         get {
-            return GetDeltaRotation();
+            return _deltaRotation;
         }
     }
     //===============================
@@ -141,21 +142,23 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     //===============================
     void FixedUpdate()
     {
+        if(spaceshipController == null)
+        {
+            // Check if there has been a connection sending nozzle control data
+            InitComHandlerTCPReceiver();
+        }
+
         if(Input.GetKey(KeyCode.Space))
         {
             Rigidbody rb = GetComponent<Rigidbody>();
             rb.constraints = RigidbodyConstraints.None;
         }
     }
-
-    void LateUpdate()
-    {
-        previousRotation = new Quaterniond(transform.rotation);
-    }
     //===============================
     //===============================
     void Awake()
     {
+        spaceshipController = null;
         previousRotation = new Quaterniond(transform.rotation);
         if(spawnAsUIRocket)
         {
@@ -353,10 +356,20 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         return distanceScaleFactor;
     }
 
-    private Quaterniond GetDeltaRotation()
+    private void GetDeltaRotation()
     {
         // Returns the increment of rotation of the rocket
         // Simulates what the gyrscopes of the IMU would measure
-        return new Quaterniond(transform.rotation) - previousRotation;
+        _deltaRotation = new Quaterniond(transform.rotation) - previousRotation;
+        previousRotation = new Quaterniond(transform.rotation);
+    }
+
+    public IEnumerator DeltaRotation_Coroutine(float comHandlerSenderSimEnvFrequency)
+    {
+        while (true)
+        {
+            GetDeltaRotation();
+            yield return new WaitForSeconds(comHandlerSenderSimEnvFrequency);
+        }
     }
 }

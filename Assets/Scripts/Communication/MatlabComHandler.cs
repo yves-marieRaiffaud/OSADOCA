@@ -10,6 +10,8 @@ namespace Matlab_Communication
 {
     public class MatlabComHandler : MonoBehaviour
     {
+        public const string SENDER_DELIMITER = ";";
+
         [Header("UniverseRunner Instance")]
         public UniverseRunner universe;
         //=============
@@ -22,6 +24,7 @@ namespace Matlab_Communication
         public bool enableSimEnvTCPServer;
         public float senderFrequencySimEnv; // in s
         private IEnumerator simEnvCoroutine;
+        private IEnumerator shipDeltaRotCoroutine;
         private bool simEnvCoroutineIsRunning;
         [NonSerialized] public MatlabComChannel<TCPServer> simEnvTCPServer;
         //=============
@@ -75,7 +78,7 @@ namespace Matlab_Communication
             {
                 counter++;
                 if(counter != listCount)
-                    txt += item + " ; ";
+                    txt += item + SENDER_DELIMITER;
                 else
                     txt += item;
             }
@@ -84,12 +87,12 @@ namespace Matlab_Communication
 
         private string Format_Vector3d(Vector3d inputVec, int nbDigits)
         {
-            return Fncs.DoubleToSignificantDigits(inputVec.x, nbDigits) + " ; " + Fncs.DoubleToSignificantDigits(inputVec.y, nbDigits) + " ; " + Fncs.DoubleToSignificantDigits(inputVec.z, nbDigits);
+            return Fncs.DoubleToSignificantDigits(inputVec.x, nbDigits) + SENDER_DELIMITER + Fncs.DoubleToSignificantDigits(inputVec.y, nbDigits) + SENDER_DELIMITER + Fncs.DoubleToSignificantDigits(inputVec.z, nbDigits);
         }
 
         private string Format_Quaterniond(Quaterniond inputVec, int nbDigits)
         {
-            return Fncs.DoubleToSignificantDigits(inputVec.X, nbDigits) + " ; " + Fncs.DoubleToSignificantDigits(inputVec.Y, nbDigits) + " ; " + Fncs.DoubleToSignificantDigits(inputVec.Z, nbDigits) + " ; " + Fncs.DoubleToSignificantDigits(inputVec.W, nbDigits);
+            return Fncs.DoubleToSignificantDigits(inputVec.X, nbDigits) + SENDER_DELIMITER + Fncs.DoubleToSignificantDigits(inputVec.Y, nbDigits) + SENDER_DELIMITER + Fncs.DoubleToSignificantDigits(inputVec.Z, nbDigits) + SENDER_DELIMITER + Fncs.DoubleToSignificantDigits(inputVec.W, nbDigits);
         }
 
         private IEnumerator SimulationEnv_Sending_Coroutine()
@@ -117,12 +120,14 @@ namespace Matlab_Communication
             if(enableSimEnvTCPServer)
             {
                 simEnvCoroutine = SimulationEnv_Sending_Coroutine();
+                shipDeltaRotCoroutine = universe.activeSpaceship.DeltaRotation_Coroutine(senderFrequencySimEnv);
                 MatlabConectionType coType = MatlabConectionType.simulationEnv;
                 MatlabSendReceiveType srType = MatlabSendReceiveType.sendOnly;
                 ComChannelParams dataParams = new ComChannelParams("169.254.183.22", 25011, coType, srType, 25011);
                 simEnvTCPServer = new MatlabComChannel<TCPServer>(dataParams);
                 if(simEnvTCPServer != null) {
                     StartCoroutine(simEnvCoroutine);
+                    StartCoroutine(shipDeltaRotCoroutine);
                     simEnvCoroutineIsRunning = true;
                 }
             }
@@ -139,6 +144,7 @@ namespace Matlab_Communication
         void OnApplicationQuit()
         {
             StopAllCoroutines();
+            StopCoroutine(shipDeltaRotCoroutine);
             //==================
             // Close UDP Sender Connection
             if(dataVisSenderChannel != null) {

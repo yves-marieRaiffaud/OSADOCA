@@ -52,23 +52,29 @@ public class MainNozzle_Control : MonoBehaviour
             }
             FireEngine(raw_inputs_array, rawThrustValue);
         }
-    }
-
-    public void FireEngine(float[] raw_inputs_array, float rawThrustValue)
-    {
-        Debug.Log("engineIsActive: " + engineIsActive);
         if(engineIsActive)
         {
             mainNozzleVFX.Play();
-            // Tranforming the raw values to the desired rotation angles of the nozzle
-            Quaternion targetQuaternion = computeYawPitchAngle(raw_inputs_array[0], raw_inputs_array[1]);
-            RotateNozzle(targetQuaternion);
-            nozzleRigidbody.AddForce(transform.up * nozzleThrust * rawThrustValue, ForceMode.Force);
         }
         else {
             mainNozzleVFX.Stop();
             engineIsActive = false;
         }
+    }
+
+    public IEnumerator FireEngine(float[] raw_inputs_array, float rawThrustValue)
+    {
+        if(UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f)) {
+            engineIsActive = false;
+            yield return null;
+        }
+        
+        // Tranforming the raw values to the desired rotation angles of the nozzle
+        Quaternion targetQuaternion = computeYawPitchAngle(raw_inputs_array[0], raw_inputs_array[1]);
+        RotateNozzle(targetQuaternion);
+        nozzleRigidbody.AddForce(transform.up * nozzleThrust * rawThrustValue, ForceMode.Force);
+        engineIsActive = false;
+        yield return null;
     }
 
     private void SetLiveConfigurableJoint()
