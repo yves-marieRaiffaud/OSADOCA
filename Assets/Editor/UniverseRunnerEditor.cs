@@ -102,6 +102,10 @@ public class UniverseRunnerEditor : Editor
 
         param.physicsUpdateRate.value = EditorGUILayout.IntSlider("Physics update rate", param.physicsUpdateRate.value, 1, 100);
         param.timeScale.value = EditorGUILayout.FloatField("Time scale", param.timeScale.value);
+
+        EditorGUILayout.Separator();
+        EditorGUILayout.LabelField("Spaceship Control", EditorStyles.boldLabel);
+        param.shipUseKeyboardControl.value = EditorGUILayout.Toggle("Control ship with keyboard", param.shipUseKeyboardControl.value);
         
         if(GUI.changed)
         {

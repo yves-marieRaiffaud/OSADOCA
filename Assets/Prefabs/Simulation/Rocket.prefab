@@ -231,7 +231,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c925c2fe0bfd3bc42bbe25fb404a7cc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useKeyboardControl: 0
+  universe: {fileID: 0}
   engineIsActive: 0
 --- !u!153 &4384064439219058762
 ConfigurableJoint:
@@ -459,7 +459,6 @@ MonoBehaviour:
   settings: {fileID: 11400000, guid: bce1d11779f1fcc4d87f267e35648035, type: 2}
   foldoutFlyingObjInfoPanel: 1
   _orbitalParams: {fileID: 11400000, guid: 324388c31741f0046a4e62e95cb59e3b, type: 2}
-  _gravPullList: []
 --- !u!1 &6453183603802457294
 GameObject:
   m_ObjectHideFlags: 0
@@ -501,7 +500,7 @@ Camera:
   m_GameObject: {fileID: 6453183603802457294}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2

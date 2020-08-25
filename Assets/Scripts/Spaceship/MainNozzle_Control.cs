@@ -6,11 +6,14 @@ using UnityEngine.VFX;
 
 public class MainNozzle_Control : MonoBehaviour
 {
-    float nozzleThrust = 1;
+    // TO get access to the simEnv, and thus to the 'shipUseKeyboardControl' SimSettingBool variable
+    public UniverseRunner universe;
+
+    float nozzleThrust_Power = 10;
     float nozzleLowerBound = -10;
     float nozzleUpperBound = 10;
     //================
-    public bool useKeyboardControl;
+    private bool useKeyboardControl;
     [HideInInspector] public bool engineIsActive;
     //================
     Rigidbody nozzleRigidbody;
@@ -20,10 +23,24 @@ public class MainNozzle_Control : MonoBehaviour
     float pitchAngle_min, pitchAngle_max;
     //================
     VisualEffect mainNozzleVFX;
+
+    private float nozzleThrustValue;
+    private float[] targetedAngles;
     //================
     void Start()
     {
         engineIsActive = false;
+        nozzleThrustValue = 0f;
+        targetedAngles = new float[2];
+        targetedAngles[0] = targetedAngles[1] = 0f;
+
+        if(universe == null) {
+            Debug.LogWarning("The 'UniverseRunner' script has not been assgined in the MainNozzle_Control script.\n The default control (using keyboard) have been assgined for the spaceship.\nIf you are in the UI main menu, DISREGARD THIS MESSAGE");
+            useKeyboardControl = true;
+        }
+        else
+            useKeyboardControl = universe.simEnv.shipUseKeyboardControl.value;
+
         nozzleRigidbody = GetComponent<Rigidbody>();
         originalfreeFloatingJoint = GetComponent<ConfigurableJoint>();
 
@@ -38,23 +55,21 @@ public class MainNozzle_Control : MonoBehaviour
     void FixedUpdate()
     {
         if(useKeyboardControl)
-        {
-            // Reading raw values from the controller
-            float[] raw_inputs_array = getInputAxis();
-            float rawThrustValue = raw_inputs_array[2];
-            if(!UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f) && mainNozzleVFX != null)
-            {
-                engineIsActive = true;
-            }
-            if(UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f) && mainNozzleVFX != null)
-            {
-                engineIsActive = false;
-            }
-            FireEngine(raw_inputs_array, rawThrustValue);
-        }
+            Fire_Engine_KeyboardControl();
+        else
+            // Else we are controlling the rocket via TCP/IP orders and GNC algorithms
+            Fire_Engine_GNC_Algorithms();
+    }
+
+    private void Fire_Engine_GNC_Algorithms()
+    {
         if(engineIsActive)
         {
             mainNozzleVFX.Play();
+            // Tranforming the raw values to the desired rotation angles of the nozzle
+            Quaternion targetQuaternion = computeYawPitchAngle(targetedAngles[0], targetedAngles[1]);
+            RotateNozzle(targetQuaternion);
+            nozzleRigidbody.AddForce(transform.up * nozzleThrust_Power * nozzleThrustValue, ForceMode.Force);
         }
         else {
             mainNozzleVFX.Stop();
@@ -62,18 +77,33 @@ public class MainNozzle_Control : MonoBehaviour
         }
     }
 
+    private void Fire_Engine_KeyboardControl()
+    {
+        // Reading raw values from the controller
+        float[] raw_inputs_array = getInputAxis();
+        float rawThrustValue = raw_inputs_array[2];
+        if(!UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f) && mainNozzleVFX != null)
+        {
+            engineIsActive = true;
+            mainNozzleVFX.Play();
+        }
+        if(UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f) && mainNozzleVFX != null)
+        {
+            engineIsActive = false;
+            mainNozzleVFX.Stop();
+        }
+        FireEngine(raw_inputs_array, rawThrustValue);
+    }
+
     public IEnumerator FireEngine(float[] raw_inputs_array, float rawThrustValue)
     {
-        if(UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f)) {
+        nozzleThrustValue = rawThrustValue;
+        targetedAngles = raw_inputs_array;
+
+        if(nozzleThrustValue < 0.4f)
             engineIsActive = false;
-            yield return null;
-        }
-        
-        // Tranforming the raw values to the desired rotation angles of the nozzle
-        Quaternion targetQuaternion = computeYawPitchAngle(raw_inputs_array[0], raw_inputs_array[1]);
-        RotateNozzle(targetQuaternion);
-        nozzleRigidbody.AddForce(transform.up * nozzleThrust * rawThrustValue, ForceMode.Force);
-        engineIsActive = false;
+        else
+            engineIsActive = true;
         yield return null;
     }
 

@@ -144,7 +144,8 @@ namespace Matlab_Communication
         void OnApplicationQuit()
         {
             StopAllCoroutines();
-            StopCoroutine(shipDeltaRotCoroutine);
+            if(shipDeltaRotCoroutine != null)
+                StopCoroutine(shipDeltaRotCoroutine);
             //==================
             // Close UDP Sender Connection
             if(dataVisSenderChannel != null) {
