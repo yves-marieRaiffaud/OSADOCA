@@ -134,6 +134,24 @@ public static class UsefulFunctions
         }
     }
 
+    public static bool TryParse_String_To_Bool(string value, bool elseValue)
+    {
+        bool parsedValue;
+        if(bool.TryParse(value, out parsedValue))
+            return parsedValue;
+        else
+            return elseValue;
+    }
+
+    public static int TryParse_String_To_Int(string value, int elseValue)
+    {
+        int parsedValue;
+        if(int.TryParse(value, out parsedValue))
+            return parsedValue;
+        else
+            return elseValue;
+    }
+
     public static Vector2 StringToVector2(string stringVal)
     {
         string[] temp = stringVal.Substring(1, stringVal.Length-2).Split(',');

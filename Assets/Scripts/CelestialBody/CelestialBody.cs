@@ -535,14 +535,15 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     public Vector3d GetWorldPositionFromGroundStart(double latitude, double longitude)
     {
+        // Latitude and longitude in degrees
         // Substracting 180° to the longitude as the function considers the CelestialBody local +X axis as longitude 0, while longitude 0 is along local axis -X
         Vector3d sphereUnitPos = LaunchPad.LatitudeLongitude_to_3DWorldUNITPoint(latitude-90d, longitude-180d);
         //=======
         double equaRad = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
         double polarRad = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value;
         //=======
-        double geocentricRad = LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude) * UniCsts.pl2u;
-        double additionalHeight = 50d * UniCsts.m2km * UniCsts.pl2u; 
+        double geocentricRad = LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude*UniCsts.deg2rad) * UniCsts.pl2u;
+        double additionalHeight = 0d * UniCsts.m2km * UniCsts.pl2u; 
         //Debug.Log("geocentricRad = " + geocentricRad);
         //Debug.Log("sphereUnitPos: " + sphereUnitPos);
         // Direction of the normal to the planet surface of the spawn location (the chosen starting launchPad)

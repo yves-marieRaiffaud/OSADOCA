@@ -107,6 +107,8 @@ namespace Matlab_Communication
 
         void Start()
         {
+            if(universe == null)
+                return;
             simEnvCoroutineIsRunning = false;
             //============
             if(enableDataVisSenderChannel)

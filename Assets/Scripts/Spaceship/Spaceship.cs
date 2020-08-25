@@ -138,7 +138,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
     }
     //===============================
-    private bool shipRBConstraints_areOn;
+    [HideInInspector] public bool shipRBConstraints_areOn;
     //===============================
     void FixedUpdate()
     {
@@ -152,6 +152,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         {
             Rigidbody rb = GetComponent<Rigidbody>();
             rb.constraints = RigidbodyConstraints.None;
+            shipRBConstraints_areOn = false;
         }
     }
     //===============================
@@ -286,6 +287,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
 
     public double GetProjectedLatitudeFromShipPos(double polarRadius)
     {
+        // Returns the calculated/estimated latitude in degree
         Vector3d shipPosInPlanetAxis = new Vector3d(orbitalParams.orbitedBody.transform.InverseTransformPoint(transform.position));
         //=====
         double ratioAboveNullLong = shipPosInPlanetAxis.y * UniCsts.u2pl / polarRadius;
@@ -298,14 +300,15 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         // Returns the Geocentric Radius in km of the current projected position of the spaceship on the CelestialBody it is orbiting 
         double equaRad = orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
         double polarRad = orbitalParams.orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value;
-        double latitude = GetProjectedLatitudeFromShipPos(polarRad);
+        double latitude = GetProjectedLatitudeFromShipPos(polarRad); // in degree
         //=============
-        return LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude);
+        return LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude*UniCsts.deg2rad);
     }
     //===============================
     //===============================
     public static double GetProjectedLatitudeFromShipPos(double polarRadius, CelestialBody body, Vector3 shipPos)
     {
+        // Returns the calculated/estimated latitude in degree
         Vector3d shipPosInPlanetAxis = new Vector3d(body.transform.InverseTransformPoint(shipPos));
         //=====
         double ratioAboveNullLong = shipPosInPlanetAxis.y * UniCsts.u2pl / polarRadius;
@@ -320,7 +323,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         double polarRad = body.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value;
         double latitude = GetProjectedLatitudeFromShipPos(polarRad, body, shipPos);
         //=============
-        return LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude);
+        return LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude*UniCsts.deg2rad);
     }
 
     public Vector3d GetEasternDirection(double longitude)

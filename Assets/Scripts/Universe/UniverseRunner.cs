@@ -227,8 +227,8 @@ public class UniverseRunner : MonoBehaviour
                     {
                         ship.orbit.UpdateLineRendererPos();
                     }
-                    if(ship.predictor != null && ship.predictor.predictedOrbit != null)
-                        ship.predictor.predictedOrbit.UpdateLineRendererPos();
+                    //if(ship.predictor != null && ship.predictor.predictedOrbit != null)
+                        //ship.predictor.predictedOrbit.UpdateLineRendererPos();
                     break;
                 
                 case goTags.Planet:

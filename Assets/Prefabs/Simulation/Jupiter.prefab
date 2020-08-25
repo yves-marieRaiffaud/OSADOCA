@@ -17,7 +17,7 @@ GameObject:
   m_TagString: Planet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 16
   m_IsActive: 1
 --- !u!4 &1358622945706947318
 Transform:
@@ -73,6 +73,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c314a971f6f66b4d9cf62cb03d11036, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  universeRunner: {fileID: 0}
   settings: {fileID: 11400000, guid: 0753dfc782a5490499170398c4cc8089, type: 2}
   _orbit:
     param: {fileID: 0}
@@ -117,8 +118,13 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 0
+  _gravPullList: []
   spawnAsSimpleSphere: 0
   showCelestialBodyInfoPanel: 0
   planetEditorFoldout: 0
   distanceToPlayer: 0
   distanceToPlayerPow2: 0
+  planetGenerationCoroutineIsRunning: 0
+  addMeshColliders: 1
+  forceNonLODSphere: 0
+  forceLODSphere: 0

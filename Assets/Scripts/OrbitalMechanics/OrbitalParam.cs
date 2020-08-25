@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Mathd_Lib;
+using Fncs = UsefulFunctions;
 
 [CreateAssetMenu()]
 public class OrbitalParams : ScriptableObject
@@ -132,16 +133,16 @@ public struct OrbitalParamsSaveData
         
         OrbitalParams output = (OrbitalParams)ScriptableObject.CreateInstance<OrbitalParams>();
         output.orbitedBodyName = loadedData.orbitedBodyName;
-        output.orbitDefType = (OrbitalTypes.orbitDefinitionType) int.Parse(loadedData.orbitDefTypeInt);
-        output.bodyPosType = (OrbitalTypes.bodyPositionType) int.Parse(loadedData.bodyPosTypeInt);
-        output.orbParamsUnits = (OrbitalTypes.orbitalParamsUnits) int.Parse(loadedData.orbParamsUnitsInt);
-        output.orbitRealPredType = (OrbitalTypes.typeOfOrbit) int.Parse(loadedData.orbitRealPredTypeInt);
-        output.selectedVectorsDir = (OrbitalTypes.typeOfVectorDir) int.Parse(loadedData.selectedVectordDirInt);
+        output.orbitDefType = (OrbitalTypes.orbitDefinitionType) Fncs.TryParse_String_To_Int(loadedData.orbitDefTypeInt, 0);
+        output.bodyPosType = (OrbitalTypes.bodyPositionType) Fncs.TryParse_String_To_Int(loadedData.bodyPosTypeInt, 0);
+        output.orbParamsUnits = (OrbitalTypes.orbitalParamsUnits) Fncs.TryParse_String_To_Int(loadedData.orbParamsUnitsInt, 0);
+        output.orbitRealPredType = (OrbitalTypes.typeOfOrbit) Fncs.TryParse_String_To_Int(loadedData.orbitRealPredTypeInt, 0);
+        output.selectedVectorsDir = (OrbitalTypes.typeOfVectorDir) Fncs.TryParse_String_To_Int(loadedData.selectedVectordDirInt, 0);
 
-        output.drawOrbit = System.Convert.ToBoolean(int.Parse(loadedData.drawOrbitInt));
-        output.drawDirections = System.Convert.ToBoolean(int.Parse(loadedData.drawDirectionsInt));
+        output.drawOrbit = Fncs.TryParse_String_To_Bool(loadedData.drawOrbitInt, false);
+        output.drawDirections = Fncs.TryParse_String_To_Bool(loadedData.drawDirectionsInt, false);
 
-        output.orbitDrawingResolution = int.Parse(loadedData.orbitDrawingResolutionInt);
+        output.orbitDrawingResolution = Fncs.TryParse_String_To_Int(loadedData.orbitDrawingResolutionInt, 300);
         UsefulFunctions.ParseStringToDouble(loadedData.raDouble, out output.ra);
         UsefulFunctions.ParseStringToDouble(loadedData.rpDouble, out output.rp);
         UsefulFunctions.ParseStringToDouble(loadedData.pDouble, out output.p);

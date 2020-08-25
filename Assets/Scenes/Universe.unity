@@ -2143,31 +2143,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Earth
       objectReference: {fileID: 0}
-    - target: {fileID: 7958574682498467459, guid: 228e9b75980ca5c4c9d5ccc2a859c51c,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7958574682498467468, guid: 228e9b75980ca5c4c9d5ccc2a859c51c,
-        type: 3}
-      propertyPath: addMeshColliders
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7958574682498467468, guid: 228e9b75980ca5c4c9d5ccc2a859c51c,
-        type: 3}
-      propertyPath: spawnAsSimpleSphere
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7958574682498467468, guid: 228e9b75980ca5c4c9d5ccc2a859c51c,
-        type: 3}
-      propertyPath: forceNonLODSphere
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7958574682498467468, guid: 228e9b75980ca5c4c9d5ccc2a859c51c,
-        type: 3}
-      propertyPath: forceLODSphere
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7958574682498467471, guid: 228e9b75980ca5c4c9d5ccc2a859c51c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2232,16 +2207,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 9081158191422669864, guid: 481a93cb421ee104f9c16821a576c35d,
-        type: 3}
-      propertyPath: forceLODSphere
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9081158191422669864, guid: 481a93cb421ee104f9c16821a576c35d,
-        type: 3}
-      propertyPath: forceNonLODSphere
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 9081158191422669867, guid: 481a93cb421ee104f9c16821a576c35d,
         type: 3}
       propertyPath: m_Name

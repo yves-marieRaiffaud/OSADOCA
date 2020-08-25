@@ -63,7 +63,7 @@ public class simUI : MonoBehaviour
         string altitude = UsefulFunctions.DoubleToSignificantDigits(currAltitude.value, UniCsts.UI_SIGNIFICANT_DIGITS);
 
         velocityVal.text = velocity + " m/s";
-        altitudeVal.text = altitude + " km";
+        altitudeVal.text = altitude + " " + currAltitude.unit.ToString();
 
         altitude_tMinus = currAltitude;
 

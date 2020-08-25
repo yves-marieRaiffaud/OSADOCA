@@ -9,7 +9,7 @@ public class MainNozzle_Control : MonoBehaviour
     // TO get access to the simEnv, and thus to the 'shipUseKeyboardControl' SimSettingBool variable
     public UniverseRunner universe;
 
-    float nozzleThrust_Power = 10;
+    float nozzleThrust_Power = 3;
     float nozzleLowerBound = -10;
     float nozzleUpperBound = 10;
     //================
@@ -23,6 +23,7 @@ public class MainNozzle_Control : MonoBehaviour
     float pitchAngle_min, pitchAngle_max;
     //================
     VisualEffect mainNozzleVFX;
+    Spaceship spaceship;
 
     private float nozzleThrustValue;
     private float[] targetedAngles;
@@ -33,6 +34,8 @@ public class MainNozzle_Control : MonoBehaviour
         nozzleThrustValue = 0f;
         targetedAngles = new float[2];
         targetedAngles[0] = targetedAngles[1] = 0f;
+
+        spaceship = transform.parent.gameObject.GetComponent<Spaceship>();
 
         if(universe == null) {
             Debug.LogWarning("The 'UniverseRunner' script has not been assgined in the MainNozzle_Control script.\n The default control (using keyboard) have been assgined for the spaceship.\nIf you are in the UI main menu, DISREGARD THIS MESSAGE");
@@ -97,6 +100,16 @@ public class MainNozzle_Control : MonoBehaviour
 
     public IEnumerator FireEngine(float[] raw_inputs_array, float rawThrustValue)
     {
+        if(spaceship != null)
+        {
+            if(spaceship.shipRBConstraints_areOn)
+            {
+                Rigidbody rb = spaceship.GetComponent<Rigidbody>();
+                rb.constraints = RigidbodyConstraints.None;
+                spaceship.shipRBConstraints_areOn = false;
+            }
+        }
+
         nozzleThrustValue = rawThrustValue;
         targetedAngles = raw_inputs_array;
 

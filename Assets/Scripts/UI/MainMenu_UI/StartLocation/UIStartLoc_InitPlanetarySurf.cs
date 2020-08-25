@@ -221,7 +221,8 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         }
         
         launchPad_GO.name = lp_dict[LaunchPad.launchPadParams.name];
-        launchPad_GO.transform.parent = planetMap.gameObject.transform;
+        //launchPad_GO.transform.parent = planetMap.gameObject.transform;
+        launchPad_GO.transform.SetParent(planetMap.gameObject.transform, true);
 
         Button launchPad_btn = launchPad_GO.GetComponent<Button>();
         launchPad_btn.onClick.AddListener(delegate { OnLaunchPadClick(launchPad); });

@@ -165,7 +165,11 @@ public class TerrainFace
                     groundGO.transform.parent = celestialBody.transform;
                     groundGO.transform.localRotation = Quaternion.identity;
                     // NEED TO TAKE INTO ACCOUNT THE FLATENNING OF THE CELESTIAL BODY FOR THE POSITION
-                    groundGO.transform.localPosition = Vector3.zero;
+                    double geoRad = Spaceship.GetGeocentricRadiusFromShipPos(celestialBody, activeShip.position);
+                    double equaRad = celestialBodySettingsScript.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
+                    double ratioRadius = (1d-geoRad/equaRad)*14d;
+                    Vector3d dir = -ratioRadius*(new Vector3d(activeShip.position) - new Vector3d(celestialBody.transform.position));
+                    groundGO.transform.localPosition = (Vector3)dir;
                     //================
                     groundGO.layer = 9;
                     MeshRenderer meshRenderer = groundGO.GetComponent<MeshRenderer>();

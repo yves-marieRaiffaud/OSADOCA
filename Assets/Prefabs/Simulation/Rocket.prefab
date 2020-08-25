@@ -459,6 +459,7 @@ MonoBehaviour:
   settings: {fileID: 11400000, guid: bce1d11779f1fcc4d87f267e35648035, type: 2}
   foldoutFlyingObjInfoPanel: 1
   _orbitalParams: {fileID: 11400000, guid: 324388c31741f0046a4e62e95cb59e3b, type: 2}
+  shipRBConstraints_areOn: 0
 --- !u!1 &6453183603802457294
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,7 +12,6 @@ public class FlyingObj
     public FlyingObj(UniverseRunner universeRunnerInstance)
     {
         universe = universeRunnerInstance;
-        
     }
     //===============================================================================
     //===============================================================================
@@ -87,14 +86,14 @@ public class FlyingObj
             {
                 // Init position of the ship and return == do not init any orbit
                 InitializeBodyPosition<T1, T2>(body);
-                InitializeOrbitalPredictor<T1, T2>(body, initOrbitalPredictor);
+                //InitializeOrbitalPredictor<T1, T2>(body, initOrbitalPredictor);
                 return;
             }
         }
 
         InitializeOrbit<T1, T2>(body);
         //Debug.Log("initOrbitalPredictor = " + initOrbitalPredictor);
-        InitializeOrbitalPredictor<T1, T2>(body, initOrbitalPredictor);
+        //InitializeOrbitalPredictor<T1, T2>(body, initOrbitalPredictor);
         InitializeBodyPosition<T1, T2>(body);
         InitializeOrbitalSpeed<T1, T2>(body);
         InitializeDirVecLineRenderers<T1, T2>(body);

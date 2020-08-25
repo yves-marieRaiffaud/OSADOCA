@@ -295,7 +295,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     private OrbitalParams Create_OrbitalParams_File()
     {
         //OrbitalParams orbitalParams = (OrbitalParams)OrbitalParams.CreateInstance("OrbitalParams");
-        OrbitalParams orbitalParams = new OrbitalParams();
+        OrbitalParams orbitalParams = ScriptableObject.CreateInstance<OrbitalParams>();
         orbitalParams.drawOrbit = true;
         orbitalParams.drawDirections = false;
         orbitalParams.orbitDrawingResolution = 500;

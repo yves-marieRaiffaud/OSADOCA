@@ -17,7 +17,7 @@ GameObject:
   m_TagString: Planet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 16
   m_IsActive: 1
 --- !u!4 &7958574682498467471
 Transform:
@@ -118,8 +118,13 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 0
+  _gravPullList: []
   spawnAsSimpleSphere: 0
   showCelestialBodyInfoPanel: 1
   planetEditorFoldout: 0
   distanceToPlayer: 0
   distanceToPlayerPow2: 0
+  planetGenerationCoroutineIsRunning: 0
+  addMeshColliders: 0
+  forceNonLODSphere: 0
+  forceLODSphere: 1
