@@ -141,10 +141,9 @@ public class UniverseRunner : MonoBehaviour
                 case goTags.Star:
                     obj.position = Vector3.zero; // Position the Sun at the center of the Universe
                     CelestialBody starBody = obj.GetComponent<CelestialBody>();
-
                     // Modifying the radius of the sun, else it will be too large to be rendered
-                    UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet][CelestialBodyParamsBase.planetaryParams.radius.ToString()].value = 8_000d;
-                    UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet][CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value = 8_000d;
+                    //UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet][CelestialBodyParamsBase.planetaryParams.radius.ToString()].value = 8_000d;
+                    //UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet][CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value = 8_000d;
                     starBody.AwakeCelestialBody(UniCsts.planetsDict[starBody.settings.chosenPredifinedPlanet]);
                     break;
 

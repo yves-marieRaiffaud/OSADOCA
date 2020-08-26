@@ -39,11 +39,11 @@ public static class UniCsts
     public const double m2km2pl2u = m2km * pl2u; // To convert meters to unity units for SPACESHIPS
 
     // u2au = 1000 ==> 1000 unity units == 1 AU
-    public const double au2u = 100_000d; // 1 AU (150M km) translated into the unity coordinates system. 1au == 1000f
+    public const double au2u = 7_500_000d; //100_000 // 1 AU (150M km) translated into the unity coordinates system. 1au == 1000f
     public const double u2au = 1d/au2u;
 
     // u2pl=2f ==> 1 unity unit == 2km of the radius of a planet
-    public const double u2pl = 2d; // Conversion between the planetary scale and the unit coordinate system.
+    public const double u2pl = 20d; // 2 // Conversion between the planetary scale and the unit coordinate system.
     public const double pl2u = 1d/u2pl;
 
     // Only 6 levels in this array as the first distance is '+infinity' for level 0
@@ -55,7 +55,7 @@ public static class UniCsts
     public const string sphereNoLODTemplate_GO = "Sphere_noLOD_Template";
 
     // u2sh=0.005 ==> 1 unity unit == 10 m of the spaceship (with u2pl == 2d == 2km)
-    public const double u2sh = 10d / (u2pl * km2m);
+    public const double u2sh = 10d / (u2pl * km2m); // 10
     public const double sh2u = 1d/u2sh;
 
     // m2real=1000f ==> 1 mass unit == 1000f kg in real data

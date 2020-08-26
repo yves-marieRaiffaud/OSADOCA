@@ -517,7 +517,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             sunPointLight.shadows = LightShadows.Soft;
             sunPointLight.cullingMask |= 1 << LayerMask.NameToLayer("Everything");
             sunPointLight.cullingMask &=  ~(1 << LayerMask.NameToLayer("Orbit"));
-            sunPointLight.lightmapBakeType = LightmapBakeType.Baked;
+            //sunPointLight.lightmapBakeType = LightmapBakeType.Baked;
             sunPointLight.intensity = 10f;
         }
     }
