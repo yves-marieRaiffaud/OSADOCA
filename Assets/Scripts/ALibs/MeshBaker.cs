@@ -4,6 +4,8 @@ using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
+// All credit goes to Sebastian Lague for this script
+
 public static class MeshBaker
 {
 

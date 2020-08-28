@@ -150,6 +150,7 @@
      <Compile Include="Assets\Scripts\CelestialBody\CelestialBody.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\CelestialBodyParamsBase.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\CelestialBodySettings.cs" />
+     <Compile Include="Assets\Scripts\CelestialBody\LODSpheresGenerator.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\Presets.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\SphereMesh.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\TerrainFace.cs" />

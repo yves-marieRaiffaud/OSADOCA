@@ -311,9 +311,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
                 meshObj.transform.position = transform.position;
 
                 meshObj.AddComponent<MeshRenderer>().sharedMaterial = settings.bodyMaterial;
-                if(addMeshColliders) {
-                    InitMeshColliders(meshObj);
-                }
                 meshFilters[i] = meshObj.AddComponent<MeshFilter>();
                 meshFilters[i].sharedMesh = new Mesh();
                 meshFilters[i].sharedMesh.name = directionsDict[directionsDict.Keys.ElementAt(i)].ToString() + "_mesh";
@@ -352,8 +349,9 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         {
             face.ConstructTree();
             if(addMeshColliders) {
-                MeshCollider mCollider = meshFilters[idx].gameObject.GetComponent<MeshCollider>();
-                mCollider.sharedMesh = face.mesh;
+                Mesh collisionMesh = face.mesh;
+                MeshBaker.BakeMeshImmediate(collisionMesh);
+                InitMeshColliders(meshFilters[idx].gameObject, collisionMesh);
             }
             idx += 1;
         }
@@ -557,10 +555,11 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         return new LaunchPad(LaunchPadList.GetOriginLaunchPadDict(name));
     }
 
-    public void InitMeshColliders(GameObject faceGO)
+    public void InitMeshColliders(GameObject faceGO, Mesh mesh)
     {
         MeshCollider meshCollider = (MeshCollider)UsefulFunctions.CreateAssignComponent(typeof(MeshCollider), faceGO);
-        meshCollider.convex = true;
+        meshCollider.convex = false;
+        meshCollider.sharedMesh = mesh;
 
         PhysicMaterial sp_c_Material = new PhysicMaterial();
         sp_c_Material.bounciness = 0f;

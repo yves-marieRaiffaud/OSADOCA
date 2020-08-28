@@ -101,21 +101,25 @@ public class UniverseRunner : MonoBehaviour
     {
         // Initialize everything of the rigidbody except its mass as its need to access the object Settings (done in 'Start' of the UniverseRunner)
         Rigidbody rb = (Rigidbody) UsefulFunctions.CreateAssignComponent(typeof(Rigidbody), physicGameObject);
-        rb.mass = rbMass;
+        if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
+            rb.mass = 1e9f;
+        else
+            rb.mass = 10_000f;
         rb.angularDrag = 0f;
         rb.drag = 0f;
-        rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
-        if(UsefulFunctions.GoTagAndStringAreEqual(goTags.Spaceship, physicGameObject.tag))
-        {
-            rb.interpolation = RigidbodyInterpolation.Interpolate;
-        }
-        else {
-            rb.interpolation = RigidbodyInterpolation.None;
-        }
-        
+        if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
+            rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        else
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.constraints = RigidbodyConstraints.None;
         rb.detectCollisions = true;
-        rb.isKinematic = false;
+        if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
+            rb.isKinematic = true;
+        else
+            rb.isKinematic = false;
+        
         rb.useGravity = false;
     }
 

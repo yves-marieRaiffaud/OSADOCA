@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// All credit goes to Sebastian Lague for this script
+
 public class StarDome : MonoBehaviour
 {
 	public MeshRenderer starPrefab;

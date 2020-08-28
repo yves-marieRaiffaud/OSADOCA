@@ -153,7 +153,7 @@ public class TerrainFace
                 mustRemovethisChild = true;
                 hasFoundLOD7Child = true;
                 //===================================
-                GameObject groundGO;
+                /*GameObject groundGO;
                 MeshCollider meshCollider;
                 if(celestialBody.transform.Find("ground"))
                 {
@@ -194,7 +194,7 @@ public class TerrainFace
                 tmpMesh.triangles = child.triangles;
                 tmpMesh.normals = verticesAndTriangles.Item5;
                 meshFilter.mesh = tmpMesh;
-                meshCollider.sharedMesh = tmpMesh;
+                meshCollider.sharedMesh = tmpMesh;*/
                 //========================================
                 //========================================
                 //===============TEST=====================
