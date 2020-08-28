@@ -140,6 +140,7 @@
      <Compile Include="Assets\Additional\TEXDraw\Script\TEXLinkBase.cs" />
      <Compile Include="Assets\Scripts\ALibs\JsonHelper.cs" />
      <Compile Include="Assets\Scripts\ALibs\Mathd.cs" />
+     <Compile Include="Assets\Scripts\ALibs\MeshBaker.cs" />
      <Compile Include="Assets\Scripts\ALibs\Obj2Terrain.cs" />
      <Compile Include="Assets\Scripts\ALibs\Quaterniond.cs" />
      <Compile Include="Assets\Scripts\ALibs\UsefulFunctions.cs" />
@@ -150,6 +151,7 @@
      <Compile Include="Assets\Scripts\CelestialBody\CelestialBodyParamsBase.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\CelestialBodySettings.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\Presets.cs" />
+     <Compile Include="Assets\Scripts\CelestialBody\SphereMesh.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\TerrainFace.cs" />
      <Compile Include="Assets\Scripts\Communication\ComChannels\TCPServer.cs" />
      <Compile Include="Assets\Scripts\Communication\ComChannels\UDPReceiver.cs" />
@@ -192,6 +194,7 @@
      <Compile Include="Assets\Scripts\UI\Simulation_UI\simUI.cs" />
      <Compile Include="Assets\Scripts\UnityMainThreadDispatcher.cs" />
      <Compile Include="Assets\Scripts\Universe\SimulationEnv.cs" />
+     <Compile Include="Assets\Scripts\Universe\StarDome.cs" />
      <Compile Include="Assets\Scripts\Universe\StopWatch.cs" />
      <Compile Include="Assets\Scripts\Universe\UniCsts.cs" />
      <Compile Include="Assets\Scripts\Universe\Units.cs" />

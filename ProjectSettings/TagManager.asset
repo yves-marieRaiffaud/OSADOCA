@@ -8,6 +8,7 @@ TagManager:
   - Star
   - Spaceship
   - Orbit
+  - StarDome
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - Spaceship
   - CelestialBody
   - Orbit
-  - 
+  - StarDome
   - 
   - 
   - 
