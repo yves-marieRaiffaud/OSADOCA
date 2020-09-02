@@ -139,6 +139,9 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     }
     //===============================
     [HideInInspector] public bool shipRBConstraints_areOn;
+    [HideInInspector] private bool orbitsAreDisplayed;
+    [HideInInspector] public Camera mainCamera;
+    [HideInInspector] public Camera cameraBack;
     //===============================
     void FixedUpdate()
     {
@@ -155,12 +158,48 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
             shipRBConstraints_areOn = false;
         }
     }
+
+    void LateUpdate()
+    {
+        if(Input.GetKey(KeyCode.O))
+        {
+            orbitsAreDisplayed = !orbitsAreDisplayed;
+            ToggleOrbitsOnCameras(orbitsAreDisplayed);
+        }
+    }
+
+    private void ToggleOrbitsOnCameras(bool orbitsAreDisplayed)
+    {
+        if(mainCamera == null || cameraBack == null)
+            return;
+
+        if(orbitsAreDisplayed) {
+            mainCamera.cullingMask |= 1 << LayerMask.NameToLayer("Orbit");
+            cameraBack.cullingMask |= 1 << LayerMask.NameToLayer("Orbit");
+        }
+        else {
+            mainCamera.cullingMask &=  ~(1 << LayerMask.NameToLayer("Orbit"));
+            cameraBack.cullingMask &=  ~(1 << LayerMask.NameToLayer("Orbit"));
+        }
+    }
     //===============================
     //===============================
     void Awake()
     {
         spaceshipController = null;
         previousRotation = new Quaterniond(transform.rotation);
+        orbitsAreDisplayed = false;
+
+        if(transform.Find("Main Camera") != null)
+            mainCamera = transform.Find("Main Camera").GetComponent<Camera>();
+        else
+            Debug.LogWarning("'MainCamera' Camera component has not been found");
+
+        if(transform.Find("CameraBack") != null)
+            cameraBack = transform.Find("CameraBack").GetComponent<Camera>();
+        else
+            Debug.LogWarning("'CameraBack' Camera component has not been found");
+
         if(spawnAsUIRocket)
         {
             transform.Find("Main Camera").gameObject.SetActive(false);

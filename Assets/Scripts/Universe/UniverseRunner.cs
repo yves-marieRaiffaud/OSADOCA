@@ -107,18 +107,20 @@ public class UniverseRunner : MonoBehaviour
             rb.mass = 10_000f;
         rb.angularDrag = 0f;
         rb.drag = 0f;
-        if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
+        /*if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
             rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
         else
-            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;*/
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.constraints = RigidbodyConstraints.None;
         rb.detectCollisions = true;
-        if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
+        /*if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
             rb.isKinematic = true;
         else
-            rb.isKinematic = false;
+            rb.isKinematic = false;*/
+        rb.isKinematic = false;
         
         rb.useGravity = false;
     }
