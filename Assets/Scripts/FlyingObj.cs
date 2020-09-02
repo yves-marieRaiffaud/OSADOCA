@@ -328,6 +328,7 @@ public class FlyingObj
                 break;
 
             case UniverseRunner.goTags.Planet:
+                // As the body RigidBody is kinematic, we compute the updated position to then use: 'rb.MovePosition()'
                 CelestialBody celestBody = obj.GetComponent<CelestialBody>();
                 if(celestBody.orbitalParams.orbitedBody != null)
                 {
@@ -337,6 +338,7 @@ public class FlyingObj
                 break;
             
             case UniverseRunner.goTags.Spaceship:
+                // The RigidBody is not Kinematic, we compute the acceleration to then use: 'rb.AddForce(mode=Acceleration)' 
                 Spaceship ship = obj.GetComponent<Spaceship>();
                 orbitedBody = ship.orbitalParams.orbitedBody.GetComponent<CelestialBody>();
                 GravitationalUpdate<Spaceship, SpaceshipSettings>(orbitedBody, ship);
@@ -352,6 +354,7 @@ public class FlyingObj
             case UniverseRunner.goTags.Planet:
                 CelestialBody celestBody = obj.GetComponent<CelestialBody>();
                 ApplyRigbidbodyAccUpdate<CelestialBody, CelestialBodySettings>(celestBody, celestBody.settings);
+                //ApplyRigbidbodyPositionUpdate<CelestialBody, CelestialBodySettings>(celestBody, celestBody.settings);
                 break;
             
             case UniverseRunner.goTags.Spaceship:
@@ -487,10 +490,6 @@ public class FlyingObj
         {
             orbitingBody.gravPullList[j] = bodiesGravPull_ALL[j];
         }
-        //=============
-        //Debug.Log(orbitingBody.orbitalParams.name);
-        //Debug.Log(string.Join(Environment.NewLine, orbitingBody.gravPullList));
-        //Debug.Log("===================");
     }
     //=====================================================
     //=====================================================
@@ -552,6 +551,13 @@ public class FlyingObj
             orbitedBodyVel = orbitedBody.orbitedBodyRelativeVel;
         } 
         rb.velocity = (Vector3)(castBody.orbitedBodyRelativeVel*scaleFactor + orbitedBodyVel*UniCsts.m2km2au2u);
+    }
+
+    public void ApplyRigbidbodyPositionUpdate<T1, T2>(T1 castBody, T2 settings)
+    where T1: FlyingObjCommonParams where T2: FlyingObjSettings
+    {
+        Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
+        rb.MovePosition((Vector3)castBody.realPosition);
     }
     //===============================================================================
     //===============================================================================

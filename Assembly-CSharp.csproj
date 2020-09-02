@@ -138,10 +138,10 @@
      <Compile Include="Assets\Additional\TEXDraw\Script\TEXDraw3D.cs" />
      <Compile Include="Assets\Additional\TEXDraw\Script\TEXLink.cs" />
      <Compile Include="Assets\Additional\TEXDraw\Script\TEXLinkBase.cs" />
+     <Compile Include="Assets\Scripts\ALibs\ComputeHelper.cs" />
      <Compile Include="Assets\Scripts\ALibs\JsonHelper.cs" />
      <Compile Include="Assets\Scripts\ALibs\Mathd.cs" />
      <Compile Include="Assets\Scripts\ALibs\MeshBaker.cs" />
-     <Compile Include="Assets\Scripts\ALibs\Obj2Terrain.cs" />
      <Compile Include="Assets\Scripts\ALibs\Quaterniond.cs" />
      <Compile Include="Assets\Scripts\ALibs\UsefulFunctions.cs" />
      <Compile Include="Assets\Scripts\ALibs\Vector2d.cs" />
@@ -194,6 +194,7 @@
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\UIMainMenu.cs" />
      <Compile Include="Assets\Scripts\UI\Simulation_UI\simUI.cs" />
      <Compile Include="Assets\Scripts\UnityMainThreadDispatcher.cs" />
+     <Compile Include="Assets\Scripts\Universe\LODHandler.cs" />
      <Compile Include="Assets\Scripts\Universe\SimulationEnv.cs" />
      <Compile Include="Assets\Scripts\Universe\StarDome.cs" />
      <Compile Include="Assets\Scripts\Universe\StopWatch.cs" />

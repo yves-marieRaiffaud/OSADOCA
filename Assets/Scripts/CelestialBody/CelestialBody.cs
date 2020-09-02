@@ -202,13 +202,13 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
         // InitializeOrbitalParams cannot be here as the CreateComponent function will not be called at this point. Must be called after the Awake() and Start()
         GetDistancesToCamera();
-        GeneratePlanet();
-        ApplyFlatenningScale();
+        //GeneratePlanet();
+        //ApplyFlatenningScale();
         CreateAssignSunPointLight();
         UpdateLODDistances();
 
-        planetGenerationCoroutine = PlanetGenerationLoop();
-        SwitchFromLODSystemToNonLODSphere();
+        //planetGenerationCoroutine = PlanetGenerationLoop();
+        //SwitchFromLODSystemToNonLODSphere();
     }
 
     private void UpdateLODDistances()
@@ -389,7 +389,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         // 'spawnAsSimpleSphere' only refers to the UI SimpleSphere, not the NON-LOD sphere 
         if(spawnAsSimpleSphere) { return; }
         GetDistancesToCamera();
-        CheckUpdate_LOD_NonLOD_System();
+        //CheckUpdate_LOD_NonLOD_System();
 
         if(!UsefulFunctions.DoublesAreEqual(settings.rotationSpeed, 0d))
         {
@@ -541,7 +541,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         double polarRad = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value;
         //=======
         double geocentricRad = LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude*UniCsts.deg2rad) * UniCsts.pl2u;
-        double additionalHeight = 0d * UniCsts.m2km * UniCsts.pl2u; 
+        double additionalHeight = 20d * UniCsts.m2km * UniCsts.pl2u; 
         //Debug.Log("geocentricRad = " + geocentricRad);
         //Debug.Log("sphereUnitPos: " + sphereUnitPos);
         // Direction of the normal to the planet surface of the spawn location (the chosen starting launchPad)
@@ -558,7 +558,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     public void InitMeshColliders(GameObject faceGO, Mesh mesh)
     {
         MeshCollider meshCollider = (MeshCollider)UsefulFunctions.CreateAssignComponent(typeof(MeshCollider), faceGO);
-        meshCollider.convex = false;
+        meshCollider.convex = true;
         meshCollider.sharedMesh = mesh;
 
         PhysicMaterial sp_c_Material = new PhysicMaterial();

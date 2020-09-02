@@ -5,13 +5,14 @@ using UnityEngine;
 //[ExecuteInEditMode]
 public class LODSpheresGenerator : MonoBehaviour
 {
-	/*public enum PreviewMode { LOD0, LOD1, LOD2, CollisionRes }
+	public enum PreviewMode { LOD0, LOD1, LOD2, CollisionRes }
 	public ResolutionSettings resolutionSettings;
 	public PreviewMode previewMode;
 
 	public bool logTimers;
 
-	public CelestialBodySettings body;
+	public CelestialBodySettings settings;
+	//public CelestialBodySettings body;
 
 	bool debugDoubleUpdate = true;
 	int debug_numUpdates;
@@ -19,7 +20,7 @@ public class LODSpheresGenerator : MonoBehaviour
 	// Private variables
 	Mesh previewMesh;
 	Mesh collisionMesh;
-	Mesh[] lodMeshes;
+	public Mesh[] lodMeshes;
 
 	ComputeBuffer vertexBuffer;
 
@@ -35,7 +36,7 @@ public class LODSpheresGenerator : MonoBehaviour
 	Material terrainMatInstance;
 
 	static Dictionary<int, SphereMesh> sphereGenerators;
-
+	
 	void Start ()
     {
 		if (InGameMode)
@@ -76,11 +77,9 @@ public class LODSpheresGenerator : MonoBehaviour
 			GenerateCollisionMesh (resolutionSettings.collider);
 
 			// Create terrain renderer and set shading properties on the instanced material
-			terrainMatInstance = new Material (body.shading.terrainMaterial);
-			body.shading.Initialize (body.shape);
-			body.shading.SetTerrainProperties (terrainMatInstance, heightMinMax, BodyScale);
-			GameObject terrainHolder = GetOrCreateMeshObject ("Terrain Mesh", null, terrainMatInstance);
-			terrainMeshFilter = terrainHolder.GetComponent<MeshFilter> ();
+			terrainMatInstance = new Material(settings.bodyMaterial);
+			GameObject terrainHolder = GetOrCreateMeshObject("Terrain Mesh", null, terrainMatInstance);
+			terrainMeshFilter = terrainHolder.GetComponent<MeshFilter>();
 
 			// Add collider
 			MeshCollider collider;
@@ -91,7 +90,7 @@ public class LODSpheresGenerator : MonoBehaviour
 			var collisionBakeTimer = System.Diagnostics.Stopwatch.StartNew ();
 			MeshBaker.BakeMeshImmediate (collisionMesh);
 			collider.sharedMesh = collisionMesh;
-			LogTimer (collisionBakeTimer, "Mesh collider");
+			LogTimer(collisionBakeTimer, "Mesh collider");
 
 		} else {
 			Debug.Log ("Could not generate mesh");
@@ -105,8 +104,8 @@ public class LODSpheresGenerator : MonoBehaviour
 	void HandleEditModeGeneration ()
     {
 		if (InEditMode) {
-			ComputeHelper.shouldReleaseEditModeBuffers -= ReleaseAllBuffers;
-			ComputeHelper.shouldReleaseEditModeBuffers += ReleaseAllBuffers;
+			//ComputeHelper.shouldReleaseEditModeBuffers -= ReleaseAllBuffers;
+			//ComputeHelper.shouldReleaseEditModeBuffers += ReleaseAllBuffers;
 		}
 
 		if (CanGenerateMesh ()) {
@@ -125,10 +124,10 @@ public class LODSpheresGenerator : MonoBehaviour
 			// If only shading noise has changed, update it separately from shape to save time
 			else if (shadingNoiseSettingsUpdated) {
 				shadingNoiseSettingsUpdated = false;
-				ComputeHelper.CreateStructuredBuffer<Vector3> (ref vertexBuffer, previewMesh.vertices);
-				body.shading.Initialize (body.shape);
-				Vector4[] shadingData = body.shading.GenerateShadingData (vertexBuffer);
-				previewMesh.SetUVs (0, shadingData);
+				//ComputeHelper.CreateStructuredBuffer<Vector3> (ref vertexBuffer, previewMesh.vertices);
+				//body.shading.Initialize (body.shape);
+				//Vector4[] shadingData = body.shading.GenerateShadingData (vertexBuffer);
+				//previewMesh.SetUVs (0, shadingData);
 
 				// Sometimes when changing a colour property, invalid data is returned from compute shader
 				// Running the shading a second time fixes it.
@@ -146,16 +145,17 @@ public class LODSpheresGenerator : MonoBehaviour
 		}
 
 		// Update shading
-		if (body.shading) {
+		/*if (body.shading) {
 			// Set material properties
 			body.shading.Initialize (body.shape);
 			body.shading.SetTerrainProperties (body.shading.terrainMaterial, heightMinMax, BodyScale);
-		}
+		}*/
 
 		ReleaseAllBuffers (); //
 	}
 
 	public void SetLOD (int lodIndex) {
+		Debug.Log("activeLODIndex = " + activeLODIndex + "; terrainMeshFilter = " + terrainMeshFilter);
 		if (lodIndex != activeLODIndex && terrainMeshFilter) {
 			activeLODIndex = lodIndex;
 			terrainMeshFilter.sharedMesh = lodMeshes[lodIndex];
@@ -171,7 +171,7 @@ public class LODSpheresGenerator : MonoBehaviour
 	}
 
 	void OnValidate () {
-		if (body) {
+		/*if (body) {
 			if (body.shape) {
 				body.shape.OnSettingChanged -= OnShapeSettingChanged;
 				body.shape.OnSettingChanged += OnShapeSettingChanged;
@@ -185,7 +185,7 @@ public class LODSpheresGenerator : MonoBehaviour
 		if (resolutionSettings != null) {
 			resolutionSettings.ClampResolutions ();
 		}
-		OnShapeSettingChanged ();
+		OnShapeSettingChanged ();*/
 	}
 
 	void Dummy () {
@@ -195,7 +195,7 @@ public class LODSpheresGenerator : MonoBehaviour
 		// I don't know why...
 		Vector3[] vertices = new Vector3[] { Vector3.zero };
 		ComputeHelper.CreateStructuredBuffer<Vector3> (ref vertexBuffer, vertices);
-		body.shape.CalculateHeights (vertexBuffer);
+		//body.shape.CalculateHeights (vertexBuffer);
 	}
 
 	// Generates terrain mesh based on heights generated by the Shape object
@@ -208,10 +208,10 @@ public class LODSpheresGenerator : MonoBehaviour
 		float edgeLength = (vertices[triangles[0]] - vertices[triangles[1]]).magnitude;
 
 		// Set heights
-		float[] heights = body.shape.CalculateHeights (vertexBuffer);
+		//float[] heights = body.shape.CalculateHeights(vertexBuffer);
 
 		// Perturb vertices to give terrain a less perfectly smooth appearance
-		if (body.shape.perturbVertices && body.shape.perturbCompute) {
+		/*if (body.shape.perturbVertices && body.shape.perturbCompute) {
 			ComputeShader perturbShader = body.shape.perturbCompute;
 			float maxperturbStrength = body.shape.perturbStrength * edgeLength / 2;
 
@@ -222,26 +222,26 @@ public class LODSpheresGenerator : MonoBehaviour
 			ComputeHelper.Run (perturbShader, vertices.Length);
 			Vector3[] pertData = new Vector3[vertices.Length];
 			vertexBuffer.GetData (vertices);
-		}
+		}*/
 
 		// Calculate terrain min/max height and set heights of vertices
-		float minHeight = float.PositiveInfinity;
+		/*float minHeight = float.PositiveInfinity;
 		float maxHeight = float.NegativeInfinity;
 		for (int i = 0; i < heights.Length; i++) {
 			float height = heights[i];
 			vertices[i] *= height;
 			minHeight = Mathf.Min (minHeight, height);
 			maxHeight = Mathf.Max (maxHeight, height);
-		}
+		}*/
 
 		// Create mesh
-		CreateMesh (ref mesh, vertices.Length);
+		CreateMesh(ref mesh, vertices.Length);
 		mesh.SetVertices (vertices);
 		mesh.SetTriangles (triangles, 0, true);
 		mesh.RecalculateNormals (); //
 
 		// Shading noise data
-		body.shading.Initialize (body.shape);
+		/*body.shading.Initialize (body.shape);
 		Vector4[] shadingData = body.shading.GenerateShadingData (vertexBuffer);
 		mesh.SetUVs (0, shadingData);
 
@@ -254,9 +254,10 @@ public class LODSpheresGenerator : MonoBehaviour
 			Vector3 normal = normals[i];
 			crudeTangents[i] = new Vector4 (-normal.z, 0, normal.x, 1);
 		}
-		mesh.SetTangents (crudeTangents);
+		mesh.SetTangents (crudeTangents);*/
 
-		return new Vector2 (minHeight, maxHeight);
+		return new Vector2 (0f, 0f);
+		//return new Vector2 (minHeight, maxHeight);
 	}
 
 	void GenerateCollisionMesh (int resolution) {
@@ -264,11 +265,11 @@ public class LODSpheresGenerator : MonoBehaviour
 		ComputeHelper.CreateStructuredBuffer<Vector3> (ref vertexBuffer, vertices);
 
 		// Set heights
-		float[] heights = body.shape.CalculateHeights (vertexBuffer);
+		/*float[] heights = body.shape.CalculateHeights (vertexBuffer);
 		for (int i = 0; i < vertices.Length; i++) {
 			float height = heights[i];
 			vertices[i] *= height;
-		}
+		}*/
 
 		// Create mesh
 		CreateMesh (ref collisionMesh, vertices.Length);
@@ -287,7 +288,7 @@ public class LODSpheresGenerator : MonoBehaviour
 	}
 
 	void DrawEditModeMesh () {
-		GameObject terrainHolder = GetOrCreateMeshObject ("Terrain Mesh", previewMesh, body.shading.terrainMaterial);
+		GameObject terrainHolder = GetOrCreateMeshObject ("Terrain Mesh", previewMesh, settings.bodyMaterial);
 	}
 
 	// Gets child object with specified name.
@@ -338,20 +339,6 @@ public class LODSpheresGenerator : MonoBehaviour
 
 	}
 
-	// Radius of the ocean (0 if no ocean exists)
-	public float GetOceanRadius () {
-		if (!body.shading.hasOcean) {
-			return 0;
-		}
-		return UnscaledOceanRadius * BodyScale;
-	}
-
-	float UnscaledOceanRadius {
-		get {
-			return Mathf.Lerp (heightMinMax.x, 1, body.shading.oceanLevel);
-		}
-	}
-
 	public float BodyScale {
 		get {
 			// Body radius is determined by the celestial body class,
@@ -381,12 +368,12 @@ public class LODSpheresGenerator : MonoBehaviour
 
 	void ReleaseAllBuffers () {
 		ComputeHelper.Release (vertexBuffer);
-		if (body.shape) {
+		/*if (body.shape) {
 			body.shape.ReleaseBuffers ();
 		}
 		if (body.shading) {
 			body.shading.ReleaseBuffers ();
-		}
+		}*/
 	}
 
 	void OnDestroy () {
@@ -394,7 +381,7 @@ public class LODSpheresGenerator : MonoBehaviour
 	}
 
 	bool CanGenerateMesh () {
-		return ComputeHelper.CanRunEditModeCompute && body.shape && body.shape.heightMapCompute;
+		return ComputeHelper.CanRunEditModeCompute;
 	}
 
 	void LogTimer (System.Diagnostics.Stopwatch sw, string text) {
@@ -449,6 +436,6 @@ public class LODSpheresGenerator : MonoBehaviour
 			lod2 = Mathf.Min (maxAllowedResolution, lod2);
 			collider = Mathf.Min (maxAllowedResolution, collider);
 		}
-	}*/
+	}
 
 }

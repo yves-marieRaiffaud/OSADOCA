@@ -190,6 +190,10 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         previousRotation = new Quaterniond(transform.rotation);
         orbitsAreDisplayed = false;
 
+        MeshCollider collider = GetComponent<MeshCollider>();
+        collider.enabled = false;
+        collider.enabled = true;
+
         if(transform.Find("Main Camera") != null)
             mainCamera = transform.Find("Main Camera").GetComponent<Camera>();
         else

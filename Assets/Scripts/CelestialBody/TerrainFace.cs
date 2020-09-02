@@ -217,14 +217,14 @@ public class TerrainFace
 
                 //========================================
                 //========================================
-                if(celestialBody.name == "Earth")
+                /*if(celestialBody.name == "Earth")
                 {
                     Debug.Log("vertices: \n" + string.Join("\n", verticesAndTriangles.Item1));
                     Debug.Log("triangles: \n" + string.Join("\n", child.triangles));
                     Debug.Log("borderVertices: \n" + string.Join("\n", verticesAndTriangles.Item4));
                     Debug.Log("borderTriangles: \n" + string.Join("\n", child.borderTriangles));
                     Debug.Log("========================");
-                }
+                }*/
             }
 
             if(!mustRemovethisChild)

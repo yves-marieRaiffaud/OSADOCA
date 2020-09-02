@@ -7,6 +7,9 @@ using System.IO;
 [DisallowMultipleComponent, System.Serializable]
 public class UniverseRunner : MonoBehaviour
 {
+
+    public LODHandler lODHandler;
+    public LODSpheresGenerator.ResolutionSettings resolutionSettings;
     //======
     [HideInInspector] public bool simulationEnvFoldout=true; // For universeRunner custom editor
     //======
@@ -101,28 +104,29 @@ public class UniverseRunner : MonoBehaviour
     {
         // Initialize everything of the rigidbody except its mass as its need to access the object Settings (done in 'Start' of the UniverseRunner)
         Rigidbody rb = (Rigidbody) UsefulFunctions.CreateAssignComponent(typeof(Rigidbody), physicGameObject);
+        rb.drag = 0f;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString())) {
+            rb.angularDrag = 0.05f;
+            rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        }
+        else {
+            rb.angularDrag = 10f;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+        }
+
+        rb.constraints = RigidbodyConstraints.None;
+        if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
+            rb.isKinematic = true;
+        else
+            rb.isKinematic = false;
+
         if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
             rb.mass = 1e9f;
         else
-            rb.mass = 10_000f;
-        rb.angularDrag = 0f;
-        rb.drag = 0f;
-        /*if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
-            rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
-        else
-            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;*/
-        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
-        rb.constraints = RigidbodyConstraints.None;
-        rb.detectCollisions = true;
-        /*if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
-            rb.isKinematic = true;
-        else
-            rb.isKinematic = false;*/
-        rb.isKinematic = false;
-        
+            rb.mass = 10f;
         rb.useGravity = false;
+        rb.detectCollisions = true;
     }
 
     public void AddGameObjectToPhysicsFolders(GameObject gameObjectToAdd, GameObject parentFolder)
@@ -155,6 +159,18 @@ public class UniverseRunner : MonoBehaviour
 
                 case goTags.Planet:
                     CelestialBody celestBody = obj.GetComponent<CelestialBody>();
+
+                    GameObject holder = new GameObject("Body Generator");
+                    var generator = holder.AddComponent<LODSpheresGenerator>();
+                    generator.transform.parent = celestBody.transform;
+                    generator.gameObject.layer = celestBody.gameObject.layer;
+                    generator.transform.localRotation = Quaternion.identity;
+                    generator.transform.localPosition = Vector3.zero;
+                    generator.transform.localScale = (Vector3)(Vector3d.one * celestBody.settings.radiusU);
+                    generator.resolutionSettings = resolutionSettings;
+                    generator.settings = celestBody.settings;
+
+
                     if(GameObject.FindGameObjectsWithTag(goTags.Star.ToString()).Length > 0)
                     {
                         celestBody.AwakeCelestialBody(UniCsts.planetsDict[celestBody.settings.chosenPredifinedPlanet]);
@@ -172,6 +188,7 @@ public class UniverseRunner : MonoBehaviour
                     break;
             }
         }
+        lODHandler.InitLODHandler();
         flyingObjInst.InitGravitationalPullLists();
         //==============================
         if(simEnv.missionTimer != null)
@@ -246,6 +263,5 @@ public class UniverseRunner : MonoBehaviour
             }
         }
     }
-
 
 }
