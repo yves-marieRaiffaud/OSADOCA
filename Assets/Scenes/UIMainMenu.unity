@@ -872,26 +872,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 50258904}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.18867922, g: 0.18867922, b: 0.18867922, a: 0.58431375}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_Texture: {fileID: 8400000, guid: 735c81315b3738f459d41210005c314e, type: 2}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
 --- !u!222 &50258907
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -26649,43 +26646,13 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 557151589851327423, guid: 4f8cbd3b497c7624489bdec67c0b3f7e,
         type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 557151589851327423, guid: 4f8cbd3b497c7624489bdec67c0b3f7e,
-        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4384064439219058762, guid: 4f8cbd3b497c7624489bdec67c0b3f7e,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.x
-      value: -0.00014305118
-      objectReference: {fileID: 0}
-    - target: {fileID: 4384064439219058762, guid: 4f8cbd3b497c7624489bdec67c0b3f7e,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.y
-      value: -0.49934387
-      objectReference: {fileID: 0}
-    - target: {fileID: 4384064439219058762, guid: 4f8cbd3b497c7624489bdec67c0b3f7e,
-        type: 3}
-      propertyPath: m_ConnectedAnchor.z
-      value: -2.2737368e-11
-      objectReference: {fileID: 0}
-    - target: {fileID: 4384064440388701808, guid: 4f8cbd3b497c7624489bdec67c0b3f7e,
-        type: 3}
-      propertyPath: spawnAsUIRocket
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4384064440388701809, guid: 4f8cbd3b497c7624489bdec67c0b3f7e,
         type: 3}
       propertyPath: m_Name
       value: Rocket
-      objectReference: {fileID: 0}
-    - target: {fileID: 4384064440388701809, guid: 4f8cbd3b497c7624489bdec67c0b3f7e,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4384064440388701814, guid: 4f8cbd3b497c7624489bdec67c0b3f7e,
         type: 3}
@@ -26741,16 +26708,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4384064440388701814, guid: 4f8cbd3b497c7624489bdec67c0b3f7e,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.009999998
-      objectReference: {fileID: 0}
-    - target: {fileID: 4384064440388701814, guid: 4f8cbd3b497c7624489bdec67c0b3f7e,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.009999998
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f8cbd3b497c7624489bdec67c0b3f7e, type: 3}
@@ -44523,6 +44480,11 @@ PrefabInstance:
       propertyPath: m_CullingMask.m_Bits
       value: 512
       objectReference: {fileID: 0}
+    - target: {fileID: 8430513295115143511, guid: 54784e818031e9840b85f08421972e08,
+        type: 3}
+      propertyPath: m_TargetTexture
+      value: 
+      objectReference: {fileID: 8400000, guid: 735c81315b3738f459d41210005c314e, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54784e818031e9840b85f08421972e08, type: 3}
 --- !u!1001 &8995394094162067252

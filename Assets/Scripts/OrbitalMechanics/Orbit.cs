@@ -135,6 +135,7 @@ public class Orbit
         lineRenderer.useWorldSpace = false;
         lineRenderer.loop = true;
         lineRenderer.receiveShadows = false;
+        lineRenderer.generateLightingData = true;
         lineRenderer.shadowCastingMode = ShadowCastingMode.Off;
         lineRenderer.widthCurve = AnimationCurve.Constant(0f, 1f, 30f);
         lineRenderer.sharedMaterial = Resources.Load(Filepaths.DEBUG_orbitMaterial, typeof(Material)) as Material;

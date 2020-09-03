@@ -190,10 +190,6 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         previousRotation = new Quaterniond(transform.rotation);
         orbitsAreDisplayed = false;
 
-        MeshCollider collider = GetComponent<MeshCollider>();
-        collider.enabled = false;
-        collider.enabled = true;
-
         if(transform.Find("Main Camera") != null)
             mainCamera = transform.Find("Main Camera").GetComponent<Camera>();
         else
@@ -234,7 +230,11 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         {
             // Will load only the orbitalParams from JSON disk File
             DEBUG_LOAD_ORBITALPARAMS_TO_SCRIPTABLE_OBJ();
-            orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
+            if(universeGO != null && orbitalParams != null) {
+                orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
+            }
+            else
+                orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName+"Planet_UI").GetComponent<CelestialBody>();
         }
 
         if(universeGO != null)
