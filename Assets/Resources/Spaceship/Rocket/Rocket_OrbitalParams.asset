@@ -23,12 +23,12 @@ MonoBehaviour:
   drawDirections: 0
   orbitDrawingResolution: 500
   ra: 10000
-  rp: 10000
-  p: 7862.604685034592
-  e: 0.21373953149654085
-  a: 8239
-  b: 8048.602363143554
-  c: 1761
+  rp: 6578
+  p: 10000
+  e: 0
+  a: 10000
+  b: 10000
+  c: 0
   i: 0
   lAscN: 0
   omega: 0
@@ -36,7 +36,7 @@ MonoBehaviour:
   m0: 0
   l0: 0
   t0: 0
-  period: 7442.567508907675
+  period: 9952.015147857916
   vp:
     x: 1
     y: -1.8657886505126953e-99

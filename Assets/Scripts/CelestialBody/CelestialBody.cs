@@ -6,6 +6,8 @@ using Mathd_Lib;
 
 public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 {
+    public ComputeShader elevationComputeShader;
+
     [HideInInspector] public UniverseRunner universeRunner; // Assigned in the Awake() function
     //=========================================
     public CelestialBodySettings settings;
@@ -123,8 +125,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     [HideInInspector] public bool showCelestialBodyInfoPanel;
     [HideInInspector] public bool planetEditorFoldout;
     //=========================================
-    // Active Camera and distance
-    private Transform universePlayerCamera;
+    // Distance from the CelestialBody to the active Spaceship
     [HideInInspector] public float distanceToPlayer;
     [HideInInspector] public float distanceToPlayerPow2;
     //=========================================
@@ -136,7 +137,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     public bool planetGenerationCoroutineIsRunning = false;
     private float nonLODTransitionDistance; // in unity units, using the 'pl2u' scaling factor
     string sphereTemplateCelestBodyName = "sphereTemplate";
-    public bool addMeshColliders = true;
     [Header("Force LOD/Non-LOD Sphere System")]
     public bool forceNonLODSphere = false;
     public bool forceLODSphere = false;
@@ -189,9 +189,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             InitializeBodyParameters();
             return; // Early exit if it's a UI celestialBody
         }
-
-        // Get playerCamera defined in the UniverseRunner Instance
-        universePlayerCamera = universeRunner.playerCamera.transform;
         
         InitializeBodyParameters();
 
@@ -224,7 +221,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     private void GetDistancesToCamera()
     {
-        distanceToPlayer = Vector3.Distance(transform.position, universePlayerCamera.position);
+        distanceToPlayer = Vector3.Distance(transform.position, universeRunner.activeSpaceship.transform.position);
         distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
     }
 
@@ -317,7 +314,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
                 meshObj.layer = 9;
                 meshObj.SetActive(false);
             }
-            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this, settings.heightMap, hasDefaultHeightMap, universeRunner.activeSpaceship.transform, universeRunner.playerCamera.transform);
+            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this, settings.heightMap, hasDefaultHeightMap, universeRunner.activeSpaceship.transform);
         }
 
         // Finally, create an additional gameobject to hold the sphere template when the celestialBody is super far from the activeCamera
@@ -348,11 +345,9 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         foreach(TerrainFace face in terrainFaces)
         {
             face.ConstructTree();
-            if(addMeshColliders) {
-                Mesh collisionMesh = face.mesh;
-                MeshBaker.BakeMeshImmediate(collisionMesh);
-                InitMeshColliders(meshFilters[idx].gameObject, collisionMesh);
-            }
+            Mesh collisionMesh = face.mesh;
+            MeshBaker.BakeMeshImmediate(collisionMesh);
+            InitMeshColliders(meshFilters[idx].gameObject, collisionMesh);
             idx += 1;
         }
     }
@@ -541,7 +536,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         double polarRad = settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()].value;
         //=======
         double geocentricRad = LaunchPad.ComputeGeocentricRadius(equaRad, polarRad, latitude*UniCsts.deg2rad) * UniCsts.pl2u;
-        double additionalHeight = 0d * UniCsts.m2km * UniCsts.pl2u; 
+        double additionalHeight = 20d * UniCsts.m2km * UniCsts.pl2u; 
         //Debug.Log("geocentricRad = " + geocentricRad);
         //Debug.Log("sphereUnitPos: " + sphereUnitPos);
         // Direction of the normal to the planet surface of the spawn location (the chosen starting launchPad)
@@ -558,7 +553,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     public void InitMeshColliders(GameObject faceGO, Mesh mesh)
     {
         MeshCollider meshCollider = (MeshCollider)UsefulFunctions.CreateAssignComponent(typeof(MeshCollider), faceGO);
-        meshCollider.convex = false;
+        meshCollider.convex = true;
         meshCollider.sharedMesh = mesh;
 
         PhysicMaterial sp_c_Material = new PhysicMaterial();

@@ -9,7 +9,7 @@ public class MainNozzle_Control : MonoBehaviour
     // TO get access to the simEnv, and thus to the 'shipUseKeyboardControl' SimSettingBool variable
     public UniverseRunner universe;
 
-    float nozzleThrust_Power = 3;
+    public float nozzleThrust_Power = 3;
     float nozzleLowerBound = -10;
     float nozzleUpperBound = 10;
     //================

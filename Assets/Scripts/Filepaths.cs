@@ -12,7 +12,7 @@ public static class Filepaths
 
     public const string DEBUG_defaultHeightMap = "CelestialBody/default_heightMap";
 
-    public const string DEBUG_orbitMaterial = "OrbitalMechanics/OrbitMaterial";
+    public const string DEBUG_orbitMaterial = "OrbitalMechanics/OrbitDynamicMat";
     // with the name of the planet afterwards for 'DEBUG_UIPlanetaryMaps'
     public const string DEBUG_UIPlanetaryMaps = "CelestialBody/UIPlanetary_Maps/";
     //================================================================================

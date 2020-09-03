@@ -16986,10 +16986,10 @@ MonoBehaviour:
   m_Content: {fileID: 2082797578}
   m_Horizontal: 0
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.04
   m_Inertia: 1
-  m_DecelerationRate: 6
+  m_DecelerationRate: 3
   m_ScrollSensitivity: 20
   m_Viewport: {fileID: 151152630}
   m_HorizontalScrollbar: {fileID: 143081030}
@@ -23415,37 +23415,6 @@ Camera:
     type: 3}
   m_PrefabInstance: {fileID: 8281958484999457716}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1068566086
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1068566082}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_RenderShadows: 1
-  m_RequiresDepthTextureOption: 2
-  m_RequiresOpaqueTextureOption: 2
-  m_CameraType: 0
-  m_Cameras: []
-  m_RendererIndex: -1
-  m_VolumeLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  m_VolumeTrigger: {fileID: 0}
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
-  m_AntialiasingQuality: 2
-  m_StopNaN: 0
-  m_Dithering: 0
-  m_ClearDepth: 1
-  m_RequiresDepthTexture: 0
-  m_RequiresColorTexture: 0
-  m_Version: 2
 --- !u!1 &1080875826
 GameObject:
   m_ObjectHideFlags: 0
@@ -32416,7 +32385,7 @@ RectTransform:
   - {fileID: 1287922836}
   - {fileID: 396910863}
   m_Father: {fileID: 1781411351}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -34996,7 +34965,7 @@ RectTransform:
   - {fileID: 759914351}
   - {fileID: 1753585082}
   m_Father: {fileID: 1781411351}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -37512,9 +37481,9 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 958038299}
-  - {fileID: 1666663684}
-  - {fileID: 1888415575}
   - {fileID: 1514695968}
+  - {fileID: 1888415575}
+  - {fileID: 1666663684}
   m_Father: {fileID: 930964325}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

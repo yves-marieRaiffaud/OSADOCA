@@ -101,26 +101,30 @@ public class UniverseRunner : MonoBehaviour
     {
         // Initialize everything of the rigidbody except its mass as its need to access the object Settings (done in 'Start' of the UniverseRunner)
         Rigidbody rb = (Rigidbody) UsefulFunctions.CreateAssignComponent(typeof(Rigidbody), physicGameObject);
-        if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
-            rb.mass = 1e9f;
-        else
-            rb.mass = 10_000f;
-        rb.angularDrag = 0f;
         rb.drag = 0f;
-        if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
-            rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
-        else
-            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
-
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+        if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString())) {
+            rb.angularDrag = 0.05f;
+            rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        }
+        else {
+            rb.angularDrag = 10f;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+        }
+
         rb.constraints = RigidbodyConstraints.None;
-        rb.detectCollisions = true;
         if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
             rb.isKinematic = true;
         else
             rb.isKinematic = false;
-        
+        rb.isKinematic = false;
+
+        if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
+            rb.mass = 1e9f;
+        else
+            rb.mass = 10f;
         rb.useGravity = false;
+        rb.detectCollisions = true;
     }
 
     public void AddGameObjectToPhysicsFolders(GameObject gameObjectToAdd, GameObject parentFolder)
@@ -244,6 +248,5 @@ public class UniverseRunner : MonoBehaviour
             }
         }
     }
-
 
 }

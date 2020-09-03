@@ -630,6 +630,21 @@ public static class UsefulFunctions
         return minValue_idx;
     }
 
+    public static int IntArrayMaxVal(int[] array)
+    {
+        if(array.Length <= 0)
+            Debug.LogError("Array is empty");
+
+        int maxVal = array[0];
+        foreach(int value in array)
+        {
+            if(value > maxVal) {
+                maxVal = value;
+            }
+        }
+        return maxVal;
+    }
+
     public static bool IP_AddressIsValid(string IP_toCheck)
     {
         string ipv4_REGEX = "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
