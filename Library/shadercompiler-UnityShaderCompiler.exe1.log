@@ -1,2 +1,11 @@
 Base path: 'C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
+Cmd: compileComputeKernel
+  error: 2 plat 4 at TerrainFaceElevation.compute(37): invalid subscript 'numVertices'
+  api=4 insize=2073 outsize=0 ok=0
+Cmd: compileComputeKernel
+  error: 2 plat 4 at TerrainFaceElevation.compute(17): structured buffer elements cannot be larger than 2048 bytes in cs_5_0 (actual size 4704 bytes)
+  error: 1 plat 4 at TerrainFaceElevation.compute(48): 'mul': implicit truncation of vector type
+  error: 1 plat 4 at TerrainFaceElevation.compute(48): implicit truncation of vector type
+  error: 1 plat 4 at TerrainFaceElevation.compute(59): signed/unsigned mismatch, unsigned assumed
+  api=4 insize=2119 outsize=0 ok=0

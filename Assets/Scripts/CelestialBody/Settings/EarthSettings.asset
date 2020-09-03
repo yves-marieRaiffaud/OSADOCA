@@ -16,37 +16,37 @@ MonoBehaviour:
   orbitInfoShowPredictedOrbitInfo: 0
   usePredifinedPlanets: 1
   chosenPredifinedPlanet: 4
-  radiusU: 3189.0685
+  radiusU: 318.90685
   equatorialPlane:
     forwardVec:
-      x: 0.9957897382244818
-      y: 0.09163276542274137
-      z: 0.0024967073915265446
+      x: 1
+      y: 0
+      z: 0
     rightVec:
-      x: 0.033281489468852135
-      y: -0.3867858095684311
-      z: 0.9215688145630949
+      x: 0
+      y: 0
+      z: 1
     point:
       x: 0
       y: 0
       z: 0
     normal:
-      x: -0.085411589995461
-      y: 0.9176056744688724
-      z: 0.388207014976511
+      x: 0
+      y: 1
+      z: 0
   rotationSpeed: 0.00008356149109295368
   cullingMinAngle: 0.199
   planetRefreshPeriod: 0.5
   detailLevelDistances:
   - Infinity
-  - 3189.0686
-  - 1275.6274
-  - 637.8137
   - 318.90686
-  - 159.45343
-  - 47.83603
+  - 127.562744
+  - 63.781372
+  - 31.890686
+  - 15.945343
+  - 4.7836027
   gravBodies: []
   bodyMaterial: {fileID: 2100000, guid: 2857c249e46edc54daaa9f9a1ba414a3, type: 2}
   sphereTemplateMaterial: {fileID: 2100000, guid: 2857c249e46edc54daaa9f9a1ba414a3,
     type: 2}
-  heightMap: {fileID: 0}
+  heightMap: {fileID: 2800000, guid: 568eb7e280116974aa17ce75b41244eb, type: 3}

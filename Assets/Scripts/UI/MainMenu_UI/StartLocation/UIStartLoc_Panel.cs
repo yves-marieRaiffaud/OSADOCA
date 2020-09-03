@@ -28,13 +28,9 @@ public class UIStartLoc_Panel : MonoBehaviour
     };
     //======
     [HideInInspector] public bool isPLanetarySurfaceInitialization;
-    private string selectedSpacecraftName;
 
     void Start()
     {
-        selectedSpacecraftName = "Rocket";
-        //======================================
-
         lastSelectedPlanetName = UniCsts.planets.Earth.ToString();
 
         Init_startLocInitTypeDropdown();

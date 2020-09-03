@@ -6,8 +6,7 @@ using Mathd_Lib;
 
 public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 {
-    public ComputeShader elevationComputeShader;
-
+    //public ComputeShader elevationComputeShader; 
     [HideInInspector] public UniverseRunner universeRunner; // Assigned in the Awake() function
     //=========================================
     public CelestialBodySettings settings;
@@ -297,7 +296,8 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             // Set variable to a default key
             settings.planetBaseParamsDict.Add(CelestialBodyParamsBase.biomeParams.highestBumpAlt.ToString(), new DoubleNoDim(0d));
         }
-        settings.heightMap = UsefulFunctions.RotateTexture180(settings.heightMap);
+        // Need rotate the texture in another variable to avoid the heightmap field from being reset in the inspector because of a type mismatch at runtime
+        Texture2D rotatedHeightMap = UsefulFunctions.RotateTexture180(settings.heightMap);
 
         for(int i=0; i<6; i++)
         {
@@ -314,7 +314,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
                 meshObj.layer = 9;
                 meshObj.SetActive(false);
             }
-            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this, settings.heightMap, hasDefaultHeightMap, universeRunner.activeSpaceship.transform);
+            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directionsDict.Keys.ElementAt(i), this, rotatedHeightMap, hasDefaultHeightMap, universeRunner.activeSpaceship.transform);
         }
 
         // Finally, create an additional gameobject to hold the sphere template when the celestialBody is super far from the activeCamera
@@ -347,7 +347,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             face.ConstructTree();
             Mesh collisionMesh = face.mesh;
             MeshBaker.BakeMeshImmediate(collisionMesh);
-            InitMeshColliders(meshFilters[idx].gameObject, collisionMesh);
             idx += 1;
         }
     }
@@ -550,21 +549,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         return new LaunchPad(LaunchPadList.GetOriginLaunchPadDict(name));
     }
 
-    public void InitMeshColliders(GameObject faceGO, Mesh mesh)
-    {
-        MeshCollider meshCollider = (MeshCollider)UsefulFunctions.CreateAssignComponent(typeof(MeshCollider), faceGO);
-        meshCollider.convex = true;
-        meshCollider.sharedMesh = mesh;
-
-        PhysicMaterial sp_c_Material = new PhysicMaterial();
-        sp_c_Material.bounciness = 0f;
-        sp_c_Material.dynamicFriction = 1f;
-        sp_c_Material.staticFriction = 1f;
-        sp_c_Material.frictionCombine = PhysicMaterialCombine.Average;
-        sp_c_Material.bounceCombine = PhysicMaterialCombine.Average;
-        meshCollider.material = sp_c_Material;
-    }
-
     public double SetDistanceScaleFactor()
     {
         if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree)
@@ -576,7 +560,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
         return distanceScaleFactor;
     }
-
 }
 
 [System.Serializable]

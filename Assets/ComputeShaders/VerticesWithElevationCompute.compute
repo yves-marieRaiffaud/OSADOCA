@@ -1,0 +1,67 @@
+#pragma kernel VerticesWithElevationCompute
+
+struct ElevationComputeInputData {
+    uint numVertices;
+    float4x4 TransformMat;
+    float RadiusU; 
+    float MaxAltitude;
+    float MaxRatio;
+};
+
+// Outputs of the compute shader
+RWStructuredBuffer<float3> Vertices;
+
+// Inputs
+StructuredBuffer<ElevationComputeInputData> Input;
+float4 QuadVerticesPreset[(16+1)*(16+1)];
+Texture2D<float4> HeightMap;
+
+float LinearInterpolation(float x1, float y1, float x3, float y3, float xValToGuessY)
+{
+    return (y3-y1)/(x3-x1) * (xValToGuessY-x1) + y1;
+}
+
+float Clamp(float value, float min, float max)
+{
+    if(value <= min) {
+        return min;
+    }
+    else if(value >= max) {
+        return max;
+    }
+    return value;
+}
+
+[numthreads(512,1,1)]
+void VerticesWithElevationCompute (uint3 id : SV_DispatchThreadID)
+{
+	if (id.x >= Input[id.y].numVertices) { return; }
+ 
+    float pi = 3.14159265359;
+    float pi_x_2 = 6.28318530718;
+    uint width, height, pixelWidthOffset;
+    HeightMap.GetDimensions(width, height);
+    pixelWidthOffset = width - (0.5 + atan2(1, 0) / pi_x_2) * width;
+
+    float3 presetVertex = QuadVerticesPreset[id.x].xyz;
+	float3 pointOnUnitSphere = normalize(mul(Input[id.y].TransformMat, presetVertex));
+
+    float pixel_w = (0.5 + atan2(pointOnUnitSphere.x, pointOnUnitSphere.z) / pi_x_2) * width;
+    float pixel_h = (0.5 - asin(pointOnUnitSphere.y) / pi) * height;
+    if(pixel_w - pixelWidthOffset < 0) {
+        pixel_w = width + (pixel_w - pixelWidthOffset);
+    }
+    else {
+        pixel_w = pixel_w - pixelWidthOffset;
+    }
+
+    if(pixel_w > width) {
+        pixel_w = pixel_w - width;
+    }
+	
+    float grayVal = HeightMap[float2(pixel_w, pixel_h)].g;
+    float elevation = LinearInterpolation(0, 0, 1, Input[id.y].MaxAltitude, grayVal) / Input[id.y].RadiusU;
+    elevation = 1 + Clamp(elevation, 0, Input[id.y].MaxRatio);
+
+    Vertices[id.x] = pointOnUnitSphere * elevation * Input[id.y].RadiusU;
+}

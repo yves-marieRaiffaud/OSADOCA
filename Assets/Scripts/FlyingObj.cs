@@ -239,9 +239,6 @@ public class FlyingObj
         Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
         Vector3d absoluteScaledVelocity = castBody.orbitedBodyRelativeVel*scaleFactor + speedOfOrbitedBody*UniCsts.m2km2au2u;
         rb.velocity = (Vector3)absoluteScaledVelocity;
-        Debug.Log(rb.name + " | (Vector3)absoluteScaledVelocity = " + (Vector3)absoluteScaledVelocity);
-        Debug.Log("castBody.orbitedBodyRelativeVel*scaleFactor = " + (castBody.orbitedBodyRelativeVel*scaleFactor));
-        Debug.Log("speedOfOrbitedBody*UniCsts.m2km2au2u = " + (speedOfOrbitedBody*UniCsts.m2km2au2u));
 
         if(body is Spaceship) {
             InitializeSpaceshipRotation<T1>(castBody, (Vector3)tangentialVec);

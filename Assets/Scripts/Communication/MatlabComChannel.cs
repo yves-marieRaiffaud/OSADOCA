@@ -76,10 +76,6 @@ namespace Matlab_Communication
         }
         //====================
         //====================
-        // Only for TCP/IP server
-        private TcpListener serverToConnectTo;
-        //====================
-        //====================
         public MatlabComChannel(ComChannelParams parameters)
         {
             IP = parameters.IP;
@@ -88,8 +84,6 @@ namespace Matlab_Communication
             defaultPort = parameters.defaultPort;
             connectionType = parameters.connectionType;
             sendReceiveType = parameters.sendReceiveType;
-            //======
-            serverToConnectTo = null;
             //======
             if((Fncs.IP_AddressIsValid(IP) && port > -1) || typeof(T) == typeof(TCPServer))
                 InitChannelObj();

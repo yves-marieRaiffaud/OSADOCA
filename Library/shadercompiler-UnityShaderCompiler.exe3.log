@@ -1,2 +1,7 @@
 Base path: 'C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
+Cmd: compileComputeKernel
+  error: 1 plat 4 at VerticesWithElevationCompute.compute(47): 'mul': implicit truncation of vector type
+  error: 1 plat 4 at VerticesWithElevationCompute.compute(47): implicit truncation of vector type
+  error: 1 plat 4 at VerticesWithElevationCompute.compute(58): signed/unsigned mismatch, unsigned assumed
+  api=4 insize=1994 outsize=3177 ok=1

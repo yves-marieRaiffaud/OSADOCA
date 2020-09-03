@@ -598,6 +598,11 @@ public class Chunk
         pi_x_2 = 2f*Mathf.PI;
 
         float maxRatio = MAX_ALTITUDE / (float)(celestialBodySettingsScript.radiusU);
+        //=====================================================================
+        //=====================================================================
+        //=====================================================================
+        //=====================================================================
+        //var timer = System.Diagnostics.Stopwatch.StartNew();
         for (int i = 0; i < vertices.Length; i++)
         {
             // pointOnCube goes along the x values, then the y values (with a localUp normal along +z axis)
@@ -613,8 +618,6 @@ public class Chunk
 
                 pixel_w = (pixel_w + 3) > initialBumpMap.width ? pixel_w-3 : pixel_w;
                 pixel_h = (pixel_h + 3) > initialBumpMap.height ? pixel_h-3 : pixel_h;
-
-                Debug.Log("pixel_w = " + pixel_w + "; pixel_h = " + pixel_h);
                 
                 Color[] surroundingPixels = initialBumpMap.GetPixels((int)Mathf.Floor(pixel_w), (int)Mathf.Floor(pixel_h), 3, 3);
                 float p1 = surroundingPixels[0].grayscale; // bottom left
@@ -636,7 +639,60 @@ public class Chunk
             }
             vertices[i] = pointOnUnitSphere * elevation * (float)celestialBodySettingsScript.radiusU;
         }
+        //Debug.Log("Ellapsed time = " + timer.ElapsedMilliseconds + " ms");
+        //=====================================================================
+        //=====================================================================
+        //=====================================================================
+        //=====================================================================
+        // Calling the Compute Shader here and running it
+        /*ComputeShader shader = celestialBody.elevationComputeShader;
+        int kernelIdx = shader.FindKernel("VerticesWithElevationCompute");
+        ComputeBuffer buffer = null;
+        int maxNbVertices = (Presets.quadRes+1)*(Presets.quadRes+1);
+        ComputeShaderHelper.CreateStructuredBuffer<Vector3>(ref buffer, maxNbVertices);
 
+        Vector3[] computeVertices = new Vector3[maxNbVertices];
+        for(int i=0; i<computeVertices.Length; i++) {
+            computeVertices[i] = Vector3.zero;
+        }
+        buffer.SetData(computeVertices);
+        shader.SetBuffer(kernelIdx, "Vertices", buffer);
+
+        Vector3[] preset = Presets.quadTemplateVertices[quadIndex];
+        Vector4[] quadVerticesPreset_v4 = new Vector4[maxNbVertices];
+        int count = 0;
+        foreach(Vector3 vertexPreset in preset)
+            quadVerticesPreset_v4[count++] = new Vector4(vertexPreset.x, vertexPreset.y, vertexPreset.z);
+        for(int i=preset.Length; i<quadVerticesPreset_v4.Length; i++)
+            quadVerticesPreset_v4[i] = Vector4.zero;
+        
+        float rad = (float)celestialBodySettingsScript.radiusU;
+        ElevationComputeInputData[] inputData = new ElevationComputeInputData[1];
+        inputData[0] = new ElevationComputeInputData(vertices.Length, transformMatrix, rad, MAX_ALTITUDE, maxRatio);
+
+        ComputeBuffer inputBuffer = null; 
+        ComputeShaderHelper.CreateStructuredBuffer<ElevationComputeInputData>(ref inputBuffer, 1);
+        inputBuffer.SetData(inputData);
+        shader.SetBuffer(kernelIdx, "Input", inputBuffer);
+        shader.SetTexture(kernelIdx, "HeightMap", initialBumpMap);
+        shader.SetVectorArray("QuadVerticesPreset", quadVerticesPreset_v4);
+
+        Debug.Log("Before Data: \n" + string.Join("\n", computeVertices));
+        var timer = System.Diagnostics.Stopwatch.StartNew();
+
+        ComputeShaderHelper.Run(shader, vertices.Length);
+        buffer.GetData(computeVertices);
+        buffer.Release();
+
+        Debug.Log("Ellapsed time = " + timer.ElapsedMilliseconds + " ms");
+        Debug.Log("After Data: \n" + string.Join("\n", computeVertices));
+
+        for(int i=0; i<vertices.Length; i++)
+            vertices[i] = computeVertices[i];*/
+        //=====================================================================
+        //=====================================================================
+        //=====================================================================
+        //=====================================================================
         // Do the same for the border vertices
         borderVertices = new Vector3[Presets.quadTemplateBorderVertices[quadIndex].Length];
 
@@ -777,4 +833,22 @@ public class Chunk
         Vector3 sideAC = pointC - pointA;
         return Vector3.Cross(sideAB, sideAC).normalized;
     }
+
+    struct ElevationComputeInputData {
+        // Size of 'QuadVerticesPreset' depends on the parameter 'quadRes' in the Preset.cs file. Defualt to 16
+        public int numVertices;
+        public Matrix4x4 TransformMat;
+        public float RadiusU; 
+        public float MaxAltitude;
+        public float MaxRatio;
+
+        public ElevationComputeInputData(int _numVertices, Matrix4x4 _transformMat, float _RadiusU, float _maxAltitude, float _maxRatio)
+        {
+            this.numVertices = _numVertices;
+            this.TransformMat = _transformMat;
+            this.RadiusU = _RadiusU;
+            this.MaxAltitude = _maxAltitude;
+            this.MaxRatio = _maxRatio;
+        }
+    };
 }
