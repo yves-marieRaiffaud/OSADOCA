@@ -7,7 +7,6 @@ using System.IO;
 [DisallowMultipleComponent, System.Serializable]
 public class UniverseRunner : MonoBehaviour
 {
-    //======
     [HideInInspector] public bool simulationEnvFoldout=true; // For universeRunner custom editor
     //======
     [HideInInspector] public SimulationEnv simEnv;
@@ -76,8 +75,6 @@ public class UniverseRunner : MonoBehaviour
         {
             // CelestialBodies and Spaceships must have done their Awake() at this point
             InitializeRigidbody(star, 100000f);
-            //InitializeCelestialSphereCollider(star);
-
             AddGameObjectToPhysicsFolders(star, starFolder);
         }
 
@@ -85,8 +82,6 @@ public class UniverseRunner : MonoBehaviour
         {
             // CelestialBodies and Spaceships must have done their Awake() at this point
             InitializeRigidbody(planet, 1000f);
-            //InitializeCelestialSphereCollider(planet);
-
             AddGameObjectToPhysicsFolders(planet, planetsFolder);
         }
 
@@ -133,11 +128,6 @@ public class UniverseRunner : MonoBehaviour
         physicsRigidbodies.Add(gameObjectToAdd.GetComponent<Rigidbody>());
         physicsObjArray.Add(gameObjectToAdd.transform);
         UsefulFunctions.parentObj(gameObjectToAdd, parentFolder);
-    }
-
-    private void InitializeCelestialSphereCollider(GameObject bodyGO)
-    {
-       // Need to find a smart way to create colliders for the celestialBodies
     }
     //=========================================
     void Start()

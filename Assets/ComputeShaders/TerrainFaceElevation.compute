@@ -1,4 +1,4 @@
-#pragma kernel VerticesWithElevationCompute
+/*#pragma kernel VerticesWithElevationCompute
 
 RWStructuredBuffer<float3> Vertices;
 
@@ -6,7 +6,7 @@ uint numVertices;
 float4 quadVerticesPreset[100];
 float4x4 transformMat;
 Texture2D<float4> InputTexture;
-float RadiusU;
+float RadiusU; 
 float MaxAltitude;
 float MaxRatio;
 
@@ -58,4 +58,4 @@ void VerticesWithElevationCompute (uint id : SV_DispatchThreadID)
     elevation = 1 + Clamp(elevation, 0, MaxRatio);
 
     Vertices[id] = pointOnUnitSphere * elevation * RadiusU;
-}
+}*/
