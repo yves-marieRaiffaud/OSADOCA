@@ -1,2 +1,62 @@
 Base path: 'C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
+Cmd: preprocessCompute
+  insize=870 outsize=872 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at TerrainFaceElevation.compute(18): invalid subscript 'x'
+  api=4 insize=872 outsize=0 ok=0
+Cmd: preprocessCompute
+  insize=1719 outsize=1721 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at TerrainFaceElevation.compute(39): 'atan2': no matching 0 parameter intrinsic function; Possible intrinsic functions are: atan2(float|half|min10float|min16float, float|half|min10float|min16float)
+  error: 2 plat 4 at TerrainFaceElevation.compute(39): syntax error: unexpected token 'f'
+  api=4 insize=1721 outsize=0 ok=0
+Cmd: preprocessCompute
+  insize=1741 outsize=1743 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at TerrainFaceElevation.compute(39): 'atan2': no matching 0 parameter intrinsic function; Possible intrinsic functions are: atan2(float|half|min10float|min16float, float|half|min10float|min16float)
+  error: 2 plat 4 at TerrainFaceElevation.compute(39): syntax error: unexpected token '#'
+  api=4 insize=1743 outsize=0 ok=0
+Cmd: preprocessCompute
+  insize=1745 outsize=1747 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at TerrainFaceElevation.compute(39): 'atan2': no matching 0 parameter intrinsic function; Possible intrinsic functions are: atan2(float|half|min10float|min16float, float|half|min10float|min16float)
+  error: 2 plat 4 at TerrainFaceElevation.compute(39): syntax error: unexpected token '#'
+  api=4 insize=1747 outsize=0 ok=0
+Cmd: preprocessCompute
+  insize=1709 outsize=1711 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at TerrainFaceElevation.compute(41): invalid subscript 'xyz'
+  api=4 insize=1711 outsize=0 ok=0
+Cmd: preprocessCompute
+  insize=1709 outsize=1711 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at TerrainFaceElevation.compute(41): invalid subscript 'rgb'
+  api=4 insize=1711 outsize=0 ok=0
+Cmd: preprocessCompute
+  insize=1722 outsize=1724 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at TerrainFaceElevation.compute(6): array dimensions must be literal scalar expressions
+  api=4 insize=1724 outsize=0 ok=0
+Cmd: preprocessCompute
+  insize=1725 outsize=1727 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at TerrainFaceElevation.compute(6): array dimensions must be literal scalar expressions
+  api=4 insize=1727 outsize=0 ok=0
+Cmd: preprocessCompute
+  insize=1795 outsize=1797 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at TerrainFaceElevation.compute(6): array dimensions must be literal scalar expressions
+  api=4 insize=1797 outsize=0 ok=0
+Cmd: preprocessCompute
+  insize=1880 outsize=1882 ok=1
+Cmd: compileComputeKernel
+  error: 2 plat 4 at TerrainFaceElevation.compute(6): syntax error: unexpected token '}'
+  api=4 insize=1882 outsize=0 ok=0
+Cmd: preprocessCompute
+  insize=1787 outsize=1789 ok=1
+Cmd: compileComputeKernel
+  error: 1 plat 4 at TerrainFaceElevation.compute(41): 'mul': implicit truncation of vector type
+  error: 1 plat 4 at TerrainFaceElevation.compute(41): implicit truncation of vector type
+  error: 2 plat 4 at TerrainFaceElevation.compute(43): undeclared identifier 'textureWidth'
+  api=4 insize=1789 outsize=0 ok=0

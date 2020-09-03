@@ -138,7 +138,7 @@
      <Compile Include="Assets\Additional\TEXDraw\Script\TEXDraw3D.cs" />
      <Compile Include="Assets\Additional\TEXDraw\Script\TEXLink.cs" />
      <Compile Include="Assets\Additional\TEXDraw\Script\TEXLinkBase.cs" />
-     <Compile Include="Assets\Scripts\ALibs\ComputeHelper.cs" />
+     <Compile Include="Assets\Scripts\ALibs\ComputeShaderHelper.cs" />
      <Compile Include="Assets\Scripts\ALibs\JsonHelper.cs" />
      <Compile Include="Assets\Scripts\ALibs\Mathd.cs" />
      <Compile Include="Assets\Scripts\ALibs\MeshBaker.cs" />
@@ -152,7 +152,6 @@
      <Compile Include="Assets\Scripts\CelestialBody\CelestialBodySettings.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\LODSpheresGenerator.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\Presets.cs" />
-     <Compile Include="Assets\Scripts\CelestialBody\SphereMesh.cs" />
      <Compile Include="Assets\Scripts\CelestialBody\TerrainFace.cs" />
      <Compile Include="Assets\Scripts\Communication\ComChannels\TCPServer.cs" />
      <Compile Include="Assets\Scripts\Communication\ComChannels\UDPReceiver.cs" />
@@ -194,7 +193,6 @@
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\UIMainMenu.cs" />
      <Compile Include="Assets\Scripts\UI\Simulation_UI\simUI.cs" />
      <Compile Include="Assets\Scripts\UnityMainThreadDispatcher.cs" />
-     <Compile Include="Assets\Scripts\Universe\LODHandler.cs" />
      <Compile Include="Assets\Scripts\Universe\SimulationEnv.cs" />
      <Compile Include="Assets\Scripts\Universe\StarDome.cs" />
      <Compile Include="Assets\Scripts\Universe\StopWatch.cs" />
@@ -214,6 +212,7 @@
      <None Include="Assets\Additional\TEXDraw\Script\Shaders\TEXShaderLit4Pass.shader" />
      <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
      <None Include="Assets\Additional\TEXDraw\Script\Shaders\TEXShaderGrad3Pass.shader" />
+     <None Include="Assets\ComputeShaders\TerrainFaceElevation.compute" />
      <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface.shader" />
      <None Include="Assets\Additional\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
      <None Include="Assets\Additional\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Custom-Atlas.shader" />

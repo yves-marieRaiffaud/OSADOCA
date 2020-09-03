@@ -7,9 +7,6 @@ using System.IO;
 [DisallowMultipleComponent, System.Serializable]
 public class UniverseRunner : MonoBehaviour
 {
-
-    public LODHandler lODHandler;
-    public LODSpheresGenerator.ResolutionSettings resolutionSettings;
     //======
     [HideInInspector] public bool simulationEnvFoldout=true; // For universeRunner custom editor
     //======
@@ -120,6 +117,7 @@ public class UniverseRunner : MonoBehaviour
             rb.isKinematic = true;
         else
             rb.isKinematic = false;
+        rb.isKinematic = false;
 
         if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
             rb.mass = 1e9f;
@@ -159,18 +157,6 @@ public class UniverseRunner : MonoBehaviour
 
                 case goTags.Planet:
                     CelestialBody celestBody = obj.GetComponent<CelestialBody>();
-
-                    GameObject holder = new GameObject("Body Generator");
-                    var generator = holder.AddComponent<LODSpheresGenerator>();
-                    generator.transform.parent = celestBody.transform;
-                    generator.gameObject.layer = celestBody.gameObject.layer;
-                    generator.transform.localRotation = Quaternion.identity;
-                    generator.transform.localPosition = Vector3.zero;
-                    generator.transform.localScale = (Vector3)(Vector3d.one * celestBody.settings.radiusU);
-                    generator.resolutionSettings = resolutionSettings;
-                    generator.settings = celestBody.settings;
-
-
                     if(GameObject.FindGameObjectsWithTag(goTags.Star.ToString()).Length > 0)
                     {
                         celestBody.AwakeCelestialBody(UniCsts.planetsDict[celestBody.settings.chosenPredifinedPlanet]);
@@ -188,7 +174,6 @@ public class UniverseRunner : MonoBehaviour
                     break;
             }
         }
-        lODHandler.InitLODHandler();
         flyingObjInst.InitGravitationalPullLists();
         //==============================
         if(simEnv.missionTimer != null)
