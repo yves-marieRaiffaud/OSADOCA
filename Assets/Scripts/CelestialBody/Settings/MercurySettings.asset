@@ -16,7 +16,7 @@ MonoBehaviour:
   orbitInfoShowPredictedOrbitInfo: 0
   usePredifinedPlanets: 1
   chosenPredifinedPlanet: 2
-  radiusU: 1219.85
+  radiusU: 121.985
   equatorialPlane:
     forwardVec:
       x: 1
@@ -46,7 +46,7 @@ MonoBehaviour:
   - 5
   - 0.1
   gravBodies: []
-  bodyMaterial: {fileID: 2100000, guid: ad36a693b01d0fa41992e606bc30cfed, type: 2}
-  sphereTemplateMaterial: {fileID: 2100000, guid: ad36a693b01d0fa41992e606bc30cfed,
+  bodyMaterial: {fileID: 2100000, guid: ea731694f9ff2f44b8d9e35a8d9902e5, type: 2}
+  sphereTemplateMaterial: {fileID: 2100000, guid: ea731694f9ff2f44b8d9e35a8d9902e5,
     type: 2}
   heightMap: {fileID: 2800000, guid: 9e2905be4821def428ac0ae46ecb27e5, type: 3}

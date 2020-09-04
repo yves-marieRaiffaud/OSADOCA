@@ -237,6 +237,14 @@ public class UniverseRunner : MonoBehaviour
                     break;
             }
         }
+
+        foreach(GameObject obj in GameObject.FindGameObjectsWithTag(goTags.Orbit.ToString()))
+        {
+            float dist = Vector3.Distance(obj.transform.position, playerCamera.transform.position);///1_000f;
+            LineRenderer orbitLR = obj.GetComponent<LineRenderer>();
+            orbitLR.startWidth *= dist;
+            orbitLR.endWidth *= dist;
+        }
     }
 
 }

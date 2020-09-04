@@ -43916,6 +43916,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: MarsPlanet_UI
       objectReference: {fileID: 0}
+    - target: {fileID: 1023415298707381034, guid: b9df030ef83d6c24281247c91cf4c0ba,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e155cd1c4e6a8e94c93adb3d4e7a31a7, type: 2}
     - target: {fileID: 1023415299195789685, guid: b9df030ef83d6c24281247c91cf4c0ba,
         type: 3}
       propertyPath: m_LocalPosition.x
