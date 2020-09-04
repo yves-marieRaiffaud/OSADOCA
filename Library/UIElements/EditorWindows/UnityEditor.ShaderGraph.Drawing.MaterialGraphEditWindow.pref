@@ -24,8 +24,8 @@ MonoBehaviour:
   m_Values:
   - '{}'
   - '{}'
-  - '{"position":{"x":622.0,"y":45.33333206176758,"z":0.0},"scale":{"x":0.32690176367759707,"y":0.32690176367759707,"z":1.0}}'
-  - '{"m_Version":264,"m_SelectedElementsArray":["b6d54dec-52c9-4934-84cd-b56f00a37ddc","8fabd64e-7742-4103-b10e-90602c7eb4f5","71cc71ed-d102-4a77-81e9-4ff453b6b0f2","f36c7d11-8c7d-4778-bb9c-82c58adc1d15","b68b7a7e-4a1c-45de-9f83-dbadd3acca06","c6d2fdfa-7269-46e6-b629-4470084a7eec","cbe57047-4467-4dee-8674-d3c943f3680d","56f68d06-c9ea-44d5-a680-37e256d9437d","ed251fb2-5fb6-4c42-ad89-57a618251a5e","d031b8a6-9016-4bbe-b0d9-11151faf72ad","f64bba1e-2962-4f8b-8630-cb1e1cd4fbc1","b78f4760-3b94-4e0f-9535-e8ada8a17f1d"]}'
+  - '{"position":{"x":513.3333129882813,"y":318.0,"z":0.0},"scale":{"x":0.32690176367759707,"y":0.32690176367759707,"z":1.0}}'
+  - '{"m_Version":233,"m_SelectedElementsArray":["42520f23-e8d3-461f-a69e-ea9dcdba5cad"]}'
   - '{}'
   - '{}'
   - '{}'
