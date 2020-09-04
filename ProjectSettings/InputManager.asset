@@ -43,8 +43,8 @@ InputManager:
     descriptiveNegativeName: 
     negativeButton: left ctrl
     positiveButton: left shift
-    altNegativeButton: left ctrl
-    altPositiveButton: left shift
+    altNegativeButton: q
+    altPositiveButton: w
     gravity: 1000
     dead: 0.001
     sensitivity: 1000
@@ -57,8 +57,8 @@ InputManager:
     m_Name: YawAxis
     descriptiveName: 
     descriptiveNegativeName: 
-    negativeButton: 
-    positiveButton: 
+    negativeButton: left
+    positiveButton: right
     altNegativeButton: 
     altPositiveButton: 
     gravity: 0
@@ -73,8 +73,8 @@ InputManager:
     m_Name: PitchAxis
     descriptiveName: 
     descriptiveNegativeName: 
-    negativeButton: 
-    positiveButton: 
+    negativeButton: down
+    positiveButton: up
     altNegativeButton: 
     altPositiveButton: 
     gravity: 0

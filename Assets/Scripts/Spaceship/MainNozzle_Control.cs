@@ -84,18 +84,17 @@ public class MainNozzle_Control : MonoBehaviour
     {
         // Reading raw values from the controller
         float[] raw_inputs_array = getInputAxis();
+        targetedAngles[0] = raw_inputs_array[0];
+        targetedAngles[1] = raw_inputs_array[1];
         float rawThrustValue = raw_inputs_array[2];
-        if(!UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f) && mainNozzleVFX != null)
-        {
-            engineIsActive = true;
-            mainNozzleVFX.Play();
-        }
-        if(UsefulFunctions.FloatsAreEqual(rawThrustValue, 0f) && mainNozzleVFX != null)
-        {
-            engineIsActive = false;
-            mainNozzleVFX.Stop();
-        }
-        FireEngine(raw_inputs_array, rawThrustValue);
+
+        //FireEngine(targetedAngles, rawThrustValue);
+        Debug.Log("nozzleThrustValue = " + nozzleThrustValue);
+        Debug.Log("targetedAngles = " + string.Join(";", targetedAngles));
+
+        Quaternion targetQuaternion = computeYawPitchAngle(targetedAngles[0], targetedAngles[1]);
+        RotateNozzle(targetQuaternion);
+        nozzleRigidbody.AddForce(transform.up * nozzleThrust_Power * nozzleThrustValue, ForceMode.Force);
     }
 
     public IEnumerator FireEngine(float[] raw_inputs_array, float rawThrustValue)
@@ -112,11 +111,17 @@ public class MainNozzle_Control : MonoBehaviour
 
         nozzleThrustValue = rawThrustValue;
         targetedAngles = raw_inputs_array;
+        Debug.Log("nozzleThrustValue = " + nozzleThrustValue);
+        Debug.Log("targetedAngles = " + string.Join(";", targetedAngles));
 
-        if(nozzleThrustValue < 0.4f)
+        if(nozzleThrustValue < 0.4f) {
             engineIsActive = false;
-        else
+            mainNozzleVFX.Stop();
+        }
+        else {
             engineIsActive = true;
+            mainNozzleVFX.Play();
+        }
         yield return null;
     }
 
