@@ -244,7 +244,7 @@ public class TerrainFace
             //================
             groundGO.layer = 9;
             MeshRenderer meshRenderer = groundGO.GetComponent<MeshRenderer>();
-            meshRenderer.material = Resources.Load<Material>("Ground");
+            meshRenderer.sharedMaterial = celestialBodySettingsScript.bodyMaterial;//Resources.Load<Material>("Ground");
             //================
             PhysicMaterial colliderMaterial = new PhysicMaterial("MeshColliderMaterial");
             colliderMaterial.bounceCombine = PhysicMaterialCombine.Minimum;

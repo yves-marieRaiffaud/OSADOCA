@@ -345,8 +345,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         foreach(TerrainFace face in terrainFaces)
         {
             face.ConstructTree();
-            Mesh collisionMesh = face.mesh;
-            MeshBaker.BakeMeshImmediate(collisionMesh);
             idx += 1;
         }
     }

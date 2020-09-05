@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityEngine.VFX;
+using Mathd_Lib;
 
 public class MainNozzle_Control : MonoBehaviour
 {
@@ -10,8 +11,10 @@ public class MainNozzle_Control : MonoBehaviour
     public UniverseRunner universe;
 
     public float nozzleThrust_Power = 3;
-    float nozzleLowerBound = -10;
-    float nozzleUpperBound = 10;
+    [Header("Yaw Axis Nozzle Limits")]
+    public float yawAngle_min, yawAngle_max;
+    [Header("Pitch Axis Limits")]
+    public float pitchAngle_min, pitchAngle_max;
     //================
     private bool useKeyboardControl;
     [HideInInspector] public bool engineIsActive;
@@ -19,8 +22,6 @@ public class MainNozzle_Control : MonoBehaviour
     Rigidbody nozzleRigidbody;
     ConfigurableJoint originalfreeFloatingJoint; //Configurable Joint from the Editor
     ConfigurableJoint onlinefreeFloatingJoint; //Configurable Joint that is created and updated in live in 'Update()'
-    float yawAngle_min, yawAngle_max;
-    float pitchAngle_min, pitchAngle_max;
     //================
     VisualEffect mainNozzleVFX;
     Spaceship spaceship;
@@ -47,14 +48,7 @@ public class MainNozzle_Control : MonoBehaviour
         nozzleRigidbody = GetComponent<Rigidbody>();
         originalfreeFloatingJoint = GetComponent<ConfigurableJoint>();
 
-        // Retrieving the min/max angles along the Yaw/X and Pitch/Y Axis
-        yawAngle_min = originalfreeFloatingJoint.lowAngularXLimit.limit;
-        yawAngle_max = originalfreeFloatingJoint.highAngularXLimit.limit;
-        pitchAngle_max = originalfreeFloatingJoint.angularYLimit.limit;
-        pitchAngle_min = -pitchAngle_max;
-
-        //SetLiveConfigurableJoint();
-
+        SetLiveConfigurableJoint();
         mainNozzleVFX = GetComponentInChildren<VisualEffect>();
     }
 
@@ -69,6 +63,7 @@ public class MainNozzle_Control : MonoBehaviour
 
     private void Fire_Engine_GNC_Algorithms()
     {
+        RotateNozzle();
         if(engineIsActive)
         {
             mainNozzleVFX.Play();
@@ -88,23 +83,17 @@ public class MainNozzle_Control : MonoBehaviour
         targetedAngles[1] = raw_inputs_array[1];
         nozzleThrustValue = raw_inputs_array[2] * nozzleThrust_Power;
 
-        if(UsefulFunctions.isInRange(nozzleThrustValue, -0.01f, 0.01f)) {
+        RotateNozzle();
+
+        if(UsefulFunctions.FloatsAreEqual(nozzleThrustValue, 0f)) {
             engineIsActive = false;
             mainNozzleVFX.Stop();
         }
         else {
             engineIsActive = true;
             mainNozzleVFX.Play();
+            ApplyThrust();
         }
-
-        ApplyThrust();
-    }
-
-    private void ApplyThrust()
-    {
-        Quaternion targetQuaternion = computeYawPitchAngle(targetedAngles[0], targetedAngles[1]);
-        RotateNozzle(targetQuaternion);
-        nozzleRigidbody.AddForce(transform.up * nozzleThrustValue, ForceMode.Force);
     }
 
     public IEnumerator FireEngine(float[] raw_inputs_array, float rawThrustValue)
@@ -137,30 +126,96 @@ public class MainNozzle_Control : MonoBehaviour
     {
         // Copying the values from the Joint in the Editor, in order to keep the user-input values
         onlinefreeFloatingJoint = originalfreeFloatingJoint;
+        // Local Scale of the spaceship, to scale the anchors position
+        Vector3 ls = spaceship.transform.localScale;
+        float lsFactor = (ls.x + ls.y + ls.z) / 3f;
 
-        // Common attributes for every Soft Join Limits
-        float contactDistance = 100;
-        SoftJointLimit angularXLimits = new SoftJointLimit();
-        angularXLimits.contactDistance = contactDistance;
-        angularXLimits.bounciness = 0;
+        onlinefreeFloatingJoint.anchor = new Vector3(0f, 0.4f*lsFactor, 0f);
+        onlinefreeFloatingJoint.axis = Vector3.right;
+        onlinefreeFloatingJoint.autoConfigureConnectedAnchor = false;
+        onlinefreeFloatingJoint.connectedAnchor = Vector3.zero;
+        onlinefreeFloatingJoint.secondaryAxis = Vector3.forward;
 
-        // Setting the nozzle lower angular limit along the X-Axis/Yaw Angle
-        angularXLimits.limit = nozzleLowerBound;
-        onlinefreeFloatingJoint.lowAngularXLimit = angularXLimits;
+        onlinefreeFloatingJoint.xMotion = ConfigurableJointMotion.Locked;
+        onlinefreeFloatingJoint.yMotion = ConfigurableJointMotion.Locked;
+        onlinefreeFloatingJoint.zMotion = ConfigurableJointMotion.Locked;
+        onlinefreeFloatingJoint.angularXMotion = ConfigurableJointMotion.Limited;
+        onlinefreeFloatingJoint.angularYMotion = ConfigurableJointMotion.Limited;
+        onlinefreeFloatingJoint.angularZMotion = ConfigurableJointMotion.Locked;
 
-        // Setting the nozzle upper angular limit along the X-Axis/Yaw Angle
-        angularXLimits.limit = nozzleUpperBound;
-        onlinefreeFloatingJoint.highAngularXLimit = angularXLimits;
+        SoftJointLimitSpring linearLimitSpring = new SoftJointLimitSpring();
+        linearLimitSpring.spring = 0f;
+        linearLimitSpring.damper = 0f;
+        onlinefreeFloatingJoint.linearLimitSpring = linearLimitSpring;
 
-        // Setting the nozzle angular limit along the Y-Axis/Pitch Angle
-        onlinefreeFloatingJoint.angularYLimit = angularXLimits;
-        onlinefreeFloatingJoint.projectionAngle = nozzleUpperBound;
+        SoftJointLimit linearLimit = new SoftJointLimit();
+        linearLimit.limit = 0f;
+        linearLimit.bounciness = 0f;
+        linearLimit.contactDistance = 10f*lsFactor;
+        onlinefreeFloatingJoint.linearLimit = linearLimit;
 
-        // Retrieving the min/max angles along the Yaw/X and Pitch/Y Axis
-        yawAngle_min = onlinefreeFloatingJoint.lowAngularXLimit.limit;
-        yawAngle_max = onlinefreeFloatingJoint.highAngularXLimit.limit;
-        pitchAngle_max = onlinefreeFloatingJoint.angularYLimit.limit;
-        pitchAngle_min = -pitchAngle_max;
+        onlinefreeFloatingJoint.angularXLimitSpring = linearLimitSpring;
+
+        SoftJointLimit angularLimits = new SoftJointLimit();
+        angularLimits.bounciness = 0f;
+        angularLimits.contactDistance = 10f*lsFactor;
+
+        angularLimits.limit = yawAngle_min;
+        onlinefreeFloatingJoint.lowAngularXLimit = angularLimits;
+
+        angularLimits.limit = yawAngle_max;
+        onlinefreeFloatingJoint.highAngularXLimit = angularLimits;
+
+        onlinefreeFloatingJoint.angularYZLimitSpring = linearLimitSpring;
+
+        angularLimits.limit = Mathf.Abs(pitchAngle_max);
+        onlinefreeFloatingJoint.angularYLimit = angularLimits;
+
+        angularLimits.limit = 0f;
+        onlinefreeFloatingJoint.angularZLimit = angularLimits;
+
+        onlinefreeFloatingJoint.targetPosition = Vector3.zero;
+        onlinefreeFloatingJoint.targetVelocity = Vector3.zero;
+
+        JointDrive jointDrive = new JointDrive();
+        jointDrive.positionSpring = 0f;
+        jointDrive.positionDamper = 0f;
+        jointDrive.maximumForce = Mathf.Infinity;
+
+        onlinefreeFloatingJoint.xDrive = jointDrive;
+        onlinefreeFloatingJoint.yDrive = jointDrive;
+        onlinefreeFloatingJoint.zDrive = jointDrive;
+
+        onlinefreeFloatingJoint.targetRotation = Quaternion.identity;
+        onlinefreeFloatingJoint.targetAngularVelocity = Vector3.zero;
+
+        onlinefreeFloatingJoint.rotationDriveMode = RotationDriveMode.Slerp;
+
+        onlinefreeFloatingJoint.angularXDrive = jointDrive;
+        onlinefreeFloatingJoint.angularYZDrive = jointDrive;
+
+        JointDrive slerpDrive = new JointDrive();
+        slerpDrive.positionSpring = 1e7f;
+        slerpDrive.positionDamper = 1e6f;
+        slerpDrive.maximumForce = Mathf.Infinity;
+
+        onlinefreeFloatingJoint.slerpDrive = slerpDrive;
+
+        onlinefreeFloatingJoint.projectionMode = JointProjectionMode.None;
+        onlinefreeFloatingJoint.projectionDistance = 0.01f;
+        onlinefreeFloatingJoint.projectionAngle = 1f;
+
+        onlinefreeFloatingJoint.configuredInWorldSpace = false;
+        onlinefreeFloatingJoint.swapBodies = false;
+
+        onlinefreeFloatingJoint.breakForce = Mathf.Infinity;
+        onlinefreeFloatingJoint.breakTorque = Mathf.Infinity;
+
+        onlinefreeFloatingJoint.enableCollision = false;
+        onlinefreeFloatingJoint.enablePreprocessing = true;
+
+        onlinefreeFloatingJoint.massScale = 1f;
+        onlinefreeFloatingJoint.connectedMassScale = 1f;
     }
 
     private float[] getInputAxis()
@@ -179,8 +234,17 @@ public class MainNozzle_Control : MonoBehaviour
         return Quaternion.Euler(desiredYawAngle, desiredPitchAngle, 0f);
     }
 
-    private void RotateNozzle(Quaternion targetQuaternion)
+    private void ApplyThrust()
     {
+        Vector3 thrustForce = transform.up * nozzleThrustValue;
+        Vector3d thrustAcc = new Vector3d(thrustForce) / 1d /*spaceship.mass*/;
+        nozzleRigidbody.AddForce(thrustForce, ForceMode.Force);
+        //spaceship.orbitedBodyRelativeAcc += thrustAcc;
+    }
+
+    private void RotateNozzle()
+    {
+        Quaternion targetQuaternion = computeYawPitchAngle(targetedAngles[0], targetedAngles[1]);
         // Seeting the target Quaternion of the Configurable Joint. Can be used with either the SLERP motor or the X/YZ motor
         originalfreeFloatingJoint.targetRotation = targetQuaternion;
     }

@@ -249,6 +249,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   universe: {fileID: 0}
   nozzleThrust_Power: 300
+  yawAngle_min: -15
+  yawAngle_max: 15
+  pitchAngle_min: -15
+  pitchAngle_max: 15
   engineIsActive: 0
 --- !u!153 &4384064439219058762
 ConfigurableJoint:

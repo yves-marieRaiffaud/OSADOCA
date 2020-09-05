@@ -340,6 +340,33 @@ namespace Mathd_Lib {
             return num;
         }
 
+        public static double Mean(params double[] values)
+        {
+            int nbValues = 0;
+            double sum = 0d;
+            foreach(double val in values) {
+                sum += val;
+                nbValues++;
+            }
+            return sum / nbValues;
+        }
+
+        public static double Mean(Vector2d vec)
+        {
+            return Mean(vec.x, vec.y);
+        }
+
+        public static double Mean(Vector3d vec)
+        {
+            return Mean(vec.x, vec.y, vec.z);
+        }
+
+        public static double Mean(Vector4d vec)
+        {
+            return Mean(vec.x, vec.y, vec.z, vec.w);
+        }
+
+
         internal static bool LineIntersection(Vector2d p1, Vector2d p2, Vector2d p3, Vector2d p4, ref Vector2d result) {
             double num1 = p2.x - p1.x;
             double num2 = p2.y - p1.y;
