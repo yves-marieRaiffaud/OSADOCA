@@ -22,14 +22,14 @@ MonoBehaviour:
   drawOrbit: 1
   drawDirections: 0
   orbitDrawingResolution: 500
-  ra: 100000
-  rp: 100000
+  ra: 30000
+  rp: 30000
   p: 7935.8185547110625
   e: 0.2064181445288937
   a: 8289
   b: 8110.487038396646
   c: 1711
-  i: 0
+  i: 10
   lAscN: 0
   omega: 0
   nu: 0

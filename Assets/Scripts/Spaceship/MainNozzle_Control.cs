@@ -130,7 +130,7 @@ public class MainNozzle_Control : MonoBehaviour
         Vector3 ls = spaceship.transform.localScale;
         float lsFactor = (ls.x + ls.y + ls.z) / 3f;
 
-        onlinefreeFloatingJoint.anchor = new Vector3(0f, 0.4f*lsFactor, 0f);
+        onlinefreeFloatingJoint.anchor = new Vector3(0f, 0f*lsFactor, 0f);
         onlinefreeFloatingJoint.axis = Vector3.right;
         onlinefreeFloatingJoint.autoConfigureConnectedAnchor = false;
         onlinefreeFloatingJoint.connectedAnchor = Vector3.zero;
