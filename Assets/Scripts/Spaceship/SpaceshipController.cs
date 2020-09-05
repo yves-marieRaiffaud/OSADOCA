@@ -39,12 +39,12 @@ public class SpaceshipController
     {
         Debug.Log("New orders have been received from the TCP/IP receiver");
         Debug.LogFormat("ReceivedData : {0}", receivedData);
-        float[] arg1 = {0f,0f};
+        /*float[] arg1 = {0f,0f};
         nozzleControl.engineIsActive = true;
         float parsedVal;
         UsefulFunctions.ParseStringToFloat(receivedData, out parsedVal);
         // Make sure that the 'FireEngine' method is executed on the main thread, as it is accessing gameObject/Components
-        UnityMainThreadDispatcher.Instance().Enqueue(nozzleControl.FireEngine(arg1, parsedVal));
+        UnityMainThreadDispatcher.Instance().Enqueue(nozzleControl.FireEngine(arg1, parsedVal));*/
         //nozzleControl.engineIsActive = false;
     }
 }

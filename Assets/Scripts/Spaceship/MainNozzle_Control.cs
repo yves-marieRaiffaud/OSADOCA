@@ -47,12 +47,15 @@ public class MainNozzle_Control : MonoBehaviour
         nozzleRigidbody = GetComponent<Rigidbody>();
         originalfreeFloatingJoint = GetComponent<ConfigurableJoint>();
 
-        SetLiveConfigurableJoint();
+        // Retrieving the min/max angles along the Yaw/X and Pitch/Y Axis
+        yawAngle_min = originalfreeFloatingJoint.lowAngularXLimit.limit;
+        yawAngle_max = originalfreeFloatingJoint.highAngularXLimit.limit;
+        pitchAngle_max = originalfreeFloatingJoint.angularYLimit.limit;
+        pitchAngle_min = -pitchAngle_max;
 
-        if(transform.parent.Find("MainNozzleVFX") != null)
-            mainNozzleVFX = transform.parent.Find("MainNozzleVFX").GetComponent<VisualEffect>();
-        else
-            mainNozzleVFX = null;
+        //SetLiveConfigurableJoint();
+
+        mainNozzleVFX = GetComponentInChildren<VisualEffect>();
     }
 
     void FixedUpdate()
@@ -70,9 +73,7 @@ public class MainNozzle_Control : MonoBehaviour
         {
             mainNozzleVFX.Play();
             // Tranforming the raw values to the desired rotation angles of the nozzle
-            Quaternion targetQuaternion = computeYawPitchAngle(targetedAngles[0], targetedAngles[1]);
-            RotateNozzle(targetQuaternion);
-            nozzleRigidbody.AddForce(transform.up * nozzleThrust_Power * nozzleThrustValue, ForceMode.Force);
+            ApplyThrust();
         }
         else {
             mainNozzleVFX.Stop();
@@ -82,19 +83,28 @@ public class MainNozzle_Control : MonoBehaviour
 
     private void Fire_Engine_KeyboardControl()
     {
-        // Reading raw values from the controller
         float[] raw_inputs_array = getInputAxis();
         targetedAngles[0] = raw_inputs_array[0];
         targetedAngles[1] = raw_inputs_array[1];
-        float rawThrustValue = raw_inputs_array[2];
+        nozzleThrustValue = raw_inputs_array[2] * nozzleThrust_Power;
 
-        //FireEngine(targetedAngles, rawThrustValue);
-        Debug.Log("nozzleThrustValue = " + nozzleThrustValue);
-        Debug.Log("targetedAngles = " + string.Join(";", targetedAngles));
+        if(UsefulFunctions.isInRange(nozzleThrustValue, -0.01f, 0.01f)) {
+            engineIsActive = false;
+            mainNozzleVFX.Stop();
+        }
+        else {
+            engineIsActive = true;
+            mainNozzleVFX.Play();
+        }
 
+        ApplyThrust();
+    }
+
+    private void ApplyThrust()
+    {
         Quaternion targetQuaternion = computeYawPitchAngle(targetedAngles[0], targetedAngles[1]);
         RotateNozzle(targetQuaternion);
-        nozzleRigidbody.AddForce(transform.up * nozzleThrust_Power * nozzleThrustValue, ForceMode.Force);
+        nozzleRigidbody.AddForce(transform.up * nozzleThrustValue, ForceMode.Force);
     }
 
     public IEnumerator FireEngine(float[] raw_inputs_array, float rawThrustValue)
@@ -111,8 +121,6 @@ public class MainNozzle_Control : MonoBehaviour
 
         nozzleThrustValue = rawThrustValue;
         targetedAngles = raw_inputs_array;
-        Debug.Log("nozzleThrustValue = " + nozzleThrustValue);
-        Debug.Log("targetedAngles = " + string.Join(";", targetedAngles));
 
         if(nozzleThrustValue < 0.4f) {
             engineIsActive = false;
@@ -158,8 +166,8 @@ public class MainNozzle_Control : MonoBehaviour
     private float[] getInputAxis()
     {
         float[] outputArray = new float[3];
-        outputArray[0] = CrossPlatformInputManager.GetAxis("YawAxis");
-        outputArray[1] = CrossPlatformInputManager.GetAxis("PitchAxis");
+        outputArray[0] = CrossPlatformInputManager.GetAxis("Horizontal");
+        outputArray[1] = CrossPlatformInputManager.GetAxis("Vertical");
         outputArray[2] = CrossPlatformInputManager.GetAxis("VerticalThrust");
         return outputArray;
     }
@@ -168,23 +176,13 @@ public class MainNozzle_Control : MonoBehaviour
     {
         float desiredYawAngle = UsefulFunctions.mapInRange(new Vector2(-1, 1), new Vector2(yawAngle_min, yawAngle_max), rawYawAngle);
         float desiredPitchAngle = UsefulFunctions.mapInRange(new Vector2(-1, 1), new Vector2(pitchAngle_min, pitchAngle_max), rawPitchAngle);
-
-        // Rounding small values to zero (can be seen as precision)
-        if(UsefulFunctions.isInRange(desiredYawAngle, -0.1f, 0.1f))
-        {
-            desiredYawAngle = 0f;
-        }
-        if(UsefulFunctions.isInRange(desiredPitchAngle, -0.1f, 0.1f))
-        {
-            desiredPitchAngle = 0f;
-        }
         return Quaternion.Euler(desiredYawAngle, desiredPitchAngle, 0f);
     }
 
     private void RotateNozzle(Quaternion targetQuaternion)
     {
         // Seeting the target Quaternion of the Configurable Joint. Can be used with either the SLERP motor or the X/YZ motor
-        onlinefreeFloatingJoint.targetRotation = targetQuaternion;
+        originalfreeFloatingJoint.targetRotation = targetQuaternion;
     }
 
 }
