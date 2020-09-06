@@ -82,6 +82,7 @@ public class simUI : MonoBehaviour
         shipMainControlNozzleScript.showThrustVector = !shipMainControlNozzleScript.showThrustVector;
         if(shipMainControlNozzleScript.thrustLR_GO != null)
             shipMainControlNozzleScript.thrustLR_GO.SetActive(shipMainControlNozzleScript.showThrustVector);
+        //universeRunner.activeSpaceship.propulsionManager.ToggleRCSVectorsDisplay();
     }
 
     public void ToggleRocketCameraRotationLock()

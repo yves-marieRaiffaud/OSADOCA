@@ -88,7 +88,7 @@ public class SimRocketCam_MouseOrbit : MonoBehaviour
         else if(target && Input.GetKey(KeyCode.LeftAlt))
         {
             float offset = Mathf.Clamp(Input.GetAxis("MouseScrollWheel"), -5f, 5f);
-            camLongitudinalOffset += offset;
+            camLongitudinalOffset += offset * Mathd_Lib.Mathd.Mean(transform.parent.localScale);
             transform.position += transform.parent.TransformDirection(new Vector3(0f, offset, 0f));
         }
         else if(target)

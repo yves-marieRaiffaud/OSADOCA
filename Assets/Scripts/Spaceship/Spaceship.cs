@@ -9,6 +9,7 @@ using Matlab_Communication;
 public class Spaceship : MonoBehaviour, FlyingObjCommonParams
 {
     public bool spawnAsUIRocket; 
+    [HideInInspector] public PropulsionManager propulsionManager;
     [HideInInspector] public SpaceshipController spaceshipController {get; private set;}
     [HideInInspector] public SpaceshipSettings settings;
     //=======
@@ -187,6 +188,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     //===============================
     void Awake()
     {
+        propulsionManager = GetComponent<PropulsionManager>();
         spaceshipController = null;
         previousRotation = new Quaterniond(transform.rotation);
         orbitsAreDisplayed = false;

@@ -388,12 +388,27 @@ public static class UsefulFunctions
         GameObject retunedGO = UsefulFunctions.CreateAssignGameObject(gameObjectName);
         retunedGO.transform.position = position;
         if(parent != null && retunedGO.transform.parent != parent.transform)
-        {
             retunedGO.transform.parent = parent.transform;
-        }
         return retunedGO;
     }
 
+    public static GameObject CreateAssignGameObject(string gameObjectName, GameObject parent, System.Type componentType)
+    {
+        if(GameObject.Find(gameObjectName) == null)
+        {
+            GameObject gameObject = new GameObject(gameObjectName, componentType);
+            if(parent != null && gameObject.transform.parent != parent.transform)
+                gameObject.transform.parent = parent.transform;
+            return gameObject;
+        }
+        else{
+            GameObject gameObject = GameObject.Find(gameObjectName);
+            if(parent != null && gameObject.transform.parent != parent.transform)
+                gameObject.transform.parent = parent.transform;
+            return gameObject;
+        }
+    }
+    
     public static GameObject CreateAssignGameObject(string gameObjectName, System.Type componentType)
     {
         if(GameObject.Find(gameObjectName) == null)

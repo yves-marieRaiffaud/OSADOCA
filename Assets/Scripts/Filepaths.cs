@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+
 // Class that gathers every filepaths needed in the code
 public static class Filepaths
 {
@@ -23,4 +26,13 @@ public static class Filepaths
     public const string simulation_settings = "/simulation_settings.json";
 
     public const string userAdded_launchPads = "/custom_launchPads.json";
+
+    public enum EngineLayersName { Spaceship, CelestialBody, Orbit, StarDome, SpaceshipVectors };
+    public static Dictionary<EngineLayersName, int> engineLayersToInt = new Dictionary<EngineLayersName, int>() {
+        { EngineLayersName.Spaceship       , 8 },
+        { EngineLayersName.CelestialBody   , 9 },
+        { EngineLayersName.Orbit           , 10 },
+        { EngineLayersName.StarDome        , 11 },
+        { EngineLayersName.SpaceshipVectors, 12 },
+    };
 }

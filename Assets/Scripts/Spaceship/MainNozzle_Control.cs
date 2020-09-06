@@ -31,7 +31,7 @@ public class MainNozzle_Control : MonoBehaviour
 
     private Vector3 thrustForce;
     public bool showThrustVector;
-    public GameObject thrustLR_GO;
+    [HideInInspector] public GameObject thrustLR_GO;
     //================
     void Start()
     {

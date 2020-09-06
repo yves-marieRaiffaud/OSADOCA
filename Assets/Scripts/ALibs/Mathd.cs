@@ -366,6 +366,32 @@ namespace Mathd_Lib {
             return Mean(vec.x, vec.y, vec.z, vec.w);
         }
 
+        public static float Mean(params float[] values)
+        {
+            int nbValues = 0;
+            float sum = 0f;
+            foreach(float val in values) {
+                sum += val;
+                nbValues++;
+            }
+            return sum / nbValues;
+        }
+
+        public static float Mean(Vector2 vec)
+        {
+            return Mean(vec.x, vec.y);
+        }
+
+        public static float Mean(Vector3 vec)
+        {
+            return Mean(vec.x, vec.y, vec.z);
+        }
+
+        public static float Mean(Vector4 vec)
+        {
+            return Mean(vec.x, vec.y, vec.z, vec.w);
+        }
+
         public static Quaternion Quaterniond_To_Quaternion(Quaterniond quat)
         {
             return new Quaternion((float)quat.X, (float)quat.Y, (float)quat.Z, (float)quat.W);
