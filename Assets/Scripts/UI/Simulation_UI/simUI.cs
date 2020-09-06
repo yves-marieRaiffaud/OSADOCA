@@ -19,6 +19,9 @@ public class simUI : MonoBehaviour
     private float uiUpdateValues_period = 0.2f; // in s
     private bool delayCoroutine;
     //=================
+    private MainNozzle_Control shipMainControlNozzleScript;
+    private SimRocketCam_MouseOrbit rocketCamScript;
+    //=================
     void Start()
     {
         delayCoroutine = true;
@@ -30,6 +33,9 @@ public class simUI : MonoBehaviour
                 Debug.Log(fileName+" already exists.");
             sr = File.CreateText(fileName);
         }
+        //=====
+        shipMainControlNozzleScript = universeRunner.activeSpaceship.transform.GetComponentInChildren<MainNozzle_Control>(false);
+        rocketCamScript = universeRunner.activeSpaceship.transform.GetComponentInChildren<SimRocketCam_MouseOrbit>(false);
         //=====
         StartCoroutine(UpdateUICoroutine());
     }
@@ -70,6 +76,20 @@ public class simUI : MonoBehaviour
         if(!saveOrbitalDataToText) { return; }
         sr.WriteLine (velocity + ";" + altitude);
     }
+
+    public void ToggleThrustVectorDisplay()
+    {
+        shipMainControlNozzleScript.showThrustVector = !shipMainControlNozzleScript.showThrustVector;
+        if(shipMainControlNozzleScript.thrustLR_GO != null)
+            shipMainControlNozzleScript.thrustLR_GO.SetActive(shipMainControlNozzleScript.showThrustVector);
+    }
+
+    public void ToggleRocketCameraRotationLock()
+    {
+        rocketCamScript.freezeCamRotation = !rocketCamScript.freezeCamRotation;
+    }
+
+
 
     void OnApplicationQuit()
     {

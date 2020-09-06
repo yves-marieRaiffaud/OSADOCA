@@ -145,6 +145,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     //===============================
     void FixedUpdate()
     {
+        GetDeltaRotation();
         if(spaceshipController == null)
         {
             // Check if there has been a connection sending nozzle control data
@@ -402,12 +403,14 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         return distanceScaleFactor;
     }
 
-    private void GetDeltaRotation()
+    public Quaterniond GetDeltaRotation()
     {
         // Returns the increment of rotation of the rocket
         // Simulates what the gyrscopes of the IMU would measure
-        _deltaRotation = new Quaterniond(transform.rotation) - previousRotation;
+        //_deltaRotation = new Quaterniond(transform.rotation) - previousRotation;
+        _deltaRotation = new Quaterniond(transform.rotation) * Quaterniond.Conjugate(previousRotation);
         previousRotation = new Quaterniond(transform.rotation);
+        return _deltaRotation;
     }
 
     public IEnumerator DeltaRotation_Coroutine(float comHandlerSenderSimEnvFrequency)

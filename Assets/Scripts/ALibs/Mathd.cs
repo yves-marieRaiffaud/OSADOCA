@@ -366,6 +366,19 @@ namespace Mathd_Lib {
             return Mean(vec.x, vec.y, vec.z, vec.w);
         }
 
+        public static Quaternion Quaterniond_To_Quaternion(Quaterniond quat)
+        {
+            return new Quaternion((float)quat.X, (float)quat.Y, (float)quat.Z, (float)quat.W);
+        }
+
+        public static bool IsValid(Vector3 a) {
+            if(float.IsNaN(a.x) || float.IsNaN(a.y) || float.IsNaN(a.z) ||
+            float.IsInfinity(a.x) || float.IsInfinity(a.y) || float.IsInfinity(a.z)) {
+                return false;
+            }
+            return true;
+        }
+
 
         internal static bool LineIntersection(Vector2d p1, Vector2d p2, Vector2d p3, Vector2d p4, ref Vector2d result) {
             double num1 = p2.x - p1.x;

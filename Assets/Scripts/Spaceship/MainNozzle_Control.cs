@@ -28,11 +28,18 @@ public class MainNozzle_Control : MonoBehaviour
 
     private float nozzleThrustValue;
     private float[] targetedAngles;
+
+    private Vector3 thrustForce;
+    public bool showThrustVector;
+    public GameObject thrustLR_GO;
     //================
     void Start()
     {
         engineIsActive = false;
         nozzleThrustValue = 0f;
+        showThrustVector = false;
+        thrustForce = Vector3.zero;
+        thrustLR_GO = null;
         targetedAngles = new float[2];
         targetedAngles[0] = targetedAngles[1] = 0f;
 
@@ -57,8 +64,24 @@ public class MainNozzle_Control : MonoBehaviour
         if(useKeyboardControl)
             Fire_Engine_KeyboardControl();
         else
-            // Else we are controlling the rocket via TCP/IP orders and GNC algorithms
-            Fire_Engine_GNC_Algorithms();
+            Fire_Engine_GNC_Algorithms(); // Else we are controlling the rocket via TCP/IP orders and GNC algorithms
+    }
+
+    void LateUpdate()
+    {
+        if(showThrustVector)
+            ShowThrustVector();
+    }
+
+    public void ShowThrustVector()
+    {
+        // Layer 12 is the 'SpaceshipVectors' layer
+        float maxVecLength = 20f;
+        //float vecLength = Mathf.Clamp(thrustForce.magnitude / 100f, -maxVecLength, maxVecLength);
+        Debug.Log("thrustForce = " + thrustForce);
+        thrustLR_GO = UsefulFunctions.DrawVector(thrustForce, Vector3.zero, 10f, "MainNozzleThrust", 0.5f, 12, spaceship.gameObject.transform);
+        thrustLR_GO.transform.position = spaceship.transform.position;
+        thrustLR_GO.transform.rotation = Quaternion.identity;
     }
 
     private void Fire_Engine_GNC_Algorithms()
@@ -73,6 +96,7 @@ public class MainNozzle_Control : MonoBehaviour
         else {
             mainNozzleVFX.Stop();
             engineIsActive = false;
+            nozzleRigidbody.AddForce(thrustForce, ForceMode.Force);
         }
     }
 
@@ -236,8 +260,8 @@ public class MainNozzle_Control : MonoBehaviour
 
     private void ApplyThrust()
     {
-        Vector3 thrustForce = transform.up * nozzleThrustValue;
-        Vector3d thrustAcc = new Vector3d(thrustForce) / 1d /*spaceship.mass*/;
+        thrustForce += transform.up * nozzleThrustValue;
+        //Vector3d thrustAcc = new Vector3d(thrustForce) / 1d /*spaceship.mass*/;
         nozzleRigidbody.AddForce(thrustForce, ForceMode.Force);
         //spaceship.orbitedBodyRelativeAcc += thrustAcc;
     }

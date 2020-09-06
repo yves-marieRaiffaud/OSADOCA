@@ -26,9 +26,15 @@ public class SimRocketCam_MouseOrbit : MonoBehaviour
     private Camera mainCameraForRocket; // Needed to modify its Far clipping plane value when zooming in/out
     private Camera cameraBackOuterSpace;
     private float farClipPlaneMargin;
+    private float camLongitudinalOffset; // Offset of the camera along the longitudinal axis of the rocket (to move the cam up/down along the main axis of the rocket)
+
+    public bool freezeCamRotation;
 
     void Start () 
     {
+        freezeCamRotation = false;
+        camLongitudinalOffset = 0f;
+
         targetLocalScale = 3f / (target.localScale.x + target.localScale.y + target.localScale.z);
         distance = cameraBackTR.position.magnitude/targetLocalScale;
         //farClipPlaneMargin = (float)UniCsts.u2pl/2f;
@@ -43,8 +49,7 @@ public class SimRocketCam_MouseOrbit : MonoBehaviour
         y = angles.x;
         //========
         // Make the rigid body not change rotation
-        if (rb != null)
-        {
+        if (rb != null) {
             rb.freezeRotation = true;
         }
     }
@@ -61,10 +66,13 @@ public class SimRocketCam_MouseOrbit : MonoBehaviour
  
     private void UpdateCamera_Rotation_Zoom()
     {
-        if (target && Input.GetMouseButton(0)) 
+        if (target && (Input.GetMouseButton(0) || freezeCamRotation)) 
         {
-            x += Input.GetAxis("MouseX") * xSpeed * 0.02f;
-            y -= Input.GetAxis("MouseY") * ySpeed * 0.02f;
+            if(!freezeCamRotation) {
+                x += Input.GetAxis("MouseX") * xSpeed * 0.02f;
+                y -= Input.GetAxis("MouseY") * ySpeed * 0.02f;
+            }
+            
             //========
             y = ClampAngle(y, yMinLimit, yMaxLimit);
             //========
@@ -75,7 +83,13 @@ public class SimRocketCam_MouseOrbit : MonoBehaviour
             Vector3 position = rotation * negDistance + target.position;
             //========
             transform.rotation = rotation;
-            transform.position = position;
+            transform.position = position + transform.parent.TransformDirection(new Vector3(0f, camLongitudinalOffset, 0f));
+        }
+        else if(target && Input.GetKey(KeyCode.LeftAlt))
+        {
+            float offset = Mathf.Clamp(Input.GetAxis("MouseScrollWheel"), -5f, 5f);
+            camLongitudinalOffset += offset;
+            transform.position += transform.parent.TransformDirection(new Vector3(0f, offset, 0f));
         }
         else if(target)
         {
@@ -85,7 +99,7 @@ public class SimRocketCam_MouseOrbit : MonoBehaviour
             Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance/targetLocalScale);
             Vector3 position = transform.rotation * negDistance + target.position;
             //========
-            transform.position = position;
+            transform.position = position + transform.parent.TransformDirection(new Vector3(0f, camLongitudinalOffset, 0f));
         }
         mainCameraForRocket.farClipPlane = distance/targetLocalScale + farClipPlaneMargin;
     }

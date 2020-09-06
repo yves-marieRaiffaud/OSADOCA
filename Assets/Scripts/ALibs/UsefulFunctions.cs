@@ -376,7 +376,18 @@ public static class UsefulFunctions
     public static GameObject CreateAssignGameObject(string gameObjectName, GameObject parent)
     {
         GameObject retunedGO = UsefulFunctions.CreateAssignGameObject(gameObjectName);
-        if(retunedGO.transform.parent != parent.transform)
+        if(parent != null && retunedGO.transform.parent != parent.transform)
+        {
+            retunedGO.transform.parent = parent.transform;
+        }
+        return retunedGO;
+    }
+
+    public static GameObject CreateAssignGameObject(string gameObjectName, GameObject parent, Vector3 position)
+    {
+        GameObject retunedGO = UsefulFunctions.CreateAssignGameObject(gameObjectName);
+        retunedGO.transform.position = position;
+        if(parent != null && retunedGO.transform.parent != parent.transform)
         {
             retunedGO.transform.parent = parent.transform;
         }
@@ -489,26 +500,34 @@ public static class UsefulFunctions
         else{ return false; }
     }
 
-    public static void DrawVector(Vector3d vectorDir, Vector3d startPoint, float vectorLength=1000f, string nameGameObject="NewVector", float lineWidth=50f)
+    public static GameObject DrawVector(Vector3d vectorDir, Vector3d startPoint, float vectorLength=1000f, string nameGameObject="NewVector", float lineWidth=50f, int layer=10, Transform parent=null)
     {
-        if(!Vector3d.IsValid(vectorDir) || !Vector3d.IsValid(startPoint)) {
-            return;
+        return DrawVector((Vector3)vectorDir, (Vector3)startPoint, vectorLength, nameGameObject, lineWidth, layer, parent);
+    }
+
+    public static GameObject DrawVector(Vector3 vectorDir, Vector3 startPoint, float vectorLength=1000f, string nameGameObject="NewVector", float lineWidth=50f, int layer=10, Transform parent=null)
+    {
+        // Default layer is the 'Orbit' layer
+        if(!Mathd.IsValid(vectorDir) || !Mathd.IsValid(startPoint)) {
+            return null;
         }
         else {
             // Check if GameObject already Exists
-            GameObject dirGO = UsefulFunctions.CreateAssignGameObject(nameGameObject);
-            dirGO.layer = 10; // 'Orbit' layer
+            GameObject dirGO = UsefulFunctions.CreateAssignGameObject(nameGameObject, parent.gameObject);
+            dirGO.layer = layer; // 'Orbit' layer
             LineRenderer dirLR = (LineRenderer) UsefulFunctions.CreateAssignComponent(typeof(LineRenderer), dirGO);
 
             Vector3[] pos = new Vector3[2];
-            pos[0] = (Vector3) startPoint;
-            pos[1] = (Vector3)startPoint + (Vector3) (vectorLength*vectorDir);
+            pos[0] = startPoint;
+            pos[1] = startPoint + vectorLength*vectorDir;
 
             dirLR.useWorldSpace = false;
             dirLR.positionCount = pos.Length;
             dirLR.SetPositions(pos);
             dirLR.widthCurve = AnimationCurve.Constant(0f, 1f, lineWidth);
             dirLR.sharedMaterial = Resources.Load("OrbitMaterial", typeof(Material)) as Material;
+            
+            return dirGO;
         }
     }
 

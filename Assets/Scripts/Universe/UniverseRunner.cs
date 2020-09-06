@@ -103,15 +103,11 @@ public class UniverseRunner : MonoBehaviour
             rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
         }
         else {
-            rb.angularDrag = 10f;
+            rb.angularDrag = 0f;
             rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
         }
 
         rb.constraints = RigidbodyConstraints.None;
-        if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
-            rb.isKinematic = true;
-        else
-            rb.isKinematic = false;
         rb.isKinematic = false;
 
         if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
