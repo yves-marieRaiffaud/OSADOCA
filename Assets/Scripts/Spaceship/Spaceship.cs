@@ -396,12 +396,9 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     public double SetDistanceScaleFactor()
     {
         if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree)
-        {
             distanceScaleFactor = UniCsts.m2km2pl2u; // If the orbit is defined in km_degree
-        }
-        else {
+        else
             distanceScaleFactor = UniCsts.m2km2au2u; // If the orbit is defined in AU_degree
-        }
         return distanceScaleFactor;
     }
 

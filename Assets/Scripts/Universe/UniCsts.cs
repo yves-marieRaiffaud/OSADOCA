@@ -35,9 +35,6 @@ public static class UniCsts
     public const double au2km = 149_597_870.7d; // km
     public const double km2au = 1/au2km;
 
-    public const double m2km2au2u = m2km * km2au * au2u; // To convert meters to unity units for CELESTIALBODIES
-    public const double m2km2pl2u = m2km * pl2u; // To convert meters to unity units for SPACESHIPS
-
     // u2au = 1000 ==> 1000 unity units == 1 AU
     public const double au2u = 7_500_000d; //100_000 // 1 AU (150M km) translated into the unity coordinates system. 1au == 1000f
     public const double u2au = 1d/au2u;
@@ -45,6 +42,9 @@ public static class UniCsts
     // u2pl=2f ==> 1 unity unit == 2km of the radius of a planet
     public const double u2pl = 20d; // 2 // Conversion between the planetary scale and the unit coordinate system.
     public const double pl2u = 1d/u2pl;
+
+    public const double m2km2au2u = m2km * km2au * au2u; // To convert meters to unity units for CELESTIALBODIES
+    public const double m2km2pl2u = m2km * pl2u; // To convert meters to unity units for SPACESHIPS
 
     // Only 6 levels in this array as the first distance is '+infinity' for level 0
     // level 0 is +infinity and will not be modified

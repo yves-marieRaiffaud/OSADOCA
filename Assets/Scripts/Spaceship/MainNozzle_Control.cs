@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityEngine.VFX;
 using Mathd_Lib;
+using UseFnc = UsefulFunctions;
 
 public class MainNozzle_Control : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class MainNozzle_Control : MonoBehaviour
     [Header("Pitch Axis Limits")]
     public float pitchAngle_min, pitchAngle_max;
     //================
-    private bool useKeyboardControl;
+    bool useKeyboardControl;
     [HideInInspector] public bool engineIsActive;
     //================
     Rigidbody nozzleRigidbody;
@@ -26,12 +27,14 @@ public class MainNozzle_Control : MonoBehaviour
     VisualEffect mainNozzleVFX;
     Spaceship spaceship;
 
-    private float nozzleThrustValue;
-    private float[] targetedAngles;
+    float nozzleThrustValue;
+    float[] targetedAngles;
 
-    private Vector3 thrustForce;
+    Vector3 thrustForce;
     public bool showThrustVector;
-    [HideInInspector] public GameObject thrustLR_GO;
+    
+    GameObject thrustVectorLR_GO;
+    LineRenderer thrustVectorLR;
     //================
     void Start()
     {
@@ -39,7 +42,6 @@ public class MainNozzle_Control : MonoBehaviour
         nozzleThrustValue = 0f;
         showThrustVector = false;
         thrustForce = Vector3.zero;
-        thrustLR_GO = null;
         targetedAngles = new float[2];
         targetedAngles[0] = targetedAngles[1] = 0f;
 
@@ -57,6 +59,14 @@ public class MainNozzle_Control : MonoBehaviour
 
         SetLiveConfigurableJoint();
         mainNozzleVFX = GetComponentInChildren<VisualEffect>();
+
+        thrustVectorLR_GO = UseFnc.CreateAssignGameObject("ThrustVector_LR", gameObject, typeof(LineRenderer), false);
+        thrustVectorLR_GO.transform.localPosition = Vector3.zero;
+        thrustVectorLR_GO.tag = "SpaceshipVectors";
+        thrustVectorLR_GO.layer = Filepaths.engineLayersToInt[Filepaths.EngineLayersName.SpaceshipVectors];
+        thrustVectorLR = thrustVectorLR_GO.GetComponent<LineRenderer>();
+        thrustVectorLR.useWorldSpace = true; // Using worldSpace as we are passing the 'thrustForce' Vector3 to the 'DrawThrustVector' method
+        thrustVectorLR.sharedMaterial = Resources.Load("OrbitMaterial", typeof(Material)) as Material; // SHOULD BE CHANGED
     }
 
     void FixedUpdate()
@@ -69,19 +79,17 @@ public class MainNozzle_Control : MonoBehaviour
 
     void LateUpdate()
     {
-        if(showThrustVector)
+        if(showThrustVector) {
+            thrustVectorLR_GO.SetActive(true);
             ShowThrustVector();
+        }
+        else if(!showThrustVector && thrustVectorLR_GO.activeInHierarchy)
+            thrustVectorLR_GO.SetActive(false);
     }
 
     public void ShowThrustVector()
     {
-        // Layer 12 is the 'SpaceshipVectors' layer
-        float maxVecLength = 20f;
-        //float vecLength = Mathf.Clamp(thrustForce.magnitude / 100f, -maxVecLength, maxVecLength);
-        Debug.Log("thrustForce = " + thrustForce);
-        thrustLR_GO = UsefulFunctions.DrawVector(thrustForce, Vector3.zero, 10f, "MainNozzleThrust", 0.5f, 12, spaceship.gameObject.transform);
-        thrustLR_GO.transform.position = spaceship.transform.position;
-        thrustLR_GO.transform.rotation = Quaternion.identity;
+        UsefulFunctions.DrawVector(thrustVectorLR_GO, thrustVectorLR, thrustForce, spaceship.transform.position, thrustForce.magnitude);
     }
 
     private void Fire_Engine_GNC_Algorithms()

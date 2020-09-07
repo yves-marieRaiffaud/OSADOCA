@@ -23,18 +23,22 @@ public class PropulsionManager : MonoBehaviour
     List<RCSThruster> rcsThrusters;
 
     Rigidbody shipRB;
-    bool showRCSVectors;
+    bool drawAllThrustForces;
     //==========
     void Start()
     {
-        showRCSVectors = false;
+        drawAllThrustForces = false;
         shipRB = transform.GetComponentInParent<Rigidbody>();
         if(RCS_Folder == null)
             return;
 
         rcsThrusters = new List<RCSThruster>();
         for(int i=0; i<RCS_Folder.transform.childCount; i++) {
-            rcsThrusters.Add(RCS_Folder.transform.GetChild(i).GetComponent<RCSThruster>());
+            RCSThruster thruster = RCS_Folder.transform.GetChild(i).GetComponent<RCSThruster>();
+            rcsThrusters.Add(thruster);
+            thruster.thrustIsOn.AddListener(delegate{
+                DrawThrustForce(thruster as PropulsionInterface);
+            });
         }
     }
 
@@ -73,5 +77,28 @@ public class PropulsionManager : MonoBehaviour
 
         foreach(RCSThruster rcs in rcsThrusters)
             rcs.FireRCS(orientation, sense);
+    }
+
+    public void Toggle_DrawAllThrustForce()
+    {
+        drawAllThrustForces = !drawAllThrustForces;
+
+        foreach(RCSThruster rcs in rcsThrusters) {
+            if(drawAllThrustForces)
+            {
+                if(!rcs.gameObject.activeSelf)
+                    rcs.gameObject.SetActive(true);
+                rcs.DrawThrustVector();
+            }
+            else
+                rcs.gameObject.SetActive(false);
+        }
+            
+    }
+
+    public void DrawThrustForce(PropulsionInterface propulsionObj)
+    {
+        Debug.Log("propulsionObj = " + propulsionObj);
+        propulsionObj.DrawThrustVector();
     }
 }

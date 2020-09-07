@@ -408,6 +408,24 @@ public static class UsefulFunctions
             return gameObject;
         }
     }
+
+    public static GameObject CreateAssignGameObject(string gameObjectName, GameObject parent, System.Type componentType, bool nameMustBeUnique)
+    {
+        if(!nameMustBeUnique || (nameMustBeUnique && GameObject.Find(gameObjectName) == null))
+        {
+            GameObject gameObject = new GameObject(gameObjectName, componentType);
+            if(parent != null && gameObject.transform.parent != parent.transform)
+                gameObject.transform.parent = parent.transform;
+            return gameObject;
+        }
+        else
+        {
+            GameObject gameObject = GameObject.Find(gameObjectName);
+            if(parent != null && gameObject.transform.parent != parent.transform)
+                gameObject.transform.parent = parent.transform;
+            return gameObject;
+        }
+    }
     
     public static GameObject CreateAssignGameObject(string gameObjectName, System.Type componentType)
     {
@@ -543,6 +561,22 @@ public static class UsefulFunctions
             dirLR.sharedMaterial = Resources.Load("OrbitMaterial", typeof(Material)) as Material;
             
             return dirGO;
+        }
+    }
+
+    public static void DrawVector(GameObject lrGO, LineRenderer lr, Vector3 vectorDir, Vector3 startPoint, float vectorLength=1000f)
+    {
+        // Default layer is the 'Orbit' layer
+        if(!Mathd.IsValid(vectorDir) || !Mathd.IsValid(startPoint)) {
+            return;
+        }
+        else {
+            Vector3[] pos = new Vector3[2];
+            pos[0] = startPoint;
+            pos[1] = startPoint + vectorLength*vectorDir;
+
+            lr.positionCount = pos.Length;
+            lr.SetPositions(pos);
         }
     }
 

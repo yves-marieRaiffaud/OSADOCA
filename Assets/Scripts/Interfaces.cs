@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
+using UnityEngine.Events;
 
 public interface FlyingObjCommonParams
 {
@@ -40,3 +41,26 @@ public interface SimSettingInterface<T1>
     SimSettingCategory category {get; set;}
     SimSettings_Info simSettings_Info {get; set;}
 }
+
+public interface PropulsionInterface
+{
+    Rigidbody effectiveRB {get; set;}
+    Vector3 worldPosition {get;}
+    Vector3 localPosition {get;}
+
+    Vector3 worldUpThrustAxis {get;}
+    Vector3 worldRightThrustAxis {get;}
+    Vector3 worldForwardThrustAxis {get;}
+
+    float RCSThrustPower {get; set;}
+
+    ThrustIsOnEvent thrustIsOn {get; set;}
+
+    bool displayThrustVector {get; set;}
+    bool displayThrustAxes {get; set;}
+
+    void DrawThrustVector();
+}
+
+[System.Serializable]
+public class ThrustIsOnEvent : UnityEvent<PropulsionInterface>{}
