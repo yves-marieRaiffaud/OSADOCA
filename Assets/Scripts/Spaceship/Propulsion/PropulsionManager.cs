@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
 using System.Text;
+using System.Linq;
 using UseFnc = UsefulFunctions;
 
 public class PropulsionManager : MonoBehaviour
@@ -36,7 +37,6 @@ public class PropulsionManager : MonoBehaviour
         for(int i=0; i<RCS_Folder.transform.childCount; i++) {
             RCSThruster thruster = RCS_Folder.transform.GetChild(i).GetComponent<RCSThruster>();
             rcsThrusters.Add(thruster);
-            Debug.Log(thruster.thrustIsOn);
             thruster.thrustIsOn.AddListener(delegate{
                 DrawThrustForce(thruster as PropulsionInterface);
             });
@@ -116,8 +116,8 @@ public class PropulsionManager : MonoBehaviour
         // Else we need to find which RCS should/can be fired, depending on the translationDirection and each RCS thrust axes
         Vector3 desiredThrustAxis = MapTranslationDirectionToShipThrustAxis(translationDirection);
         List<RCSThruster> rcsToFire = Get_RCSThrusters_ThatCanFireInAxis(desiredThrustAxis);
+        Debug.Log("desiredThrustAxis: " + desiredThrustAxis + "; firing: " + string.Join("-", rcsToFire.Select(i => i.name)));
         foreach(RCSThruster rcs in rcsToFire) {
-            Debug.Log("rcs name: " + rcs.name);
             rcs.FireRCS(orientation, sense);
         }
         Debug.Log("====");
@@ -125,6 +125,7 @@ public class PropulsionManager : MonoBehaviour
 
     private List<RCSThruster> Get_RCSThrusters_ThatCanFireInAxis(Vector3 desiredThrustAxis)
     {
+        // 'desiredThrustAxis' should be in LOCAL SPACE of the rocket
         List<RCSThruster> outputList = new List<RCSThruster>();
         foreach(RCSThruster rcs in rcsThrusters) {
             if(rcs.ThrustAxis_AlignedWith_Direction(desiredThrustAxis))
@@ -135,7 +136,7 @@ public class PropulsionManager : MonoBehaviour
 
     private Vector3 MapTranslationDirectionToShipThrustAxis(RCSTranslationDirection translationDirection)
     {
-        // Returns the thrust axis in the spaceship's LOCAL SPACE corresponding the passed 'translationDirection' enum
+        // Returns the thrust axis in the spaceship's LOCAL SPACE corresponding to the passed 'translationDirection' enum
         Vector3 outputThrustAxis;
         switch(translationDirection) {
             case(RCSTranslationDirection.Upward):
@@ -147,26 +148,26 @@ public class PropulsionManager : MonoBehaviour
                 break;
             
             case(RCSTranslationDirection.Forward):
-                outputThrustAxis = Vector3.forward;
-                break;
-            
-            case(RCSTranslationDirection.Backward):
                 outputThrustAxis = Vector3.back;
                 break;
             
+            case(RCSTranslationDirection.Backward):
+                outputThrustAxis = Vector3.forward;
+                break;
+            
             case(RCSTranslationDirection.Right):
-                outputThrustAxis = Vector3.right;
+                outputThrustAxis = Vector3.left;
                 break;
             
             case(RCSTranslationDirection.Left):
-                outputThrustAxis = Vector3.left;
+                outputThrustAxis = Vector3.right;
                 break;
             
             default:
                 outputThrustAxis = Vector3.zero;
                 break;
         }
-        return shipRB.transform.TransformDirection(outputThrustAxis);
+        return outputThrustAxis;
     }
 
     public void Toggle_DrawAllThrustForce()

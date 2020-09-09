@@ -6212,6 +6212,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1580006462}
     m_Modifications:
+    - target: {fileID: 1261606585738369952, guid: bcbf8a00623a17249935a8c8f4942b55,
+        type: 3}
+      propertyPath: _RCSThrustPower
+      value: 0.4
+      objectReference: {fileID: 0}
     - target: {fileID: 2830405243192528421, guid: bcbf8a00623a17249935a8c8f4942b55,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -6276,6 +6281,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3146543975647474620, guid: bcbf8a00623a17249935a8c8f4942b55,
+        type: 3}
+      propertyPath: _RCSThrustPower
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3656105187729847630, guid: bcbf8a00623a17249935a8c8f4942b55,
+        type: 3}
+      propertyPath: commonThrustPower
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4669710361502336229, guid: bcbf8a00623a17249935a8c8f4942b55,
+        type: 3}
+      propertyPath: _RCSThrustPower
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8582710329502349449, guid: bcbf8a00623a17249935a8c8f4942b55,
+        type: 3}
+      propertyPath: _RCSThrustPower
+      value: 0.4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bcbf8a00623a17249935a8c8f4942b55, type: 3}

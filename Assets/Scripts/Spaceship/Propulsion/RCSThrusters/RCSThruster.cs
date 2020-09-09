@@ -8,6 +8,11 @@ using UseFnc = UsefulFunctions;
 
 public class RCSThruster : MonoBehaviour, PropulsionInterface
 {
+    public enum SideLocation { FrontPositive, FrontNegative, RightPositive, RightNegative };
+    public SideLocation sideLocation;
+    //======================
+    //======================
+
     public float _RCSThrustPower; // public to be user-modified
     public float RCSThrustPower {
         get {
@@ -103,11 +108,45 @@ public class RCSThruster : MonoBehaviour, PropulsionInterface
             _thrustIsOn = new ThrustIsOnEvent();
     }
 
+    void InitThrusterSideLocation()
+    {
+        // Comparing the Rocket local axes with the RCS thruster local axes
+        // If the rocket local X-axis is colinear & same sense with the RCS thruster local X-axis ==> SideLocation == FrontPositive
+            // Else if local X-axis is colinear with opposite sense ==> SideLocation == FrontNegative
+        // If the rocket local Z-axis is colinear & same sense with the RCS thruster local X-axis ==> SideLocation == RightPositive
+            // Else if local Z-axis is colinear & opposite sense ==> SideLocation == RightNegative
+        Vector3 trLocalX = transform.TransformDirection(Vector3.right);
+        //=======
+        Vector3 rocketLocalX = effectiveRB.transform.TransformDirection(Vector3.right);
+        float dotX = Vector3.Dot(trLocalX, rocketLocalX);
+        if(UseFnc.FloatsAreEqual(dotX, 1f)) {
+            sideLocation = SideLocation.FrontPositive;
+            return;
+        }
+        else if(UseFnc.FloatsAreEqual(dotX, -1f)) {
+            sideLocation = SideLocation.FrontNegative;
+            return;
+        }
+
+        Vector3 rocketLocalZ = effectiveRB.transform.TransformDirection(Vector3.forward);
+        float dotZ = Vector3.Dot(trLocalX, rocketLocalZ);
+        if(UseFnc.FloatsAreEqual(dotZ, 1f)) {
+            sideLocation = SideLocation.RightPositive;
+            return;
+        }
+        else if(UseFnc.FloatsAreEqual(dotZ, -1f)) {
+            sideLocation = SideLocation.RightNegative;
+            return;
+        }
+    }
+
     void Start()
     {
-        _thrustAxes = new ThrustAxes(transform);
         if(effectiveRB == null)
             Debug.LogWarningFormat("The specified Rigidbody 'effectiveRB' is null. Thrust for {0} is thus disabled.", name);
+        
+        InitThrusterSideLocation();
+        _thrustAxes = new ThrustAxes(transform, sideLocation);
         
         thrustVectorLR_GO = UseFnc.CreateAssignGameObject("ThrustVector_LR", gameObject, typeof(LineRenderer), false);
         thrustVectorLR_GO.transform.localPosition = Vector3.zero;
@@ -145,15 +184,16 @@ public class RCSThruster : MonoBehaviour, PropulsionInterface
 
     private Vector3 VectorFromOrientation(RCSThrustOrientation orientation)
     {
+        float mul = (sideLocation.Equals(SideLocation.FrontNegative) || sideLocation.Equals(SideLocation.RightNegative)) ? -1f : 1f;
         switch(orientation) {
             case RCSThrustOrientation.right:
-                return thrustAxes.worldRightThrustAxis;
+                return mul * thrustAxes.worldRightThrustAxis;
 
             case RCSThrustOrientation.up:
                 return thrustAxes.worldUpThrustAxis;
             
             case RCSThrustOrientation.forward:
-                return thrustAxes.worldForwardThrustAxis;
+                return mul * thrustAxes.worldForwardThrustAxis;
 
             case RCSThrustOrientation.NULL:
                 return Vector3.zero;
@@ -182,8 +222,10 @@ public class RCSThruster : MonoBehaviour, PropulsionInterface
 
     public bool ThrustAxis_AlignedWith_Direction(Vector3 directionToCheck)
     {
-        foreach(Vector3 thrustAxis in thrustAxes.PossibleWorldThrustAxes()) {
-            if(Vector3.Dot(directionToCheck, thrustAxis) == 1f)
+        Debug.Log(name + ":PossibleLocalThrustAxRocketFrame: " + string.Join("\n", thrustAxes.PossibleLocalThrustAxRocketFrame()));
+        foreach(Vector3 thrustAxis in thrustAxes.PossibleLocalThrustAxRocketFrame()) {
+            Debug.Log("directionToCheck: " + directionToCheck + "; thrustAxis: " + thrustAxis + "; dot" + (Vector3.Dot(directionToCheck, thrustAxis)));
+            if(UseFnc.FloatsAreEqual(Vector3.Dot(directionToCheck, thrustAxis), 1f, 0.01f))
                 return true;
         }
         return false;
@@ -199,6 +241,7 @@ public class RCSThruster : MonoBehaviour, PropulsionInterface
 
 public struct ThrustAxes {
     Transform transform;
+    RCSThruster.SideLocation sideLocation;
     /// <summary>
     /// Vector; in WORLD SPACE; pointing toward the centerline axis of the rocket cylinder == colinear with the same direction of the inward radial axis == along +X-Axis
     /// </summary>
@@ -249,8 +292,9 @@ public struct ThrustAxes {
         }
     }
 
-    public ThrustAxes(Transform _transform) {
+    public ThrustAxes(Transform _transform, RCSThruster.SideLocation _sideLocation) {
         transform = _transform;
+        sideLocation = _sideLocation;
     }
 
     public Vector3[] LocalThrustAxes() {
@@ -271,20 +315,57 @@ public struct ThrustAxes {
 
     public Vector3[] PossibleLocalThrustAxes() {
         Vector3[] localTRAxes = new Vector3[5];
-        localTRAxes[0] = localRightThrustAxis;
-        localTRAxes[1] = -localRightThrustAxis;
+        localTRAxes[0] = -localRightThrustAxis;
+        localTRAxes[1] = -localUpThrustAxis;
         localTRAxes[2] = localUpThrustAxis;
-        localTRAxes[3] = -localUpThrustAxis;
+        localTRAxes[3] = -localForwardThrustAxis;
         localTRAxes[4] = localForwardThrustAxis;
+        return localTRAxes;
+    }
+
+    public Vector3[] PossibleLocalThrustAxRocketFrame() {
+        Vector3[] localTRAxes = new Vector3[5];
+        // The hereunder vectors are expressed in the rocket frame
+        switch(sideLocation)
+        {
+            case RCSThruster.SideLocation.FrontPositive:
+                localTRAxes[0] = Vector3.left;
+                localTRAxes[1] = Vector3.up;
+                localTRAxes[2] = Vector3.down;
+                localTRAxes[3] = Vector3.back;
+                localTRAxes[4] = Vector3.forward;
+                break;
+            case RCSThruster.SideLocation.FrontNegative:
+                localTRAxes[0] = Vector3.right;
+                localTRAxes[1] = Vector3.up;
+                localTRAxes[2] = Vector3.down;
+                localTRAxes[3] = Vector3.forward;
+                localTRAxes[4] = Vector3.back;
+                break;
+            case RCSThruster.SideLocation.RightPositive:
+                localTRAxes[0] = Vector3.back;
+                localTRAxes[1] = Vector3.up;
+                localTRAxes[2] = Vector3.down;
+                localTRAxes[3] = Vector3.left;
+                localTRAxes[4] = Vector3.right;
+                break;
+            case RCSThruster.SideLocation.RightNegative:
+                localTRAxes[0] = Vector3.forward;
+                localTRAxes[1] = Vector3.up;
+                localTRAxes[2] = Vector3.down;
+                localTRAxes[3] = Vector3.right;
+                localTRAxes[4] = Vector3.left;
+                break;
+        }
         return localTRAxes;
     }
 
     public Vector3[] PossibleWorldThrustAxes() {
         Vector3[] localTRAxes = new Vector3[5];
-        localTRAxes[0] = worldRightThrustAxis;
-        localTRAxes[1] = -worldRightThrustAxis;
+        localTRAxes[0] = -worldRightThrustAxis;
+        localTRAxes[1] = -worldUpThrustAxis;
         localTRAxes[2] = worldUpThrustAxis;
-        localTRAxes[3] = -worldUpThrustAxis;
+        localTRAxes[3] = -worldForwardThrustAxis;
         localTRAxes[4] = worldForwardThrustAxis;
         return localTRAxes;
     }
