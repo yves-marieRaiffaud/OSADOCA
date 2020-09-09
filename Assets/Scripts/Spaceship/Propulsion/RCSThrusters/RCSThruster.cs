@@ -70,28 +70,10 @@ public class RCSThruster : MonoBehaviour, PropulsionInterface
         }
     }
 
-    /// <summary>
-    /// Vector; in WORLD SPACE; pointing toward the centerline axis of the rocket cylinder == colinear with the same direction of the inward radial axis == along +X-Axis
-    /// </summary>
-    public Vector3 worldRightThrustAxis {
+    ThrustAxes _thrustAxes;
+    public ThrustAxes thrustAxes {
         get {
-            return transform.TransformDirection(Vector3.right);
-        }
-    }
-    /// <summary>
-    /// Vector; in WORLD SPACE; pointing upward == along the positive longitudinal axis of the rocket == along +Y-Axis
-    /// </summary>
-    public Vector3 worldUpThrustAxis {
-        get {
-            return transform.TransformDirection(Vector3.up);
-        }
-    }
-    /// <summary>
-    /// Vector; in WORLD SPACE; pointing toward the centerline axis of the rocket cylinder == colinear with the same direction of the inward radial axis == along +Z-Axis
-    /// </summary>
-    public Vector3 worldForwardThrustAxis {
-        get {
-            return transform.TransformDirection(Vector3.forward);
+            return _thrustAxes;
         }
     }
 
@@ -115,9 +97,15 @@ public class RCSThruster : MonoBehaviour, PropulsionInterface
         }
     }
 
+    void Awake()
+    {
+        if(_thrustIsOn == null)
+            _thrustIsOn = new ThrustIsOnEvent();
+    }
 
     void Start()
     {
+        _thrustAxes = new ThrustAxes(transform);
         if(effectiveRB == null)
             Debug.LogWarningFormat("The specified Rigidbody 'effectiveRB' is null. Thrust for {0} is thus disabled.", name);
         
@@ -128,9 +116,6 @@ public class RCSThruster : MonoBehaviour, PropulsionInterface
         thrustVectorLR = thrustVectorLR_GO.GetComponent<LineRenderer>();
         thrustVectorLR.useWorldSpace = true; // Using worldSpace as we are passing the 'world****ThrustAxis' Vector3 to the 'DrawThrustVector' method
         thrustVectorLR.sharedMaterial = Resources.Load("OrbitMaterial", typeof(Material)) as Material; // SHOULD BE CHANGED
-
-        if(_thrustIsOn == null)
-            _thrustIsOn = new ThrustIsOnEvent();
     }
 
     public void FireRCS(RCSThrustOrientation orientation, RCSThrustSense sense)
@@ -141,12 +126,13 @@ public class RCSThruster : MonoBehaviour, PropulsionInterface
         }
         
         thrust = RCSThrustPower * VectorFromOrientation(orientation) * ValueFromThrustSense(sense);
+        Debug.Log("thrust = " + thrust);
         effectiveRB.AddForceAtPosition(thrust, worldPosition, ForceMode.Force);
     }
 
     void LateUpdate()
     {
-        if((thrust.x != 0f || thrust.y != 0f || thrust.z != 0f) && thrust.magnitude != 0f) {
+        /*if((thrust.x != 0f || thrust.y != 0f || thrust.z != 0f) && thrust.magnitude != 0f) {
             if(displayThrustVector && !thrustVectorLR_GO.activeSelf)
                 thrustVectorLR_GO.SetActive(true);
             else if(!displayThrustAxes && thrustVectorLR_GO.activeSelf)
@@ -154,20 +140,20 @@ public class RCSThruster : MonoBehaviour, PropulsionInterface
                 
             if(_thrustIsOn != null)
                 _thrustIsOn.Invoke(this as PropulsionInterface);
-        }
+        }*/
     }
 
     private Vector3 VectorFromOrientation(RCSThrustOrientation orientation)
     {
         switch(orientation) {
             case RCSThrustOrientation.right:
-                return worldRightThrustAxis;
+                return thrustAxes.worldRightThrustAxis;
 
             case RCSThrustOrientation.up:
-                return worldUpThrustAxis;
+                return thrustAxes.worldUpThrustAxis;
             
             case RCSThrustOrientation.forward:
-                return worldForwardThrustAxis;
+                return thrustAxes.worldForwardThrustAxis;
 
             case RCSThrustOrientation.NULL:
                 return Vector3.zero;
@@ -194,11 +180,112 @@ public class RCSThruster : MonoBehaviour, PropulsionInterface
         }
     }
 
+    public bool ThrustAxis_AlignedWith_Direction(Vector3 directionToCheck)
+    {
+        foreach(Vector3 thrustAxis in thrustAxes.PossibleWorldThrustAxes()) {
+            if(Vector3.Dot(directionToCheck, thrustAxis) == 1f)
+                return true;
+        }
+        return false;
+    }
+
 
     public void DrawThrustVector()
     {
-        //Debug.Log("thrust.magnitude = " + thrust.magnitude);
         UsefulFunctions.DrawVector(thrustVectorLR_GO, thrustVectorLR, thrust, effectiveRB.transform.position, thrust.magnitude);
     }
 
 }
+
+public struct ThrustAxes {
+    Transform transform;
+    /// <summary>
+    /// Vector; in WORLD SPACE; pointing toward the centerline axis of the rocket cylinder == colinear with the same direction of the inward radial axis == along +X-Axis
+    /// </summary>
+    public Vector3 worldRightThrustAxis {
+        get {
+            return transform.TransformDirection(localRightThrustAxis);
+        }
+    }
+    /// <summary>
+    /// Vector; in WORLD SPACE; pointing upward == along the positive longitudinal axis of the rocket == along +Y-Axis
+    /// </summary>
+    public Vector3 worldUpThrustAxis {
+        get {
+            return transform.TransformDirection(localUpThrustAxis);
+        }
+    }
+    /// <summary>
+    /// Vector; in WORLD SPACE; pointing toward the centerline axis of the rocket cylinder == colinear with the same direction of the inward radial axis == along +Z-Axis
+    /// </summary>
+    public Vector3 worldForwardThrustAxis {
+        get {
+            return transform.TransformDirection(localForwardThrustAxis);
+        }
+    }
+
+    /// <summary>
+    /// Vector; in LOCAL SPACE; pointing toward the centerline axis of the rocket cylinder == colinear with the same direction of the inward radial axis == along +X-Axis
+    /// </summary>
+    public Vector3 localRightThrustAxis {
+        get {
+            return Vector3.right;
+        }
+    }
+    /// <summary>
+    /// Vector; in LOCAL SPACE; pointing upward == along the positive longitudinal axis of the rocket == along +Y-Axis
+    /// </summary>
+    public Vector3 localUpThrustAxis {
+        get {
+            return Vector3.up;
+        }
+    }
+    /// <summary>
+    /// Vector; in LOCAL SPACE; pointing toward the centerline axis of the rocket cylinder == colinear with the same direction of the inward radial axis == along +Z-Axis
+    /// </summary>
+    public Vector3 localForwardThrustAxis {
+        get {
+            return Vector3.forward;
+        }
+    }
+
+    public ThrustAxes(Transform _transform) {
+        transform = _transform;
+    }
+
+    public Vector3[] LocalThrustAxes() {
+        Vector3[] localTRAxes = new Vector3[3];
+        localTRAxes[0] = localRightThrustAxis;
+        localTRAxes[1] = localUpThrustAxis;
+        localTRAxes[2] = localForwardThrustAxis;
+        return localTRAxes;
+    }
+
+    public Vector3[] WorldThrustAxes() {
+        Vector3[] worldTRAxes = new Vector3[3];
+        worldTRAxes[0] = worldRightThrustAxis;
+        worldTRAxes[1] = worldUpThrustAxis;
+        worldTRAxes[2] = worldForwardThrustAxis;
+        return worldTRAxes;
+    }
+
+    public Vector3[] PossibleLocalThrustAxes() {
+        Vector3[] localTRAxes = new Vector3[5];
+        localTRAxes[0] = localRightThrustAxis;
+        localTRAxes[1] = -localRightThrustAxis;
+        localTRAxes[2] = localUpThrustAxis;
+        localTRAxes[3] = -localUpThrustAxis;
+        localTRAxes[4] = localForwardThrustAxis;
+        return localTRAxes;
+    }
+
+    public Vector3[] PossibleWorldThrustAxes() {
+        Vector3[] localTRAxes = new Vector3[5];
+        localTRAxes[0] = worldRightThrustAxis;
+        localTRAxes[1] = -worldRightThrustAxis;
+        localTRAxes[2] = worldUpThrustAxis;
+        localTRAxes[3] = -worldUpThrustAxis;
+        localTRAxes[4] = worldForwardThrustAxis;
+        return localTRAxes;
+    }
+};

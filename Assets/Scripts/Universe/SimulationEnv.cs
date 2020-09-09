@@ -14,16 +14,16 @@ public class SimulationEnv : ScriptableObject
     //=============================================
     // Class containing every variables needed to define the simulation environment
     public SimSettingBool simulateGravity = new SimSettingBool(true, true, "Simulate gravity", SimSettingCategory.NBodyEngine, SimSettings_InfoList.simulateGravity);
-    public SimSettingBool useNBodySimulation = new SimSettingBool(true, true, "Enable N-Body Simulation", SimSettingCategory.NBodyEngine);
+    public SimSettingBool useNBodySimulation = new SimSettingBool(true, true, "Enable N-Body Simulation", SimSettingCategory.NBodyEngine, SimSettings_InfoList.enableNBodySim);
     // Number of celestialBodies to compute the gravitational acc for each celestialBody
-    public SimSettingInt NBODYSIM_NB_BODY = new SimSettingInt(3, 3, "Number of body to consider for the N-Body sim computations", SimSettingCategory.NBodyEngine, 1, 10);
+    public SimSettingInt NBODYSIM_NB_BODY = new SimSettingInt(3, 3, "N-Body Value", SimSettingCategory.NBodyEngine, 1, 10, SimSettings_InfoList.Nb_NBodySim);
     //=============================================
     //=============================================
     //=============================================
-    public SimSettingBool useTargetFrameRate = new SimSettingBool(false, false, "Enable FPS targetting", SimSettingCategory.Physics);
-    public SimSettingInt targetFrameRate = new SimSettingInt(60, 60, "Target FPS value", SimSettingCategory.Physics, 1, 100);
-    public SimSettingInt physicsUpdateRate = new SimSettingInt(50, 50, "Physics update frequency", SimSettingCategory.Physics, 1, 100);
-    public SimSettingFloat timeScale = new SimSettingFloat(1f, 1f, "Time scale", SimSettingCategory.Physics, 0.1f, 10f, SimSettings_InfoList.simulateGravity);
+    public SimSettingBool useTargetFrameRate = new SimSettingBool(false, false, "Enable FPS targetting", SimSettingCategory.Physics, SimSettings_InfoList.enableFPSTargetting);
+    public SimSettingInt targetFrameRate = new SimSettingInt(60, 60, "Target FPS value", SimSettingCategory.Physics, 1, 100, SimSettings_InfoList.fpsTargetValue);
+    public SimSettingInt physicsUpdateRate = new SimSettingInt(50, 50, "Physics update frequency", SimSettingCategory.Physics, 1, 100, SimSettings_InfoList.physicsUpdateRate);
+    public SimSettingFloat timeScale = new SimSettingFloat(1f, 1f, "Time scale", SimSettingCategory.Physics, 0.1f, 10f, SimSettings_InfoList.timeScale);
     //=============================================
     //=============================================
     //=============================================
@@ -48,8 +48,10 @@ public class SimulationEnv : ScriptableObject
     //================================================
     public static bool ObjectIsSimSetting(object obj)
     {
-        if(obj is SimSettingBool || obj is SimSettingInt || obj is SimSettingFloat) { return true; }
-        else { return false; }
+        if(obj is SimSettingBool || obj is SimSettingInt || obj is SimSettingFloat || obj is SimSettingEnum)
+            return true; 
+        else
+            return false;
     }
 }
 

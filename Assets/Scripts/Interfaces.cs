@@ -48,10 +48,7 @@ public interface PropulsionInterface
     Vector3 worldPosition {get;}
     Vector3 localPosition {get;}
 
-    Vector3 worldUpThrustAxis {get;}
-    Vector3 worldRightThrustAxis {get;}
-    Vector3 worldForwardThrustAxis {get;}
-
+    ThrustAxes thrustAxes {get;}
     float RCSThrustPower {get; set;}
 
     ThrustIsOnEvent thrustIsOn {get; set;}

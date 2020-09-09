@@ -2094,12 +2094,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &1345868046 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2830405242911805180, guid: bcbf8a00623a17249935a8c8f4942b55,
-    type: 3}
-  m_PrefabInstance: {fileID: 2830405244252397554}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1399472305
 GameObject:
   m_ObjectHideFlags: 0
@@ -2433,31 +2427,6 @@ PrefabInstance:
       propertyPath: universe
       value: 
       objectReference: {fileID: 2184931581547347816}
-    - target: {fileID: 2830405243040488557, guid: bcbf8a00623a17249935a8c8f4942b55,
-        type: 3}
-      propertyPath: nozzleThrust_Power
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2830405243040488557, guid: bcbf8a00623a17249935a8c8f4942b55,
-        type: 3}
-      propertyPath: yawAngle_min
-      value: -15
-      objectReference: {fileID: 0}
-    - target: {fileID: 2830405243040488557, guid: bcbf8a00623a17249935a8c8f4942b55,
-        type: 3}
-      propertyPath: yawAngle_max
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 2830405243040488557, guid: bcbf8a00623a17249935a8c8f4942b55,
-        type: 3}
-      propertyPath: pitchAngle_min
-      value: -15
-      objectReference: {fileID: 0}
-    - target: {fileID: 2830405243040488557, guid: bcbf8a00623a17249935a8c8f4942b55,
-        type: 3}
-      propertyPath: pitchAngle_max
-      value: 15
-      objectReference: {fileID: 0}
     - target: {fileID: 2830405243192528421, guid: bcbf8a00623a17249935a8c8f4942b55,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2523,15 +2492,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7510835672475205007, guid: bcbf8a00623a17249935a8c8f4942b55,
+    - target: {fileID: 2830405243814933036, guid: bcbf8a00623a17249935a8c8f4942b55,
         type: 3}
-      propertyPath: RCS_Folder
-      value: 
-      objectReference: {fileID: 1345868046}
-    - target: {fileID: 7510835672475205007, guid: bcbf8a00623a17249935a8c8f4942b55,
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2830405243814933036, guid: bcbf8a00623a17249935a8c8f4942b55,
         type: 3}
-      propertyPath: RCSThrustPower
-      value: 50
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2830405243814933036, guid: bcbf8a00623a17249935a8c8f4942b55,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bcbf8a00623a17249935a8c8f4942b55, type: 3}

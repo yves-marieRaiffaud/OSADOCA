@@ -58,6 +58,7 @@ public class MainNozzle_Control : MonoBehaviour
         originalfreeFloatingJoint = GetComponent<ConfigurableJoint>();
 
         SetLiveConfigurableJoint();
+
         mainNozzleVFX = GetComponentInChildren<VisualEffect>();
 
         thrustVectorLR_GO = UseFnc.CreateAssignGameObject("ThrustVector_LR", gameObject, typeof(LineRenderer), false);
@@ -79,12 +80,12 @@ public class MainNozzle_Control : MonoBehaviour
 
     void LateUpdate()
     {
-        if(showThrustVector) {
+        /*if(showThrustVector) {
             thrustVectorLR_GO.SetActive(true);
             ShowThrustVector();
         }
         else if(!showThrustVector && thrustVectorLR_GO.activeInHierarchy)
-            thrustVectorLR_GO.SetActive(false);
+            thrustVectorLR_GO.SetActive(false);*/
     }
 
     public void ShowThrustVector()
@@ -161,6 +162,8 @@ public class MainNozzle_Control : MonoBehaviour
         // Local Scale of the spaceship, to scale the anchors position
         Vector3 ls = spaceship.transform.localScale;
         float lsFactor = (ls.x + ls.y + ls.z) / 3f;
+
+        onlinefreeFloatingJoint.connectedBody = spaceship.GetComponent<Rigidbody>();
 
         onlinefreeFloatingJoint.anchor = new Vector3(0f, 0f*lsFactor, 0f);
         onlinefreeFloatingJoint.axis = Vector3.right;
@@ -268,7 +271,7 @@ public class MainNozzle_Control : MonoBehaviour
 
     private void ApplyThrust()
     {
-        thrustForce += transform.up * nozzleThrustValue;
+        thrustForce = transform.up * nozzleThrustValue;
         //Vector3d thrustAcc = new Vector3d(thrustForce) / 1d /*spaceship.mass*/;
         nozzleRigidbody.AddForce(thrustForce, ForceMode.Force);
         //spaceship.orbitedBodyRelativeAcc += thrustAcc;
