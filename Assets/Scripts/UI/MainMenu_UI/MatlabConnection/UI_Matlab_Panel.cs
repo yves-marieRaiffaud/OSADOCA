@@ -2,13 +2,22 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using System.Collections.Generic;
-using Fncs = UsefulFunctions;
+using UseFncs = UsefulFunctions;
 using Matlab_Communication;
+using System;
 
 public class UI_Matlab_Panel : MonoBehaviour
 {
     // This script is attached to the 'MainPanel' GameObject
     //=============================================================================================
+    [Header("Spaceship Control Panels")]
+    public GameObject remoteConnectionControlPanel;
+    public GameObject keyboardControlPanel;
+
+    [Header("Control Mode Dropdown")]
+    public TMPro.TMP_Dropdown shipControlModeDropdown;
+    //=======================
+    //=======================
     [Header("Matlab Communication Handler Script")]
     [Tooltip("MatlabComHandler script instance located in the 'MatlabCom_Handler' GameObject")]
     public MatlabComHandler comHandler;
@@ -30,31 +39,35 @@ public class UI_Matlab_Panel : MonoBehaviour
     public TMPro.TMP_InputField portControlAlgoInputField;
     public Button controlAlgoRevert_btn;
     public Button controlAlgoTest_btn;
+    //=======================
+    //=======================
+
+    void OnEnable()
+    {
+        
+    }
+
+    void OnDisable()
+    {   
+        
+    }
     //==========
     void Start()
     {
+        shipControlModeDropdown.onValueChanged.AddListener(delegate{
+            ToggleControlTypePanels(shipControlModeDropdown.value);
+            SaveSimulationEnvParams();
+        });
+        InitControlModeDropdownFromSavedParams();
+
+        //=======================
+        //=======================
         ipDataVisuInputField.onValueChanged.AddListener(delegate{
             UpdateConnectionChannel(comHandler.dataVisSenderChannel, ipDataVisuInputField, portDataVisuInputField);
         });
         portDataVisuInputField.onValueChanged.AddListener(delegate{
             UpdateConnectionChannel(comHandler.dataVisSenderChannel, ipDataVisuInputField, portDataVisuInputField);
         });
-        //===========
-        //===========
-        /*ipSimEnvInputField.onValueChanged.AddListener(delegate{
-            UpdateConnectionChannel(comHandler.simEnvSenderChannel, ipSimEnvInputField, portSimEnvInputField);
-        });
-        portSimEnvInputField.onValueChanged.AddListener(delegate{
-            UpdateConnectionChannel(comHandler.simEnvSenderChannel, ipSimEnvInputField, portSimEnvInputField);
-        });*/
-        //===========
-        //===========
-        /*ipControlAlgoInputField.onValueChanged.AddListener(delegate{
-            UpdateConnectionChannel(comHandler.controlAlgoTCPServer, ipControlAlgoInputField, portControlAlgoInputField);
-        });
-        portControlAlgoInputField.onValueChanged.AddListener(delegate{
-            UpdateConnectionChannel(comHandler.controlAlgoTCPServer, ipControlAlgoInputField, portControlAlgoInputField);
-        });*/
         //===========
         //===========
         dataVisuTest_btn.onClick.AddListener(delegate{OnTestConnectionClick(comHandler.dataVisSenderChannel);});
@@ -66,11 +79,72 @@ public class UI_Matlab_Panel : MonoBehaviour
         //controlAlgoRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.controlAlgoReceiverChannel, ipControlAlgoInputField, portControlAlgoInputField);});
     }
 
+    void ToggleControlTypePanels(int selectedDropdownIdx)
+    {
+        switch(selectedDropdownIdx)
+        {
+            case 0:
+                // The 'Use Keyboard' option is selected
+                if(!keyboardControlPanel.activeSelf)
+                    keyboardControlPanel.SetActive(true);
+                if(remoteConnectionControlPanel.activeSelf)
+                    remoteConnectionControlPanel.SetActive(false);
+                break;
+
+            case 1:
+                // The 'Use remote connections to send/receive commands' option is selected
+                if(!remoteConnectionControlPanel.activeSelf)
+                    remoteConnectionControlPanel.SetActive(true);
+                if(keyboardControlPanel.activeSelf)
+                    keyboardControlPanel.SetActive(false);
+                break;
+        }
+    }
+
+    void InitControlModeDropdownFromSavedParams()
+    {
+        SimulationEnv simulationEnv = UseFncs.GetSimEnvObjectFrom_ReadUserParams();
+        bool useKeyboardParamvalue = simulationEnv.shipUseKeyboardControl.value;
+        shipControlModeDropdown.value = Convert.ToInt32(!useKeyboardParamvalue);
+    }
+
+    bool Get_UseKeyboard_SimSettingValue_FromDropdown()
+    {
+        bool useKeyboardControlBool;
+        switch(shipControlModeDropdown.value) {
+            case 0:
+                // The 'Use Keyboard' option is selected
+                useKeyboardControlBool= true;
+                break;
+            case 1:
+                // The 'Use remote connections to send/receive commands' option is selected
+                useKeyboardControlBool= false;
+                break;
+            default:
+                useKeyboardControlBool = true;
+                break;
+        }
+        return useKeyboardControlBool;
+    }
+
+    void SaveSimulationEnvParams()
+    {
+        // Get fresh simulationEnv values, in case some params were modified when switching between tabs
+        SimulationEnv simulationEnv = UseFncs.GetSimEnvObjectFrom_ReadUserParams();
+        // From the retrieved instance, only change the params that were modified in this tab
+        simulationEnv.shipUseKeyboardControl.value = Get_UseKeyboard_SimSettingValue_FromDropdown();
+        string filepath = UsefulFunctions.WriteToFileSimuSettingsSaveData(simulationEnv);
+        Debug.Log("SimSettings has succesfuly been saved at : '" + filepath + "'."); 
+    }
+    //=======================
+    //=======================
+    //=======================
+    //=======================
     private void UpdateConnectionChannel<T>(MatlabComChannel<T> channel, TMPro.TMP_InputField ipField, TMPro.TMP_InputField portField)
     where T : SenderReceiverBaseChannel
     {
         channel.IP = ipField.text;
-        if(!Fncs.IP_AddressIsValid(channel.IP))
+        if(!UseFncs.IP_AddressIsValid(channel.IP))
             return;
         int parsedPort;
         if(int.TryParse(portField.text, out parsedPort))

@@ -719,4 +719,15 @@ public static class UsefulFunctions
         return Regex.IsMatch(IP_toCheck, ipv4_REGEX);
     }
 
+    public static SimulationEnv GetSimEnvObjectFrom_ReadUserParams()
+    {
+        SimulationEnv simulationEnv = ScriptableObject.CreateInstance<SimulationEnv>();
+        string simSettingJSONPath = Application.persistentDataPath + Filepaths.simulation_settings;
+        if(File.Exists(simSettingJSONPath))
+            JsonUtility.FromJsonOverwrite(File.ReadAllText(simSettingJSONPath), simulationEnv);
+        else
+            simulationEnv = new SimulationEnv();
+        return simulationEnv;
+    }
+
 }
