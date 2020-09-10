@@ -419,7 +419,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f52307590d3de7e4aa3df836b39fd9bf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d752dd8914ba4c6428760600c1fc4b81, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3581,6 +3581,80 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 126614229}
+  m_CullTransparentMesh: 0
+--- !u!1 &126924322
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 126924323}
+  - component: {fileID: 126924325}
+  - component: {fileID: 126924324}
+  m_Layer: 5
+  m_Name: controlBar_Spacecraft_Triangle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &126924323
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 126924322}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1983871709}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 440, y: 0}
+  m_SizeDelta: {x: 440, y: 0}
+  m_Pivot: {x: 0, y: 0.5}
+--- !u!114 &126924324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 126924322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 7b9c286c3feb7a04fa095bd972ae9b5a, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &126924325
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 126924322}
   m_CullTransparentMesh: 0
 --- !u!1 &127980277
 GameObject:
@@ -10833,7 +10907,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1983871709}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
@@ -10859,7 +10933,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7b4324c68ee62f544b5139d18bc1cd49, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b5bebfdb673900a4ab7e3a3cabc103bd, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -13312,6 +13386,9 @@ MonoBehaviour:
     orbitingGO: {fileID: 0}
     n: 0
     suffixGO: 
+  panelIsFullySetUp:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &522936160
 GameObject:
   m_ObjectHideFlags: 0
@@ -15502,6 +15579,80 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &673007730
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 673007731}
+  - component: {fileID: 673007733}
+  - component: {fileID: 673007732}
+  m_Layer: 5
+  m_Name: controlBar_StartLoc_Triangle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &673007731
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673007730}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1983871709}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 440, y: 0}
+  m_Pivot: {x: 0, y: 0.5}
+--- !u!114 &673007732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673007730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 7b9c286c3feb7a04fa095bd972ae9b5a, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &673007733
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673007730}
+  m_CullTransparentMesh: 0
 --- !u!1 &686301021
 GameObject:
   m_ObjectHideFlags: 0
@@ -21267,6 +21418,10 @@ MonoBehaviour:
   panel_SimSettings: {fileID: 1666663683}
   panel_Matlab: {fileID: 1888415574}
   panel_Spacecraft: {fileID: 1514695967}
+  startLocTxt: {fileID: 1892574045}
+  spacecraftTxt: {fileID: 366716614}
+  matlabTxt: {fileID: 1402413329}
+  simSettingsTxt: {fileID: 724431888}
   currentSelectedMenuInt: 0
   activeContentPanel: {fileID: 0}
 --- !u!114 &930964329
@@ -21287,6 +21442,9 @@ MonoBehaviour:
   simpleSpheresFolder: {fileID: 1207253230}
   startLocInitTypeDropdown: {fileID: 1281931081}
   startLocPlanetSelectorDropdown: {fileID: 2003545660}
+  panelIsFullySetUp:
+    m_PersistentCalls:
+      m_Calls: []
   isPLanetarySurfaceInitialization: 0
 --- !u!114 &930964330
 MonoBehaviour:
@@ -21352,6 +21510,9 @@ MonoBehaviour:
   portControlAlgoInputField: {fileID: 1348420300}
   controlAlgoRevert_btn: {fileID: 1877175611}
   controlAlgoTest_btn: {fileID: 1124217865}
+  panelIsFullySetUp:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &930964332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21365,6 +21526,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelSpacecraft: {fileID: 1514695967}
+  panelIsFullySetUp:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &943485643
 GameObject:
   m_ObjectHideFlags: 0
@@ -22809,6 +22973,9 @@ MonoBehaviour:
   lp_Cancel_btn: {fileID: 890682134}
   lp_save_btn: {fileID: 1576857423}
   isAddingNewLaunchPad: 0
+  panelIsFullySetUp:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &984710635 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2830405243814933036, guid: bcbf8a00623a17249935a8c8f4942b55,
@@ -33156,7 +33323,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1983871709}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
@@ -33182,7 +33349,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3965e3b6cb4778c40bf2b0337f83833e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b5bebfdb673900a4ab7e3a3cabc103bd, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -34861,6 +35028,80 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1603119723}
+  m_CullTransparentMesh: 0
+--- !u!1 &1608452197
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1608452198}
+  - component: {fileID: 1608452200}
+  - component: {fileID: 1608452199}
+  m_Layer: 5
+  m_Name: controlBar_SimSettings_Triangle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1608452198
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608452197}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1983871709}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1420, y: 0}
+  m_SizeDelta: {x: 440, y: 0}
+  m_Pivot: {x: 0, y: 0.5}
+--- !u!114 &1608452199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608452197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 7b9c286c3feb7a04fa095bd972ae9b5a, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1608452200
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608452197}
   m_CullTransparentMesh: 0
 --- !u!1 &1627657014
 GameObject:
@@ -42181,7 +42422,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1983871709}
-  m_RootOrder: 4
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
@@ -42207,7 +42448,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 007836765a69de1469396c628fed0eb2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6ef9fdde223aae343aff4b3ebf98b295, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -42512,10 +42753,14 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 18180325}
+  - {fileID: 673007731}
   - {fileID: 430226101}
+  - {fileID: 126924323}
   - {fileID: 2052384104}
   - {fileID: 1501224076}
+  - {fileID: 2147072316}
   - {fileID: 1975981511}
+  - {fileID: 1608452198}
   m_Father: {fileID: 1651215485}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -42536,15 +42781,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e314a48768949c94fb2bde0f820587a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color_isSetUp: {r: 0.20647918, g: 0.754717, b: 0.2966499, a: 1}
-  color_isNOTSetUp: {r: 1, g: 0.45402387, b: 0.1981132, a: 1}
-  color_selectedPanel: {r: 0.3194197, g: 0.6184882, b: 0.9150943, a: 1}
+  color_isSetUp: {r: 0.17859153, g: 0.634, b: 0.19198592, a: 1}
+  color_isNOTSetUp: {r: 0.9811321, g: 0.72942626, b: 0.21288714, a: 1}
+  color_selectedPanel: {r: 0.19437523, g: 0.5811247, b: 0.8584906, a: 1}
   color_default: {r: 1, g: 1, b: 1, a: 1}
   controlBar_startLoc_Img: {fileID: 18180326}
   controlBar_Spacecraft_Img: {fileID: 430226102}
   controlBar_FLY_Img: {fileID: 2052384105}
   controlBar_Matlab_Img: {fileID: 1501224077}
   controlBar_SimSettings_Img: {fileID: 1975981512}
+  triangle_startLoc_Img: {fileID: 673007732}
+  triangle_Spacecraft_Img: {fileID: 126924324}
+  triangle_Matlab_Img: {fileID: 2147072317}
+  triangle_SimSettings_Img: {fileID: 1608452199}
 --- !u!1 &1987908517
 GameObject:
   m_ObjectHideFlags: 0
@@ -44026,7 +44275,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1983871709}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
@@ -45492,6 +45741,80 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2146503446}
+  m_CullTransparentMesh: 0
+--- !u!1 &2147072315
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2147072316}
+  - component: {fileID: 2147072318}
+  - component: {fileID: 2147072317}
+  m_Layer: 5
+  m_Name: controlBar_Matlab_Triangle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2147072316
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2147072315}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1983871709}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 980, y: 0}
+  m_SizeDelta: {x: 440, y: 0}
+  m_Pivot: {x: 0, y: 0.5}
+--- !u!114 &2147072317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2147072315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 7b9c286c3feb7a04fa095bd972ae9b5a, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2147072318
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2147072315}
   m_CullTransparentMesh: 0
 --- !u!1001 &871450991180147108
 PrefabInstance:

@@ -42,9 +42,13 @@ public class UI_Matlab_Panel : MonoBehaviour
     public Button controlAlgoTest_btn;
     //=======================
     //=======================
+    public MainPanelIsSetUp panelIsFullySetUp;
     //==========
     void Start()
     {
+        if(panelIsFullySetUp == null)
+            panelIsFullySetUp = new MainPanelIsSetUp();
+
         shipControlModeDropdown.onValueChanged.AddListener(delegate{
             ToggleControlTypePanels(shipControlModeDropdown.value);
             SaveSimulationEnvParams();
@@ -68,6 +72,51 @@ public class UI_Matlab_Panel : MonoBehaviour
         dataVisuRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.dataVisSenderChannel, ipDataVisuInputField, portDataVisuInputField);});
         //simEnvRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.simEnvSenderChannel, ipSimEnvInputField, portSimEnvInputField);});
         //controlAlgoRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.controlAlgoReceiverChannel, ipControlAlgoInputField, portControlAlgoInputField);});
+        //=======================
+        //=======================
+        ToggleControlTypePanels(1); // Init at remote connections
+        CheckPanels_SetUp();
+    }
+
+    bool CheckPanels_SetUp()
+    {
+        if(keyboardControlPanel.activeSelf && !remoteConnectionControlPanel.activeSelf) {
+            if(Check_Keyboard_Control_SetUp()) {
+                panelIsFullySetUp.Invoke(2, 1);
+                return true;
+            }
+            else {
+                panelIsFullySetUp.Invoke(2, 0);
+                return false;
+            }
+        }
+        else if(!keyboardControlPanel.activeSelf && remoteConnectionControlPanel.activeSelf) {
+            if(Check_ControlAlgo_Control_SetUp()) {
+                panelIsFullySetUp.Invoke(2, 1);
+                return true;
+            }
+            else {
+                panelIsFullySetUp.Invoke(2, 0);
+                return false;
+            }
+        }
+        else
+            return false;
+    }
+
+    public bool SendControlBarTriangleUpdate()
+    {
+        return CheckPanels_SetUp();
+    }
+
+    bool Check_Keyboard_Control_SetUp()
+    {
+        return true;
+    }
+
+    bool Check_ControlAlgo_Control_SetUp()
+    {
+        return false;
     }
 
     void ToggleControlTypePanels(int selectedDropdownIdx)
@@ -90,6 +139,7 @@ public class UI_Matlab_Panel : MonoBehaviour
                     keyboardControlPanel.SetActive(false);
                 break;
         }
+        CheckPanels_SetUp();
     }
 
     void InitControlModeDropdownFromSavedParams()

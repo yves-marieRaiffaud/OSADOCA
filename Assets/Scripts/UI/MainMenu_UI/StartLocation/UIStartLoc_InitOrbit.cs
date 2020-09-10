@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Mathd_Lib;
+using Fncs = UsefulFunctions;
+using UnityEngine.Events;
 
 public class UIStartLoc_InitOrbit : MonoBehaviour
 {
@@ -65,6 +67,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     //==================================================================
     private bool ORBITAL_PARAMS_VALID = true;
     public Orbit previewedOrbit;
+    public StartLocPanelIsSetUp panelIsFullySetUp;
 
     void OnEnable()
     {
@@ -75,6 +78,20 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         bodyPosType.onValueChanged.AddListener(delegate { OnBodyPosDropdownValueChanged(); });
 
         ClearOrbitInfoValues();
+    }
+
+    public bool TriggerPanelIsSetBoolEvent()
+    {
+        CheckForEmptyFields();
+        if(panelIsFullySetUp != null)
+            panelIsFullySetUp.Invoke(0, System.Convert.ToInt32(ORBITAL_PARAMS_VALID));
+        return ORBITAL_PARAMS_VALID;
+    }
+
+    void Start()
+    {
+        if(panelIsFullySetUp == null)
+            panelIsFullySetUp = new StartLocPanelIsSetUp();
     }
 
     private void InitDropdowns()
@@ -190,9 +207,16 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
             UpdatePinpointsPosition();
             UpdateOrbitInfoValues();
             UpdateOrbitInfoUnits();
+
+            // Sending 0 as the 'inOrbitInit' identifier and 1 as the panel IS set-up
+            if(panelIsFullySetUp != null)
+                panelIsFullySetUp.Invoke(0, 1);
         }
         else {
             Debug.LogWarning("ORBITAL_PARAMS_VALID has been set to false. Check the entered orbital parameters.");
+            // Sending 0 as the 'inOrbitInit' identifier and 0 as the panel IS NOT set-up
+            if(panelIsFullySetUp != null)
+                panelIsFullySetUp.Invoke(0, 0);
         }
     }
 
@@ -272,12 +296,23 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     {
         // Inserting a 0 as the default value for each empty field when the UpdateOrbit button is pressed
 
-        if(orbitShape_p1_field.text.Equals("")) {
-            orbitShape_p1_field.text = "0";
+        float tmpRes=0f;
+        Fncs.ParseStringToFloat(orbitShape_p1_field.text,out tmpRes);
+        float aphelion = tmpRes;
+        if(orbitShape_p1_field.text.Equals("") || Fncs.FloatsAreEqual(tmpRes, 0f, 0.1f)) {
+            // Cannot have an aphelion value of 0
+            ORBITAL_PARAMS_VALID = false;
         }
-        if(orbitShape_p2_field.text.Equals("")) {
-            orbitShape_p2_field.text = "0";
+
+        Fncs.ParseStringToFloat(orbitShape_p2_field.text,out tmpRes);
+        if(orbitShape_p2_field.text.Equals("") || Fncs.FloatsAreEqual(tmpRes, 0f, 0.1f)) {
+            // Cannot have a perihelion value of 0
+            ORBITAL_PARAMS_VALID = false;
         }
+
+        if(aphelion-tmpRes < Mathf.Epsilon)
+            ORBITAL_PARAMS_VALID = false;
+
         if(inclination_field.text.Equals("")) {
             inclination_field.text = "0";
         }

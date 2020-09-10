@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine.UI;
 using Mathd_Lib;
 using System;
-using UnityEngine.EventSystems;
+using UnityEngine.Events;
 using System.IO;
 
 public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
@@ -54,19 +54,20 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
     private RectTransform currActiveUIInfoPanel; // The active panel of UI additional info. Either 'location_addNewLaunchPad_panel' or 'location_infoContent_panel'
     //===============================================
     public LaunchPad currSelectedLaunchpad;
+    bool hasALaunchPadSelected;
+    public StartLocPanelIsSetUp panelIsFullySetUp;
 
     void Start()
     {
+        if(panelIsFullySetUp == null)
+            panelIsFullySetUp = new StartLocPanelIsSetUp();
+
+        hasALaunchPadSelected = false;
         UpdatePlanetaryMap();
         InitMapSizeVariables();
         Init_LaunchPad_Sprites();
 
-        // By default, display the last launchPad in the array
-        if(launchPadGOs.Count > 0 && launchPadInstances.Count > 0)
-        {
-            launchPadGOs.ElementAt(launchPadGOs.Count-1).GetComponent<Button>().Select();
-            OnLaunchPadClick(launchPadInstances.ElementAt(launchPadInstances.Count-1));
-        }
+        SelectLastLaunchPadInList();
     }
 
     public void ClearAllInfoValues()
@@ -100,6 +101,7 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
             launchPadInstances.Clear();
         }
         launchPadAlreadyInCreationAndMoving = false;
+        SelectLastLaunchPadInList();
     }
 
     private void InitMapSizeVariables()
@@ -168,9 +170,20 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         }
     }
 
+    private void SelectLastLaunchPadInList()
+    {
+        // By default, display the last launchPad in the array
+        if(launchPadGOs.Count > 0 && launchPadInstances.Count > 0)
+        {
+            launchPadGOs.ElementAt(launchPadGOs.Count-1).GetComponent<Button>().Select();
+            OnLaunchPadClick(launchPadInstances.ElementAt(launchPadInstances.Count-1));
+        }
+    }
+
     private void OnLaunchPadClick(LaunchPad clickedLP)
     {
         currSelectedLaunchpad = clickedLP;
+        hasALaunchPadSelected = true;
 
         lp_name_val.text = clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.name];
         lp_country_val.text = clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.country];
@@ -179,6 +192,17 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         lp_longitude_val.text = UsefulFunctions.StringToSignificantDigits(clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.longitude], UniCsts.UI_SIGNIFICANT_DIGITS) + " °";
         lp_latitude_val.text = UsefulFunctions.StringToSignificantDigits(clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.latitude], UniCsts.UI_SIGNIFICANT_DIGITS) + " °";
         lp_eastwardBoost_val.text = UsefulFunctions.StringToSignificantDigits(clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.eastwardBoost], UniCsts.UI_SIGNIFICANT_DIGITS) + " m/s";
+    
+        // Sending 1 as the 'initPlanetary' identifier and 1 as the panel IS set-up
+        if(panelIsFullySetUp != null)
+            panelIsFullySetUp.Invoke(1, 1);
+    }
+
+    public bool TriggerPanelIsSetBoolEvent()
+    {
+        if(panelIsFullySetUp != null && hasALaunchPadSelected && !launchPadAlreadyInCreationAndMoving)
+            panelIsFullySetUp.Invoke(1, Convert.ToInt32(hasALaunchPadSelected));
+        return hasALaunchPadSelected;
     }
 
     private void AddLaunchPad(LaunchPad launchPad, bool addAsCustomLaunchPad)
@@ -248,9 +272,11 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
                 location_infoContent_panel.gameObject.SetActive(false);
                 location_addNewLaunchPad_panel.gameObject.SetActive(true);
                 currActiveUIInfoPanel = location_addNewLaunchPad_panel;
+                hasALaunchPadSelected = true;
             }
             else {
                 // The launchPad is still movable by the user
+                hasALaunchPadSelected = false;
                 if(launchPadGOs.Count < 1) { return; }
                 UpdateLaunchPadInCreationPosition();
                 UpdateLaunchPadInCreationLatitudeLongitude();

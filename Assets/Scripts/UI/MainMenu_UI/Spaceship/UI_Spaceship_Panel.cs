@@ -11,10 +11,29 @@ public class UI_Spaceship_Panel : MonoBehaviour
     //=====================================
     //=====================================
     UI_Spaceship_Builder shipBuilder;
+
+    public MainPanelIsSetUp panelIsFullySetUp;
     //==================
     //==================
     void OnEnable()
     {
         shipBuilder = panelSpacecraft.GetComponent<UI_Spaceship_Builder>();
+    }
+
+    void Start()
+    {
+        if(panelIsFullySetUp == null)
+            panelIsFullySetUp = new MainPanelIsSetUp();
+        
+        // As the panel is not implemented, sending 1 as bool value (arg2)
+        if(panelIsFullySetUp != null)
+            panelIsFullySetUp.Invoke(1, 1);
+    }
+
+    public bool SendControlBarTriangleUpdate()
+    {
+        if(panelIsFullySetUp != null)
+            panelIsFullySetUp.Invoke(1, 1);
+        return true;
     }
 }

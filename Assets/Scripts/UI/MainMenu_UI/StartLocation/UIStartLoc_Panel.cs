@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.UI;
-using System.Linq;
+using UnityEngine.Events;
 using System.IO;
 
 public class UIStartLoc_Panel : MonoBehaviour
@@ -11,13 +11,20 @@ public class UIStartLoc_Panel : MonoBehaviour
     [Header("UI GameObjects/RectTransform")]
     public RectTransform startLoc_Panel_RT;
     public GameObject section_InitPlanetarySurfaceGO;
+    UIStartLoc_InitPlanetarySurf UI_initPlanetaryScript;
+
     public GameObject section_InitOrbitGO;
+    UIStartLoc_InitOrbit UI_initOrbitScript;
+
     // Empty Gameobject containing every simple spheres
     public GameObject simpleSpheresFolder;
     // Dropdowns
     [Header("Dropdowns")]
     public TMPro.TMP_Dropdown startLocInitTypeDropdown;
     public TMPro.TMP_Dropdown startLocPlanetSelectorDropdown;
+
+
+    public MainPanelIsSetUp panelIsFullySetUp;
 
     private string lastSelectedPlanetName;
     //===================================================================================================
@@ -28,9 +35,25 @@ public class UIStartLoc_Panel : MonoBehaviour
     };
     //======
     [HideInInspector] public bool isPLanetarySurfaceInitialization;
+    public bool hasFinishedStart;
 
     void Start()
     {
+        hasFinishedStart = false;
+        if(panelIsFullySetUp == null)
+            panelIsFullySetUp = new MainPanelIsSetUp();
+
+        // By default, sending 0 to indicate that things need to be configured by the user
+        if(panelIsFullySetUp != null)
+                panelIsFullySetUp.Invoke(0, 0);
+        
+        UI_initOrbitScript = section_InitOrbitGO.GetComponent<UIStartLoc_InitOrbit>();
+        UI_initOrbitScript.panelIsFullySetUp.AddListener(OnPanelFullySetUp_Event);
+
+        UI_initPlanetaryScript = section_InitPlanetarySurfaceGO.GetComponent<UIStartLoc_InitPlanetarySurf>();
+        UI_initPlanetaryScript.panelIsFullySetUp.AddListener(OnPanelFullySetUp_Event);
+
+
         lastSelectedPlanetName = UniCsts.planets.Earth.ToString();
 
         Init_startLocInitTypeDropdown();
@@ -40,6 +63,17 @@ public class UIStartLoc_Panel : MonoBehaviour
         startLocPlanetSelectorDropdown.onValueChanged.AddListener(delegate { OnValueChangedPlanetSelectorDropdown(); });
         
         InitSimpleSpheres();
+
+        hasFinishedStart = true;
+    }
+
+    private void OnPanelFullySetUp_Event(int panelIdentifier, int boolPanelIsSetUp)
+    {
+        if((panelIdentifier == 0 && section_InitOrbitGO.activeSelf) || (panelIdentifier == 1 && section_InitPlanetarySurfaceGO.activeSelf)) {
+            // Sending 0 as the 'startLocation' panel identifier
+            if(panelIsFullySetUp != null)
+                panelIsFullySetUp.Invoke(0, boolPanelIsSetUp);
+        }
     }
 
     public void On_FLY_click_GatherOrbitalParams()
@@ -87,9 +121,21 @@ public class UIStartLoc_Panel : MonoBehaviour
         }
         // Need to update the dropdown of the possible start planets
         Init_startLocPlanetSelectorDropdown();
-        UIStartLoc_InitPlanetarySurf initPlanetary_instance = section_InitPlanetarySurfaceGO.GetComponent<UIStartLoc_InitPlanetarySurf>();
-        initPlanetary_instance.currPlanetSelectedName = startLocPlanetSelectorDropdown.options[startLocPlanetSelectorDropdown.value].text;
-        initPlanetary_instance.UpdatePlanetaryMap();
+        UI_initPlanetaryScript.currPlanetSelectedName = startLocPlanetSelectorDropdown.options[startLocPlanetSelectorDropdown.value].text;
+        UI_initPlanetaryScript.UpdatePlanetaryMap();
+
+        SendControlBarTriangleUpdate();
+    }
+
+    public bool SendControlBarTriangleUpdate()
+    {
+        if(section_InitOrbitGO.activeSelf)
+            return UI_initOrbitScript.TriggerPanelIsSetBoolEvent();
+            
+        else if(section_InitPlanetarySurfaceGO.activeSelf)
+            return UI_initPlanetaryScript.TriggerPanelIsSetBoolEvent();
+        else
+            return false;
     }
 
     private void Init_startLocPlanetSelectorDropdown()
@@ -156,17 +202,15 @@ public class UIStartLoc_Panel : MonoBehaviour
         string dropdownText = startLocPlanetSelectorDropdown.options[startLocPlanetSelectorDropdown.value].text;
         string goToFind = dropdownText + go_suffix;
 
-        UIStartLoc_InitOrbit initOrbit_instance = section_InitOrbitGO.GetComponent<UIStartLoc_InitOrbit>();
-        UIStartLoc_InitPlanetarySurf initPlanetary_instance = section_InitPlanetarySurfaceGO.GetComponent<UIStartLoc_InitPlanetarySurf>();
-        initPlanetary_instance.currPlanetSelectedName = dropdownText;
-        initPlanetary_instance.UpdatePlanetaryMap();
+        UI_initPlanetaryScript.currPlanetSelectedName = dropdownText;
+        UI_initPlanetaryScript.UpdatePlanetaryMap();
 
         foreach(Transform child in simpleSpheresFolder.transform)
         {
             if(child.name.Equals(goToFind))
             {
                 child.gameObject.SetActive(true);
-                initOrbit_instance.orbitedBody = child.gameObject.GetComponent<CelestialBody>();
+                UI_initOrbitScript.orbitedBody = child.gameObject.GetComponent<CelestialBody>();
             }
             else {
                 child.gameObject.SetActive(false);
@@ -174,10 +218,10 @@ public class UIStartLoc_Panel : MonoBehaviour
         }
 
         // Redraw the orbit to take into account the change of planet
-        if(!initOrbit_instance.InputFieldsAreAllEmpty())
+        if(!UI_initOrbitScript.InputFieldsAreAllEmpty())
         {
             // Update only if some values have been entered. Avoid drawing an orbit of ra=rp=0 km when first selecting the planet
-            initOrbit_instance.OnUpdateOrbit_BtnClick();
+            UI_initOrbitScript.OnUpdateOrbit_BtnClick();
         }
 
         lastSelectedPlanetName = startLocPlanetSelectorDropdown.options[startLocPlanetSelectorDropdown.value].text;
@@ -189,7 +233,7 @@ public class UIStartLoc_Panel : MonoBehaviour
     {
         // Save the needed orbitalParams data to disk
         // Saved data file has the name 'shipToLoad_orbitalParams.json'
-        UIStartLoc_InitOrbit UI_initOrbit = section_InitOrbitGO.GetComponent<UIStartLoc_InitOrbit>();
+
         // Creating the string[] for the 'OrbitalParamsSaveData' struct
         // Refer to struct definition for the order of the variables to add to the string[]
         string[] arrayToSave = new string[OrbitalParamsSaveData.NB_PARAMS];
@@ -197,22 +241,22 @@ public class UIStartLoc_Panel : MonoBehaviour
         arrayToSave[0] = startLocPlanetSelectorDropdown.options[startLocPlanetSelectorDropdown.value].text;
         if(!isPLanetarySurfaceInitialization)
         {
-            arrayToSave[1] = UI_initOrbit.orbitDefType.value.ToString();
-            arrayToSave[2] = UI_initOrbit.bodyPosType.value.ToString();
-            arrayToSave[3] = UI_initOrbit.unitsDropdown.value.ToString();
+            arrayToSave[1] = UI_initOrbitScript.orbitDefType.value.ToString();
+            arrayToSave[2] = UI_initOrbitScript.bodyPosType.value.ToString();
+            arrayToSave[3] = UI_initOrbitScript.unitsDropdown.value.ToString();
             arrayToSave[4] = "0"; // Defining a real orbit, not a predicted one
             arrayToSave[5] = "0"; // For the moment, don't draw any vectors/directions
             arrayToSave[6] = "1"; // default as true for drawOrbit bool
             arrayToSave[7] = "0"; // default as false for drawDirections bool
             arrayToSave[8] = "300"; //default value for the orbitDrawingResolution
-            arrayToSave[9] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.ra);
-            arrayToSave[10] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.rp);
-            arrayToSave[11] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.p);
-            arrayToSave[12] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.e);
-            arrayToSave[13] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.i);
-            arrayToSave[14] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.lAscN);
-            arrayToSave[15] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.omega);
-            arrayToSave[16] = UsefulFunctions.DoubleToString(UI_initOrbit.previewedOrbit.param.nu);
+            arrayToSave[9] = UsefulFunctions.DoubleToString(UI_initOrbitScript.previewedOrbit.param.ra);
+            arrayToSave[10] = UsefulFunctions.DoubleToString(UI_initOrbitScript.previewedOrbit.param.rp);
+            arrayToSave[11] = UsefulFunctions.DoubleToString(UI_initOrbitScript.previewedOrbit.param.p);
+            arrayToSave[12] = UsefulFunctions.DoubleToString(UI_initOrbitScript.previewedOrbit.param.e);
+            arrayToSave[13] = UsefulFunctions.DoubleToString(UI_initOrbitScript.previewedOrbit.param.i);
+            arrayToSave[14] = UsefulFunctions.DoubleToString(UI_initOrbitScript.previewedOrbit.param.lAscN);
+            arrayToSave[15] = UsefulFunctions.DoubleToString(UI_initOrbitScript.previewedOrbit.param.omega);
+            arrayToSave[16] = UsefulFunctions.DoubleToString(UI_initOrbitScript.previewedOrbit.param.nu);
         }
         else {
             for(int i=1; i<arrayToSave.Length; i++) { arrayToSave[i]="Nan"; }
@@ -227,7 +271,7 @@ public class UIStartLoc_Panel : MonoBehaviour
     {
         // Save the needed SpaceshipSettings data to disk
         // Saved data file has the name 'shipToLoad_settings.json'
-        UIStartLoc_InitPlanetarySurf UI_initSurface = section_InitPlanetarySurfaceGO.GetComponent<UIStartLoc_InitPlanetarySurf>();
+        
         // Creating the string[] for the 'SpaceshipSettingsSaveData' struct
         // Refer to struct definition for the order of the variables to add to the string[]
         string[] arrayToSave = new string[SpaceshipSettingsSaveData.NB_PARAMS];
@@ -236,7 +280,7 @@ public class UIStartLoc_Panel : MonoBehaviour
         if(isPLanetarySurfaceInitialization)
         {
             arrayToSave[1] = "1"; // True if the planetary surface was the last panel in the start location to be active
-            arrayToSave[2] = UI_initSurface.currSelectedLaunchpad.Get_Lat_Long().ToString();
+            arrayToSave[2] = UI_initPlanetaryScript.currSelectedLaunchpad.Get_Lat_Long().ToString();
         }
         else {
             arrayToSave[1] = "0"; // Not a planetary init, thus an in-orbit init

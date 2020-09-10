@@ -32,8 +32,13 @@ public class UI_SimSettings_Panel : MonoBehaviour
     private int currCategoryBeingDrawn;
     private int yPosition;
 
+    public MainPanelIsSetUp panelIsFullySetUp;
+
     void Start()
     {
+        if(panelIsFullySetUp == null)
+            panelIsFullySetUp = new MainPanelIsSetUp();
+
         // At start, hide the 'moreInfoPanel' as no settings has been selected for more info
         moreInfoSetting_Panel.gameObject.SetActive(false);
 
@@ -196,6 +201,16 @@ public class UI_SimSettings_Panel : MonoBehaviour
         AddSeparator(yPosition-100, prefab_horizontalSeparator);
         // Manually adjust the size of the content container
         rectTransform.sizeDelta = new Vector2(0f, Mathf.Abs(yPosition-140));
+
+        if(panelIsFullySetUp != null)
+            panelIsFullySetUp.Invoke(3, 1);
+    }
+
+    public bool SendControlBarTriangleUpdate()
+    {
+        if(panelIsFullySetUp != null)
+            panelIsFullySetUp.Invoke(3, 1);
+        return true;
     }
     //=============================================================================================
     //=============================================================================================

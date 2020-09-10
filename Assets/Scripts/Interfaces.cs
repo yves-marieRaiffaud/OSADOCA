@@ -61,3 +61,21 @@ public interface PropulsionInterface
 
 [System.Serializable]
 public class ThrustIsOnEvent : UnityEvent<PropulsionInterface>{}
+
+[System.Serializable]
+// Sends 2 int when one panel of startLocation (either InitPlanetary or inOrbit panel) fire this event.
+// =======FIRST INT IS THE PANEL IDENTIFIER:
+// The 'inOrbitInitialization' panel will send '0' as its identifier
+// The 'planetaryInitialization' panel will send '1' as its identifier
+// ======SECOND INT IS THE BOOLEAN INDICATING IF THE PANEL IS SET-UP (0: not set-up; 1: set-up)
+public class StartLocPanelIsSetUp : UnityEvent<int, int>{}
+
+[System.Serializable]
+// Sends 2 int when one panel of the mainMenu ('startLocation', 'Spacecraft', 'Matlab' or 'simSettings') fire this event.
+// =======FIRST INT IS THE PANEL IDENTIFIER:
+// The 'startLocation' panel will send '0' as its identifier
+// The 'spacecraft' panel will send '1' as its identifier
+// The 'matlab' panel will send '2' as its identifier
+// The 'simSettings' panel will send '3' as its identifier
+// ======SECOND INT IS THE BOOLEAN INDICATING IF THE PANEL IS SET-UP (0: not set-up; 1: set-up)
+public class MainPanelIsSetUp : UnityEvent<int, int>{}
