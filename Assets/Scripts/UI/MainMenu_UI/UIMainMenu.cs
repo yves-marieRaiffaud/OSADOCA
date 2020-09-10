@@ -35,6 +35,8 @@ public class UIMainMenu : MonoBehaviour
     [HideInInspector] public int currentSelectedMenuInt; 
     [HideInInspector] public RectTransform activeContentPanel; // Panel containing all the sub panels for each menu
     //===================
+    enum LastSelectedPanel { startLocationPanel, SpacecraftPanel, MatlabPanel, SettingsPanel };
+    LastSelectedPanel lastSelectedPanel;
 
     void Start()
     {
@@ -68,6 +70,8 @@ public class UIMainMenu : MonoBehaviour
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_FLY_Img, controlBarCheckScript.color_isNOTSetUp);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.color_isSetUp);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_SimSettings_Img, controlBarCheckScript.color_isNOTSetUp);
+
+        lastSelectedPanel = LastSelectedPanel.startLocationPanel;
     }
 
     private void onSpacecraftBtnClick()
@@ -84,6 +88,8 @@ public class UIMainMenu : MonoBehaviour
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_FLY_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_SimSettings_Img, controlBarCheckScript.color_default);
+
+        lastSelectedPanel = LastSelectedPanel.SpacecraftPanel;
     }
 
     private void onMatlabBtnClick()
@@ -100,6 +106,8 @@ public class UIMainMenu : MonoBehaviour
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_FLY_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.color_selectedPanel);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_SimSettings_Img, controlBarCheckScript.color_default);
+
+        lastSelectedPanel = LastSelectedPanel.MatlabPanel;
     }
 
     private void onSimSettingsBtnClick()
@@ -116,6 +124,8 @@ public class UIMainMenu : MonoBehaviour
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_FLY_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.color_default);
         controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_SimSettings_Img, controlBarCheckScript.color_selectedPanel);
+
+        lastSelectedPanel = LastSelectedPanel.SettingsPanel;
     }
 
     private void onFLYBtnClick()

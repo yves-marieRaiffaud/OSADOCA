@@ -195,6 +195,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Saturn
       objectReference: {fileID: 0}
+    - target: {fileID: 225891371387098503, guid: 21302d36114123940ae130004064b371,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 21302d36114123940ae130004064b371, type: 3}
 --- !u!1001 &124327982
@@ -208,6 +213,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Venus
+      objectReference: {fileID: 0}
+    - target: {fileID: 8816859823054267974, guid: 3e1dfb06d50941e4aa50e0ae581453e4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8816859823054267994, guid: 3e1dfb06d50941e4aa50e0ae581453e4,
         type: 3}
@@ -332,6 +342,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Neptune
+      objectReference: {fileID: 0}
+    - target: {fileID: 7186030635595241960, guid: 244df052852ad7f4fafce31321a2e44a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 244df052852ad7f4fafce31321a2e44a, type: 3}
@@ -549,6 +564,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Uranus
       objectReference: {fileID: 0}
+    - target: {fileID: 4315179471413529283, guid: c0776ea03cd801044bf399e43516759d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4315179471413529295, guid: c0776ea03cd801044bf399e43516759d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -672,6 +692,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Mars
+      objectReference: {fileID: 0}
+    - target: {fileID: 8360217227922760664, guid: 1e3cee76ff2e57b419127b5bf8a88264,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e3cee76ff2e57b419127b5bf8a88264, type: 3}
@@ -1108,6 +1133,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Jupiter
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358622945706947274, guid: 66080e6461d80d24eaff2905e39148be,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1358622945706947318, guid: 66080e6461d80d24eaff2905e39148be,
         type: 3}
@@ -2492,21 +2522,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2830405243814933036, guid: bcbf8a00623a17249935a8c8f4942b55,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2830405243814933036, guid: bcbf8a00623a17249935a8c8f4942b55,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2830405243814933036, guid: bcbf8a00623a17249935a8c8f4942b55,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bcbf8a00623a17249935a8c8f4942b55, type: 3}
 --- !u!1001 &2924592231736944573
@@ -2659,6 +2674,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Mercury
+      objectReference: {fileID: 0}
+    - target: {fileID: 3252324858151988421, guid: 75da7e21b1253ce468f1ab1cf6941998,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 75da7e21b1253ce468f1ab1cf6941998, type: 3}

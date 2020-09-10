@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.IO;
 using System.Collections.Generic;
 using UseFncs = UsefulFunctions;
+using UnityEngine.Playables;
 using Matlab_Communication;
 using System;
 
@@ -41,16 +42,6 @@ public class UI_Matlab_Panel : MonoBehaviour
     public Button controlAlgoTest_btn;
     //=======================
     //=======================
-
-    void OnEnable()
-    {
-        
-    }
-
-    void OnDisable()
-    {   
-        
-    }
     //==========
     void Start()
     {

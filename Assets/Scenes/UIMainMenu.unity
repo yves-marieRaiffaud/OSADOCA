@@ -40710,6 +40710,7 @@ GameObject:
   - component: {fileID: 1888415575}
   - component: {fileID: 1888415577}
   - component: {fileID: 1888415576}
+  - component: {fileID: 1888415578}
   m_Layer: 5
   m_Name: Panel_Matlab
   m_TagString: Untagged
@@ -40776,6 +40777,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1888415574}
   m_CullTransparentMesh: 0
+--- !u!114 &1888415578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1888415574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 229b5b4555c09e04ba910b22340e8c38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraAnimator: {fileID: 8430513295382613443}
+  OnEnableAnim: {fileID: 7400000, guid: 2119f4181d7175341bff47f3d5937c10, type: 2}
+  OnDisableAnim: {fileID: 7400000, guid: 9766a5e81d7a51f4db2bc6e9ad5270c0, type: 2}
 --- !u!1 &1892574043
 GameObject:
   m_ObjectHideFlags: 0
@@ -46272,6 +46288,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54784e818031e9840b85f08421972e08, type: 3}
+--- !u!95 &8430513295382613443 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8430513295382613443, guid: 54784e818031e9840b85f08421972e08,
+    type: 3}
+  m_PrefabInstance: {fileID: 8430513295382613441}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8995394094162067252
 PrefabInstance:
   m_ObjectHideFlags: 0
