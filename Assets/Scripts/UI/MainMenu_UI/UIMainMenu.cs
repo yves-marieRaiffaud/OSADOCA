@@ -46,9 +46,13 @@ public class UIMainMenu : MonoBehaviour
     //===================
     enum LastSelectedPanel { startLocationPanel, SpacecraftPanel, MatlabPanel, SettingsPanel };
     LastSelectedPanel lastSelectedPanel;
+    
+    bool flyBtnIsAlreadyReady;
 
     void Start()
     {
+        flyBtnIsAlreadyReady = false;
+
         startLocPanelScript = GetComponent<UIStartLoc_Panel>();
         startLocPanelScript.panelIsFullySetUp.AddListener(HandleControlBarTriangleColor);
 
@@ -62,6 +66,7 @@ public class UIMainMenu : MonoBehaviour
         simSettingsPanelScript.panelIsFullySetUp.AddListener(HandleControlBarTriangleColor);
 
         InitMainButtons();
+        StartCoroutine(FLY_CheckUpdate());
     }
 
     private void InitMainButtons()
@@ -82,7 +87,6 @@ public class UIMainMenu : MonoBehaviour
         currentSelectedMenuInt = 0;
         HandlePanelsToggling(currentSelectedMenuInt);
         HandleControlBarLineColor(currentSelectedMenuInt);
-
         lastSelectedPanel = LastSelectedPanel.startLocationPanel;
     }
 
@@ -91,7 +95,6 @@ public class UIMainMenu : MonoBehaviour
         currentSelectedMenuInt = 1;
         HandlePanelsToggling(currentSelectedMenuInt);
         HandleControlBarLineColor(currentSelectedMenuInt);
-
         lastSelectedPanel = LastSelectedPanel.SpacecraftPanel;
     }
 
@@ -100,7 +103,6 @@ public class UIMainMenu : MonoBehaviour
         currentSelectedMenuInt = 3;
         HandlePanelsToggling(currentSelectedMenuInt);
         HandleControlBarLineColor(currentSelectedMenuInt);
-
         lastSelectedPanel = LastSelectedPanel.MatlabPanel;
     }
 
@@ -109,7 +111,6 @@ public class UIMainMenu : MonoBehaviour
         currentSelectedMenuInt = 4;
         HandlePanelsToggling(currentSelectedMenuInt);
         HandleControlBarLineColor(currentSelectedMenuInt);
-
         lastSelectedPanel = LastSelectedPanel.SettingsPanel;
     }
 
@@ -124,20 +125,26 @@ public class UIMainMenu : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Loading the simulation scene
     }
 
-
-
-    void LateUpdate()
+    IEnumerator FLY_CheckUpdate()
     {
-        // Forcing every panel to send their control check before actually checking
-        bool startLocOK = startLocPanelScript.SendControlBarTriangleUpdate();
-        bool shipOK = spaceshipPanelScript.SendControlBarTriangleUpdate();
-        bool matlabOK = matlabPanelScript.SendControlBarTriangleUpdate();
-        bool simSettingsOK = simSettingsPanelScript.SendControlBarTriangleUpdate();
+        while(true)
+        {
+            yield return new WaitForSeconds(0.5f);
+            // Forcing every panel to send their control check before actually checking
+            bool startLocOK = startLocPanelScript.SendControlBarTriangleUpdate();
+            bool shipOK = spaceshipPanelScript.SendControlBarTriangleUpdate();
+            bool matlabOK = matlabPanelScript.SendControlBarTriangleUpdate();
+            bool simSettingsOK = simSettingsPanelScript.SendControlBarTriangleUpdate();
 
-        if(startLocOK && shipOK && matlabOK && simSettingsOK)
-            controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(true);
-        else
-            controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(false);
+            if(startLocOK && shipOK && matlabOK && simSettingsOK && !flyBtnIsAlreadyReady) {
+                controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(true);
+                flyBtnIsAlreadyReady = true;
+            }
+            else if((!startLocOK || !shipOK || !matlabOK || !simSettingsOK) && flyBtnIsAlreadyReady) {
+                controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(false);
+                flyBtnIsAlreadyReady = false;
+            }
+        }
     }
     //=====================================
     //=====================================
@@ -208,7 +215,6 @@ public class UIMainMenu : MonoBehaviour
             case 0:
                 // "StartLocation" panel selected
                 controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_startLoc_Img, true);
-
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_Spacecraft_Img, controlBarCheckScript.triangle_Spacecraft_Img);
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.triangle_Matlab_Img);
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_SimSettings_Img, controlBarCheckScript.triangle_SimSettings_Img);
@@ -216,7 +222,6 @@ public class UIMainMenu : MonoBehaviour
             case 1:
                 // "Spacecraft" panel selected
                 controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Spacecraft_Img, true);
-                
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_startLoc_Img, controlBarCheckScript.triangle_startLoc_Img);
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.triangle_Matlab_Img);
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_SimSettings_Img, controlBarCheckScript.triangle_SimSettings_Img);
@@ -224,7 +229,6 @@ public class UIMainMenu : MonoBehaviour
             case 3:
                 // "Matlab" panel selected
                 controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_Matlab_Img, true);
-
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_startLoc_Img, controlBarCheckScript.triangle_startLoc_Img);
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_Spacecraft_Img, controlBarCheckScript.triangle_Spacecraft_Img);
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_SimSettings_Img, controlBarCheckScript.triangle_SimSettings_Img);
@@ -232,11 +236,9 @@ public class UIMainMenu : MonoBehaviour
             case 4:
                 // "SimSettings" panel selected
                 controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_SimSettings_Img, true);
-
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_startLoc_Img, controlBarCheckScript.triangle_startLoc_Img);
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_Spacecraft_Img, controlBarCheckScript.triangle_Spacecraft_Img);
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.triangle_Matlab_Img);
-                
                 simSettingsPanelScript.UpdateParameters();
                 break;
         }

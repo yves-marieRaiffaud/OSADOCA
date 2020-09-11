@@ -52,9 +52,9 @@ public class ControlBarCheck : MonoBehaviour
         if(isReadyToFly) {
             
             fly_text.color = controlBar_FLY_Img.color = color_OKtoFLY;
+            AnimationPlayableUtilities.PlayClip(flyTxtAnimator, flyTxtAnimation, out flyTxtGraph);
         }
         else {
-            AnimationPlayableUtilities.PlayClip(flyTxtAnimator, flyTxtAnimation, out flyTxtGraph);
             fly_text.color = controlBar_FLY_Img.color = color_default;
         }
             

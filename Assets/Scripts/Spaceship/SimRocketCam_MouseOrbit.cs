@@ -87,14 +87,15 @@ public class SimRocketCam_MouseOrbit : MonoBehaviour
         }
         else if(target && Input.GetKey(KeyCode.LeftAlt))
         {
-            float offset = Mathf.Clamp(Input.GetAxis("MouseScrollWheel"), -5f, 5f);
-            camLongitudinalOffset += offset * Mathd_Lib.Mathd.Mean(transform.parent.localScale);
+            float meanLocalScale = Mathd_Lib.Mathd.Mean(transform.parent.localScale);
+            float offset = Mathf.Clamp(Input.GetAxis("MouseScrollWheel"), -5f*meanLocalScale, 5f*meanLocalScale);
+            camLongitudinalOffset += offset;
             transform.position += transform.parent.TransformDirection(new Vector3(0f, offset, 0f));
         }
         else if(target)
         {
             // For the zoom management, no need to have the left mouse button held down
-            distance = Mathf.Clamp(distance - Input.GetAxis("MouseScrollWheel")*5, distanceMin, distanceMax);
+            distance = Mathf.Clamp(distance - Input.GetAxis("MouseScrollWheel")*2, distanceMin, distanceMax);
             //========
             Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance/targetLocalScale);
             Vector3 position = transform.rotation * negDistance + target.position;

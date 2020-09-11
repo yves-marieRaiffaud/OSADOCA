@@ -117,6 +117,15 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             _gravPullList=value;
         }
     }
+    
+    /// <summary>
+    /// Returns the north pole axis of the CelestialBody, in WORLD space
+    /// </summary>
+    public Vector3 worldNorthPoleAxis {
+        get {
+            return transform.TransformDirection(Vector3.up);
+        }
+    }
     //=========================================
     public bool spawnAsSimpleSphere = false; // For the UI, will spawn a simple sphere (no LOD, culling etc.). For the simlation, will spawn the complex one
     //=========================================

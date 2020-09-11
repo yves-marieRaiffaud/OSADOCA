@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
 using System.IO;
+using UnityEngine.Events;
 
 [DisallowMultipleComponent, System.Serializable]
 public class UniverseRunner : MonoBehaviour
@@ -26,6 +27,11 @@ public class UniverseRunner : MonoBehaviour
 
     public List<Rigidbody> physicsRigidbodies;
     public List<Transform> physicsObjArray;
+
+    /// <summary>
+    /// UnityEvent firing when the Start() method of UniverseRunner is finished
+    /// </summary>
+    public UnityEvent startIsDone;
 
     public Vector3 universeOffset; // Keeping track of the offset of the whole universe
     //=========================================
@@ -128,6 +134,9 @@ public class UniverseRunner : MonoBehaviour
     //=========================================
     void Start()
     {
+        if(startIsDone == null)
+            startIsDone = new UnityEvent();
+
         foreach(Transform obj in physicsObjArray)
         {
             switch(UsefulFunctions.CastStringToGoTags(obj.tag))
@@ -160,6 +169,8 @@ public class UniverseRunner : MonoBehaviour
         //==============================
         if(simEnv.missionTimer != null)
             simEnv.missionTimer.Start_Stopwatch();
+        if(startIsDone != null)
+            startIsDone.Invoke();
     }
 
     void FixedUpdate()
