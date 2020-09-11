@@ -12177,7 +12177,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -705, y: -202.8}
+  m_AnchoredPosition: {x: -705, y: -202.79999}
   m_SizeDelta: {x: 340, y: 120}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &473604006
@@ -21418,10 +21418,6 @@ MonoBehaviour:
   panel_SimSettings: {fileID: 1666663683}
   panel_Matlab: {fileID: 1888415574}
   panel_Spacecraft: {fileID: 1514695967}
-  startLocTxt: {fileID: 1892574045}
-  spacecraftTxt: {fileID: 366716614}
-  matlabTxt: {fileID: 1402413329}
-  simSettingsTxt: {fileID: 724431888}
   currentSelectedMenuInt: 0
   activeContentPanel: {fileID: 0}
 --- !u!114 &930964329
@@ -21446,6 +21442,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   isPLanetarySurfaceInitialization: 0
+  hasFinishedStart: 0
 --- !u!114 &930964330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21482,6 +21479,9 @@ MonoBehaviour:
   prefab_moreInfo_formula: {fileID: 6082407438430134120, guid: 4c1b86483a84fc241a8d7ac12dd069d3,
     type: 3}
   moreInfoSetting_Panel: {fileID: 1753585082}
+  panelIsFullySetUp:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &930964331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22155,6 +22155,7 @@ GameObject:
   - component: {fileID: 962259293}
   - component: {fileID: 962259295}
   - component: {fileID: 962259294}
+  - component: {fileID: 962259296}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -22300,6 +22301,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 962259292}
   m_CullTransparentMesh: 0
+--- !u!95 &962259296
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 962259292}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a50be0d6f725da44bbeb05e4a9ffc46f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &962876639
 GameObject:
   m_ObjectHideFlags: 0
@@ -42782,18 +42802,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color_isSetUp: {r: 0.17859153, g: 0.634, b: 0.19198592, a: 1}
-  color_isNOTSetUp: {r: 0.9811321, g: 0.72942626, b: 0.21288714, a: 1}
+  color_isNOTSetUp: {r: 0.9716981, g: 0.59609425, b: 0.26584193, a: 1}
   color_selectedPanel: {r: 0.19437523, g: 0.5811247, b: 0.8584906, a: 1}
   color_default: {r: 1, g: 1, b: 1, a: 1}
+  color_OKtoFLY: {r: 1, g: 0.8076105, b: 0, a: 1}
   controlBar_startLoc_Img: {fileID: 18180326}
   controlBar_Spacecraft_Img: {fileID: 430226102}
-  controlBar_FLY_Img: {fileID: 2052384105}
   controlBar_Matlab_Img: {fileID: 1501224077}
   controlBar_SimSettings_Img: {fileID: 1975981512}
   triangle_startLoc_Img: {fileID: 673007732}
   triangle_Spacecraft_Img: {fileID: 126924324}
   triangle_Matlab_Img: {fileID: 2147072317}
   triangle_SimSettings_Img: {fileID: 1608452199}
+  controlBar_FLY_Img: {fileID: 2052384105}
+  fly_text: {fileID: 962259294}
+  flyTxtAnimator: {fileID: 962259296}
+  flyTxtAnimation: {fileID: 7400000, guid: 98572c4495db84d4fab7e6e3821c6a49, type: 2}
 --- !u!1 &1987908517
 GameObject:
   m_ObjectHideFlags: 0

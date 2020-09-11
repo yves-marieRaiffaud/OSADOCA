@@ -7,7 +7,7 @@ using System;
 public class OnEnableDisable_ControlAnimations : MonoBehaviour
 {
     public Animator cameraAnimator;
-    public PlayableGraph playableGraph;
+    PlayableGraph playableGraph;
     public AnimationClip OnEnableAnim;
     public AnimationClip OnDisableAnim;
 

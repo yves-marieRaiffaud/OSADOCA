@@ -378,14 +378,24 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     //=========================================
     void FixedUpdate()
     {
-        // 'spawnAsSimpleSphere' only refers to the UI SimpleSphere, not the NON-LOD sphere 
-        if(spawnAsSimpleSphere) { return; }
+        if(spawnAsSimpleSphere)
+            return;
+        
         GetDistancesToCamera();
         CheckUpdate_LOD_NonLOD_System();
 
         if(!UsefulFunctions.DoublesAreEqual(settings.rotationSpeed, 0d))
         {
             RotatePlanet();
+        }
+    }
+
+    void Update()
+    {
+        // 'spawnAsSimpleSphere' only refers to the UI SimpleSphere, not the NON-LOD sphere 
+        if(spawnAsSimpleSphere) {
+            gameObject.transform.rotation = Quaternion.AngleAxis(-0.1f, Vector3.up) * transform.rotation;
+            return;
         }
     }
 

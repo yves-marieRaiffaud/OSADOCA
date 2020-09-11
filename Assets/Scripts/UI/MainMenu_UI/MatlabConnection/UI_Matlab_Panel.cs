@@ -74,7 +74,8 @@ public class UI_Matlab_Panel : MonoBehaviour
         //controlAlgoRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.controlAlgoReceiverChannel, ipControlAlgoInputField, portControlAlgoInputField);});
         //=======================
         //=======================
-        ToggleControlTypePanels(1); // Init at remote connections
+        //ToggleControlTypePanels(1); // Init at remote connections
+        shipControlModeDropdown.value = 1;
         CheckPanels_SetUp();
     }
 

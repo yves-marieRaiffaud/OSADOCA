@@ -134,13 +134,10 @@ public class UIMainMenu : MonoBehaviour
         bool matlabOK = matlabPanelScript.SendControlBarTriangleUpdate();
         bool simSettingsOK = simSettingsPanelScript.SendControlBarTriangleUpdate();
 
-        if(startLocOK && shipOK && matlabOK && simSettingsOK) {
-            // OK TO CLICK THE FLY BUTTON
-            controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_FLY_Img, true);
-        }
-        else {
-            controlBarCheckScript.ChangeControlBarColor(controlBarCheckScript.controlBar_FLY_Img, false);
-        }
+        if(startLocOK && shipOK && matlabOK && simSettingsOK)
+            controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(true);
+        else
+            controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(false);
     }
     //=====================================
     //=====================================
