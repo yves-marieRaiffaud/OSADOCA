@@ -236,6 +236,8 @@ public class UIMainMenu : MonoBehaviour
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_startLoc_Img, controlBarCheckScript.triangle_startLoc_Img);
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_Spacecraft_Img, controlBarCheckScript.triangle_Spacecraft_Img);
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.triangle_Matlab_Img);
+                
+                simSettingsPanelScript.UpdateParameters();
                 break;
         }
     }

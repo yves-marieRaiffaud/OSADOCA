@@ -394,7 +394,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     {
         // 'spawnAsSimpleSphere' only refers to the UI SimpleSphere, not the NON-LOD sphere 
         if(spawnAsSimpleSphere) {
-            gameObject.transform.rotation = Quaternion.AngleAxis(-0.1f, Vector3.up) * transform.rotation;
+            gameObject.transform.rotation = Quaternion.AngleAxis(-0.01f, Vector3.up) * transform.rotation;
             return;
         }
     }

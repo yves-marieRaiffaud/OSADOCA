@@ -206,6 +206,13 @@ public class UI_SimSettings_Panel : MonoBehaviour
             panelIsFullySetUp.Invoke(3, 1);
     }
 
+    public void UpdateParameters()
+    {
+        foreach(Transform childTR in scrollviewContentTR.transform)
+            GameObject.Destroy(childTR.gameObject);
+        Start();
+    }
+
     public bool SendControlBarTriangleUpdate()
     {
         if(panelIsFullySetUp != null)
@@ -450,6 +457,9 @@ public class UI_SimSettings_Panel : MonoBehaviour
 
             RectTransform parent_RT = title.transform.parent.GetComponent<RectTransform>();
             rectTransform.anchoredPosition = new Vector2(parent_RT.anchoredPosition.x/2f, 0f);
+
+            rectTransform.offsetMin = new Vector2(30, rectTransform.offsetMin.y); // Setting 'left' property
+            rectTransform.offsetMax = new Vector2(-30, rectTransform.offsetMax.y); // Setting 'right' property
         }
         else {
             title = moreInfoSetting_Panel.transform.Find("MoreInfo_Title").gameObject;
