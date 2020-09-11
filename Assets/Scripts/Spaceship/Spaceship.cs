@@ -12,6 +12,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     [HideInInspector] public PropulsionManager propulsionManager;
     [HideInInspector] public SpaceshipController spaceshipController {get; private set;}
     [HideInInspector] public SpaceshipSettings settings;
+    [HideInInspector] Rigidbody rb;
     //=======
     [HideInInspector] public bool foldoutFlyingObjInfoPanel;
     //=======
@@ -155,7 +156,6 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
 
         if(Input.GetKey(KeyCode.Space))
         {
-            Rigidbody rb = GetComponent<Rigidbody>();
             rb.constraints = RigidbodyConstraints.None;
             shipRBConstraints_areOn = false;
         }
@@ -192,6 +192,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         spaceshipController = null;
         previousRotation = new Quaterniond(transform.rotation);
         orbitsAreDisplayed = false;
+        rb = GetComponent<Rigidbody>();
 
         if(transform.Find("Main Camera") != null)
             mainCamera = transform.Find("Main Camera").GetComponent<Camera>();
@@ -419,5 +420,10 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
             GetDeltaRotation();
             yield return new WaitForSeconds(comHandlerSenderSimEnvFrequency);
         }
+    }
+
+    public void UnlockRigibodyROtations()
+    {
+        rb.constraints = RigidbodyConstraints.None;
     }
 }

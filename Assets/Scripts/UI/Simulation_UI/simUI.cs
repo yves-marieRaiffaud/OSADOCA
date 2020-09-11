@@ -8,6 +8,7 @@ public class simUI : MonoBehaviour
 {
     public UniverseRunner universeRunner;
     public TMPro.TMP_Text velocityVal;
+    public TMPro.TMP_Text orbitalVelocityVal;
     public TMPro.TMP_Text altitudeVal;
     //=================
     public bool saveOrbitalDataToText=false;
@@ -67,14 +68,16 @@ public class simUI : MonoBehaviour
         
         string velocity = UsefulFunctions.DoubleToSignificantDigits(currVelocity.ConvertTo(Units.velocity.m_s).value, UniCsts.UI_SIGNIFICANT_DIGITS);
         string altitude = UsefulFunctions.DoubleToSignificantDigits(currAltitude.value, UniCsts.UI_SIGNIFICANT_DIGITS);
+        string orbitalVelocity = UsefulFunctions.DoubleToSignificantDigits(universeRunner.activeSpaceship.orbitedBodyRelativeVel.magnitude, UniCsts.UI_SIGNIFICANT_DIGITS);
 
         velocityVal.text = velocity + " m/s";
         altitudeVal.text = altitude + " " + currAltitude.unit.ToString();
+        orbitalVelocityVal.text = orbitalVelocity + " " + " m/s";
 
         altitude_tMinus = currAltitude;
 
         if(!saveOrbitalDataToText) { return; }
-        sr.WriteLine (velocity + ";" + altitude);
+        sr.WriteLine (velocity + ";" + altitude + ";" + orbitalVelocity);
     }
 
     public void ToggleThrustVectorDisplay()

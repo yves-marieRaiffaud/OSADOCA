@@ -9,6 +9,14 @@ public class NavBall : MonoBehaviour
     Quaternion navBallBaseRot;
     public Vector3 navBallSphereNorthPoleAxis; // == (0;1;0), north axis along the world +Y-Axis
 
+    [Header("Navball heading GameObjects")]
+    public GameObject progradeGO;
+    public GameObject retrogradeGO;
+    public GameObject normalGO;
+    public GameObject antinormalGO;
+    public GameObject radialInGO;
+    public GameObject radialOutGO;
+
     CelestialBody orbitedBody;
     Spaceship ship;
 
@@ -38,8 +46,20 @@ public class NavBall : MonoBehaviour
         if(ship==null || orbitedBody==null)
             return;
         
+        RotateNavBall();
+        UpdateProgradeRetrogradePosition();
+    }
+
+    void RotateNavBall()
+    {
         Quaternion quatRot = ship.transform.rotation * Quaternion.Inverse(orbitedBody.transform.rotation) * navBallBaseRot;
-        
         navBallGO.transform.rotation = quatRot;
     }
+
+    void UpdateProgradeRetrogradePosition()
+    {
+        Vector3 velocityVec = (Vector3)ship.orbitedBodyRelativeVel;
+        
+    }
+
 }

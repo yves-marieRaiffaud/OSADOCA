@@ -43,10 +43,7 @@ public class UIMainMenu : MonoBehaviour
     // 4 : Simulation Settings panel
     [HideInInspector] public int currentSelectedMenuInt; 
     [HideInInspector] public RectTransform activeContentPanel; // Panel containing all the sub panels for each menu
-    //===================
-    enum LastSelectedPanel { startLocationPanel, SpacecraftPanel, MatlabPanel, SettingsPanel };
-    LastSelectedPanel lastSelectedPanel;
-    
+    //===================    
     bool flyBtnIsAlreadyReady;
 
     void Start()
@@ -71,47 +68,24 @@ public class UIMainMenu : MonoBehaviour
 
     private void InitMainButtons()
     {
-        btn_StartLocation.onClick.AddListener(onStartLocationBtnClick);
-        btn_Spacecraft.onClick.AddListener(onSpacecraftBtnClick);
-        btn_Matlab.onClick.AddListener(onMatlabBtnClick);
-        btn_SimSettings.onClick.AddListener(onSimSettingsBtnClick);
+        btn_StartLocation.onClick.AddListener(delegate{OnMainMenuButtonClick(0);});
+        btn_Spacecraft.onClick.AddListener(delegate{OnMainMenuButtonClick(1);});
+        btn_Matlab.onClick.AddListener(delegate{OnMainMenuButtonClick(3);});
+        btn_SimSettings.onClick.AddListener(delegate{OnMainMenuButtonClick(4);});
         btn_Fly.onClick.AddListener(onFLYBtnClick);
 
-        //controlBarCheckScript.ChangeTriangleColor(controlBarCheckScript.triangle_SimSettings_Img, true);
         // On Start, by default, start on the StartLocation menu
-        onStartLocationBtnClick();
+        // Forced to first call matlab panel as it will trigger the OnEnable planetUI animation, then switching to the default starting panel
+        // I don't know why this behaviour is happening (animation is triggered even when 'OnenableDisable_ControlAnimation' code is commented out)
+        OnMainMenuButtonClick(3);
+        OnMainMenuButtonClick(0);
     }
 
-    private void onStartLocationBtnClick()
+    private void OnMainMenuButtonClick(int idxClickedBtn)
     {
-        currentSelectedMenuInt = 0;
+        currentSelectedMenuInt = idxClickedBtn;
         HandlePanelsToggling(currentSelectedMenuInt);
         HandleControlBarLineColor(currentSelectedMenuInt);
-        lastSelectedPanel = LastSelectedPanel.startLocationPanel;
-    }
-
-    private void onSpacecraftBtnClick()
-    {
-        currentSelectedMenuInt = 1;
-        HandlePanelsToggling(currentSelectedMenuInt);
-        HandleControlBarLineColor(currentSelectedMenuInt);
-        lastSelectedPanel = LastSelectedPanel.SpacecraftPanel;
-    }
-
-    private void onMatlabBtnClick()
-    {
-        currentSelectedMenuInt = 3;
-        HandlePanelsToggling(currentSelectedMenuInt);
-        HandleControlBarLineColor(currentSelectedMenuInt);
-        lastSelectedPanel = LastSelectedPanel.MatlabPanel;
-    }
-
-    private void onSimSettingsBtnClick()
-    {
-        currentSelectedMenuInt = 4;
-        HandlePanelsToggling(currentSelectedMenuInt);
-        HandleControlBarLineColor(currentSelectedMenuInt);
-        lastSelectedPanel = LastSelectedPanel.SettingsPanel;
     }
 
     private void onFLYBtnClick()

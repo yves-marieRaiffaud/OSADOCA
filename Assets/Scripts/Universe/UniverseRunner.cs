@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
 using System.IO;
+using System.Linq;
 using UnityEngine.Events;
 
 [DisallowMultipleComponent, System.Serializable]
@@ -113,7 +114,10 @@ public class UniverseRunner : MonoBehaviour
             rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
         }
 
-        rb.constraints = RigidbodyConstraints.None;
+        if(physicGameObject.CompareTag(goTags.Spaceship.ToString()))
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+        else
+            rb.constraints = RigidbodyConstraints.None;
         rb.isKinematic = false;
 
         if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
@@ -166,11 +170,20 @@ public class UniverseRunner : MonoBehaviour
             }
         }
         flyingObjInst.InitGravitationalPullLists();
+        Invoke("UnlockShips", 0.5f);
         //==============================
         if(simEnv.missionTimer != null)
             simEnv.missionTimer.Start_Stopwatch();
         if(startIsDone != null)
             startIsDone.Invoke();
+    }
+
+    void UnlockShips()
+    {
+        foreach(Spaceship ship in GameObject.FindGameObjectsWithTag(goTags.Spaceship.ToString()).Select(i => i.GetComponent<Spaceship>()))
+        {
+            ship.UnlockRigibodyROtations();
+        }
     }
 
     void FixedUpdate()

@@ -1,8 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections.Generic;
 using UnityEngine.Playables;
-using System;
 
 public class OnEnableDisable_ControlAnimations : MonoBehaviour
 {
@@ -10,8 +7,6 @@ public class OnEnableDisable_ControlAnimations : MonoBehaviour
     PlayableGraph playableGraph;
     public AnimationClip OnEnableAnim;
     public AnimationClip OnDisableAnim;
-
-    
 
     void OnEnable()
     {

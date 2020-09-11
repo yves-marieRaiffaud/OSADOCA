@@ -35,7 +35,7 @@ public class UIStartLoc_Panel : MonoBehaviour
     };
     //======
     [HideInInspector] public bool isPLanetarySurfaceInitialization;
-    public bool hasFinishedStart;
+    [HideInInspector] public bool hasFinishedStart;
 
     void Start()
     {
