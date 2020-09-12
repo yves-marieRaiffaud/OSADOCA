@@ -10,11 +10,13 @@ public class OnEnableDisable_ControlAnimations : MonoBehaviour
 
     void OnEnable()
     {
-        AnimationPlayableUtilities.PlayClip(cameraAnimator, OnEnableAnim, out playableGraph);
+        if(cameraAnimator != null && OnEnableAnim != null)
+            AnimationPlayableUtilities.PlayClip(cameraAnimator, OnEnableAnim, out playableGraph);
     }
 
     void OnDisable()
     {   
-        AnimationPlayableUtilities.PlayClip(cameraAnimator, OnDisableAnim, out playableGraph);
+        if(cameraAnimator != null && OnDisableAnim != null)
+            AnimationPlayableUtilities.PlayClip(cameraAnimator, OnDisableAnim, out playableGraph);
     }
 }

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &225891371387098503
+--- !u!1 &3779666770989645831
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,50 +8,50 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 225891371387098499}
-  - component: {fileID: 225891371387098496}
-  - component: {fileID: 225891371387098497}
-  - component: {fileID: 225891371387098502}
+  - component: {fileID: 3987539336520034445}
+  - component: {fileID: 3779666770989645826}
+  - component: {fileID: 3779666770989645829}
+  - component: {fileID: 3779666770989645828}
   m_Layer: 9
   m_Name: Saturn
   m_TagString: Planet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &225891371387098499
+  m_IsActive: 1
+--- !u!4 &3987539336520034445
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 225891371387098503}
+  m_GameObject: {fileID: 3779666770989645831}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.467587, y: 9.396717, z: -6.544395}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &225891371387098496
+--- !u!114 &3779666770989645826
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 225891371387098503}
+  m_GameObject: {fileID: 3779666770989645831}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9a9b4959f5f3994b87d608284f83fb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!54 &225891371387098497
+--- !u!54 &3779666770989645829
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 225891371387098503}
+  m_GameObject: {fileID: 3779666770989645831}
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
@@ -61,13 +61,13 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &225891371387098502
+--- !u!114 &3779666770989645828
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 225891371387098503}
+  m_GameObject: {fileID: 3779666770989645831}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c314a971f6f66b4d9cf62cb03d11036, type: 3}

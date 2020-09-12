@@ -259,7 +259,22 @@ public class UIStartLoc_Panel : MonoBehaviour
             arrayToSave[16] = UsefulFunctions.DoubleToString(UI_initOrbitScript.previewedOrbit.param.nu);
         }
         else {
-            for(int i=1; i<arrayToSave.Length; i++) { arrayToSave[i]="Nan"; }
+            arrayToSave[1] = "0";
+            arrayToSave[2] = "0";
+            arrayToSave[3] = "0";
+            arrayToSave[4] = "0"; // Defining a real orbit, not a predicted one
+            arrayToSave[5] = "0"; // For the moment, don't draw any vectors/directions
+            arrayToSave[6] = "0"; // default as true for drawOrbit bool
+            arrayToSave[7] = "0"; // default as false for drawDirections bool
+            arrayToSave[8] = "300"; //default value for the orbitDrawingResolution
+            arrayToSave[9] = "0";
+            arrayToSave[10] = "0";
+            arrayToSave[11] = "0";
+            arrayToSave[12] = "0";
+            arrayToSave[13] = "0";
+            arrayToSave[14] = "0";
+            arrayToSave[15] = "0";
+            arrayToSave[16] = "0";
         }
         OrbitalParamsSaveData orbParamsSaveData = new OrbitalParamsSaveData(arrayToSave);
 

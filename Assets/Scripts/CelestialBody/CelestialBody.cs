@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using System.Linq;
 using Mathd_Lib;
+using UnityEngine.SceneManagement;
 
 public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 {
@@ -150,8 +152,19 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     public bool forceLODSphere = false;
     //=========================================
 
+    private string GetAssetName()
+    {
+        string assetName;
+        if(SceneManager.GetActiveScene().name.Equals("Universe"))
+            assetName = name;
+        else
+            assetName = name.Substring(0, name.Length - 9); // Removing "Planet_UI" from the GameObject's name == 9 characters
+        return assetName;
+    }
+
     void Awake()
     {
+        CheckOrbitalFileAndBodySettings();
         if(GameObject.Find("UniverseRunner") == null)
         {
             // Can not find any UniverseRunner in the scene, thus it is a celetialBody in a UI menu
@@ -162,35 +175,22 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             universeRunner = GameObject.Find("UniverseRunner").GetComponent<UniverseRunner>();
             gravPullList = new CelestialBodyPullForce[universeRunner.simEnv.NBODYSIM_NB_BODY.value];
         }
+    }
 
-        // FOR DEBUG PURPOSES
-        if(GameObject.Find("DEBUG") == null) { return; }
-
-        DebugGameObject debugGO = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
-        if(universeRunner != null && orbitalParams == null)
-        {
-            orbitalParams = Resources.Load<OrbitalParams>(Filepaths.DEBUG_planetOrbitalParams_0 + gameObject.name + Filepaths.DEBUG_planetOrbitalParams_2);
-            if(orbitalParams.orbitedBodyName.Equals("None"))
-            {
-                orbitalParams.orbitedBody = null;
-            }
-        }
-        else
-        {
-            if(orbitalParams.orbitedBodyName.Equals("None"))
-            {
-                orbitalParams.orbitedBody = null;
-            }
-            else {
-                string suffix = spawnAsSimpleSphere ? "Planet_UI" : "";
-                orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName+suffix).GetComponent<CelestialBody>();
-            }
-        }
-        
+    private void CheckOrbitalFileAndBodySettings()
+    {
+        string orbitalParamsfilepath = Filepaths.DEBUG_planetOrbitalParams_0 + GetAssetName();
+        if(_orbitalParams == null)
+            _orbitalParams = Resources.Load<OrbitalParams>(orbitalParamsfilepath);
+        Debug.Log("orbitalParams: " + orbitalParams + "; _orbitalParams: " + _orbitalParams + "; current scene: " + SceneManager.GetActiveScene().name);
+            
+        if(settings == null)
+            settings = Resources.Load<CelestialBodySettings>(Filepaths.DEBUG_planetSettings_0 + GetAssetName());
     }
 
     public void AwakeCelestialBody(Dictionary<string, UnitInterface> refDictOrbParams)
     {
+        CheckOrbitalFileAndBodySettings();
         AssignRefDictOrbitalParams(refDictOrbParams);
         if(spawnAsSimpleSphere) { 
             gameObject.GetComponent<MeshRenderer>().material = settings.sphereTemplateMaterial;
@@ -493,19 +493,21 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     private void InitializeOrbitalParameters()
     {
+        CheckOrbitalFileAndBodySettings();
+        
         // Called only if 'usePredefinedPlanet' is true
         // Copying orbital values from the planet dictionary to the orbitalParams scriptable object
-        orbitalParams.orbitRealPredType = OrbitalTypes.typeOfOrbit.realOrbit;
-        orbitalParams.orbitDefType = OrbitalTypes.orbitDefinitionType.rarp;
-        orbitalParams.orbParamsUnits = OrbitalTypes.orbitalParamsUnits.AU_degree;
-        orbitalParams.bodyPosType = OrbitalTypes.bodyPositionType.nu;
+        _orbitalParams.orbitRealPredType = OrbitalTypes.typeOfOrbit.realOrbit;
+        _orbitalParams.orbitDefType = OrbitalTypes.orbitDefinitionType.rarp;
+        _orbitalParams.orbParamsUnits = OrbitalTypes.orbitalParamsUnits.AU_degree;
+        _orbitalParams.bodyPosType = OrbitalTypes.bodyPositionType.nu;
 
-        orbitalParams.ra = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.aphelion.ToString()].value;
-        orbitalParams.rp = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.perihelion.ToString()].value;
-        orbitalParams.i = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.i.ToString()].value;
-        orbitalParams.lAscN = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()].value;
-        orbitalParams.omega = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()].value;
-        orbitalParams.nu = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()].value;
+        _orbitalParams.ra = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.aphelion.ToString()].value;
+        _orbitalParams.rp = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.perihelion.ToString()].value;
+        _orbitalParams.i = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.i.ToString()].value;
+        _orbitalParams.lAscN = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.longAscendingNode.ToString()].value;
+        _orbitalParams.omega = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.perihelionArg.ToString()].value;
+        _orbitalParams.nu = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()].value;
     }
 
     public void InitializeOrbitalPredictor()

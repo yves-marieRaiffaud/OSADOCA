@@ -122,7 +122,9 @@ public class FlyingObj
         {
             T1 castBody = CastObjectToType<T1>(body); // Spaceship or CelestialBody
             T2 settings = GetObjectSettings<T2>(body); // SpaceshipSettings or CelestialBodySettings
-            castBody.orbit = new Orbit(castBody.orbitalParams, castBody.orbitalParams.orbitedBody.GetComponent<CelestialBody>(), castBody._gameObject);
+            if(castBody.orbitalParams.orbitedBody == null && !castBody.orbitalParams.orbitedBodyName.Equals("None") && !castBody.orbitalParams.orbitedBodyName.Equals(""))
+                castBody.orbitalParams.orbitedBody = GameObject.Find(castBody.orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
+            castBody.orbit = new Orbit(castBody.orbitalParams, castBody.orbitalParams.orbitedBody, castBody._gameObject);
         }
         else {
             Debug.LogError("Specified UnityEngine.Object is not of the specified generic type.");
@@ -165,6 +167,9 @@ public class FlyingObj
             Vector3d bodyRelatedPos;
             if(body is Spaceship)
             {
+                if(castBody.orbitalParams.orbitedBody == null && !castBody.orbitalParams.orbitedBodyName.Equals("None") && !castBody.orbitalParams.orbitedBodyName.Equals(""))
+                    castBody.orbitalParams.orbitedBody = GameObject.Find(castBody.orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
+
                 SpaceshipSettings shipSettings = (SpaceshipSettings)(dynamic)settings;
                 Spaceship ship = (Spaceship)(dynamic)castBody;
                 if(shipSettings.startFromGround)

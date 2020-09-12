@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 using Mathd_Lib;
 using System.IO;
@@ -16,12 +15,37 @@ public class CelestialBodyEditor : Editor
     {
         celestBody = (CelestialBody)target;
         CheckCreateOrbitalParamsAsset();
-        serializedOrbitalParams = new SerializedObject(serializedObject.FindProperty("_orbitalParams").objectReferenceValue);
+
+        SerializedProperty prop = serializedObject.FindProperty("_orbitalParams");
+        if(prop == null) {
+            CheckCreateOrbitalParamsAsset();
+            prop = serializedObject.FindProperty("_orbitalParams");
+        }
+        if(prop == null) {
+            // Nothing worked so far, we can try to load the data from the json file and see if it's work
+            celestBody._orbitalParams = OrbitalParamsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams);
+            prop = serializedObject.FindProperty("_orbitalParams");
+        }
+        
+        if(prop.objectReferenceValue == null)
+            serializedOrbitalParams = new SerializedObject(celestBody._orbitalParams);
+        else
+            serializedOrbitalParams = new SerializedObject(prop.objectReferenceValue);
+    }
+
+    private string GetAssetName()
+    {
+        string assetName;
+        if(SceneManager.GetActiveScene().name.Equals("Universe"))
+            assetName = celestBody.name;
+        else
+            assetName = celestBody.name.Substring(0, celestBody.name.Length - 9); // Removing "Planet_UI" from the GameObject's name == 9 characters
+        return assetName;
     }
 
     private void CheckCreateOrbitalParamsAsset()
     {
-        string orbitalParamsPath = "Assets/Resources/" + Filepaths.DEBUG_planetOrbitalParams_0 + celestBody.gameObject.name + Filepaths.DEBUG_planetOrbitalParams_2;
+        string orbitalParamsPath = "Assets/Resources/" + Filepaths.DEBUG_planetOrbitalParams_0 + GetAssetName() + Filepaths.DEBUG_planetOrbitalParams_2;
         if(!File.Exists(orbitalParamsPath))
         {
             Debug.Log("Creating a new instance of OrbitalParams at path: '" + orbitalParamsPath + "'");
@@ -30,7 +54,9 @@ public class CelestialBodyEditor : Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
-        celestBody.orbitalParams = (OrbitalParams)AssetDatabase.LoadAssetAtPath(orbitalParamsPath, typeof(OrbitalParams));
+        //celestBody._orbitalParams = Resources.Load<OrbitalParams>(Filepaths.DEBUG_planetOrbitalParams_0 + GetAssetName() + Filepaths.DEBUG_planetOrbitalParams_2);
+        celestBody._orbitalParams = AssetDatabase.LoadAssetAtPath<OrbitalParams>(orbitalParamsPath);
+        Debug.Log(celestBody._orbitalParams);
     }
 
 
@@ -41,7 +67,13 @@ public class CelestialBodyEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        serializedOrbitalParams = new SerializedObject(serializedObject.FindProperty("_orbitalParams").objectReferenceValue);
+        SerializedProperty prop = serializedObject.FindProperty("_orbitalParams");
+        if(prop == null) {
+            CheckCreateOrbitalParamsAsset();
+            prop = serializedObject.FindProperty("_orbitalParams");
+        }
+        serializedOrbitalParams = new SerializedObject(prop.objectReferenceValue);
+
         if (!EditorGUIUtility.wideMode)
         {
             EditorGUIUtility.wideMode = true;
@@ -55,6 +87,9 @@ public class CelestialBodyEditor : Editor
         EditorGUI.BeginChangeCheck();
         EditorGUILayout.Separator();
         EditorGUILayout.PropertyField(serializedOrbitalParams.FindProperty("orbitedBodyName"));
+
+        if(celestBody.settings == null)
+            celestBody.settings = AssetDatabase.LoadAssetAtPath<CelestialBodySettings>("Assets/Resources/" + Filepaths.DEBUG_planetSettings_0 + GetAssetName() + ".asset");
 
         if(CelestialBody.CelestialBodyHasTagName(celestBody, "Planet"))
         {

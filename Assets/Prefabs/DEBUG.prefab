@@ -43,6 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d48767d195179f46af41a9b4821f7ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadShipDataFromUIDiskFile: 0
+  loadShipDataFromUIDiskFile: 1
   simUIScript: {fileID: 0}
   saveOrbitalParamsData: 0

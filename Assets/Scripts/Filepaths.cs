@@ -12,6 +12,7 @@ public static class Filepaths
 
     public const string DEBUG_planetOrbitalParams_0 = "CelestialBody/OrbitalParams/";
     public const string DEBUG_planetOrbitalParams_2 = ".asset";
+    public const string DEBUG_planetSettings_0 = "CelestialBody/Settings/";
 
     public const string DEBUG_defaultHeightMap = "CelestialBody/default_heightMap";
 

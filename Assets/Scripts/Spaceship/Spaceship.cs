@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
 using System.Text;
+using UnityEngine.SceneManagement;
 using UseFnc = UsefulFunctions;
 using Matlab_Communication;
 
@@ -188,6 +189,10 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     //===============================
     void Awake()
     {
+        settings = SpaceshipSettingsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_settings);
+        // Reading & Copying the JSON files to the right Scriptable Objects of the spaceship
+        orbitalParams = OrbitalParamsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams);
+
         propulsionManager = GetComponent<PropulsionManager>();
         spaceshipController = null;
         previousRotation = new Quaterniond(transform.rotation);
@@ -213,34 +218,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
 
         shipRBConstraints_areOn = true;
         //==================================================
-        // FOR DEBUG PURPOSES
-        if(GameObject.Find("DEBUG") == null) { return; }
-
-        settings = SpaceshipSettingsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_settings);
-
-        DebugGameObject debugGO = GameObject.Find("DEBUG").GetComponent<DebugGameObject>();
-        
         GameObject universeGO = GameObject.Find("UniverseRunner");
-        if(universeGO != null && orbitalParams == null && !debugGO.loadShipDataFromUIDiskFile)
-        {
-            // Will load only the orbitalParams from JSON disk File
-            orbitalParams = Resources.Load<OrbitalParams>(Filepaths.DEBUG_shipOrbitalParams_0 + gameObject.name + Filepaths.DEBUG_shipOrbitalParams_2);
-            if(orbitalParams.orbitedBodyName.Equals("None"))
-            {
-                orbitalParams.orbitedBody = null;
-            }
-        }
-        else
-        {
-            // Will load only the orbitalParams from JSON disk File
-            DEBUG_LOAD_ORBITALPARAMS_TO_SCRIPTABLE_OBJ();
-            if(universeGO != null && orbitalParams != null) {
-                orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
-            }
-            else
-                orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName+"Planet_UI").GetComponent<CelestialBody>();
-        }
-
         if(universeGO != null)
         {
             UniverseRunner universe = universeGO.GetComponent<UniverseRunner>();

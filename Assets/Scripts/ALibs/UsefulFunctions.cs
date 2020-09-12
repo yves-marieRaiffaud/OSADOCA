@@ -651,12 +651,39 @@ public static class UsefulFunctions
         return filepath;
     }
 
+    public static int BoolToInt(bool value)
+    {
+        if(value)
+            return 1;
+        else
+            return 0;
+    }
+
+    public static string WriteToFileRocketOrbitalParamsSavedData(OrbitalParamsSaveData data)
+    {
+        // Save the file and returns the filepath
+        string filepath = Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams;
+        File.WriteAllText(filepath, JsonUtility.ToJson(data, true));
+        return filepath;
+    }
+
     public static string WriteToFileSimuSettingsSaveData(SimulationEnv data)
     {
         // Save the file and returns the filepath
         string filepath = Application.persistentDataPath + Filepaths.simulation_settings;
         File.WriteAllText(filepath, JsonUtility.ToJson(data, true));
         return filepath;
+    }
+
+    public static SimulationEnv GetSimEnvObjectFrom_ReadUserParams()
+    {
+        SimulationEnv simulationEnv = ScriptableObject.CreateInstance<SimulationEnv>();
+        string simSettingJSONPath = Application.persistentDataPath + Filepaths.simulation_settings;
+        if(File.Exists(simSettingJSONPath))
+            JsonUtility.FromJsonOverwrite(File.ReadAllText(simSettingJSONPath), simulationEnv);
+        else
+            simulationEnv = new SimulationEnv();
+        return simulationEnv;
     }
 
     public static LaunchPad[] ReadCustomLaunchPadsFromJSON()
@@ -717,17 +744,6 @@ public static class UsefulFunctions
     {
         string ipv4_REGEX = "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
         return Regex.IsMatch(IP_toCheck, ipv4_REGEX);
-    }
-
-    public static SimulationEnv GetSimEnvObjectFrom_ReadUserParams()
-    {
-        SimulationEnv simulationEnv = ScriptableObject.CreateInstance<SimulationEnv>();
-        string simSettingJSONPath = Application.persistentDataPath + Filepaths.simulation_settings;
-        if(File.Exists(simSettingJSONPath))
-            JsonUtility.FromJsonOverwrite(File.ReadAllText(simSettingJSONPath), simulationEnv);
-        else
-            simulationEnv = new SimulationEnv();
-        return simulationEnv;
     }
 
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
+using Fncs = UsefulFunctions;
 
 [CustomEditor(typeof(Spaceship),true), CanEditMultipleObjects]
 public class SpaceshipEditor: Editor
@@ -14,7 +15,23 @@ public class SpaceshipEditor: Editor
     {
         spaceship = (Spaceship)target;
         CheckCreateOrbitalParamsAsset();
-        serializedOrbitalParams = new SerializedObject(serializedObject.FindProperty("_orbitalParams").objectReferenceValue);
+
+        SerializedProperty prop = serializedObject.FindProperty("_orbitalParams");
+        if(prop == null) {
+            CheckCreateOrbitalParamsAsset();
+            prop = serializedObject.FindProperty("_orbitalParams");
+        }
+        if(prop == null) {
+            // Nothing worked so far, we can try to load the data from the json file and see if it's work
+            spaceship._orbitalParams = OrbitalParamsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams);
+            prop = serializedObject.FindProperty("_orbitalParams");
+        }
+        
+        if(prop.objectReferenceValue == null)
+            serializedOrbitalParams = new SerializedObject(spaceship._orbitalParams);
+        else
+            serializedOrbitalParams = new SerializedObject(prop.objectReferenceValue);
+
         //============
         string filepath = Application.persistentDataPath + Filepaths.shipToLoad_settings;
         SpaceshipSettings dataLoadedFromJsonFile = SpaceshipSettingsSaveData.LoadObjectFromJSON(filepath);
@@ -44,7 +61,7 @@ public class SpaceshipEditor: Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
-        spaceship.orbitalParams = (OrbitalParams)AssetDatabase.LoadAssetAtPath(orbitalParamsPath, typeof(OrbitalParams));
+        spaceship._orbitalParams = AssetDatabase.LoadAssetAtPath<OrbitalParams>(orbitalParamsPath);
     }
 
     public void OnInspectorUpdate()
@@ -54,6 +71,18 @@ public class SpaceshipEditor: Editor
 
     public override void OnInspectorGUI()
     {
+        SerializedProperty prop = serializedObject.FindProperty("_orbitalParams");
+        if(prop == null) {
+            CheckCreateOrbitalParamsAsset();
+            prop = serializedObject.FindProperty("_orbitalParams");
+        }
+        if(prop == null) {
+            // Nothing worked so far, we can try to load the data from the json file and see if it's work
+            spaceship.orbitalParams = OrbitalParamsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams);
+            prop = serializedObject.FindProperty("_orbitalParams");
+        }
+        serializedOrbitalParams = new SerializedObject(prop.objectReferenceValue);
+
         if (!EditorGUIUtility.wideMode)
         {
             EditorGUIUtility.wideMode = true;
@@ -211,7 +240,54 @@ public class SpaceshipEditor: Editor
             SpaceshipSettingsSaveData dataToWrite = GatherSpaceshipDataToWriteToFile();
             string filepath = UsefulFunctions.WriteToFileSpaceshipSettingsSaveData(dataToWrite);
             Debug.Log("SpaceshipSettingsSaveData successfully saved at: '" + filepath + "'.");
+
+            OrbitalParamsSaveData orbitalDataToWrite = GatherOrbitalDataToWriteToFile();
+            string orbitalDataFilePath = UsefulFunctions.WriteToFileRocketOrbitalParamsSavedData(orbitalDataToWrite);
+            Debug.Log("OrbitalParamsSaveData successfully saved at: '" + orbitalDataFilePath + "'.");
         }
+    }
+
+    private OrbitalParamsSaveData GatherOrbitalDataToWriteToFile()
+    {
+        /*
+        string orbitedBodyName;
+        string orbitDefTypeInt;
+        string bodyPosTypeInt;
+        string orbParamsUnitsInt;
+        string orbitRealPredTypeInt;
+        string selectedVectordDirInt;
+        string drawOrbitInt;
+        string drawDirectionsInt;
+        string orbitDrawingResolutionInt;
+        string raDouble;
+        string rpDouble;
+        string pDouble;
+        string eDouble;
+        string iDouble;
+        string lAscNDouble;
+        string omegaDouble;
+        private string nuDouble;
+        */
+        string[] shipDataToSave = new string[OrbitalParamsSaveData.NB_PARAMS];
+        shipDataToSave[0] = serializedOrbitalParams.FindProperty("orbitedBodyName").stringValue;
+        shipDataToSave[1] = serializedOrbitalParams.FindProperty("orbitDefType").intValue.ToString();
+        shipDataToSave[2] = serializedOrbitalParams.FindProperty("bodyPosType").intValue.ToString();
+        shipDataToSave[3] = serializedOrbitalParams.FindProperty("orbParamsUnits").intValue.ToString();
+        shipDataToSave[4] = serializedOrbitalParams.FindProperty("orbitRealPredType").intValue.ToString();
+        shipDataToSave[5] = serializedOrbitalParams.FindProperty("selectedVectorsDir").intValue.ToString();
+        shipDataToSave[6] = Fncs.BoolToInt(serializedOrbitalParams.FindProperty("drawOrbit").boolValue).ToString();
+        shipDataToSave[7] = Fncs.BoolToInt(serializedOrbitalParams.FindProperty("drawDirections").boolValue).ToString();
+        shipDataToSave[8] = serializedOrbitalParams.FindProperty("orbitDrawingResolution").intValue.ToString();
+        shipDataToSave[9] = Fncs.DoubleToString(serializedOrbitalParams.FindProperty("ra").doubleValue);
+        shipDataToSave[10] = Fncs.DoubleToString(serializedOrbitalParams.FindProperty("rp").doubleValue);
+        shipDataToSave[11] = Fncs.DoubleToString(serializedOrbitalParams.FindProperty("p").doubleValue);
+        shipDataToSave[12] = Fncs.DoubleToString(serializedOrbitalParams.FindProperty("e").doubleValue);
+        shipDataToSave[13] = Fncs.DoubleToString(serializedOrbitalParams.FindProperty("i").doubleValue);
+        shipDataToSave[14] = Fncs.DoubleToString(serializedOrbitalParams.FindProperty("lAscN").doubleValue);
+        shipDataToSave[15] = Fncs.DoubleToString(serializedOrbitalParams.FindProperty("omega").doubleValue);
+        shipDataToSave[16] = Fncs.DoubleToString(serializedOrbitalParams.FindProperty("nu").doubleValue);
+
+        return new OrbitalParamsSaveData(shipDataToSave);
     }
 
     private string[] GetStartingLaunchPadOptions(string startBodyName)
