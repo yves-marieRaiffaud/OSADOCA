@@ -93,7 +93,7 @@ public class FlyingObj
 
         InitializeOrbit<T1, T2>(body);
         //Debug.Log("initOrbitalPredictor = " + initOrbitalPredictor);
-        //InitializeOrbitalPredictor<T1, T2>(body, initOrbitalPredictor);
+        InitializeOrbitalPredictor<T1, T2>(body, initOrbitalPredictor);
         InitializeBodyPosition<T1, T2>(body);
         InitializeOrbitalSpeed<T1, T2>(body);
         InitializeDirVecLineRenderers<T1, T2>(body);
@@ -140,7 +140,7 @@ public class FlyingObj
             T2 settings = GetObjectSettings<T2>(body); // SpaceshipSettings or CelestialBodySettings
             if(initOrbitalPredictor)
             {
-                Debug.Log("init for " + castBody._gameObject.name);
+                Debug.Log("Initializing OrbitalPredictor for " + castBody._gameObject.name);
                 castBody.predictor = new OrbitalPredictor(castBody, castBody.orbitalParams.orbitedBody, castBody.orbit);
                 //castBody.predictor.DebugLog_Predictor();
             }

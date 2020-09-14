@@ -8,7 +8,6 @@ using System.Collections.Generic;
 public class OrbitalPredictor
 {
     FlyingObjCommonParams bodyToPredict;
-    //Spaceship spaceship;
     [SerializeField] CelestialBody orbitedBody;
     [SerializeField] Orbit linkedOrbit; // initial orbit that the predictor will use to predict its evolution 
     public Orbit predictedOrbit; // orbit that the predictor computed
@@ -18,6 +17,7 @@ public class OrbitalPredictor
         bodyToPredict = predictedBody;
         orbitedBody = body;
         linkedOrbit = orbit;
+        Debug.Log("bodyToPredict: " + bodyToPredict._gameObject.name + "; orbitedBody" + orbitedBody.name + "; orbit:" + orbit.suffixGO);
         smartPredictor();
     }
 
@@ -36,7 +36,8 @@ public class OrbitalPredictor
 
     public void smartPredictor()
     {
-        if(bodyToPredict == null || orbitedBody == null) { return; }
+        if(bodyToPredict == null || orbitedBody == null)
+            return;
 
         double speedMagn = bodyToPredict.orbitedBodyRelativeVel.magnitude;
         double circularSpeed = linkedOrbit.GetCircularOrbitalSpeed();
@@ -87,21 +88,16 @@ public class OrbitalPredictor
 
         predictedOrbit = new Orbit(predOrbitParams, orbitedBody, bodyToPredict._gameObject);
 
-        if(predOrbitParams.drawDirections)
-        {
-            foreach(OrbitalTypes.typeOfVectorDir vectorDir in Enum.GetValues(typeof(OrbitalTypes.typeOfVectorDir)))
-            {
-                if (predOrbitParams.selectedVectorsDir.HasFlag(vectorDir))
-                {
+        if(predOrbitParams.drawDirections) {
+            foreach(OrbitalTypes.typeOfVectorDir vectorDir in Enum.GetValues(typeof(OrbitalTypes.typeOfVectorDir))) {
+                if (predOrbitParams.selectedVectorsDir.HasFlag(vectorDir)) {
                     if(vectorDir.Equals(OrbitalTypes.typeOfVectorDir.radialVec) || vectorDir.Equals(OrbitalTypes.typeOfVectorDir.tangentialVec))
-                    {
                         predictedOrbit.DrawDirection(vectorDir, 0.1f, 50f, bodyToPredict._gameObject.transform.position);
-                    }
-                    else{
+                    else
                         predictedOrbit.DrawDirection(vectorDir, 0.1f, 50f);
-                    }
                 }
             }
         }
-    }   
+        DebugLog_Predictor();
+    }
 }

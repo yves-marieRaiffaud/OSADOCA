@@ -6,12 +6,11 @@ using UnityEngine.EventSystems;
 
 public class CustomShaped_Buttons : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    ButtonTooltip tooltip;
+    public ButtonTooltip tooltip;
 
     void Start()
     {
         this.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.1f;
-        tooltip = transform.Find("Tooltip").GetComponent<ButtonTooltip>();
     }
 
     public void OnPointerEnter(PointerEventData data)

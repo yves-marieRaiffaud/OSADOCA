@@ -33,9 +33,12 @@ public class UI_SimSettings_Panel : MonoBehaviour
     private int yPosition;
 
     public MainPanelIsSetUp panelIsFullySetUp;
+    public UseKeyboardSimSettingEvent useKeyboardEvent;
 
     void Start()
     {
+        if(useKeyboardEvent == null)
+            useKeyboardEvent = new UseKeyboardSimSettingEvent();
         if(panelIsFullySetUp == null)
             panelIsFullySetUp = new MainPanelIsSetUp();
 
@@ -322,6 +325,11 @@ public class UI_SimSettings_Panel : MonoBehaviour
             toggleSwitch.Toggle(toggleSwitch.isOn);
             UpdateSimSettingBoolValue(setting, toggleSwitch);
             SaveSettingsToFile();
+            Debug.Log("has clicked a param");
+            if(useKeyboardEvent != null && setting.displayName.Equals("Control spaceship with Keyboard")) {
+                Debug.Log("has clicked the use keyboard toggle");
+                useKeyboardEvent.Invoke(toggleSwitch.isOn);
+            }
         });
 
         Button revert_btn = boolSectionPanel.transform.Find("Revert_btn").GetComponent<Button>();

@@ -240,8 +240,8 @@ public class UniverseRunner : MonoBehaviour
                     {
                         ship.orbit.UpdateLineRendererPos();
                     }
-                    //if(ship.predictor != null && ship.predictor.predictedOrbit != null)
-                        //ship.predictor.predictedOrbit.UpdateLineRendererPos();
+                    if(ship.predictor != null && ship.predictor.predictedOrbit != null)
+                        ship.predictor.predictedOrbit.UpdateLineRendererPos();
                     break;
                 
                 case goTags.Planet:
@@ -256,10 +256,10 @@ public class UniverseRunner : MonoBehaviour
 
         foreach(GameObject obj in GameObject.FindGameObjectsWithTag(goTags.Orbit.ToString()))
         {
-            float dist = Vector3.Distance(obj.transform.position, playerCamera.transform.position);///1_000f;
+            float lineWidth = 5f;
+            float dist = Vector3.Distance(obj.transform.position, playerCamera.transform.position) *lineWidth/ 1_000_000f;
             LineRenderer orbitLR = obj.GetComponent<LineRenderer>();
-            orbitLR.startWidth *= dist;
-            orbitLR.endWidth *= dist;
+            orbitLR.widthMultiplier = dist;
         }
     }
 

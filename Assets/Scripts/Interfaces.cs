@@ -79,3 +79,6 @@ public class StartLocPanelIsSetUp : UnityEvent<int, int>{}
 // The 'simSettings' panel will send '3' as its identifier
 // ======SECOND INT IS THE BOOLEAN INDICATING IF THE PANEL IS SET-UP (0: not set-up; 1: set-up)
 public class MainPanelIsSetUp : UnityEvent<int, int>{}
+
+// Event sending a bool of the value of the parameter 'use keyboard to control the spaceship'
+public class UseKeyboardSimSettingEvent : UnityEvent<bool>{}

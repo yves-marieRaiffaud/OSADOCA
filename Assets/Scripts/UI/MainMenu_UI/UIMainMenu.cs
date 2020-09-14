@@ -64,6 +64,25 @@ public class UIMainMenu : MonoBehaviour
 
         InitMainButtons();
         StartCoroutine(FLY_CheckUpdate());
+        StartCoroutine(WatchUseKeyboardParamToggle());
+    }
+
+    private void ToggleUseKeyboardSimSettingPanel(bool paramBoolValue)
+    {
+        int val = paramBoolValue ? 0 : 1;
+        matlabPanelScript.shipControlModeDropdown.value = val;
+        controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.triangle_Matlab_Img);
+    }
+
+    IEnumerator WatchUseKeyboardParamToggle()
+    {
+        while(true)
+        {
+            yield return new WaitForSeconds(0.5f);
+            // Forcing every panel to send their control check before actually checking
+            if(simSettingsPanelScript.useKeyboardEvent != null)
+                simSettingsPanelScript.useKeyboardEvent.AddListener(ToggleUseKeyboardSimSettingPanel);
+        }
     }
 
     private void InitMainButtons()
@@ -92,6 +111,9 @@ public class UIMainMenu : MonoBehaviour
     {
         currentSelectedMenuInt = 2;
 
+        bool isReady = CheckFLYReadiness();
+        if(!isReady)
+            return;
         // Gathering the orbitalParams/PlanetarySurface data
         UIStartLoc_Panel startLocPanelScript = gameObject.GetComponent<UIStartLoc_Panel>();
         startLocPanelScript.On_FLY_click_GatherOrbitalParams();
@@ -105,20 +127,49 @@ public class UIMainMenu : MonoBehaviour
         {
             yield return new WaitForSeconds(0.5f);
             // Forcing every panel to send their control check before actually checking
-            bool startLocOK = startLocPanelScript.SendControlBarTriangleUpdate();
-            bool shipOK = spaceshipPanelScript.SendControlBarTriangleUpdate();
-            bool matlabOK = matlabPanelScript.SendControlBarTriangleUpdate();
-            bool simSettingsOK = simSettingsPanelScript.SendControlBarTriangleUpdate();
-
-            if(startLocOK && shipOK && matlabOK && simSettingsOK && !flyBtnIsAlreadyReady) {
-                controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(true);
-                flyBtnIsAlreadyReady = true;
-            }
-            else if((!startLocOK || !shipOK || !matlabOK || !simSettingsOK) && flyBtnIsAlreadyReady) {
-                controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(false);
-                flyBtnIsAlreadyReady = false;
-            }
+            CheckFLYReadinessForCoroutine();
         }
+    }
+
+    private bool CheckFLYReadinessForCoroutine()
+    {
+        bool startLocOK = startLocPanelScript.SendControlBarTriangleUpdate();
+        bool shipOK = spaceshipPanelScript.SendControlBarTriangleUpdate();
+        bool matlabOK = matlabPanelScript.SendControlBarTriangleUpdate();
+        bool simSettingsOK = simSettingsPanelScript.SendControlBarTriangleUpdate();
+
+        bool outputValue = false;
+
+        if(startLocOK && shipOK && matlabOK && simSettingsOK && !flyBtnIsAlreadyReady) {
+            controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(true);
+            flyBtnIsAlreadyReady = true;
+            outputValue = true;
+        }
+        else if((!startLocOK || !shipOK || !matlabOK || !simSettingsOK) && flyBtnIsAlreadyReady) {
+            controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(false);
+            flyBtnIsAlreadyReady = false;
+            outputValue = false;
+        }
+        return outputValue;
+    }
+
+    private bool CheckFLYReadiness()
+    {
+        bool startLocOK = startLocPanelScript.SendControlBarTriangleUpdate();
+        bool shipOK = spaceshipPanelScript.SendControlBarTriangleUpdate();
+        bool matlabOK = matlabPanelScript.SendControlBarTriangleUpdate();
+        bool simSettingsOK = simSettingsPanelScript.SendControlBarTriangleUpdate();
+
+        bool outputValue = false;
+
+        if(startLocOK && shipOK && matlabOK && simSettingsOK) {
+            outputValue = true;
+        }
+        else if(!startLocOK || !shipOK || !matlabOK || !simSettingsOK) {
+            controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(false);
+            outputValue = false;
+        }
+        return outputValue;
     }
     //=====================================
     //=====================================

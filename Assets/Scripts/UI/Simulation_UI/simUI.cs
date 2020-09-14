@@ -23,6 +23,9 @@ public class simUI : MonoBehaviour
     private MainNozzle_Control shipMainControlNozzleScript;
     private SimRocketCam_MouseOrbit rocketCamScript;
     //=================
+    bool orbitsAreDisplayed;
+    Camera activeSpaceshipCamBack;
+
     void Start()
     {
         delayCoroutine = true;
@@ -37,6 +40,7 @@ public class simUI : MonoBehaviour
         //=====
         shipMainControlNozzleScript = universeRunner.activeSpaceship.transform.GetComponentInChildren<MainNozzle_Control>(false);
         rocketCamScript = universeRunner.activeSpaceship.transform.GetComponentInChildren<SimRocketCam_MouseOrbit>(false);
+        activeSpaceshipCamBack = universeRunner.activeSpaceship.cameraBack;
         //=====
         StartCoroutine(UpdateUICoroutine());
     }
@@ -89,6 +93,28 @@ public class simUI : MonoBehaviour
     public void ToggleRocketCameraRotationLock()
     {
         rocketCamScript.freezeCamRotation = !rocketCamScript.freezeCamRotation;
+    }
+
+    void LateUpdate()
+    {
+        if(Input.GetKey(KeyCode.O))
+        {
+            ToggleOrbitsOnCameras();
+        }
+    }
+
+    public void ToggleOrbitsOnCameras()
+    {
+        orbitsAreDisplayed = !orbitsAreDisplayed;
+        if(activeSpaceshipCamBack == null)
+            return;
+
+        if(orbitsAreDisplayed) {
+            activeSpaceshipCamBack.cullingMask |= 1 << LayerMask.NameToLayer("Orbit");
+        }
+        else {
+            activeSpaceshipCamBack.cullingMask &=  ~(1 << LayerMask.NameToLayer("Orbit"));
+        }
     }
 
 

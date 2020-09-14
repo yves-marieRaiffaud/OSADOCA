@@ -137,16 +137,14 @@ public class Orbit
         lineRenderer.receiveShadows = false;
         lineRenderer.generateLightingData = false;
         lineRenderer.shadowCastingMode = ShadowCastingMode.Off;
-        lineRenderer.widthCurve = AnimationCurve.Constant(0f, 1f, 30f);
+        lineRenderer.widthCurve = AnimationCurve.Constant(0f, 1f, 1f);
         lineRenderer.sharedMaterial = Resources.Load(Filepaths.DEBUG_orbitMaterial, typeof(Material)) as Material;
-        if(!orbitedBody.spawnAsSimpleSphere)
-        {
+        if(!orbitedBody.spawnAsSimpleSphere) {
             // Execute only if we are in the simulation. Else, the GameObject 'Orbits' does not exist
             lineRenderer.transform.parent = GameObject.Find("Orbits").transform;
         }
         else {
             lineRenderer.transform.parent = GameObject.Find("Planets_Rendering").transform;
-            lineRenderer.widthCurve = AnimationCurve.Constant(0f, 1f, 1f);
         }
     }
 
@@ -311,9 +309,9 @@ public class Orbit
 
         lineRenderer.positionCount = param.orbitDrawingResolution;
         lineRenderer.SetPositions(pos);
-        if(param.drawOrbit) { lineRenderer.enabled = true; }
-        else { lineRenderer.enabled = false; }
-
+        /*if(param.drawOrbit) { lineRenderer.enabled = true; }
+        else { lineRenderer.enabled = false; }*/
+        lineRenderer.enabled = true;
         // 4
         // normalUp vector has changed after the rotation by longAscendingNodeRot.
         orbitNormalUp = equatorialAdjustment * longAscendingNodeRot * orbitNormalUp;

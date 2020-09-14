@@ -161,30 +161,6 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
             shipRBConstraints_areOn = false;
         }
     }
-
-    void LateUpdate()
-    {
-        if(Input.GetKey(KeyCode.O))
-        {
-            orbitsAreDisplayed = !orbitsAreDisplayed;
-            ToggleOrbitsOnCameras(orbitsAreDisplayed);
-        }
-    }
-
-    private void ToggleOrbitsOnCameras(bool orbitsAreDisplayed)
-    {
-        if(mainCamera == null || cameraBack == null)
-            return;
-
-        if(orbitsAreDisplayed) {
-            mainCamera.cullingMask |= 1 << LayerMask.NameToLayer("Orbit");
-            cameraBack.cullingMask |= 1 << LayerMask.NameToLayer("Orbit");
-        }
-        else {
-            mainCamera.cullingMask &=  ~(1 << LayerMask.NameToLayer("Orbit"));
-            cameraBack.cullingMask &=  ~(1 << LayerMask.NameToLayer("Orbit"));
-        }
-    }
     //===============================
     //===============================
     void Awake()
