@@ -59,7 +59,6 @@ public class NavBall : MonoBehaviour
     void UpdateProgradeRetrogradePosition()
     {
         Vector3 velocityVec = (Vector3)ship.orbitedBodyRelativeVel;
-        
     }
 
 }

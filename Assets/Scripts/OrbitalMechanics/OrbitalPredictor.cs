@@ -39,7 +39,8 @@ public class OrbitalPredictor
         if(bodyToPredict == null || orbitedBody == null)
             return;
 
-        double speedMagn = bodyToPredict.orbitedBodyRelativeVel.magnitude;
+        Vector3d velocityVec = bodyToPredict.orbitedBodyRelativeVel;
+        double speedMagn = velocityVec.magnitude;
         double circularSpeed = linkedOrbit.GetCircularOrbitalSpeed();
         double liberationSpeed = Mathd.Sqrt(2d) * circularSpeed;
         // Calculate orbital speed and compare it to the one needed to reach a circular orbit
@@ -47,7 +48,6 @@ public class OrbitalPredictor
         double µ = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value;
         Vector3d rVec = bodyToPredict.GetRelativeRealWorldPosition()*UniCsts.km2m;
         double r = rVec.magnitude;
-        Vector3d velocityVec = bodyToPredict.orbitedBodyRelativeVel;
 
         // Computing semi-major axis length
         double a = r * µ*Mathd.Pow(10,13) / (2*µ*Mathd.Pow(10,13) - r*Mathd.Pow(speedMagn,2)) * UniCsts.m2km;
@@ -98,6 +98,6 @@ public class OrbitalPredictor
                 }
             }
         }
-        DebugLog_Predictor();
+        //DebugLog_Predictor();
     }
 }

@@ -23,8 +23,11 @@ public interface FlyingObjCommonParams
     //================
     double SetDistanceScaleFactor(); // To set the Scaling factor to convert meters to unity units, depending if the orbit is defined in 'km' or in 'AU' 
     Vector3d GetRelativeRealWorldPosition();
+    Vector3d Get_RadialVec();
     //================
     GameObject _gameObject {get; set;}
+    RungeKutta4<FlyingObjCommonParams> rk4 {get; set;}
+    void InitRK4();
 }
 
 public interface FlyingObjSettings

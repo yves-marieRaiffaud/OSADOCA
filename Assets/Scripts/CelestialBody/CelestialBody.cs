@@ -151,6 +151,22 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     public bool forceNonLODSphere = false;
     public bool forceLODSphere = false;
     //=========================================
+    RungeKutta4<FlyingObjCommonParams> _rk4;
+    public RungeKutta4<FlyingObjCommonParams> rk4
+    {
+        get {
+            return _rk4;
+        }
+        set {
+            _rk4=value;
+        }
+    }
+
+    public void InitRK4()
+    {
+        Debug.Log(orbitalParams.orbitedBody + " ; " + orbitalParams.orbitedBody.name);
+        rk4 = new RungeKutta4<FlyingObjCommonParams>(orbitalParams.orbitedBody, this, Time.fixedDeltaTime);
+    }
 
     private string GetAssetName()
     {
@@ -578,6 +594,26 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             distanceScaleFactor = UniCsts.m2km2au2u; // If the orbit is defined in AU_degree
         }
         return distanceScaleFactor;
+    }
+
+    public Vector3d Get_RadialVec()
+    {
+        // Returns the radial vector, from the orbitedBody centre to this gameObject position, in KM
+        if(orbitalParams.orbitedBody == null)
+            Debug.LogError("'orbitedBody' is null");
+
+        Vector3d pullinBodyPos = new Vector3d(orbitalParams.orbitedBody.transform.position);
+        Vector3d r = new Vector3d(transform.position) - pullinBodyPos;
+        double scalingFactor = UniCsts.u2au * UniCsts.au2km; // km, for planets
+
+        if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree &&
+            orbitalParams.orbitedBodyName == orbitalParams.orbitedBody.name)
+        {
+            scalingFactor = UniCsts.u2pl; // km, for spaceships or interplanetary orbits of spaceships. This line SHOULD NEVER BE CALLED IN THIS CLASS
+        }
+
+        r *= scalingFactor; // km
+        return r;
     }
 }
 

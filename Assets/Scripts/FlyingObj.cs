@@ -20,15 +20,12 @@ public class FlyingObj
     //===============================================================================
     public static T GetObjectSettings<T>(UnityEngine.Object body)
     {
-        
         // 'T' is either SpaceshipSettings or CelestialBodySettings
-        if(body is Spaceship)
-        {
+        if(body is Spaceship) {
             Spaceship spaceship = (Spaceship)body;
             return (T)(dynamic)spaceship.settings;
         }
-        else
-        {
+        else {
             CelestialBody celestialBody = (CelestialBody)body;
             return (T)(dynamic)celestialBody.settings;
         }
@@ -39,13 +36,11 @@ public class FlyingObj
     {
         // 'T1' is either Spaceship or CelestialBody
         // 'T2' is either SpaceshipSettings or CelestialBodySettings
-        if(body is Spaceship)
-        {
+        if(body is Spaceship) {
             Spaceship spaceship = (Spaceship)(dynamic)body;
             return (T2)(dynamic)spaceship.settings;
         }
-        else
-        {
+        else {
             CelestialBody celestialBody = (CelestialBody)(dynamic)body;
             return (T2)(dynamic)celestialBody.settings;
         }
@@ -54,13 +49,11 @@ public class FlyingObj
     public static T CastObjectToType<T>(UnityEngine.Object body)
     {
         // T is either Spaceship or CelestialBody
-        if(body is Spaceship)
-        {
+        if(body is Spaceship) {
             Spaceship spaceship = (Spaceship)body;
             return (T)(dynamic)spaceship;
         }
-        else
-        {
+        else {
             CelestialBody celestialBody = (CelestialBody)body;
             return (T)(dynamic)celestialBody;
         }
@@ -78,7 +71,6 @@ public class FlyingObj
 
         castBody.SetDistanceScaleFactor(); // Set the scaleFactor of the body, depending on the definition of the orbit (in km or in AU)
         // From this point, we can directly use the 'distanceScaleFactor' property of the body
-
         if(body is Spaceship)
         {
             SpaceshipSettings shipSettings = (SpaceshipSettings)(dynamic)bodySettings;
@@ -106,7 +98,6 @@ public class FlyingObj
             CelestialBody celestBody = (CelestialBody)body;
             celestBody.InitializeAxialTilt();
         }
-
     }
 
     /// <summary>
@@ -140,7 +131,7 @@ public class FlyingObj
             T2 settings = GetObjectSettings<T2>(body); // SpaceshipSettings or CelestialBodySettings
             if(initOrbitalPredictor)
             {
-                Debug.Log("Initializing OrbitalPredictor for " + castBody._gameObject.name);
+                //Debug.Log("Initializing OrbitalPredictor for " + castBody._gameObject.name);
                 castBody.predictor = new OrbitalPredictor(castBody, castBody.orbitalParams.orbitedBody, castBody.orbit);
                 //castBody.predictor.DebugLog_Predictor();
             }
@@ -308,15 +299,11 @@ public class FlyingObj
     {
         // First computing the acceleration updates for each Star, Planet or Spaceship 
         foreach(Transform obj in universe.physicsObjArray)
-        {
             ComputeNewPosition(obj, obj.tag);
-        }
 
         // Once everything has been computed, apply the new accelerations at every objects
         foreach(Transform obj in universe.physicsObjArray)
-        {
             ApplyNewPosition(obj, obj.tag);
-        }
     }
 
     public void ComputeNewPosition(Transform obj, string objTag)
@@ -332,8 +319,7 @@ public class FlyingObj
             case UniverseRunner.goTags.Planet:
                 // As the body RigidBody is kinematic, we compute the updated position to then use: 'rb.MovePosition()'
                 CelestialBody celestBody = obj.GetComponent<CelestialBody>();
-                if(celestBody.orbitalParams.orbitedBody != null)
-                {
+                if(celestBody.orbitalParams.orbitedBody != null) {
                     orbitedBody = celestBody.orbitalParams.orbitedBody.GetComponent<CelestialBody>();
                     GravitationalUpdate<CelestialBody, CelestialBodySettings>(orbitedBody, celestBody);
                 }
@@ -362,6 +348,7 @@ public class FlyingObj
             case UniverseRunner.goTags.Spaceship:
                 Spaceship ship = obj.GetComponent<Spaceship>();
                 ApplyRigbidbodyAccUpdate<Spaceship, SpaceshipSettings>(ship, ship.settings);
+                //ApplyRigbidbodyPositionUpdate<Spaceship, SpaceshipSettings>(ship, ship.settings);
                 // Update the orbital predictor if it has been defined for the object
                 if(ship.predictor != null)
                     ship.predictor.smartPredictor();
@@ -381,15 +368,13 @@ public class FlyingObj
             T2 settings = GetObjectSettings<T1, T2>(orbitingBody);
             
             if(universe.simEnv.useNBodySimulation.value)
-            {
                 ComputeGravitationalAccNBODY<T1, T2>(orbitingBody, settings, true);
-            }
-            else {
+            else
                 ComputeGravitationalAcc<T1, T2>(pullingBody, orbitingBody, settings, true);
-            }
             
-            ComputeUpdatedVelocity<T1, T2>(orbitingBody, settings);
-            ComputeUpdatedPosition<T1, T2>(orbitingBody, settings);
+            /*ComputeUpdatedVelocity<T1, T2>(orbitingBody, settings);
+            ComputeUpdatedPosition<T1, T2>(orbitingBody, settings);*/
+            UpdateVelocityPos_RK4<T1>(orbitingBody);
         }
     }
 
@@ -420,8 +405,7 @@ public class FlyingObj
         double mu = pullingBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value;
         Vector3d acc =  - Mathd.Pow(10,7) * mu * r / dstPow3; // m.s-2
 
-        if(!Vector3d.IsValid(acc) || UsefulFunctions.DoublesAreEqual(dstPow3, 0d))
-        {
+        if(!Vector3d.IsValid(acc) || UsefulFunctions.DoublesAreEqual(dstPow3, 0d)) {
             Debug.LogError("Acc is not valid or distance between the pulling body and the target body is null");
             acc = Vector3d.positiveInfinity;
         }
@@ -479,19 +463,15 @@ public class FlyingObj
         bodiesGravPull_ALL.Reverse();
         //===============
         // Retaining only the 'NBODYSIM_NB_BODY' first values
-        if(universe.simEnv.NBODYSIM_NB_BODY.value > bodiesGravPull_ALL.Count) {
+        if(universe.simEnv.NBODYSIM_NB_BODY.value > bodiesGravPull_ALL.Count)
             Debug.LogWarning("WARNING ! The specified SimSetting 'NBODYSIM_NB_BODY' is partially applied as its value is greater than the total number of CelestialBodies in the universe. Thus, 'NBODYSIM_NB_BODY' has been automatically set to the greatest value possible : " + bodiesGravPull_ALL.Count + ".");
-        }
         int nbItemsToRetain = Mathf.Min(universe.simEnv.NBODYSIM_NB_BODY.value, bodiesGravPull_ALL.Count);
 
-        if(orbitingBody.gravPullList.Length != nbItemsToRetain) {
+        if(orbitingBody.gravPullList.Length != nbItemsToRetain)
             orbitingBody.gravPullList = new CelestialBodyPullForce[nbItemsToRetain];
-        }
         
         for(int j = 0; j < nbItemsToRetain; j++)
-        {
             orbitingBody.gravPullList[j] = bodiesGravPull_ALL[j];
-        }
     }
     //=====================================================
     //=====================================================
@@ -499,15 +479,13 @@ public class FlyingObj
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         UpdateBodyGravPullList<T1, T2>(orbitingBody, settings);
+        
         Vector3d acc = new Vector3d();
         foreach(CelestialBodyPullForce item in orbitingBody.gravPullList)
-        {
             acc += item.gravForce;
-        }
 
-        if(saveAccToOrbitingBodyParam) {
+        if(saveAccToOrbitingBodyParam)
             orbitingBody.orbitedBodyRelativeAcc = acc;
-        }
         return acc;
     }
 
@@ -523,7 +501,7 @@ public class FlyingObj
     //===============================================================================
     //===============================================================================
     //===============================================================================
-    public void ComputeUpdatedVelocity<T1, T2>(T1 orbitingBody, T2 settings)
+    /*public void ComputeUpdatedVelocity<T1, T2>(T1 orbitingBody, T2 settings)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         orbitingBody.orbitedBodyRelativeVelIncr = Time.fixedDeltaTime * orbitingBody.orbitedBodyRelativeAcc;
@@ -535,6 +513,19 @@ public class FlyingObj
     {
         Vector3d updatedPos = Time.fixedDeltaTime * castBody.distanceScaleFactor * castBody.orbitedBodyRelativeVel;
         castBody.realPosition += updatedPos;
+    }*/
+    public void UpdateVelocityPos_RK4<T1>(T1 orbitingBody)
+    where T1: FlyingObjCommonParams
+    {
+        orbitingBody.rk4.Step();
+        orbitingBody.orbitedBodyRelativeVel = orbitingBody.rk4.X[1];
+
+        Vector3d posPlanet = Vector3d.zero;
+        if(orbitingBody.orbitalParams.orbitedBody != null)
+            posPlanet = orbitingBody.orbitalParams.orbitedBody.realPosition;
+        orbitingBody.realPosition = orbitingBody.rk4.X[0] + posPlanet;
+        if(!orbitingBody._gameObject.name.Equals("Earth"))
+            orbitingBody.rk4.PrintState();
     }
 
     public void ApplyRigbidbodyAccUpdate<T1, T2>(T1 castBody, T2 settings)
@@ -555,12 +546,23 @@ public class FlyingObj
         rb.velocity = (Vector3)(castBody.orbitedBodyRelativeVel*scaleFactor + orbitedBodyVel*UniCsts.m2km2au2u);
     }
 
-    public void ApplyRigbidbodyPositionUpdate<T1, T2>(T1 castBody, T2 settings)
+    /*public void ApplyRigbidbodyPositionUpdate<T1, T2>(T1 castBody, T2 settings)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
-        rb.MovePosition((Vector3)castBody.realPosition);
-    }
+
+        double scaleFactor = castBody.distanceScaleFactor;
+
+        Vector3d force = castBody.orbitedBodyRelativeAcc * scaleFactor;
+        rb.AddForce((Vector3)force, ForceMode.Acceleration);
+
+        Vector3d orbitedBodyPos = Vector3d.zero;
+        if(!castBody.orbitalParams.orbitedBodyName.Equals("None")) {
+            CelestialBody orbitedBody = castBody.orbitalParams.orbitedBody;
+            orbitedBodyPos = orbitedBody.realPosition;
+        }
+        rb.MovePosition((Vector3)(castBody.realPosition*scaleFactor + orbitedBodyPos*UniCsts.m2km2au2u));
+    }*/
     //===============================================================================
     //===============================================================================
     //===============================================================================

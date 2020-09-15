@@ -170,6 +170,15 @@ public class UniverseRunner : MonoBehaviour
             }
         }
         flyingObjInst.InitGravitationalPullLists();
+
+        foreach(Transform obj in physicsObjArray)
+        {
+            if(obj.tag.Equals(goTags.Spaceship.ToString()))
+                obj.GetComponent<Spaceship>().InitRK4();
+            if(obj.tag.Equals(goTags.Planet.ToString()))
+                obj.GetComponent<CelestialBody>().InitRK4();
+        }
+
         Invoke("UnlockShips", 0.5f);
         //==============================
         if(simEnv.missionTimer != null)

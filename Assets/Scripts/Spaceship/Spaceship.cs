@@ -146,6 +146,22 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     [HideInInspector] public Camera mainCamera;
     [HideInInspector] public Camera cameraBack;
     //===============================
+    RungeKutta4<FlyingObjCommonParams> _rk4;
+    public RungeKutta4<FlyingObjCommonParams> rk4
+    {
+        get {
+            return _rk4;
+        }
+        set {
+            _rk4=value;
+        }
+    }
+
+    public void InitRK4()
+    {
+        rk4 = new RungeKutta4<FlyingObjCommonParams>(orbitalParams.orbitedBody, this, Time.fixedDeltaTime);
+    }
+
     void FixedUpdate()
     {
         GetDeltaRotation();
@@ -234,6 +250,26 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     }
     //===============================
     //===============================
+    public Vector3d Get_RadialVec()
+    {
+        // Returns the radial vector, from the orbitedBody centre to this gameObject position, in KM
+        if(orbitalParams.orbitedBody == null)
+            Debug.LogError("'orbitedBody' is null");
+
+        Vector3d pullinBodyPos = new Vector3d(orbitalParams.orbitedBody.transform.position);
+        Vector3d r = new Vector3d(transform.position) - pullinBodyPos;
+        double scalingFactor = UniCsts.u2au * UniCsts.au2km; // km, for planets
+
+        if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree &&
+            orbitalParams.orbitedBodyName == orbitalParams.orbitedBody.name)
+        {
+            scalingFactor = UniCsts.u2pl; // km, for spaceships or interplanetary orbits of spaceships
+        }
+
+        r *= scalingFactor; // km
+        return r;
+    }
+    
     public double Get_R()
     {
         // Returns the distance in real world (in km) from the spaceship position to the centre of the orbited body
