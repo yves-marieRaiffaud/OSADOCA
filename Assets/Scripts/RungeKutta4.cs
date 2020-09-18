@@ -33,14 +33,8 @@ where T: FlyingObjCommonParams
             _X = new Vector3d[2];
         
         _X[0] = orbitingBody.Get_RadialVec()*1_000d; // m
-        _X[1] = orbitedBody.orbitedBodyRelativeVel; // m/s
-    }
-
-    public string PrintState()
-    {
-        string txt = "[" + _X[0][0] + ";" + _X[0][1] + ";" + _X[0][2] + "]\n" + "[" + _X[1][0] + ";" + _X[1][1] + ";" + _X[1][2] + "]";
-        Debug.Log(txt);
-        return txt;
+        _X[1] = orbitingBody.orbitedBodyRelativeVel; // m/s
+        PrintState();
     }
 
     /// <summary>
@@ -85,34 +79,10 @@ where T: FlyingObjCommonParams
         return krkv;
     }
 
-    /*
-    nbSteps = 1000;
-    h = 20;
-    disp('Initial conditions : ');
-    X = [x0;v0]
-    for t=1:nbSteps
-        X = rk4Orbit(X,h);
-    end
-
-    function X = rk4Orbit(X,h)
-        % X is the state matrix
-        % h is the timestep
-        
-        k1 = GetKRKV(X);        % k1
-        k2 = GetKRKV(X+k1*h/2); % k2
-        k3 = GetKRKV(X+k2*h/2); % k3
-        k4 = GetKRKV(X+k3*h);   % k2
-        
-        X = X + (h/6)*(k1 + 2*k2 + 2*k3 + k4);
-    end
-
-    function krkv = GetKRKV(X)
-        r = X(1,:);
-        v = X(2,:);
-        
-        muEarth = 3.98e14;
-        kr = (-r*muEarth/norm(r)^3);
-        krkv = [v;kr];
-    end
-    */
+    public string PrintState()
+    {
+        string txt = orbitingBody._gameObject.name +  " rk4 State:\n[" + _X[0][0] + ";" + _X[0][1] + ";" + _X[0][2] + "]\n" + "[" + _X[1][0] + ";" + _X[1][1] + ";" + _X[1][2] + "]";
+        Debug.Log(txt);
+        return txt;
+    }
 }

@@ -84,7 +84,6 @@ public class FlyingObj
         }
 
         InitializeOrbit<T1, T2>(body);
-        //Debug.Log("initOrbitalPredictor = " + initOrbitalPredictor);
         InitializeOrbitalPredictor<T1, T2>(body, initOrbitalPredictor);
         InitializeBodyPosition<T1, T2>(body);
         InitializeOrbitalSpeed<T1, T2>(body);
@@ -93,8 +92,7 @@ public class FlyingObj
         // Init Axial Tilt for CelestialBody
         UniverseRunner.goTags starTag = UniverseRunner.goTags.Star;
         UniverseRunner.goTags planetTag = UniverseRunner.goTags.Planet;
-        if(UsefulFunctions.StringIsOneOfTheTwoTags(starTag, planetTag, castBody._gameObject.tag))
-        {
+        if(UsefulFunctions.StringIsOneOfTheTwoTags(starTag, planetTag, castBody._gameObject.tag)) {
             CelestialBody celestBody = (CelestialBody)body;
             celestBody.InitializeAxialTilt();
         }
@@ -342,13 +340,11 @@ public class FlyingObj
             case UniverseRunner.goTags.Planet:
                 CelestialBody celestBody = obj.GetComponent<CelestialBody>();
                 ApplyRigbidbodyAccUpdate<CelestialBody, CelestialBodySettings>(celestBody, celestBody.settings);
-                //ApplyRigbidbodyPositionUpdate<CelestialBody, CelestialBodySettings>(celestBody, celestBody.settings);
                 break;
             
             case UniverseRunner.goTags.Spaceship:
                 Spaceship ship = obj.GetComponent<Spaceship>();
                 ApplyRigbidbodyAccUpdate<Spaceship, SpaceshipSettings>(ship, ship.settings);
-                //ApplyRigbidbodyPositionUpdate<Spaceship, SpaceshipSettings>(ship, ship.settings);
                 // Update the orbital predictor if it has been defined for the object
                 if(ship.predictor != null)
                     ship.predictor.smartPredictor();
@@ -370,49 +366,9 @@ public class FlyingObj
             if(universe.simEnv.useNBodySimulation.value)
                 ComputeGravitationalAccNBODY<T1, T2>(orbitingBody, settings, true);
             else
-                ComputeGravitationalAcc<T1, T2>(pullingBody, orbitingBody, settings, true);
-            
-            /*ComputeUpdatedVelocity<T1, T2>(orbitingBody, settings);
-            ComputeUpdatedPosition<T1, T2>(orbitingBody, settings);*/
+                Kepler.GravitationalAcc<T1>(pullingBody, orbitingBody, orbitingBody.Get_RadialVec()*UniCsts.km2m, true);
             UpdateVelocityPos_RK4<T1>(orbitingBody);
         }
-    }
-
-    /// <summary>
-    /// Compute gravitationnal pull from a CelestialBody on a Spaceship or a CelestialBody
-    /// T1: The type of the argument 'orbitingBody': either 'Spaceship' or 'CelestialBody'
-    /// T2: The type of the orbitingBody Settings variable: either 'SpaceshipSettings' or 'CelestialBodySettings'
-    /// </summary>
-    /// <param name="pullingBody">A CelestialBody that is pulling the orbiting body</param>
-    /// <param name="orbitingBody">The orbiting body, either a 'Spaceship' or a 'CelestialBody'</param>
-    public Vector3d ComputeGravitationalAcc<T1, T2>(CelestialBody pullingBody, T1 orbitingBody, T2 settings, bool saveAccToOrbitingBodyParam)
-    where T1: FlyingObjCommonParams where T2: FlyingObjSettings
-    {
-        Vector3d pullinBodyPos = new Vector3d(pullingBody.transform.position);
-        Transform castOrbitingBodyTr = orbitingBody._gameObject.transform; // Spaceship Tr or CelestialBody Tr
-
-        Vector3d r = new Vector3d(castOrbitingBodyTr.position) - pullinBodyPos;
-        double scalingFactor = UniCsts.u2au * UniCsts.au2km; // km, for planets
-
-        if(orbitingBody.orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree &&
-            orbitingBody.orbitalParams.orbitedBodyName == pullingBody.name)
-        {
-            scalingFactor = UniCsts.u2pl; // km, for spaceships
-        }
-
-        r *= scalingFactor; // km
-        double dstPow3 = Mathd.Pow(r.magnitude, 3); // km^3
-        double mu = pullingBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value;
-        Vector3d acc =  - Mathd.Pow(10,7) * mu * r / dstPow3; // m.s-2
-
-        if(!Vector3d.IsValid(acc) || UsefulFunctions.DoublesAreEqual(dstPow3, 0d)) {
-            Debug.LogError("Acc is not valid or distance between the pulling body and the target body is null");
-            acc = Vector3d.positiveInfinity;
-        }
-        if(saveAccToOrbitingBodyParam) {
-            orbitingBody.orbitedBodyRelativeAcc = acc;
-        }
-        return acc;
     }
     //=====================================================
     //=====================================================
@@ -451,7 +407,7 @@ public class FlyingObj
             if(physicObjArr[i].name.Equals(orbitingBody.orbitalParams.name)) { continue; }
             
             CelestialBody orbitedBody = physicObjArr[i].GetComponent<CelestialBody>();
-            Vector3d gravForce = ComputeGravitationalAcc<T1, T2>(orbitedBody, orbitingBody, settings, false);
+            Vector3d gravForce = Kepler.GravitationalAcc<T1>(orbitedBody, orbitingBody, orbitingBody.Get_RadialVec()*UniCsts.km2m, false);
             bodiesGravPull_ALL.Add(new CelestialBodyPullForce(orbitedBody, gravForce));
         }
         
@@ -494,26 +450,13 @@ public class FlyingObj
     {
         for(int i = 0; i < orbitingBody.gravPullList.Length; i++)
         {
-            Vector3d acc = ComputeGravitationalAcc<T1, T2>(orbitingBody.gravPullList[i].celestBody, orbitingBody, settings, false);
+            Vector3d acc = Kepler.GravitationalAcc<T1>(orbitingBody.gravPullList[i].celestBody, orbitingBody, orbitingBody.Get_RadialVec()*UniCsts.km2m, false);
             orbitingBody.gravPullList[i].gravForce = acc;
         }
     }
     //===============================================================================
     //===============================================================================
     //===============================================================================
-    /*public void ComputeUpdatedVelocity<T1, T2>(T1 orbitingBody, T2 settings)
-    where T1: FlyingObjCommonParams where T2: FlyingObjSettings
-    {
-        orbitingBody.orbitedBodyRelativeVelIncr = Time.fixedDeltaTime * orbitingBody.orbitedBodyRelativeAcc;
-        orbitingBody.orbitedBodyRelativeVel += orbitingBody.orbitedBodyRelativeVelIncr;
-    }
-
-    public void ComputeUpdatedPosition<T1, T2>(T1 castBody, T2 settings)
-    where T1: FlyingObjCommonParams where T2: FlyingObjSettings
-    {
-        Vector3d updatedPos = Time.fixedDeltaTime * castBody.distanceScaleFactor * castBody.orbitedBodyRelativeVel;
-        castBody.realPosition += updatedPos;
-    }*/
     public void UpdateVelocityPos_RK4<T1>(T1 orbitingBody)
     where T1: FlyingObjCommonParams
     {
@@ -524,8 +467,8 @@ public class FlyingObj
         if(orbitingBody.orbitalParams.orbitedBody != null)
             posPlanet = orbitingBody.orbitalParams.orbitedBody.realPosition;
         orbitingBody.realPosition = orbitingBody.rk4.X[0] + posPlanet;
-        if(!orbitingBody._gameObject.name.Equals("Earth"))
-            orbitingBody.rk4.PrintState();
+        
+        orbitingBody.rk4.PrintState();
     }
 
     public void ApplyRigbidbodyAccUpdate<T1, T2>(T1 castBody, T2 settings)
@@ -538,47 +481,7 @@ public class FlyingObj
         Vector3d force = castBody.orbitedBodyRelativeAcc * scaleFactor;
         rb.AddForce((Vector3)force, ForceMode.Acceleration);
 
-        Vector3d orbitedBodyVel = Vector3d.zero;
-        if(!castBody.orbitalParams.orbitedBodyName.Equals("None")) {
-            CelestialBody orbitedBody = castBody.orbitalParams.orbitedBody;
-            orbitedBodyVel = orbitedBody.orbitedBodyRelativeVel;
-        } 
-        rb.velocity = (Vector3)(castBody.orbitedBodyRelativeVel*scaleFactor + orbitedBodyVel*UniCsts.m2km2au2u);
-    }
-
-    /*public void ApplyRigbidbodyPositionUpdate<T1, T2>(T1 castBody, T2 settings)
-    where T1: FlyingObjCommonParams where T2: FlyingObjSettings
-    {
-        Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
-
-        double scaleFactor = castBody.distanceScaleFactor;
-
-        Vector3d force = castBody.orbitedBodyRelativeAcc * scaleFactor;
-        rb.AddForce((Vector3)force, ForceMode.Acceleration);
-
-        Vector3d orbitedBodyPos = Vector3d.zero;
-        if(!castBody.orbitalParams.orbitedBodyName.Equals("None")) {
-            CelestialBody orbitedBody = castBody.orbitalParams.orbitedBody;
-            orbitedBodyPos = orbitedBody.realPosition;
-        }
-        rb.MovePosition((Vector3)(castBody.realPosition*scaleFactor + orbitedBodyPos*UniCsts.m2km2au2u));
-    }*/
-    //===============================================================================
-    //===============================================================================
-    //===============================================================================
-    //===============================================================================
-    //===============================================================================
-    public Vector3d GetAbsoluteVelocity<T1>(T1 castBody)
-    where T1 : FlyingObjCommonParams
-    {
-        // Returns a Vector3d of the absolute velocity of the passed flyingObjBody: either a Spaceship or a CelestialBody
-        Vector3d speedOfOrbitedBody = Vector3d.zero;
-        if(!castBody.orbitalParams.orbitedBodyName.Equals("None")) {
-            CelestialBody orbitedBody = castBody.orbitalParams.orbitedBody;
-            speedOfOrbitedBody = orbitedBody.orbitedBodyRelativeVel;
-        } 
-
-        double scaleFactor = castBody.distanceScaleFactor;
-        return castBody.orbitedBodyRelativeVel*scaleFactor + speedOfOrbitedBody*UniCsts.m2km2au2u;
+        Debug.Log("Update for " + castBody._gameObject.name + ": castBody.orbitedBodyRelativeVel = " + castBody.orbitedBodyRelativeVel + "; castBody.absoluteVelocityUnityScaled = " + castBody.absoluteVelocityUnityScaled + "; castBody.absoluteVelocity = " + castBody.absoluteVelocity);
+        rb.velocity = (Vector3)(castBody.absoluteVelocityUnityScaled);
     }
 }

@@ -16,6 +16,8 @@ public interface FlyingObjCommonParams
     Vector3d orbitedBodyRelativeAcc {get; set;}
     Vector3d orbitedBodyRelativeVelIncr {get; set;}
     Vector3d orbitedBodyRelativeVel {get; set;}
+    Vector3d absoluteVelocity {get;}
+    Vector3d absoluteVelocityUnityScaled {get;}
     Vector3d realPosition {get; set;}
     //================
     // Ordered List (descending order, from the strongest grav pull force to the weakest) of the gravitational forces 

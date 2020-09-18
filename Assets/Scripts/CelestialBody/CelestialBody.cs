@@ -120,6 +120,29 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         }
     }
     
+    public Vector3d absoluteVelocity
+    {
+        get {
+            Vector3d speedOfOrbitedBody = Vector3d.zero;
+            if(!orbitalParams.orbitedBodyName.Equals("None")) {
+                speedOfOrbitedBody = orbitalParams.orbitedBody.orbitedBodyRelativeVel;
+            }
+            return orbitedBodyRelativeVel + speedOfOrbitedBody;
+        }
+    }
+    public Vector3d absoluteVelocityUnityScaled
+    {
+        get {
+            Vector3d speedOfOrbitedBody = Vector3d.zero;
+            double orbitedBodySF = 0f; // Scale factor
+            if(!orbitalParams.orbitedBodyName.Equals("None")) {
+                speedOfOrbitedBody = orbitalParams.orbitedBody.orbitedBodyRelativeVel;
+                orbitedBodySF = orbitalParams.orbitedBody.distanceScaleFactor;
+            }
+            return orbitedBodyRelativeVel*distanceScaleFactor + speedOfOrbitedBody*orbitedBodySF;
+        }
+    }
+
     /// <summary>
     /// Returns the north pole axis of the CelestialBody, in WORLD space
     /// </summary>
@@ -164,7 +187,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     public void InitRK4()
     {
-        Debug.Log(orbitalParams.orbitedBody + " ; " + orbitalParams.orbitedBody.name);
         rk4 = new RungeKutta4<FlyingObjCommonParams>(orbitalParams.orbitedBody, this, Time.fixedDeltaTime);
     }
 
@@ -198,7 +220,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         string orbitalParamsfilepath = Filepaths.DEBUG_planetOrbitalParams_0 + GetAssetName();
         if(_orbitalParams == null)
             _orbitalParams = Resources.Load<OrbitalParams>(orbitalParamsfilepath);
-        Debug.Log("orbitalParams: " + orbitalParams + "; _orbitalParams: " + _orbitalParams + "; current scene: " + SceneManager.GetActiveScene().name);
+        //Debug.Log("orbitalParams: " + orbitalParams + "; _orbitalParams: " + _orbitalParams + "; current scene: " + SceneManager.GetActiveScene().name);
             
         if(settings == null)
             settings = Resources.Load<CelestialBodySettings>(Filepaths.DEBUG_planetSettings_0 + GetAssetName());

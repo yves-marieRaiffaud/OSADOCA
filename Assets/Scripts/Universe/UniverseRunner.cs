@@ -32,9 +32,12 @@ public class UniverseRunner : MonoBehaviour
     /// <summary>
     /// UnityEvent firing when the Start() method of UniverseRunner is finished
     /// </summary>
-    public UnityEvent startIsDone;
+    [HideInInspector] public UnityEvent startIsDone;
 
     public Vector3 universeOffset; // Keeping track of the offset of the whole universe
+
+    // Class of available reference frames, initialized only once every celestialBody has been initialized (end of Start() method in UniverseRunner)
+    public ReferenceFramesList refFrames;
     //=========================================
     void Awake()
     {
@@ -171,14 +174,20 @@ public class UniverseRunner : MonoBehaviour
         }
         flyingObjInst.InitGravitationalPullLists();
 
+        // Initializing Runge-Kutta integration object for each FLyingObj (for the integration of the equation of motion)
         foreach(Transform obj in physicsObjArray)
         {
             if(obj.tag.Equals(goTags.Spaceship.ToString()))
                 obj.GetComponent<Spaceship>().InitRK4();
+                
             if(obj.tag.Equals(goTags.Planet.ToString()))
                 obj.GetComponent<CelestialBody>().InitRK4();
         }
+        
+        // Initializing Reference Frames
+        refFrames = new ReferenceFramesList();
 
+        // Removing Spaceships' rigidbody Rotation Lock
         Invoke("UnlockShips", 0.5f);
         //==============================
         if(simEnv.missionTimer != null)

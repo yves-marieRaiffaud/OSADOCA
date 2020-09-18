@@ -121,6 +121,29 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
     }
     
+    public Vector3d absoluteVelocity
+    {
+        get {
+            Vector3d speedOfOrbitedBody = Vector3d.zero;
+            if(!orbitalParams.orbitedBodyName.Equals("None")) {
+                speedOfOrbitedBody = orbitalParams.orbitedBody.orbitedBodyRelativeVel;
+            }
+            return orbitedBodyRelativeVel + speedOfOrbitedBody;
+        }
+    }
+    public Vector3d absoluteVelocityUnityScaled
+    {
+        get {
+            Vector3d speedOfOrbitedBody = Vector3d.zero;
+            double orbitedBodySF = 0f; // Scale factor
+            if(!orbitalParams.orbitedBodyName.Equals("None")) {
+                speedOfOrbitedBody = orbitalParams.orbitedBody.orbitedBodyRelativeVel;
+                orbitedBodySF = orbitalParams.orbitedBody.distanceScaleFactor;
+            }
+            return orbitedBodyRelativeVel*distanceScaleFactor + speedOfOrbitedBody*orbitedBodySF;
+        }
+    }
+
     private CelestialBodyPullForce[] _gravPullList;
     public CelestialBodyPullForce[] gravPullList
     {
