@@ -1,6 +1,7 @@
 using UnityEngine;
 using Mathd_Lib;
 using System;
+using Fncs = UsefulFunctions;
 
 public class ReferenceFrame
 {
@@ -72,8 +73,9 @@ public class ReferenceFrame
         vec2 = vec2.normalized;
 
         _name = _frameName;
+        _specifiedVectors = _inputVectors;
 
-        switch(_inputVectors)
+        switch(_specifiedVectors)
         {
             case SpecifiedVectors.XY:
                 _xVec = vec1;
@@ -127,10 +129,25 @@ public class ReferenceFrame
         if(attachedToBody != null) {
             frame._attachedBody = attachedToBody;
             GameObject frameTemplate = GameObject.Find("FrameTemplate");
-            GameObject createdFrame = (GameObject) GameObject.Instantiate(frameTemplate, frame._attachedBody.transform.position, frame._attachedBody.transform.rotation, frame._attachedBody.transform);
+            Transform framesPlaceholder = frame._attachedBody.transform.Find("Frames");
+            if(framesPlaceholder == null) {
+                framesPlaceholder = Fncs.CreateAssignGameObject("Frames", frame.attachedBody).transform;
+                framesPlaceholder.position = frame.attachedBody.transform.position;
+            }
+            GameObject createdFrame = (GameObject) GameObject.Instantiate(frameTemplate, frame._attachedBody.transform.position, frame._attachedBody.transform.rotation*Quaternion.LookRotation((Vector3)frame.zVec, -(Vector3)frame.yVec), framesPlaceholder);
             createdFrame.gameObject.name = _frameName;
         }
         return frame;
+    }
+
+    public string PrintFrame(bool printToDebugLog)
+    {
+        string txt = "Reference frame named '" + name + "' ; specified vectors = " + specifiedVectors + ".\nOrigin: " + origin + "\nX-Vec = " + xVec + "\nY-Vec = " + yVec + "\nZ-Vec = " + zVec;
+        if(attachedBody != null)
+            txt += "\nFrame attached to body '" + attachedBody.name + "'";
+        if(printToDebugLog)
+            Debug.Log(txt);
+        return txt;
     }
 
 }

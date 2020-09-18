@@ -386,7 +386,7 @@ public class Orbit
             switch(vecType)
             {
                 case OrbitalTypes.typeOfVectorDir.vernalPoint:
-                    return (UniCsts.pv - new Vector3d(orbitingGO.transform.position)).normalized;
+                    return (UniCsts.pv_j2000 - new Vector3d(orbitingGO.transform.position)).normalized;
                 
                 case OrbitalTypes.typeOfVectorDir.vpAxisRight:
                     if(!Vector3d.IsValid(param.vp)){

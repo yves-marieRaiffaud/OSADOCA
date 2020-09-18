@@ -66,7 +66,9 @@ public static class UniCsts
     public const double dstThreshold = 3_000d;
 
     // Vernal Point, very high value on x so that it is located at the infinity
-    public static readonly  Vector3d pv = new Vector3d(1e100d, 0d, 0d); // SHOULD BE CHANGED TO SOMETHING ELSE
+    // Positive Vernal direction is the intersection between the ecliptic plane and the Earth's equatorial plane
+    // Arbitrarly, the vernal direction is set hereunder in the J2000 frame
+    public static readonly  Vector3d pv_j2000 = new Vector3d(1e100d, 0d, 0d);
 
     //===============================================================================================
     //===============================================================================================
