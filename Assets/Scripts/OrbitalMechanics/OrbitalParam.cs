@@ -72,6 +72,20 @@ public class OrbitalParams : ScriptableObject
     };
     //==============
     public bool showInfoPanel=false;
+
+    public struct OrbitalStateVector {
+        ReferenceFrame frame;
+        Vector3d r;
+        Vector3d v;
+        //Epoch epoch;
+
+        public OrbitalStateVector(ReferenceFrame _frame, Vector3d _r, Vector3d _v/*, Epoch _epoch*/) {
+            frame = _frame;
+            r = _r;
+            v = _v;
+            //epoch = _epoch;
+        }
+    }
 }
 
 [System.Serializable]

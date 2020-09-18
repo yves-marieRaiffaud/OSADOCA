@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
-using System.Linq;
+using Fncs = UsefulFunctions;
 
 public static class Kepler
 {
@@ -27,42 +27,38 @@ public static class Kepler
         return acc;
     }
 
-    /*
-    /// <summary>
-    /// Compute gravitationnal pull from a CelestialBody on a Spaceship or a CelestialBody
-    /// T1: The type of the argument 'orbitingBody': either 'Spaceship' or 'CelestialBody'
-    /// T2: The type of the orbitingBody Settings variable: either 'SpaceshipSettings' or 'CelestialBodySettings'
-    /// </summary>
-    /// <param name="pullingBody">A CelestialBody that is pulling the orbiting body</param>
-    /// <param name="orbitingBody">The orbiting body, either a 'Spaceship' or a 'CelestialBody'</param>
-    public Vector3d ComputeGravitationalAcc<T1, T2>(CelestialBody pullingBody, T1 orbitingBody, T2 settings, bool saveAccToOrbitingBodyParam)
-    where T1: FlyingObjCommonParams where T2: FlyingObjSettings
+    public static class OrbitalParamsConversion
     {
-        Vector3d pullinBodyPos = new Vector3d(pullingBody.transform.position);
-        Transform castOrbitingBodyTr = orbitingBody._gameObject.transform; // Spaceship Tr or CelestialBody Tr
-
-        Vector3d r = new Vector3d(castOrbitingBodyTr.position) - pullinBodyPos;
-        double scalingFactor = UniCsts.u2au * UniCsts.au2km; // km, for planets
-
-        if(orbitingBody.orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree &&
-            orbitingBody.orbitalParams.orbitedBodyName == pullingBody.name)
-        {
-            scalingFactor = UniCsts.u2pl; // km, for spaceships
+        /// <summary>
+        /// ONLY FOR ELLIPCTIC ORBIT. Compute the true anomaly 'nu' in RAD from a radial vector 'r', an excentricity vector 'e' and a velocity vector 'v'
+        /// </summary>
+        public static double rve2nu(Vector3d r, Vector3d e, Vector3d v) {
+            double nu = Mathd.Acos(Vector3d.Dot(e, r) / (e.magnitude * r.magnitude));
+            if(Vector3d.Dot(r, v) < 0d)
+                return 2d*Mathd.PI - nu;
+            else
+                return nu;
         }
 
-        r *= scalingFactor; // km
-        double dstPow3 = Mathd.Pow(r.magnitude, 3); // km^3
-        double mu = pullingBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value;
-        Vector3d acc =  - Mathd.Pow(10,7) * mu * r / dstPow3; // m.s-2
+        /// <summary>
+        /// ONLY FOR ELLIPCTIC ORBIT. Compute the true anomaly 'nu' in RAD from the passed excentricity 'e' and the eccentric anomaly 'E' in RAD
+        /// </summary>
+        public static double eE2nu(double e, double E) {
+            return 2d * Mathd.Atan((Mathd.Sqrt((1d+e)/(1d-e)) * Mathd.Tan(E/2d)));
+        }
 
-        if(!Vector3d.IsValid(acc) || UsefulFunctions.DoublesAreEqual(dstPow3, 0d)) {
-            Debug.LogError("Acc is not valid or distance between the pulling body and the target body is null");
-            acc = Vector3d.positiveInfinity;
+        /// <summary>
+        /// Computes the Mean anomaly 'M' in RAD from the eccentric anomaly 'E'
+        /// </summary>
+        public static double eE2M(double e, double E) {
+            return E - e*Mathd.Sin(E);
         }
-        if(saveAccToOrbitingBodyParam) {
-            orbitingBody.orbitedBodyRelativeAcc = acc;
+
+        /// <summary>
+        /// Compute the norm of the radial vector 'r' from the norm of the semi-major axis 'a', the norm of the excentricty 'e' and the true anomaly 'nu' in RAD
+        /// </summary>
+        public static double aenu2r(double a, double e, double nu) {
+            return a*(1d-e*e)/(1d + Mathd.Cos(nu));
         }
-        return acc;
     }
-    */
 }
