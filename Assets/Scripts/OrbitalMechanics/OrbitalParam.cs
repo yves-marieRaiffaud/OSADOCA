@@ -40,9 +40,10 @@ public class OrbitalParams : ScriptableObject
 
     // Position of the body on the ellipse
     public double nu; // True anomaly, degree
-    public double m0; // Mean Anomaly, degree
-    public double l0; // Mean Longitude, degree
-    public double t0; // Time at perihelion passage
+    public double M; // Mean Anomaly, degree
+    public double E; // Eccentric anomaly, degree
+    public double L; // Mean Longitude, degree
+    public double t; // Time at perihelion passage
     //==============
     public double period; // Orbtial period, seconds
     //==============

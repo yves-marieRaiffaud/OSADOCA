@@ -281,20 +281,15 @@ public static class UsefulFunctions
     public static OrbitalTypes.bodyPositionType String2_bodyPosTypeEnum(string goTag)
     {
         if(goTag.Equals(OrbitalTypes.bodyPositionType.nu.ToString()))
-        {
             return OrbitalTypes.bodyPositionType.nu;
-        }
-        else if(goTag.Equals(OrbitalTypes.bodyPositionType.m0.ToString()))
-        {
-            return OrbitalTypes.bodyPositionType.m0;
-        }
-        else if(goTag.Equals(OrbitalTypes.bodyPositionType.l0.ToString()))
-        {
-            return OrbitalTypes.bodyPositionType.l0;
-        }
-        else {
-            return OrbitalTypes.bodyPositionType.t0;
-        }
+        else if(goTag.Equals(OrbitalTypes.bodyPositionType.M.ToString()))
+            return OrbitalTypes.bodyPositionType.M;
+        else if(goTag.Equals(OrbitalTypes.bodyPositionType.L.ToString()))
+            return OrbitalTypes.bodyPositionType.L;
+        else if(goTag.Equals(OrbitalTypes.bodyPositionType.E.ToString()))
+            return OrbitalTypes.bodyPositionType.E;
+        else
+            return OrbitalTypes.bodyPositionType.t;
     }
 
     public static OrbitalTypes.orbitalParamsUnits String2_OrbitalParamsUnitsEnum(string goTag)

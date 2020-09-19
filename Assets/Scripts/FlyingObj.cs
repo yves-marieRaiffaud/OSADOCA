@@ -198,12 +198,12 @@ public class FlyingObj
                 else {
                     // A spaceship with in orbit init
                     //bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit, OrbitalTypes.bodyPositionType.nu);
-                    bodyRelatedPos = Orbit.GetWorldPositionFromLineRendererOrbit(castBody.orbit, OrbitalTypes.bodyPositionType.nu);
+                    bodyRelatedPos = Orbit.GetWorldPositionFromLineRendererOrbit(castBody.orbit);
                 }
             }
             else {
                 // A celestialBody with in orbit init
-                bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit, OrbitalTypes.bodyPositionType.nu);
+                bodyRelatedPos = Orbit.GetWorldPositionFromOrbit(castBody.orbit);
             }
             //===================
             castBody.realPosition = UsefulFunctions.AlignPositionVecWithParentPos(bodyRelatedPos, castBody.orbitalParams.orbitedBody.transform.position);

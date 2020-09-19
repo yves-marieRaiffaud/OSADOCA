@@ -57,6 +57,9 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     public TMPro.TMP_Text info_bodyPos_p3_txt;
     public TMPro.TMP_Text info_bodyPos_p3_val;
     public TMPro.TMP_Text info_bodyPos_p3_unit;
+    public TMPro.TMP_Text info_bodyPos_p4_txt;
+    public TMPro.TMP_Text info_bodyPos_p4_val;
+    public TMPro.TMP_Text info_bodyPos_p4_unit;
 
     public TMPro.TMP_Text info_meanMotion_val;
     public TMPro.TMP_Text info_orbitalPeriod_val;
@@ -179,17 +182,22 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
             case 1:
                 // nu, true anomaly
                 bodyPos_txt.text = "Mean anomaly";
-                bodyPos_field.placeholder.GetComponent<TMPro.TMP_Text>().text = "M0 in °";
+                bodyPos_field.placeholder.GetComponent<TMPro.TMP_Text>().text = "M in °";
                 break;
             case 2:
-                // nu, true anomaly
-                bodyPos_txt.text = "Mean longitude";
-                bodyPos_field.placeholder.GetComponent<TMPro.TMP_Text>().text = "L0 in °";
+                // E, mean eccentricity
+                bodyPos_txt.text = "Mean eccentricity";
+                bodyPos_field.placeholder.GetComponent<TMPro.TMP_Text>().text = "E in °";
                 break;
             case 3:
                 // nu, true anomaly
+                bodyPos_txt.text = "Mean longitude";
+                bodyPos_field.placeholder.GetComponent<TMPro.TMP_Text>().text = "L in °";
+                break;
+            case 4:
+                // nu, true anomaly
                 bodyPos_txt.text = "Time of passage";
-                bodyPos_field.placeholder.GetComponent<TMPro.TMP_Text>().text = "T0 in hh:mm:ss";
+                bodyPos_field.placeholder.GetComponent<TMPro.TMP_Text>().text = "T in seconds";
                 break;
         }
     }
@@ -223,7 +231,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     private void UpdateSpacecraftPosition()
     {
         OrbitalTypes.bodyPositionType inputPosType = UsefulFunctions.String2_bodyPosTypeEnum(bodyPosType.options[bodyPosType.value].text);
-        Vector3d shipWorldPos = Orbit.GetWorldPositionFromOrbit(previewedOrbit, inputPosType);
+        Vector3d shipWorldPos = Orbit.GetWorldPositionFromOrbit(previewedOrbit);
         orbitingSpacecraft.transform.position = (Vector3) shipWorldPos + orbitedBody.gameObject.transform.position;
     }
 
@@ -352,7 +360,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 // Converting entered altitude to a proper distance with respect to the planet centre
                 orbitalParams.ra += scaleFactor*orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
                 orbitalParams.rp += scaleFactor*orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value;
-                if(orbitalParams.ra < orbitalParams.rp || orbitalParams.ra < Mathd.Epsilon) {
+                if(orbitalParams.ra < Mathd.Epsilon) {
                     ORBITAL_PARAMS_VALID = false;
                 }
                 break;
@@ -380,6 +388,8 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         UsefulFunctions.ParseStringToDouble(lAscN_field.text, out orbitalParams.lAscN);
         UsefulFunctions.ParseStringToDouble(periapsisArg_field.text, out orbitalParams.omega);
 
+        orbitalParams.bodyPosType = UsefulFunctions.String2_bodyPosTypeEnum(bodyPosType.options[bodyPosType.value].text);
+
         switch(bodyPosType.value)
         {
             case 0:
@@ -387,16 +397,20 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 UsefulFunctions.ParseStringToDouble(bodyPos_field.text, out orbitalParams.nu);
                 break;
             case 1:
-                // m0, mean anomaly
-                UsefulFunctions.ParseStringToDouble(bodyPos_field.text, out orbitalParams.m0);
+                // M, mean anomaly
+                UsefulFunctions.ParseStringToDouble(bodyPos_field.text, out orbitalParams.M);
                 break;
             case 2:
-                // L0, mean longitude
-                UsefulFunctions.ParseStringToDouble(bodyPos_field.text, out orbitalParams.l0);
+                // E, eccentric anomaly
+                UsefulFunctions.ParseStringToDouble(bodyPos_field.text, out orbitalParams.E);
                 break;
             case 3:
-                // T0, time of passage at the perihelion
-                UsefulFunctions.ParseStringToDouble(bodyPos_field.text, out orbitalParams.t0);
+                // L, mean longitude
+                UsefulFunctions.ParseStringToDouble(bodyPos_field.text, out orbitalParams.L);
+                break;
+            case 4:
+                // T, time of passage at the perihelion
+                UsefulFunctions.ParseStringToDouble(bodyPos_field.text, out orbitalParams.t);
                 break;
         }
 
@@ -434,6 +448,10 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         info_bodyPos_p3_unit.text = "";
         info_bodyPos_p3_val.text = "";
 
+        info_bodyPos_p4_txt.text = "";
+        info_bodyPos_p4_unit.text = "";
+        info_bodyPos_p4_val.text = "";
+
         info_meanMotion_val.text = "";
         info_orbitalPeriod_val.text = "";
     }
@@ -468,6 +486,101 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         info_orbit_a_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.a, UniCsts.UI_SIGNIFICANT_DIGITS);
         info_orbit_b_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.b, UniCsts.UI_SIGNIFICANT_DIGITS);
         info_orbit_c_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.c, UniCsts.UI_SIGNIFICANT_DIGITS);
+
+        switch(bodyPosType.value)
+        {
+            case 0:
+                // 'nu' == true anomaly, thus displaying info M;E;L;t
+                info_bodyPos_p1_txt.text = "M";
+                info_bodyPos_p1_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.M, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p1_unit.text = "deg";
+
+                info_bodyPos_p2_txt.text = "E";
+                info_bodyPos_p2_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.E, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p2_unit.text = "deg";
+
+                info_bodyPos_p3_txt.text = "L";
+                info_bodyPos_p3_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.L, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p3_unit.text = "deg";
+
+                info_bodyPos_p4_txt.text = "t";
+                info_bodyPos_p4_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.t, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p4_unit.text = "s";
+                break;
+            case 1:
+                // 'M' == mean anomaly, thus displaying info nu;E;L;t
+                info_bodyPos_p1_txt.text = "nu";
+                info_bodyPos_p1_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.nu, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p1_unit.text = "deg";
+
+                info_bodyPos_p2_txt.text = "E";
+                info_bodyPos_p2_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.E, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p2_unit.text = "deg";
+
+                info_bodyPos_p3_txt.text = "L";
+                info_bodyPos_p3_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.L, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p3_unit.text = "deg";
+
+                info_bodyPos_p4_txt.text = "t";
+                info_bodyPos_p4_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.t, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p4_unit.text = "s";
+                break;
+            case 2:
+                // 'E' == eccentric anomaly, thus displaying info nu;M;L;t
+                info_bodyPos_p1_txt.text = "nu";
+                info_bodyPos_p1_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.nu, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p1_unit.text = "deg";
+
+                info_bodyPos_p2_txt.text = "M";
+                info_bodyPos_p2_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.M, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p2_unit.text = "deg";
+
+                info_bodyPos_p3_txt.text = "L";
+                info_bodyPos_p3_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.L, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p3_unit.text = "deg";
+
+                info_bodyPos_p4_txt.text = "t";
+                info_bodyPos_p4_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.t, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p4_unit.text = "s";
+                break;
+            case 3:
+                // 'L' == mean longitude, thus displaying info nu;M;E;t
+                info_bodyPos_p1_txt.text = "nu";
+                info_bodyPos_p1_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.nu, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p1_unit.text = "deg";
+
+                info_bodyPos_p2_txt.text = "M";
+                info_bodyPos_p2_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.M, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p2_unit.text = "deg";
+
+                info_bodyPos_p3_txt.text = "E";
+                info_bodyPos_p3_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.E, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p3_unit.text = "deg";
+
+                info_bodyPos_p4_txt.text = "t";
+                info_bodyPos_p4_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.t, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p4_unit.text = "s";
+                break;
+            case 4:
+                // 't' == time of passage at perigee, thus displaying info nu;M;E;L
+                info_bodyPos_p1_txt.text = "nu";
+                info_bodyPos_p1_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.nu, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p1_unit.text = "deg";
+
+                info_bodyPos_p2_txt.text = "M";
+                info_bodyPos_p2_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.M, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p2_unit.text = "deg";
+
+                info_bodyPos_p3_txt.text = "E";
+                info_bodyPos_p3_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.E, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p3_unit.text = "deg";
+
+                info_bodyPos_p4_txt.text = "L";
+                info_bodyPos_p4_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.L, UniCsts.UI_SIGNIFICANT_DIGITS);
+                info_bodyPos_p4_unit.text = "deg";
+                break;
+        }
+
         info_meanMotion_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.n*180d/Mathd.PI, UniCsts.UI_SIGNIFICANT_DIGITS);
         info_orbitalPeriod_val.text = UsefulFunctions.DoubleToSignificantDigits(previewedOrbit.param.period, UniCsts.UI_SIGNIFICANT_DIGITS);
     }

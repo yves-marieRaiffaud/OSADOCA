@@ -31,98 +31,101 @@ public class Orbit
         {
             case true:
                 if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU_degree)
-                {
                     scalingFactor = (double) (celestialBody.transform.localScale.x / (2d*UniCsts.km2au*celestialBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value));
-                }
-                else {
+                else
                     scalingFactor = (double) (celestialBody.transform.localScale.x / (2d*celestialBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value));
-                }
                 break;
 
             case false:
-                if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU_degree) {
+                if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU_degree)
                     scalingFactor = UniCsts.au2u;
-                }
-                else {
+                else
                     scalingFactor = UniCsts.pl2u;
-                }
                 break;
         }
 
-        switch(orbitalParams.orbitDefType)
+        param = orbitalParams;
+        orbitingGO = orbitingBody;
+        orbitedBody = celestialBody;
+
+        switch(param.orbitDefType)
         {
             case OrbitalTypes.orbitDefinitionType.rarp:
-                param = orbitalParams;
-                orbitingGO = orbitingBody;
-                orbitedBody = celestialBody;
-
                 param.e = (param.ra - param.rp)/(param.ra + param.rp);
                 param.p = 2 * param.ra * param.rp/(param.ra + param.rp);
-                
-                param.a = (param.ra + param.rp)/2;
-                param.b = Mathd.Sqrt(param.p * param.a);
-                param.c = param.e * param.a;
-
-                param.period = ComputeOrbitalPeriod();
-                n = ComputeMeanMotion();
-
-                param.vp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vernalPoint);
-                param.vpAxisRight = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisRight);
-                param.vpAxisUp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisUp);
-
-                suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
-                CreateAssignOrbitLineRenderer(suffixGO);
-                DrawOrbit();
                 break;
 
             case OrbitalTypes.orbitDefinitionType.rpe:
-                param = orbitalParams;
-                orbitingGO = orbitingBody;
-                orbitedBody = celestialBody;
-
                 param.ra = param.rp * (-1 - param.e)/(param.e - 1);
                 param.p = param.rp * (1 + param.e);
-
-                param.a = (param.ra + param.rp)/2;
-                param.b = Mathd.Sqrt(param.p * param.a);
-                param.c = param.e * param.a;
-
-                param.period = ComputeOrbitalPeriod();
-                n = ComputeMeanMotion();
-
-                param.vp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vernalPoint);
-                param.vpAxisRight = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisRight);
-                param.vpAxisUp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisUp);
-
-                suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
-                CreateAssignOrbitLineRenderer(suffixGO);
-                DrawOrbit();
                 break;
             
             case OrbitalTypes.orbitDefinitionType.pe:
-                param = orbitalParams;
-                orbitingGO = orbitingBody;
-                orbitedBody = celestialBody;
-
                 param.rp = param.p/(1 + param.e);
                 param.ra = param.rp*(-1 - param.e)/(param.e - 1);
-                
-                param.a = (param.ra + param.rp)/2;
-                param.b = Mathd.Sqrt(param.p * param.a);
-                param.c = param.e * param.a;
-
-                param.period = ComputeOrbitalPeriod();
-                n = ComputeMeanMotion();
-                
-                param.vp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vernalPoint);
-                param.vpAxisRight = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisRight);
-                param.vpAxisUp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisUp);
-
-                suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
-                CreateAssignOrbitLineRenderer(suffixGO);
-                DrawOrbit();
                 break;
         }
+
+        param.a = (param.ra + param.rp)/2;
+        param.b = Mathd.Sqrt(param.p * param.a);
+        param.c = param.e * param.a;
+
+        param.period = ComputeOrbitalPeriod();
+        n = ComputeMeanMotion();
+
+        (double,double) nu_E;
+        Debug.Log("param.bodyPosType = " + param.bodyPosType);
+        switch(param.bodyPosType)
+        {
+            case OrbitalTypes.bodyPositionType.nu:
+                (double,double) M_E = Kepler.OrbitalParamsConversion.nu2M(param.nu*UniCsts.deg2rad, param.e);
+                Debug.Log("nu = " + param.nu + "; M = " + M_E.Item1 + "; E = " + M_E.Item2);
+                param.M = M_E.Item1 * UniCsts.rad2deg;
+                param.E = M_E.Item2 * UniCsts.rad2deg;
+                param.L = Kepler.OrbitalParamsConversion.lAscN_omegaM2L(param.lAscN*UniCsts.deg2rad, param.omega*UniCsts.deg2rad, M_E.Item1) * UniCsts.rad2deg;
+                param.t = Kepler.OrbitalParamsConversion.MT2t(param.M*UniCsts.deg2rad, param.period);
+                break;
+
+            case OrbitalTypes.bodyPositionType.M:
+                nu_E = Kepler.OrbitalParamsConversion.M2nu(param.M*UniCsts.deg2rad, param.e);
+                param.nu = nu_E.Item1 * UniCsts.rad2deg;
+                param.E = nu_E.Item2 * UniCsts.rad2deg;
+                param.L = Kepler.OrbitalParamsConversion.lAscN_omegaM2L(param.lAscN*UniCsts.deg2rad, param.omega*UniCsts.deg2rad, param.M*UniCsts.deg2rad) * UniCsts.rad2deg;
+                param.t = Kepler.OrbitalParamsConversion.MT2t(param.M*UniCsts.deg2rad, param.period);
+                break;
+
+            case OrbitalTypes.bodyPositionType.E:
+                Debug.Log("Value of E = " + param.E);
+                param.nu = Kepler.OrbitalParamsConversion.E2nu(param.E*UniCsts.deg2rad, param.e) * UniCsts.rad2deg;
+                param.M = Kepler.OrbitalParamsConversion.E2M(param.E*UniCsts.deg2rad, param.e) * UniCsts.rad2deg;
+                param.L = Kepler.OrbitalParamsConversion.lAscN_omegaM2L(param.lAscN*UniCsts.deg2rad, param.omega*UniCsts.deg2rad, param.M*UniCsts.deg2rad) * UniCsts.rad2deg;
+                param.t = Kepler.OrbitalParamsConversion.MT2t(param.M*UniCsts.deg2rad, param.period);
+                break;
+
+            case OrbitalTypes.bodyPositionType.L:
+                param.M = Kepler.OrbitalParamsConversion.L2M(param.L*UniCsts.deg2rad, param.lAscN*UniCsts.deg2rad, param.omega*UniCsts.deg2rad) * UniCsts.rad2deg;
+                nu_E = Kepler.OrbitalParamsConversion.M2nu(param.M*UniCsts.deg2rad, param.e);
+                param.nu = nu_E.Item1 * UniCsts.rad2deg;
+                param.E = nu_E.Item2 * UniCsts.rad2deg;
+                param.t = Kepler.OrbitalParamsConversion.MT2t(param.M*UniCsts.deg2rad, param.period);
+                break;
+
+            case OrbitalTypes.bodyPositionType.t:
+                (double,double,double) nu_E_M = Kepler.OrbitalParamsConversion.t2nuEM(param.t, param.period, param.e);
+                param.nu = nu_E_M.Item1 * UniCsts.rad2deg;
+                param.E = nu_E_M.Item2 * UniCsts.rad2deg;
+                param.M = nu_E_M.Item3 * UniCsts.rad2deg;
+                param.L = Kepler.OrbitalParamsConversion.lAscN_omegaM2L(param.lAscN*UniCsts.deg2rad, param.omega*UniCsts.deg2rad, param.M*UniCsts.deg2rad) * UniCsts.rad2deg;
+                break;
+        }
+
+        param.vp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vernalPoint);
+        param.vpAxisRight = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisRight);
+        param.vpAxisUp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisUp);
+
+        suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
+        CreateAssignOrbitLineRenderer(suffixGO);
+        DrawOrbit();
     }
 
     private void CreateAssignOrbitLineRenderer(string nameOrbitingBody)
@@ -143,11 +146,9 @@ public class Orbit
             // Execute only if we are in the simulation. Else, the GameObject 'Orbits' does not exist
             lineRenderer.transform.parent = GameObject.Find("Orbits").transform;
         }
-        else {
+        else
             lineRenderer.transform.parent = GameObject.Find("Planets_Rendering").transform;
-        }
     }
-
 
     public void UpdateLineRendererPos()
     {
@@ -163,18 +164,14 @@ public class Orbit
             if(child.name.Contains(radial) || child.name.Contains(tangent) || child.name.Contains(velocity) || child.name.Contains(acc))
             {
                 OrbitalTypes.typeOfVectorDir vecDirection;
-                if(child.name.Contains(radial)) {
+                if(child.name.Contains(radial))
                     vecDirection = OrbitalTypes.typeOfVectorDir.radialVec;
-                }
-                else if(child.name.Contains(tangent)) {
+                else if(child.name.Contains(tangent))
                     vecDirection = OrbitalTypes.typeOfVectorDir.tangentialVec;
-                }
-                else if(child.name.Contains(velocity)) {
+                else if(child.name.Contains(velocity))
                     vecDirection = OrbitalTypes.typeOfVectorDir.velocityVec;
-                }
-                else {
+                else
                     vecDirection = OrbitalTypes.typeOfVectorDir.accelerationVec;
-                }
                 UpdateDirectionVectorLineRenderer(child.gameObject.GetComponent<LineRenderer>(), vecDirection);
                 // Need to position the gameobject vector on the spaceship
                 child.transform.position = orbitingGO.transform.localPosition;
@@ -189,49 +186,32 @@ public class Orbit
         lineRenderer.SetPosition(1, (float)(param.ra*scalingFactor)*vec);
     }
 
-    public static Vector3d GetWorldPositionFromOrbit(Orbit orbit, OrbitalTypes.bodyPositionType posType)
+    public static Vector3d GetWorldPositionFromOrbit(Orbit orbit)
     {
         // Return the Vector3d position in the world (X,Y,Z) from the position of the body on its orbit
         Vector3d worldPos = Vector3d.NaN();
-        switch(posType)
-        {
-            case OrbitalTypes.bodyPositionType.nu:
-                double posValue = orbit.param.nu * UniCsts.deg2rad;
-                double cosNu = Mathd.Cos(posValue);
-                double r = orbit.param.p / (1 + orbit.param.e*cosNu);
+        double posValue = orbit.param.nu * UniCsts.deg2rad;
+        double cosNu = Mathd.Cos(posValue);
+        double r = orbit.param.p / (1 + orbit.param.e*cosNu);
 
-                Vector3d fVec = orbit.orbitedBody.settings.equatorialPlane.forwardVec;
-                Vector3d rVec = orbit.orbitedBody.settings.equatorialPlane.rightVec;
+        Vector3d fVec = orbit.orbitedBody.settings.equatorialPlane.forwardVec;
+        Vector3d rVec = orbit.orbitedBody.settings.equatorialPlane.rightVec;
 
-                worldPos = r*cosNu*fVec + r*Mathd.Sin(posValue)*rVec;
-                worldPos = orbit.orbitRot * worldPos * orbit.scalingFactor;
-                break;
-
-            case OrbitalTypes.bodyPositionType.m0:
-                break;
-        }
+        worldPos = r*cosNu*fVec + r*Mathd.Sin(posValue)*rVec;
+        worldPos = orbit.orbitRot * worldPos * orbit.scalingFactor;
         return worldPos;
     }
 
-    public static Vector3d GetWorldPositionFromLineRendererOrbit(Orbit orbit, OrbitalTypes.bodyPositionType posType)
+    public static Vector3d GetWorldPositionFromLineRendererOrbit(Orbit orbit)
     {
         // Return the Vector3d position in the world (X,Y,Z) from the position of the body on its orbit
         // BUT RECOVERES THE POSITION DIRECTLY FROM THE LINE RENDERER DATA
         Vector3d worldPos = Vector3d.NaN();
-        switch(posType)
-        {
-            case OrbitalTypes.bodyPositionType.nu:
-                double posValue = UsefulFunctions.ClampAngle(0d, 360d, orbit.param.nu);
-                int posIndex = Convert.ToInt32(orbit.lineRenderer.positionCount * posValue / 360d);
-                worldPos = new Vector3d(orbit.lineRenderer.GetPosition(posIndex));
-                break;
-
-            case OrbitalTypes.bodyPositionType.m0:
-                break;
-        }
+        double posValue = UsefulFunctions.ClampAngle(0d, 360d, orbit.param.nu);
+        int posIndex = Convert.ToInt32(orbit.lineRenderer.positionCount * posValue / 360d);
+        worldPos = new Vector3d(orbit.lineRenderer.GetPosition(posIndex));
         return worldPos;
     }
-
 
     public void DrawOrbit()
     {
@@ -327,20 +307,14 @@ public class Orbit
         }
     }
 
-
-
     public double ComputeOrbitalPeriod()
     {
         if(orbitedBody == null)
-        {
             return float.NaN;
-        }
         else{
             double neededScaleFactor = 1d; // Default for 'km_degree' units
             if(param.orbParamsUnits.ToString().Equals(OrbitalTypes.orbitalParamsUnits.AU_degree.ToString()))
-            {
                 neededScaleFactor = UniCsts.au2km;
-            }
             double T = 2d * Mathd.PI * Mathd.Pow(10,-2) * Mathd.Sqrt(Mathd.Pow(param.a*neededScaleFactor, 3) / orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value); // without E13 for real value
             return T;
         }
@@ -355,18 +329,16 @@ public class Orbit
     public Vector3d GetPerigeePoint()
     {
         // Perigee point is the first point of the Line Renderer
-        if(lineRenderer != null){
+        if(lineRenderer != null)
             return new Vector3d(lineRenderer.GetPosition(0));
-        }
         return Vector3d.NaN();
     }
 
     public Vector3d GetApogeePoint()
     {
         // Apogee point is the point at lineRenderer.Length/2
-        if(lineRenderer != null){
+        if(lineRenderer != null)
             return new Vector3d(lineRenderer.GetPosition((int)(lineRenderer.positionCount/2)));
-        }
         return Vector3d.NaN();
     }
 
@@ -379,9 +351,7 @@ public class Orbit
     public Vector3d ComputeDirectionVector(OrbitalTypes.typeOfVectorDir vecType)
     {
         if(orbitedBody == null)
-        {
             return new Vector3d(double.NaN, double.NaN, double.NaN);
-        }
         else {
             switch(vecType)
             {
@@ -389,22 +359,19 @@ public class Orbit
                     return (UniCsts.pv_j2000 - new Vector3d(orbitingGO.transform.position)).normalized;
                 
                 case OrbitalTypes.typeOfVectorDir.vpAxisRight:
-                    if(!Vector3d.IsValid(param.vp)){
+                    if(!Vector3d.IsValid(param.vp))
                         ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vernalPoint);
-                    }
                     return new Vector3d(param.vp.y, param.vp.z, param.vp.x).normalized;
                 
                 case OrbitalTypes.typeOfVectorDir.vpAxisUp:
-                    if(!Vector3d.IsValid(param.vp)){
+                    if(!Vector3d.IsValid(param.vp))
                         ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vernalPoint);
-                    }
                     return new Vector3d(param.vp.z, param.vp.x, param.vp.y).normalized;
 
-                case OrbitalTypes.typeOfVectorDir.apogeeLine:                    
-                    if(lineRenderer != null) {
+                case OrbitalTypes.typeOfVectorDir.apogeeLine:
+                    if(lineRenderer != null)
                         //return new Vector3d(lineRenderer.GetPosition((int)(lineRenderer.positionCount/2)) - orbitedBody.transform.position).normalized;
                         return new Vector3d(lineRenderer.GetPosition((int)(lineRenderer.positionCount/2))).normalized;
-                    }
                     return new Vector3d(double.NaN, double.NaN, double.NaN);
 
                 case OrbitalTypes.typeOfVectorDir.ascendingNodeLine:
@@ -430,8 +397,7 @@ public class Orbit
                     return Vector3d.Cross(radial, param.orbitPlane.normal).normalized;
                 
                 case OrbitalTypes.typeOfVectorDir.velocityVec:
-                    if(UsefulFunctions.GoTagAndStringAreEqual(UniverseRunner.goTags.Spaceship, orbitingGO.tag))
-                    {
+                    if(UsefulFunctions.GoTagAndStringAreEqual(UniverseRunner.goTags.Spaceship, orbitingGO.tag)) {
                         Spaceship ship = orbitingGO.GetComponent<Spaceship>();
                         return ship.orbitedBodyRelativeVel.normalized;
                     }
@@ -441,8 +407,7 @@ public class Orbit
                     }
                 
                 case OrbitalTypes.typeOfVectorDir.accelerationVec:
-                    if(UsefulFunctions.GoTagAndStringAreEqual(UniverseRunner.goTags.Spaceship, orbitingGO.tag))
-                    {
+                    if(UsefulFunctions.GoTagAndStringAreEqual(UniverseRunner.goTags.Spaceship, orbitingGO.tag)) {
                         Spaceship ship = orbitingGO.GetComponent<Spaceship>();
                         return ship.orbitedBodyRelativeAcc.normalized;
                     }
@@ -457,9 +422,8 @@ public class Orbit
 
     public void DrawDirection(OrbitalTypes.typeOfVectorDir dirType, float lineWidth=1f, float lineLength=100f, Vector3 startPos=default(Vector3))
     {
-        if(!Vector3d.IsValid(param.vp)) {
+        if(!Vector3d.IsValid(param.vp))
             return;
-        }
         else {
             // Check if GameObject already Exists
             GameObject dirGO = UsefulFunctions.CreateAssignGameObject(param.suffixVectorDir[dirType] + suffixGO);
@@ -543,16 +507,13 @@ public class Orbit
     public void DrawAllDirections()
     {
         foreach(OrbitalTypes.typeOfVectorDir direction in param.suffixVectorDir.Keys)
-        {
             DrawDirection(direction);
-        }
     }
 
     public void DrawVector(Vector3d vector, string nameGameObject)
     {
-        if(!Vector3d.IsValid(vector)) {
+        if(!Vector3d.IsValid(vector))
             return;
-        }
         else {
             // Check if GameObject already Exists
             GameObject dirGO = UsefulFunctions.CreateAssignGameObject(nameGameObject + suffixGO);
@@ -573,22 +534,18 @@ public class Orbit
         }
     }
 
-
-
     public double GetOrbitalSpeedFromOrbit()
     {
         // r : radius of the celestialBody + altitude of the orbiting object, in km
-        if(UsefulFunctions.DoublesAreEqual(param.e, 0d, Mathd.Pow(10,-5)))
-        {
+        if(UsefulFunctions.DoublesAreEqual(param.e, 0d, Mathd.Pow(10,-5))) {
             // Orbit is circular
             return GetCircularOrbitalSpeed();
         }
         else if (UsefulFunctions.isInRange(param.e, 0d, 1d, UsefulFunctions.isInRangeFlags.both_excluded)){
             // Orbit is elliptic
             double a = param.a;
-            if(param.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU_degree) {
+            if(param.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU_degree)
                 a *= UniCsts.au2km;
-            }
             double velocity = Mathd.Pow(10,5) * Mathd.Sqrt(orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value * (2d/(Get_R()) - 1d/a));
             return velocity;
         }
@@ -616,9 +573,8 @@ public class Orbit
             // AU
             return distance * UniCsts.au2km;
         }
-        else {
+        else
             return distance; // distance already in km
-        }
     }
 
     public double Get_R(Vector3d shipPosition)
@@ -630,9 +586,8 @@ public class Orbit
             // AU
             return distance * UniCsts.au2km;
         }
-        else {
+        else
             return distance; // distance already in km
-        }
     }
 
     public double GetAltitude()
@@ -651,10 +606,8 @@ public class Orbit
     {
         // Check if the orbit is circular
         if(UsefulFunctions.DoublesAreEqual(param.e, 0d, CIRCULAR_ORBIT_TOLERANCE))
-        {
             return true; // orbit is circular
-        }
-        else { return false; } // orbit is not circular
+        else
+            return false; // orbit is not circular
     }
-
 }
