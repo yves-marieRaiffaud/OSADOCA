@@ -17,6 +17,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     //=======
     [HideInInspector] public bool foldoutFlyingObjInfoPanel;
     //=======
+    [HideInInspector] public double µ;
+
     public GameObject _gameObject
     { 
         get {
@@ -205,6 +207,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     void Awake()
     {
         settings = SpaceshipSettingsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_settings);
+        µ = UniCsts.G * settings.mass; // e^-11
         // Reading & Copying the JSON files to the right Scriptable Objects of the spaceship
         orbitalParams = OrbitalParamsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams);
 

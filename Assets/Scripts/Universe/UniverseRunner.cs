@@ -121,6 +121,7 @@ public class UniverseRunner : MonoBehaviour
             rb.constraints = RigidbodyConstraints.FreezeRotation;
         else
             rb.constraints = RigidbodyConstraints.None;
+        
         rb.isKinematic = false;
 
         if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
@@ -199,9 +200,7 @@ public class UniverseRunner : MonoBehaviour
     void UnlockShips()
     {
         foreach(Spaceship ship in GameObject.FindGameObjectsWithTag(goTags.Spaceship.ToString()).Select(i => i.GetComponent<Spaceship>()))
-        {
             ship.UnlockRigibodyROtations();
-        }
     }
 
     void FixedUpdate()

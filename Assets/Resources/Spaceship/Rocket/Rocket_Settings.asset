@@ -15,8 +15,9 @@ MonoBehaviour:
   foldoutSpaceshipSettings: 1
   orbitalParamsEditorFoldout: 0
   orbitInfoShowPredictedOrbitInfo: 0
-  mass: 1
+  mass: 10000
   bodyMaterial: {fileID: 2100000, guid: 9394a5707bc818742b821304f94553f2, type: 2}
   startFromGround: 0
+  startLaunchPadName: 
   groundStartLatLong: {x: 0, y: 0}
   showInfoPanel: 0

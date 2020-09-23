@@ -113,6 +113,14 @@ public class Temperature : UnitsClass<Units.temperature>
     }
 };
 
+public class Mass : UnitsClass<Units.mass>
+{
+    public Mass(double _value, Units.mass _unit) : base(_value, _unit) { }
+    public Mass ConvertTo(Units.mass outputUnit) {
+        return new Mass(Units.ConvertMass(unit, outputUnit, value), outputUnit);
+    }
+};
+
 public static class Units
 {
     public enum noDimension { NoDim };
@@ -224,5 +232,21 @@ public static class Units
         else {
             return valueToConvert + 273.15d;
         }
+    }
+
+
+    public enum mass { kg, g, T, solarMass, earthMass, pound, once };
+    private static Dictionary<mass, double> massUnitsCoefs = new Dictionary<mass, double> {
+        { mass.kg, 1d },
+        { mass.g, 0.001d },
+        { mass.T, 1_000d },
+        { mass.solarMass, UniCsts.planetsDict[UniCsts.planets.Sun]["massEarthRatio"].value*UniCsts.earthMass*UniCsts.earthMassExponent },
+        { mass.earthMass, UniCsts.earthMass*UniCsts.earthMassExponent },
+        { mass.pound, 0.45359237d },
+        { mass.once, 0.02834952313d }
+    };
+    public static double ConvertMass(mass inputUnit, mass outputUnit, double valueToConvert)
+    {
+        return valueToConvert * massUnitsCoefs[inputUnit] / massUnitsCoefs[outputUnit];
     }
 }

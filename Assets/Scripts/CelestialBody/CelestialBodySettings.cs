@@ -16,8 +16,6 @@ public class CelestialBodySettings : ScriptableObject, FlyingObjSettings
     public double radiusU; // Rendered radius in unity, == radius * UniCsts.pl2u
     public OrbitPlane equatorialPlane; // Equatorial plane represented by two vector (forward & right) and a point on the plane
 
-    // NOT USED NOR IMPLEMENTED //public double massRatio; // ratio celestialBodyMass/EarthMass
-
     public double rotationSpeed = 0f; //Rotation speed of the planet, in degree/s, calculated from the sidereal rotation period
 
     public float cullingMinAngle = 1.2f; // radian

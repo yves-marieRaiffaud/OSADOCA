@@ -231,8 +231,7 @@ public class FlyingObj
         // Init orbital speed of the Rigidbody
         double scaleFactor = castBody.distanceScaleFactor;
         Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
-        Vector3d absoluteScaledVelocity = castBody.orbitedBodyRelativeVel*scaleFactor + speedOfOrbitedBody*UniCsts.m2km2au2u;
-        rb.velocity = (Vector3)absoluteScaledVelocity;
+        rb.velocity = (Vector3)castBody.absoluteVelocityUnityScaled;
 
         if(body is Spaceship) {
             InitializeSpaceshipRotation<T1>(castBody, (Vector3)tangentialVec);
@@ -337,6 +336,11 @@ public class FlyingObj
         // Move the rigidbody of a Planet or a Spaceship to its new position due to gravitational pull
         switch(UsefulFunctions.CastStringToGoTags(objTag))
         {
+            case UniverseRunner.goTags.Star:
+                CelestialBody starBody = obj.GetComponent<CelestialBody>();
+                ApplyRigbidbodyAccUpdate<CelestialBody, CelestialBodySettings>(starBody, starBody.settings);
+                break;
+
             case UniverseRunner.goTags.Planet:
                 CelestialBody celestBody = obj.GetComponent<CelestialBody>();
                 ApplyRigbidbodyAccUpdate<CelestialBody, CelestialBodySettings>(celestBody, celestBody.settings);
@@ -363,11 +367,14 @@ public class FlyingObj
         {
             T2 settings = GetObjectSettings<T1, T2>(orbitingBody);
             
-            if(universe.simEnv.useNBodySimulation.value)
+            /*if(universe.simEnv.useNBodySimulation.value)
                 ComputeGravitationalAccNBODY<T1, T2>(orbitingBody, settings, true);
-            else
-                Kepler.GravitationalAcc<T1>(pullingBody, orbitingBody, orbitingBody.Get_RadialVec()*UniCsts.km2m, true);
-            UpdateVelocityPos_RK4<T1>(orbitingBody);
+            else {
+                //Debug.Log("Using 2-body Acc computations");
+                
+            }*/
+            Kepler.GravitationalAcc<T1>(pullingBody, orbitingBody, orbitingBody.Get_RadialVec()*UniCsts.km2m, true);
+            //UpdateVelocityPos_RK4<T1>(orbitingBody);
         }
     }
     //=====================================================
@@ -467,8 +474,6 @@ public class FlyingObj
         if(orbitingBody.orbitalParams.orbitedBody != null)
             posPlanet = orbitingBody.orbitalParams.orbitedBody.realPosition;
         orbitingBody.realPosition = orbitingBody.rk4.X[0] + posPlanet;
-        
-        orbitingBody.rk4.PrintState();
     }
 
     public void ApplyRigbidbodyAccUpdate<T1, T2>(T1 castBody, T2 settings)
@@ -479,9 +484,8 @@ public class FlyingObj
         double scaleFactor = castBody.distanceScaleFactor;
 
         Vector3d force = castBody.orbitedBodyRelativeAcc * scaleFactor;
-        rb.AddForce((Vector3)force, ForceMode.Acceleration);
-
-        Debug.Log("Update for " + castBody._gameObject.name + ": castBody.orbitedBodyRelativeVel = " + castBody.orbitedBodyRelativeVel + "; castBody.absoluteVelocityUnityScaled = " + castBody.absoluteVelocityUnityScaled + "; castBody.absoluteVelocity = " + castBody.absoluteVelocity);
-        rb.velocity = (Vector3)(castBody.absoluteVelocityUnityScaled);
+        rb.AddForce((Vector3)force);
+        
+        //Debug.Log("Update for " + castBody._gameObject.name + ": castBody.orbitedBodyRelativeVel = " + castBody.orbitedBodyRelativeVel + "; castBody.absoluteVelocityUnityScaled = " + castBody.absoluteVelocityUnityScaled + "; castBody.absoluteVelocity = " + castBody.absoluteVelocity);
     }
 }

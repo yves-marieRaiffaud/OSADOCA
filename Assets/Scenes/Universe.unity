@@ -5835,6 +5835,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Earth
       objectReference: {fileID: 0}
+    - target: {fileID: 6690763028151988713, guid: 228e9b75980ca5c4c9d5ccc2a859c51c,
+        type: 3}
+      propertyPath: showCelestialBodyInfoPanel
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 228e9b75980ca5c4c9d5ccc2a859c51c, type: 3}
 --- !u!1001 &6711877918484208033

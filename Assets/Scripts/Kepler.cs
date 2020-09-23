@@ -21,6 +21,16 @@ public static class Kepler
             Debug.LogError("Acc is not valid or distance between the pulling body and the target body is null");
             acc = Vector3d.positiveInfinity;
         }
+
+        // Apply the opposite force to the celestialbody is the body is a CelestialBody (else considered negligable if orbitingBody is a Spaceship)
+        if(orbitingBody is CelestialBody) {
+            CelestialBody body = orbitingBody as CelestialBody;
+            double muBody = body.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value;
+            Vector3d oppositeAcc = - (acc*muBody/mu);
+            pullingBody.orbitedBodyRelativeAcc += oppositeAcc;
+            Debug.Log("Adding opposite acc to " + pullingBody.name + " due to " + orbitingBody._gameObject.name + ": " + oppositeAcc);
+        }
+
         if(saveAccToOrbitingBodyParam) {
             orbitingBody.orbitedBodyRelativeAcc = acc;
         }
@@ -76,7 +86,6 @@ public static class Kepler
                 Ei = Ei - rhs;
                 count++;
             }
-            Debug.Log("Ei = " + Ei + "; count = " + count + "; rhs = " + rhs);
             return Ei;
         }
 
@@ -84,7 +93,6 @@ public static class Kepler
         /// ONLY FOR ELLIPCTIC ORBIT. Computes the Mean anomaly 'M' in RAD from the eccentric anomaly 'E' in RAD and the orbit's eccentricity 'e'
         /// </summary>
         public static double E2M(double E, double e) {
-            Debug.Log("E = " + E + "; e = " + e);
             return E - e*Mathd.Sin(E);
         }
 
@@ -93,7 +101,6 @@ public static class Kepler
         /// </summary>
         public static (double,double) nu2M(double nu, double e) {
             double E = nu2E(nu, e);
-            Debug.Log("E = " + E);
             return (E2M(E, e), E);
         }
 
@@ -141,4 +148,5 @@ public static class Kepler
             return a*(1d-e*e)/(1d + Mathd.Cos(nu));
         }
     }
+
 }

@@ -63,6 +63,8 @@ public class ReferenceFrame
         }
     }
 
+    public GameObject frameGO;
+
     /// <summary>
     /// If 'attachedToBody' is NOT specified, the 'originPoint', 'vec1' and 'vec2' vectors must be specified in the UNITY WORLD SPACE (which is inertial)
     /// </summary>
@@ -134,8 +136,8 @@ public class ReferenceFrame
                 framesPlaceholder = Fncs.CreateAssignGameObject("Frames", frame.attachedBody).transform;
                 framesPlaceholder.position = frame.attachedBody.transform.position;
             }
-            GameObject createdFrame = (GameObject) GameObject.Instantiate(frameTemplate, frame._attachedBody.transform.position, frame._attachedBody.transform.rotation*Quaternion.LookRotation((Vector3)frame.zVec, -(Vector3)frame.yVec), framesPlaceholder);
-            createdFrame.gameObject.name = _frameName;
+            frame.frameGO = (GameObject) GameObject.Instantiate(frameTemplate, frame._attachedBody.transform.position, frame._attachedBody.transform.rotation*Quaternion.LookRotation((Vector3)frame.zVec, -(Vector3)frame.yVec), framesPlaceholder);
+            frame.frameGO.gameObject.name = _frameName;
         }
         return frame;
     }

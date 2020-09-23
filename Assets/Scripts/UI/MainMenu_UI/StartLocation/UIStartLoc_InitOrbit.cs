@@ -605,7 +605,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
             case 0:
                 // 'rarp'
                 info_orbitShape_p1_unit.text = distanceUnit;
-                info_orbitShape_p2_unit.text = "";
+                info_orbitShape_p2_unit.text = "-";
                 break;
             case 1:
                 // 'rpe'

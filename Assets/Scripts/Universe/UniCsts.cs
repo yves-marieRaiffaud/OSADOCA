@@ -96,6 +96,7 @@ public static class UniCsts
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(0d, angle.degree) },
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(2_192_832d, time.s) },
         { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(13_271_244.0018d) },
+        { CelestialBodyParamsBase.planetaryParams.massEarthRatio.ToString()     , new DoubleNoDim(333_000d) },
 
         { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(0d, distance.AU) },
         { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(0d, distance.AU) },
@@ -126,6 +127,7 @@ public static class UniCsts
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(0.034d, angle.degree) },
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(5_065_560d, time.s) },
         { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(2.2032d) },
+        { CelestialBodyParamsBase.planetaryParams.massEarthRatio.ToString()     , new DoubleNoDim(0.0553d) },
 
         { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(0.466697d, distance.AU) },
         { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(0.307499d, distance.AU) },
@@ -156,6 +158,7 @@ public static class UniCsts
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(2.64d, angle.degree) },
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(-20_997_360d, time.s) },
         { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(32.4859d) },
+        { CelestialBodyParamsBase.planetaryParams.massEarthRatio.ToString()     , new DoubleNoDim(0.815d) },
 
         { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(0.728213d, distance.AU) },
         { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(0.718440d, distance.AU) },
@@ -183,9 +186,10 @@ public static class UniCsts
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(6_356.752d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(298.257223563d) },
         { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , new Distance(120_000d, distance.km) }, // TO CHANNGE
-        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(23.4392811d, angle.degree) },
+        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(23.4392811d, angle.degree) }, // Also called the obliquity to the ecliptic
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(86_164.09d, time.s) }, // Indicate a positive value for a rotation of the planet in prograde rotation. A negative value for a retrograde rotation
         { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(39.86004418d) },
+        { CelestialBodyParamsBase.planetaryParams.massEarthRatio.ToString()     , new DoubleNoDim(1d) },
 
         { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(1.067d, distance.AU) },
         { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(0.92329d, distance.AU) },
@@ -217,6 +221,7 @@ public static class UniCsts
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(25.19d, angle.degree) },
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(88_642.44d, time.s) },
         { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(4.282837d) },
+        { CelestialBodyParamsBase.planetaryParams.massEarthRatio.ToString()     , new DoubleNoDim(0.107d) },
 
         { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(1.666d, distance.AU) },
         { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(1.382d, distance.AU) },
@@ -247,6 +252,7 @@ public static class UniCsts
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(3.13d, angle.degree) },
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(35_730d, time.s) },
         { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(12_668.6534d) },
+        { CelestialBodyParamsBase.planetaryParams.massEarthRatio.ToString()     , new DoubleNoDim(317.83d) },
 
         { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(5.4588d, distance.AU) },
         { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(4.9501d, distance.AU) },
@@ -277,6 +283,7 @@ public static class UniCsts
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(26.73d, angle.degree) },
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(38_361.6d, time.s) },
         { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(3_793.1187d) },
+        { CelestialBodyParamsBase.planetaryParams.massEarthRatio.ToString()     , new DoubleNoDim(95.16d) },
 
         { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(10.1238d ,distance.AU) },
         { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(9.0412d, distance.AU) },
@@ -307,6 +314,7 @@ public static class UniCsts
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(82.33d, angle.degree) },
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(-62_064d, time.s) },
         { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(579.3939d) },
+        { CelestialBodyParamsBase.planetaryParams.massEarthRatio.ToString()     , new DoubleNoDim(14.54d) },
 
         { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(20.11d, distance.AU) },
         { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(18.33d, distance.AU) },
@@ -337,6 +345,7 @@ public static class UniCsts
         { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(28.32d, angle.degree) },
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(57_996d, time.s) },
         { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(683.6529d) },
+        { CelestialBodyParamsBase.planetaryParams.massEarthRatio.ToString()     , new DoubleNoDim(17.15d) },
 
         { CelestialBodyParamsBase.orbitalParams.aphelion.ToString()             , new Distance(30.33d, distance.AU) },
         { CelestialBodyParamsBase.orbitalParams.perihelion.ToString()           , new Distance(29.81d, distance.AU) },

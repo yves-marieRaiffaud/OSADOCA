@@ -74,12 +74,10 @@ public class Orbit
         n = ComputeMeanMotion();
 
         (double,double) nu_E;
-        Debug.Log("param.bodyPosType = " + param.bodyPosType);
         switch(param.bodyPosType)
         {
             case OrbitalTypes.bodyPositionType.nu:
                 (double,double) M_E = Kepler.OrbitalParamsConversion.nu2M(param.nu*UniCsts.deg2rad, param.e);
-                Debug.Log("nu = " + param.nu + "; M = " + M_E.Item1 + "; E = " + M_E.Item2);
                 param.M = M_E.Item1 * UniCsts.rad2deg;
                 param.E = M_E.Item2 * UniCsts.rad2deg;
                 param.L = Kepler.OrbitalParamsConversion.lAscN_omegaM2L(param.lAscN*UniCsts.deg2rad, param.omega*UniCsts.deg2rad, M_E.Item1) * UniCsts.rad2deg;
@@ -95,7 +93,6 @@ public class Orbit
                 break;
 
             case OrbitalTypes.bodyPositionType.E:
-                Debug.Log("Value of E = " + param.E);
                 param.nu = Kepler.OrbitalParamsConversion.E2nu(param.E*UniCsts.deg2rad, param.e) * UniCsts.rad2deg;
                 param.M = Kepler.OrbitalParamsConversion.E2M(param.E*UniCsts.deg2rad, param.e) * UniCsts.rad2deg;
                 param.L = Kepler.OrbitalParamsConversion.lAscN_omegaM2L(param.lAscN*UniCsts.deg2rad, param.omega*UniCsts.deg2rad, param.M*UniCsts.deg2rad) * UniCsts.rad2deg;
