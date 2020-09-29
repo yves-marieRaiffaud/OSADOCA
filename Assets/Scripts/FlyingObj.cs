@@ -374,7 +374,6 @@ public class FlyingObj
                 Debug.LogError("ERROR");
                 //ComputeGravitationalAccNBODY<T1, T2>(orbitingBody, settings, true);
             else
-                //Kepler.GravitationalAcc<T1>(pullingBody, orbitingBody, orbitingBody.Get_RadialVec()*1000d, true);
                 UpdateVelocityPos_RK4<T1>(orbitingBody);
         }
     }
@@ -471,19 +470,18 @@ public class FlyingObj
         // Calling the 'rk4.Step()' in a separate Thread for performance
         Vector3d[] stepRes = Task.Factory.StartNew<Vector3d[]>(() => orbitingBody.rk4.Step()).Result;
 
-        orbitingBody.orbitedBodyRelativeVel = stepRes[1];
-
         Vector3d speedOfOrbitedBody = Vector3d.zero;
         double orbitedBodySF = 0d;
         Vector3d OBBodyrealPos = Vector3d.zero;
         if(!orbitingBody.orbitalParams.orbitedBodyName.Equals("None")) {
-            speedOfOrbitedBody = orbitingBody.orbitalParams.orbitedBody.orbitedBodyRelativeVel;
             orbitedBodySF = orbitingBody.orbitalParams.orbitedBody.distanceScaleFactor;
+            speedOfOrbitedBody = orbitingBody.orbitalParams.orbitedBody.orbitedBodyRelativeVel;
             OBBodyrealPos = orbitingBody.orbitalParams.orbitedBody.realPosition;
         }
-        double scaleFactor = orbitingBody.distanceScaleFactor;
-        orbitingBody.rbVelocity = orbitingBody.orbitedBodyRelativeVel*scaleFactor + speedOfOrbitedBody*orbitedBodySF;
 
+        double scaleFactor = orbitingBody.distanceScaleFactor;
+        orbitingBody.orbitedBodyRelativeVel = stepRes[1];
+        orbitingBody.rbVelocity = orbitingBody.orbitedBodyRelativeVel*scaleFactor + speedOfOrbitedBody*orbitedBodySF;
         orbitingBody.realPosition = stepRes[0]*scaleFactor + OBBodyrealPos;
     }
 
@@ -491,7 +489,6 @@ public class FlyingObj
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
-        //rb.velocity = (Vector3)castBody.rbVelocity;
         rb.MovePosition((Vector3)castBody.realPosition);
     }
 }

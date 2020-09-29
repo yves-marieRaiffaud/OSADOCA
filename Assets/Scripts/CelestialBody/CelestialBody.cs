@@ -130,29 +130,6 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
             _gravPullList=value;
         }
     }
-    
-    public Vector3d absoluteVelocity
-    {
-        get {
-            Vector3d speedOfOrbitedBody = Vector3d.zero;
-            if(!orbitalParams.orbitedBodyName.Equals("None")) {
-                speedOfOrbitedBody = orbitalParams.orbitedBody.orbitedBodyRelativeVel;
-            }
-            return orbitedBodyRelativeVel + speedOfOrbitedBody;
-        }
-    }
-    public Vector3d absoluteVelocityUnityScaled
-    {
-        get {
-            Vector3d speedOfOrbitedBody = Vector3d.zero;
-            double orbitedBodySF = 0f; // Scale factor
-            if(!orbitalParams.orbitedBodyName.Equals("None")) {
-                speedOfOrbitedBody = orbitalParams.orbitedBody.orbitedBodyRelativeVel;
-                orbitedBodySF = orbitalParams.orbitedBody.distanceScaleFactor;
-            }
-            return orbitedBodyRelativeVel*distanceScaleFactor + speedOfOrbitedBody*orbitedBodySF;
-        }
-    }
 
     /// <summary>
     /// Returns the north pole axis of the CelestialBody, in WORLD space
@@ -439,14 +416,12 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     {
         if(spawnAsSimpleSphere)
             return;
-        
+
         GetDistancesToCamera();
         CheckUpdate_LOD_NonLOD_System();
 
         if(!UsefulFunctions.DoublesAreEqual(settings.rotationSpeed, 0d))
-        {
-            //RotatePlanet();
-        }
+            RotatePlanet();
     }
 
     void Update()

@@ -16,8 +16,6 @@ public interface FlyingObjCommonParams
     Vector3d orbitedBodyRelativeAcc {get; set;}
     Vector3d orbitedBodyRelativeVelIncr {get; set;}
     Vector3d orbitedBodyRelativeVel {get; set;}
-    Vector3d absoluteVelocity {get;}
-    Vector3d absoluteVelocityUnityScaled {get;}
     Vector3d realPosition {get; set;}
     Vector3d rbVelocity {get; set;}
     //================
@@ -29,6 +27,7 @@ public interface FlyingObjCommonParams
     Vector3d Get_RadialVec();
     //================
     GameObject _gameObject {get; set;}
+    // Runge-Kutta 4th order propagator
     RungeKutta4<FlyingObjCommonParams> rk4 {get; set;}
     void InitRK4();
 }

@@ -187,7 +187,7 @@ public static class UniCsts
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(6_356.752d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(298.257223563d) },
         { CelestialBodyParamsBase.planetaryParams.radiusSOI.ToString()          , new Distance(120_000d, distance.km) }, // TO CHANNGE
-        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(0d/*23.4392811d*/, angle.degree) }, // Also called the obliquity to the ecliptic
+        { CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()          , new Angle(23.4392811d, angle.degree) }, // Also called the obliquity to the ecliptic
         { CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()  , new Time_Class(86_164.09d, time.s) }, // Indicate a positive value for a rotation of the planet in prograde rotation. A negative value for a retrograde rotation
         { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new DoubleNoDim(39.86004418d) },
         { CelestialBodyParamsBase.planetaryParams.massEarthRatio.ToString()     , new DoubleNoDim(1d) },
