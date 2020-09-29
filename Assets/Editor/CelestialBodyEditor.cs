@@ -150,10 +150,9 @@ public class CelestialBodyEditor : Editor
             Init_SimCelestialBody_UsePredefinedPlanet();
         }
         else{
+            celestBody.settings.chosenPredifinedPlanet = UniCsts.planets.None;
             if(celestBody.settings.planetBaseParamsDict == null)
-            {
                 celestBody.settings.planetBaseParamsDict = InitNewPlanetBaseParamsDict();
-            }
             CreateOrbitalParametersEditor(celestBody.settings.planetBaseParamsDict);
         }
     }

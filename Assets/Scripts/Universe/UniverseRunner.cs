@@ -107,27 +107,22 @@ public class UniverseRunner : MonoBehaviour
         // Initialize everything of the rigidbody except its mass as its need to access the object Settings (done in 'Start' of the UniverseRunner)
         Rigidbody rb = (Rigidbody) UsefulFunctions.CreateAssignComponent(typeof(Rigidbody), physicGameObject);
         rb.drag = 0f;
+        rb.angularDrag = 0f;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+
         if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString())) {
-            rb.angularDrag = 0.05f;
-            rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
-        }
-        else {
-            rb.angularDrag = 0f;
-            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
-        }
-
-        if(physicGameObject.CompareTag(goTags.Spaceship.ToString()))
-            rb.constraints = RigidbodyConstraints.FreezeRotation;
-        else
-            rb.constraints = RigidbodyConstraints.None;
-        
-        rb.isKinematic = false;
-
-        if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString()))
             rb.mass = 1e9f;
-        else
+            rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+            rb.constraints = RigidbodyConstraints.None;
+            rb.isKinematic = false;
+        }
+        else if(physicGameObject.CompareTag(goTags.Spaceship.ToString())) {
             rb.mass = 10f;
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+            rb.isKinematic = true;
+        }
+
         rb.useGravity = false;
         rb.detectCollisions = true;
     }
@@ -170,9 +165,11 @@ public class UniverseRunner : MonoBehaviour
                 case goTags.Spaceship:
                     Spaceship ship = obj.GetComponent<Spaceship>();
                     flyingObjInst.InitializeFlyingObj<Spaceship, SpaceshipSettings>(ship, true);
+                    ship.orbit.DrawAllDirections();
                     break;
             }
         }
+
         flyingObjInst.InitGravitationalPullLists();
 
         // Initializing Runge-Kutta integration object for each FLyingObj (for the integration of the equation of motion)
@@ -206,10 +203,7 @@ public class UniverseRunner : MonoBehaviour
     void FixedUpdate()
     {
         if(simEnv.simulateGravity.value)
-        {
             flyingObjInst.GravitationalStep();
-        }
-        //Debug.Log(activeSpaceship.GetOrbitedBodyAtmospherePressure().ConvertTo(Units.pressure.atm));
         updateFloatingOrigin();
     }
 
@@ -247,16 +241,12 @@ public class UniverseRunner : MonoBehaviour
 
     private void UpdateOrbitLineRenderers()
     {
-        foreach(Transform obj in physicsObjArray)
-        {
-            switch(UsefulFunctions.CastStringToGoTags(obj.tag))
-            {
+        foreach(Transform obj in physicsObjArray) {
+            switch(UsefulFunctions.CastStringToGoTags(obj.tag)) {
                 case goTags.Spaceship:
                     Spaceship ship = obj.GetComponent<Spaceship>();
                     if(ship.orbit != null)
-                    {
                         ship.orbit.UpdateLineRendererPos();
-                    }
                     if(ship.predictor != null && ship.predictor.predictedOrbit != null)
                         ship.predictor.predictedOrbit.UpdateLineRendererPos();
                     break;
@@ -264,15 +254,12 @@ public class UniverseRunner : MonoBehaviour
                 case goTags.Planet:
                     CelestialBody celestBody = obj.GetComponent<CelestialBody>();
                     if(celestBody.orbit != null)
-                    {
                         celestBody.orbit.UpdateLineRendererPos();
-                    }
                     break;
             }
         }
 
-        foreach(GameObject obj in GameObject.FindGameObjectsWithTag(goTags.Orbit.ToString()))
-        {
+        foreach(GameObject obj in GameObject.FindGameObjectsWithTag(goTags.Orbit.ToString())) {
             float lineWidth = 5f;
             float dist = Vector3.Distance(obj.transform.position, playerCamera.transform.position) *lineWidth/ 1_000_000f;
             LineRenderer orbitLR = obj.GetComponent<LineRenderer>();

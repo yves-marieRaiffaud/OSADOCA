@@ -233,8 +233,9 @@ public static class Units
             return valueToConvert + 273.15d;
         }
     }
-
-
+    //=============================================================
+    //=======================MASS==================================
+    //=============================================================
     public enum mass { kg, g, T, solarMass, earthMass, pound, once };
     private static Dictionary<mass, double> massUnitsCoefs = new Dictionary<mass, double> {
         { mass.kg, 1d },

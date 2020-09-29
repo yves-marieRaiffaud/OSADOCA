@@ -15,6 +15,17 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     //=========================================
     public GameObject _gameObject { get{return this.gameObject;} set{_gameObject=this.gameObject;} }
 
+    Vector3d _rbVelocity;
+    public Vector3d rbVelocity
+    {
+        get {
+            return _rbVelocity;
+        }
+        set {
+            _rbVelocity=value;
+        }
+    }
+
     [HideInInspector, SerializeField]
     private Orbit _orbit;
     public Orbit orbit
@@ -202,6 +213,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
     void Awake()
     {
+        _rbVelocity = Vector3d.zero;
         CheckOrbitalFileAndBodySettings();
         if(GameObject.Find("UniverseRunner") == null)
         {
@@ -433,7 +445,7 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
         if(!UsefulFunctions.DoublesAreEqual(settings.rotationSpeed, 0d))
         {
-            RotatePlanet();
+            //RotatePlanet();
         }
     }
 
@@ -537,8 +549,12 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         // Copying orbital values from the planet dictionary to the orbitalParams scriptable object
         _orbitalParams.orbitRealPredType = OrbitalTypes.typeOfOrbit.realOrbit;
         _orbitalParams.orbitDefType = OrbitalTypes.orbitDefinitionType.rarp;
-        _orbitalParams.orbParamsUnits = OrbitalTypes.orbitalParamsUnits.AU_degree;
         _orbitalParams.bodyPosType = OrbitalTypes.bodyPositionType.nu;
+
+        if((settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.aphelion.ToString()] as Distance).unit.Equals(Units.distance.km))
+            _orbitalParams.orbParamsUnits = OrbitalTypes.orbitalParamsUnits.km_degree;
+        else
+            _orbitalParams.orbParamsUnits = OrbitalTypes.orbitalParamsUnits.AU_degree;
 
         _orbitalParams.ra = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.aphelion.ToString()].value;
         _orbitalParams.rp = settings.planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.perihelion.ToString()].value;
@@ -609,12 +625,9 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
     public double SetDistanceScaleFactor()
     {
         if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree)
-        {
             distanceScaleFactor = UniCsts.m2km2pl2u; // If the orbit is defined in km_degree
-        }
-        else {
+        else
             distanceScaleFactor = UniCsts.m2km2au2u; // If the orbit is defined in AU_degree
-        }
         return distanceScaleFactor;
     }
 

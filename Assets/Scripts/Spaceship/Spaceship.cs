@@ -29,6 +29,17 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
         }
     }
     
+    Vector3d _rbVelocity;
+    public Vector3d rbVelocity
+    {
+        get {
+            return _rbVelocity;
+        }
+        set {
+            _rbVelocity=value;
+        }
+    }
+
     [HideInInspector]
     private Orbit _orbit;
     public Orbit orbit
@@ -127,9 +138,8 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     {
         get {
             Vector3d speedOfOrbitedBody = Vector3d.zero;
-            if(!orbitalParams.orbitedBodyName.Equals("None")) {
+            if(!orbitalParams.orbitedBodyName.Equals("None"))
                 speedOfOrbitedBody = orbitalParams.orbitedBody.orbitedBodyRelativeVel;
-            }
             return orbitedBodyRelativeVel + speedOfOrbitedBody;
         }
     }
@@ -198,7 +208,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
 
         if(Input.GetKey(KeyCode.Space))
         {
-            rb.constraints = RigidbodyConstraints.None;
+            UnlockRigibodyROtations();
             shipRBConstraints_areOn = false;
         }
     }
@@ -206,6 +216,7 @@ public class Spaceship : MonoBehaviour, FlyingObjCommonParams
     //===============================
     void Awake()
     {
+        _rbVelocity = Vector3d.zero;
         settings = SpaceshipSettingsSaveData.LoadObjectFromJSON(Application.persistentDataPath + Filepaths.shipToLoad_settings);
         µ = UniCsts.G * settings.mass; // e^-11
         // Reading & Copying the JSON files to the right Scriptable Objects of the spaceship

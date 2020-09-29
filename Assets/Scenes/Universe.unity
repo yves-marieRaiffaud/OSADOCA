@@ -1321,7 +1321,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &552432929
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2342,7 +2342,7 @@ MonoBehaviour:
     _displayName: Enable N-Body Simulation
     _category: 1
   NBODYSIM_NB_BODY:
-    _value: 1
+    _value: 3
     _default_value: 0
     _type: System.Int32
     _displayName: Number of body to consider for the N-Body sim computations
@@ -2364,7 +2364,7 @@ MonoBehaviour:
     minValue: 1
     maxValue: 100
   physicsUpdateRate:
-    _value: 50
+    _value: 100
     _default_value: 0
     _type: System.Int32
     _displayName: Physics update frequency
@@ -3330,7 +3330,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1600534339
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3720,7 +3720,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -87, y: -60}
+  m_AnchoredPosition: {x: -87, y: -19}
   m_SizeDelta: {x: 301.51526, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2019946118
@@ -3970,6 +3970,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: NavBall_UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 550750263351341187, guid: abe32eb862853d042b17b469bea87f25,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 550750263351341188, guid: abe32eb862853d042b17b469bea87f25,
         type: 3}
@@ -5223,7 +5228,7 @@ PrefabInstance:
     - target: {fileID: 5118044742520461068, guid: 1e3cee76ff2e57b419127b5bf8a88264,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5118044742520461068, guid: 1e3cee76ff2e57b419127b5bf8a88264,
         type: 3}
@@ -5297,7 +5302,7 @@ PrefabInstance:
     - target: {fileID: 3987539336520034445, guid: 21302d36114123940ae130004064b371,
         type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3987539336520034445, guid: 21302d36114123940ae130004064b371,
         type: 3}
@@ -5389,7 +5394,7 @@ PrefabInstance:
     - target: {fileID: 6831811710031745783, guid: 244df052852ad7f4fafce31321a2e44a,
         type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6831811710031745783, guid: 244df052852ad7f4fafce31321a2e44a,
         type: 3}
@@ -5532,7 +5537,7 @@ PrefabInstance:
     - target: {fileID: 8274045677436158113, guid: c0776ea03cd801044bf399e43516759d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8274045677436158113, guid: c0776ea03cd801044bf399e43516759d,
         type: 3}
@@ -5596,7 +5601,7 @@ PrefabInstance:
     - target: {fileID: 4687713419987394268, guid: 66080e6461d80d24eaff2905e39148be,
         type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4687713419987394268, guid: 66080e6461d80d24eaff2905e39148be,
         type: 3}
@@ -5854,10 +5859,20 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 1267797437615347578, guid: bcbf8a00623a17249935a8c8f4942b55,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1966334600927627340, guid: bcbf8a00623a17249935a8c8f4942b55,
         type: 3}
       propertyPath: m_Name
       value: Diamant_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 1966334600927627340, guid: bcbf8a00623a17249935a8c8f4942b55,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5497513470808103725, guid: bcbf8a00623a17249935a8c8f4942b55,
         type: 3}

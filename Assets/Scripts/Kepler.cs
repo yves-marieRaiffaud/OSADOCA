@@ -13,27 +13,29 @@ public static class Kepler
     public static Vector3d GravitationalAcc<T1>(CelestialBody pullingBody, T1 orbitingBody, Vector3d r, bool saveAccToOrbitingBodyParam)
     where T1: FlyingObjCommonParams
     {
-        double dstPow3 = Mathd.Pow(r.magnitude, 3); // m^3
         double mu = pullingBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value;
-        Vector3d acc =  - UniCsts.µExponent * mu * r / dstPow3; // m.s-2
+        Vector3d acc = RawGravitationalAcc(r, mu);
 
-        if(!Vector3d.IsValid(acc) || UsefulFunctions.DoublesAreEqual(dstPow3, 0d)) {
+        if(acc == Vector3d.positiveInfinity)
             Debug.LogError("Acc is not valid or distance between the pulling body and the target body is null");
-            acc = Vector3d.positiveInfinity;
-        }
 
-        // Apply the opposite force to the celestialbody is the body is a CelestialBody (else considered negligable if orbitingBody is a Spaceship)
-        if(orbitingBody is CelestialBody) {
-            CelestialBody body = orbitingBody as CelestialBody;
-            double muBody = body.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value;
-            Vector3d oppositeAcc = - (acc*muBody/mu);
-            pullingBody.orbitedBodyRelativeAcc += oppositeAcc;
-            Debug.Log("Adding opposite acc to " + pullingBody.name + " due to " + orbitingBody._gameObject.name + ": " + oppositeAcc);
-        }
-
-        if(saveAccToOrbitingBodyParam) {
+        if(saveAccToOrbitingBodyParam)
             orbitingBody.orbitedBodyRelativeAcc = acc;
-        }
+
+        return acc;
+    }
+
+    /// <summary>
+    /// Method for the non-main Thread. 'r' should be in meters and retrieved with the method 'Get_RadialVec' from the FlyingObjCommonParams interface. 'mu' should be retrived from the orbited CelestialBody 'planetBaseParamsDict'
+    /// Returns the acceleration of 'orbitingBody' in m/s^2
+    /// </summary>
+    public static Vector3d RawGravitationalAcc(Vector3d r, double mu)
+    {
+        double dstPow3 = Mathd.Pow(r.magnitude, 3); // m^3
+        Vector3d acc = -UniCsts.µExponent * mu * r / dstPow3; // m.s^-2
+
+        if(!Vector3d.IsValid(acc) || UsefulFunctions.DoublesAreEqual(dstPow3, 0d))
+            acc = Vector3d.positiveInfinity;
         return acc;
     }
 
