@@ -1,34 +1,11 @@
 # OSADOCA
-*Orbital Simulator and Development of Control Algorithms*
+***O**rbital **S**imulator **a**nd **D**evelopment **o**f **C**ontrol **A**lgorithms*
 
 Providing a base environment for real-time guidance, control and navigation algorithms.
 
-[logo]: https://github.com/yves-marieRaiffaud/OSADOCA/blob/master/Assets/imgs/Orbit_SetUp_MainMenu.png "Main menu: orbit set-up panel"
+![Alt text](https://github.com/yves-marieRaiffaud/OSADOCA/blob/master/Assets/imgs/Orbit_SetUp_MainMenu.png "Main menu: orbit set-up panel")
 
-[logo]: https://github.com/yves-marieRaiffaud/OSADOCA/blob/master/Assets/imgs/Simulator_Preview.png "Simulator preview"
+![Alt text](https://github.com/yves-marieRaiffaud/OSADOCA/blob/master/Assets/imgs/Simulator_Preview.png "Simulator preview")
 
-## Installation
-
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
-
-```bash
-pip install foobar
-```
-
-## Usage
-
-```python
-import foobar
-
-foobar.pluralize('word') # returns 'words'
-foobar.pluralize('goose') # returns 'geese'
-foobar.singularize('phenomena') # returns 'phenomenon'
-```
-
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
-
-## License
-[MIT](https://choosealicense.com/licenses/mit/)
+## Content
+This repository gathers the scripts, images and textures required to run the UI main menu and the simulator in a Unity3D project
