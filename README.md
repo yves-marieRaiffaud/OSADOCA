@@ -8,4 +8,4 @@ Providing a base environment for real-time guidance, control and navigation algo
 ![Alt text](https://github.com/yves-marieRaiffaud/OSADOCA/blob/master/Assets/imgs/Simulator_Preview.png "Simulator preview")
 
 ## Content
-This repository gathers the scripts, images and textures required to run the UI main menu and the simulator in a Unity3D project
+This repository gathers the scripts, images and textures required to run the UI main menu and the simulator in a Unity3D project. Scripts can be found in: */Assets/Scripts/**
