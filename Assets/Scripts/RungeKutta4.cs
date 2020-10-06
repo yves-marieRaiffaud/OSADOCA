@@ -45,30 +45,30 @@ where T: FlyingObjCommonParams
     ///         't': integration time.
     ///         'h': integration timestep.
     /// </summary>
-    public Vector3d[] Step()
+    public (Vector3d[],Vector3d) Step()
     {
         Vector3d[] temp = _X;
-        Vector3d[] k1 = GetKRKV(temp, true);
+        Vector3d[] k1 = GetKRKV(temp);
 
         temp[0] = _X[0] + k1[0]*h/2d;
         temp[1] = _X[1] + k1[1]*h/2d;
-        Vector3d[] k2 = GetKRKV(temp, true);
+        Vector3d[] k2 = GetKRKV(temp);
 
         temp[0] = _X[0] + k2[0]*h/2d;
         temp[1] = _X[1] + k2[1]*h/2d;
-        Vector3d[] k3 = GetKRKV(temp, true);
+        Vector3d[] k3 = GetKRKV(temp);
 
         temp[0] = _X[0] + k3[0]*h;
         temp[1] = _X[1] + k3[1]*h;
-        Vector3d[] k4 = GetKRKV(temp, true);
+        Vector3d[] k4 = GetKRKV(temp);
 
         _X[0] += (h/6d) * (k1[0] + 2*k2[0] + 2*k3[0] + k4[0]);
         _X[1] += (h/6d) * (k1[1] + 2*k2[1] + 2*k3[1] + k4[1]);
 
-        return _X;
+        return (_X,k1[1]);
     }
 
-    private Vector3d[] GetKRKV(Vector3d[] X, bool saveToBodyAcc)
+    private Vector3d[] GetKRKV(Vector3d[] X)
     {
         Vector3d r = X[0]; // m
         Vector3d v = X[1]; // m/s

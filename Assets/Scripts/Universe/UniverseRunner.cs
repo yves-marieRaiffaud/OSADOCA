@@ -120,7 +120,7 @@ public class UniverseRunner : MonoBehaviour
             rb.mass = 10f;
             rb.constraints = RigidbodyConstraints.FreezeRotation;
             rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
-            rb.isKinematic = true;
+            rb.isKinematic = false;
         }
 
         rb.useGravity = false;
@@ -186,7 +186,7 @@ public class UniverseRunner : MonoBehaviour
         refFrames = new ReferenceFramesList();
 
         // Removing Spaceships' rigidbody Rotation Lock
-        Invoke("UnlockShips", 0.5f);
+        Invoke("UnlockShips", 1f);
         //==============================
         if(simEnv.missionTimer != null)
             simEnv.missionTimer.Start_Stopwatch();
@@ -204,6 +204,7 @@ public class UniverseRunner : MonoBehaviour
     {
         if(simEnv.simulateGravity.value)
             flyingObjInst.GravitationalStep();
+
         updateFloatingOrigin();
     }
 

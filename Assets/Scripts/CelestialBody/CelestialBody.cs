@@ -614,13 +614,11 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
 
         Vector3d pullinBodyPos = new Vector3d(orbitalParams.orbitedBody.transform.position);
         Vector3d r = new Vector3d(transform.position) - pullinBodyPos;
-        double scalingFactor = UniCsts.u2au * UniCsts.au2km; // km, for planets
-
-        if(orbitalParams.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.km_degree &&
-            orbitalParams.orbitedBodyName == orbitalParams.orbitedBody.name)
-        {
-            scalingFactor = UniCsts.u2pl; // km, for spaceships or interplanetary orbits of spaceships. This line SHOULD NEVER BE CALLED IN THIS CLASS
-        }
+        double scalingFactor;
+        if(orbitalParams.orbParamsUnits.Equals(OrbitalTypes.orbitalParamsUnits.km_degree))
+            scalingFactor = UniCsts.u2pl; // km, for planets
+        else
+            scalingFactor = UniCsts.u2au * UniCsts.au2km;
 
         r *= scalingFactor; // km
         return r;

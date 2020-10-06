@@ -531,6 +531,10 @@ public class Orbit
         }
     }
 
+    [Obsolete]
+    /// <summary>
+    /// Function needs to be updated
+    /// </summary>
     public double GetOrbitalSpeedFromOrbit()
     {
         // r : radius of the celestialBody + altitude of the orbiting object, in km
@@ -547,6 +551,30 @@ public class Orbit
             return velocity;
         }
         return double.NaN;
+    }
+
+    public double GetRadialSpeed()
+    {
+        double planetMu = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value;
+
+        double sF = 1d;
+        if(param.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU_degree)
+            sF = UniCsts.au2km;
+
+        double radialVel = Mathd.Pow(10,5) * Math.Sqrt(planetMu/(param.p*sF)) * param.e*Mathd.Sin(param.nu*UniCsts.deg2rad);
+        return radialVel;
+    }
+
+    public double GetTangentialSpeed()
+    {
+        double planetMu = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value;
+
+        double sF = 1d;
+        if(param.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU_degree)
+            sF = UniCsts.au2km;
+
+        double tangentialVel = Mathd.Pow(10,5) * Math.Sqrt(planetMu/(param.p*sF)) * (1 + param.e*Mathd.Cos(param.nu*UniCsts.deg2rad));
+        return tangentialVel;
     }
 
     public double ComputeLiberationSpeed()

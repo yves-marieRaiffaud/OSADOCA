@@ -2372,7 +2372,7 @@ MonoBehaviour:
     minValue: 1
     maxValue: 100
   timeScale:
-    _value: 1
+    _value: 5
     _default_value: 0
     _type: System.Single
     _displayName: Time scale
@@ -5188,7 +5188,7 @@ PrefabInstance:
     - target: {fileID: 3675931072012703825, guid: 1e3cee76ff2e57b419127b5bf8a88264,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5118044742520461068, guid: 1e3cee76ff2e57b419127b5bf8a88264,
         type: 3}

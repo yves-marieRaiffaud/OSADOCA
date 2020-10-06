@@ -9,7 +9,7 @@ using Verse = UniverseRunner;
 
 public class FlyingObj
 {
-    private UniverseRunner universe;
+    UniverseRunner universe;
     //==============
     public FlyingObj(UniverseRunner universeRunnerInstance)
     {
@@ -220,23 +220,25 @@ public class FlyingObj
         T2 bodySettings = GetObjectSettings<T2>(body);
 
         // Init orbital speed
+        Vector3d radialVec = castBody.orbit.ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.radialVec);
+        double radialVel = castBody.orbit.GetRadialSpeed(); // in m.s
         Vector3d tangentialVec = castBody.orbit.ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.tangentialVec);
-        double orbitalSpeed = castBody.orbit.GetOrbitalSpeedFromOrbit();
-        if(castBody._gameObject.name.Equals("Diamant_A"))
-            Debug.Log("orbitalSpeed = " + orbitalSpeed + " m/s");
-        castBody.orbitedBodyRelativeVel = tangentialVec * orbitalSpeed; // in m.s
+        double tangentialVel = castBody.orbit.GetTangentialSpeed(); // in m.s
+        castBody.orbitedBodyRelativeVel = radialVec*radialVel + tangentialVec*tangentialVel; // in m.s
 
-        Vector3 speedOfOrbitedBody = Vector3.zero;
+        Vector3d speedOfOrbitedBody = Vector3d.zero;
+        double OBsf = 0f;
         if(!castBody.orbitalParams.orbitedBodyName.Equals("None")) {
             CelestialBody orbitedBody = castBody.orbitalParams.orbitedBody;
-            speedOfOrbitedBody = orbitedBody.GetComponent<Rigidbody>().velocity;
+            speedOfOrbitedBody = orbitedBody.orbitedBodyRelativeVel;
+            OBsf = orbitedBody.distanceScaleFactor;
         }
         // Init orbital speed of the Rigidbody
         double scaleFactor = castBody.distanceScaleFactor;
 
         Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
-        rb.velocity = (Vector3)(castBody.orbitedBodyRelativeVel*scaleFactor + speedOfOrbitedBody);
-        castBody.rbVelocity = new Vector3d(rb.velocity);
+        Vector3d vel = castBody.orbitedBodyRelativeVel*UniCsts.m2km*scaleFactor + speedOfOrbitedBody*UniCsts.m2km*OBsf;
+        rb.AddForce((Vector3)vel, ForceMode.VelocityChange);
 
         if(body is Spaceship)
             InitializeSpaceshipRotation<T1>(castBody, (Vector3)tangentialVec);
@@ -374,7 +376,8 @@ public class FlyingObj
                 Debug.LogError("ERROR");
                 //ComputeGravitationalAccNBODY<T1, T2>(orbitingBody, settings, true);
             else
-                UpdateVelocityPos_RK4<T1>(orbitingBody);
+                Kepler.GravitationalAcc<T1>(pullingBody, orbitingBody, orbitingBody.Get_RadialVec()*UniCsts.km2m, true);
+                //UpdateVelocityPos_RK4<T1>(orbitingBody);
         }
     }
     //=====================================================
@@ -468,27 +471,30 @@ public class FlyingObj
     where T1: FlyingObjCommonParams
     {
         // Calling the 'rk4.Step()' in a separate Thread for performance
-        Vector3d[] stepRes = Task.Factory.StartNew<Vector3d[]>(() => orbitingBody.rk4.Step()).Result;
+        (Vector3d[],Vector3d) stepRes = Task.Factory.StartNew<(Vector3d[],Vector3d)>(() => orbitingBody.rk4.Step()).Result;
 
         Vector3d speedOfOrbitedBody = Vector3d.zero;
         double orbitedBodySF = 0d;
         Vector3d OBBodyrealPos = Vector3d.zero;
+        Vector3d OBBodyAcc = Vector3d.zero;
         if(!orbitingBody.orbitalParams.orbitedBodyName.Equals("None")) {
             orbitedBodySF = orbitingBody.orbitalParams.orbitedBody.distanceScaleFactor;
-            speedOfOrbitedBody = orbitingBody.orbitalParams.orbitedBody.orbitedBodyRelativeVel;
+            speedOfOrbitedBody = orbitingBody.orbitalParams.orbitedBody.rbVelocity;
             OBBodyrealPos = orbitingBody.orbitalParams.orbitedBody.realPosition;
+            OBBodyAcc = orbitingBody.orbitalParams.orbitedBody.orbitedBodyRelativeAcc;
         }
 
         double scaleFactor = orbitingBody.distanceScaleFactor;
-        orbitingBody.orbitedBodyRelativeVel = stepRes[1];
-        orbitingBody.rbVelocity = orbitingBody.orbitedBodyRelativeVel*scaleFactor + speedOfOrbitedBody*orbitedBodySF;
-        orbitingBody.realPosition = stepRes[0]*scaleFactor + OBBodyrealPos;
+        orbitingBody.orbitedBodyRelativeVel = stepRes.Item1[1];
+        orbitingBody.rbVelocity = orbitingBody.orbitedBodyRelativeVel*scaleFactor + speedOfOrbitedBody;
+        orbitingBody.realPosition = stepRes.Item1[0]*scaleFactor + OBBodyrealPos;
+        orbitingBody.orbitedBodyRelativeAcc = stepRes.Item2*scaleFactor + OBBodyAcc;
     }
 
     public void ApplyRigbidbodyAccUpdate<T1, T2>(T1 castBody, T2 settings)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
-        rb.MovePosition((Vector3)castBody.realPosition);
+        rb.AddForce((Vector3)(castBody.orbitedBodyRelativeAcc*UniCsts.m2km*castBody.distanceScaleFactor), ForceMode.Acceleration);
     }
 }
