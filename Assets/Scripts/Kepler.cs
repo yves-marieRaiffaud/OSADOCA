@@ -74,6 +74,12 @@ public static class Kepler
             return (E2nu(E, e), E);
         }
 
+        public static double nu2t(double nu, double e, double T) {
+            (double, double) items = nu2M(nu, e);
+            double M = items.Item1;
+            return MT2t(M, T);
+        }
+
         /// <summary>
         /// ONLY FOR ELLIPCTIC ORBIT. Compute iteratively the eccentric anomaly 'E' in RAD from the mean anomaly 'M' in RAD and from the orbit's eccentricity. Optional parameter is the tolerance value to define when the iterative result of E is acceptable
         /// </summary>

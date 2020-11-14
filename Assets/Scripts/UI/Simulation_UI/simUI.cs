@@ -118,7 +118,6 @@ public class simUI : MonoBehaviour
     }
 
 
-
     void OnApplicationQuit()
     {
         if(!saveOrbitalDataToText) { return; }

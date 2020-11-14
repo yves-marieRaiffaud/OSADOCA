@@ -203,6 +203,12 @@ public class LaunchPad
         bool latSuccess = UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.latitude], out lat);
         bool longSuccess = UsefulFunctions.ParseStringToDouble(launchPadParamsDict[launchPadParams.longitude], out longitude);
         //=========
+        return RawLatLong_2_XY(xy_mapSize, lat, longitude);
+    }
+
+    public static Vector2 RawLatLong_2_XY(Vector2 mapSize, double lat, double longitude)
+    {
+        // Latitude and longitude in deg
         Vector3 worldPos = (Vector3)LaunchPad.LatitudeLongitude_to_3DWorldUNITPoint(lat+90d, longitude);
         //=========
         // Convert the 3D point on the map
@@ -211,8 +217,8 @@ public class LaunchPad
         worldPos.z = worldPos.x;
         worldPos.x = tmpPos;
         //=========
-        float pixel_w = (0.5f + Mathf.Atan2(worldPos.x, worldPos.z) / (2f*Mathf.PI)) * xy_mapSize.x;
-        float pixel_h = (0.5f - Mathf.Asin(worldPos.y) / Mathf.PI) * xy_mapSize.y;
+        float pixel_w = (0.5f + Mathf.Atan2(worldPos.x, worldPos.z) / (2f*Mathf.PI)) * mapSize.x;
+        float pixel_h = (0.5f - Mathf.Asin(worldPos.y) / Mathf.PI) * mapSize.y;
 
         return new Vector2(pixel_w, pixel_h);
     }

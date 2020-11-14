@@ -37,7 +37,7 @@ public static class UniCsts
     public const double km2au = 1/au2km;
 
     // u2au = 1000 ==> 1000 unity units == 1 AU
-    public const double au2u = 7_500_000d; //100_000 // 1 AU (150M km) translated into the unity coordinates system. 1au == 1000f
+    public const double au2u = 1_500_000d; // 1 AU (150M km) translated into the unity coordinates system. 1au == 1000f
     public const double u2au = 1d/au2u;
 
     // u2pl=2f ==> 1 unity unit == 2km of the radius of a planet
@@ -64,7 +64,7 @@ public static class UniCsts
     public const double real2massU = 1d/massU2real;
 
     // Max distance before offseting every object to bring the camera back at the origin
-    public const double dstThreshold = 3_000d;
+    public const double dstThreshold = 500d;
 
     // Vernal Point, very high value on x so that it is located at the infinity
     // Positive Vernal direction is the intersection between the ecliptic plane and the Earth's equatorial plane

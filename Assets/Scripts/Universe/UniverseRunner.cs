@@ -38,9 +38,13 @@ public class UniverseRunner : MonoBehaviour
 
     // Class of available reference frames, initialized only once every celestialBody has been initialized (end of Start() method in UniverseRunner)
     public ReferenceFramesList refFrames;
+
+    bool passedFirstFixedUpdate;
     //=========================================
     void Awake()
     {
+        passedFirstFixedUpdate = false;
+
         InitializeSimulationEnv();
         flyingObjInst = new FlyingObj(this);
         universeOffset = new Vector3(0f, 0f, 0f);
@@ -161,7 +165,7 @@ public class UniverseRunner : MonoBehaviour
                         celestBody.orbitedBodyRelativeVel = Vector3d.zero;
                     }
                     break;
-                
+
                 case goTags.Spaceship:
                     Spaceship ship = obj.GetComponent<Spaceship>();
                     flyingObjInst.InitializeFlyingObj<Spaceship, SpaceshipSettings>(ship, true);
@@ -177,21 +181,23 @@ public class UniverseRunner : MonoBehaviour
         {
             if(obj.tag.Equals(goTags.Spaceship.ToString()))
                 obj.GetComponent<Spaceship>().InitRK4();
-                
+
             if(obj.tag.Equals(goTags.Planet.ToString()))
                 obj.GetComponent<CelestialBody>().InitRK4();
         }
-        
+
         // Initializing Reference Frames
         refFrames = new ReferenceFramesList();
 
         // Removing Spaceships' rigidbody Rotation Lock
-        Invoke("UnlockShips", 1f);
+        //Invoke("UnlockShips", 0.3f);
+        UnlockShips();
         //==============================
         if(simEnv.missionTimer != null)
             simEnv.missionTimer.Start_Stopwatch();
         if(startIsDone != null)
             startIsDone.Invoke();
+        Debug.Log("diamant_A rb vel = " + new Vector3d(GameObject.Find("Diamant_A").GetComponent<Rigidbody>().velocity));
     }
 
     void UnlockShips()
@@ -204,7 +210,11 @@ public class UniverseRunner : MonoBehaviour
     {
         if(simEnv.simulateGravity.value)
             flyingObjInst.GravitationalStep();
-
+        CelestialBody earth = GameObject.Find("Earth").GetComponent<CelestialBody>();
+        Spaceship diamantA = GameObject.Find("Diamant_A").GetComponent<Spaceship>();
+        Vector3d earthAcc = earth.orbitedBodyRelativeAcc * earth.distanceScaleFactor;
+        Vector3d rocketAcc = diamantA.orbitedBodyRelativeAcc * diamantA.distanceScaleFactor;
+        Debug.Log("Earth acc = " + earthAcc + " | rocket acc = " + rocketAcc + "\nEarth mg = " + earthAcc.magnitude + " | rocket acc mg = " + rocketAcc.magnitude);
         updateFloatingOrigin();
     }
 

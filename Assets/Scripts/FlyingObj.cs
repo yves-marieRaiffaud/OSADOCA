@@ -238,7 +238,10 @@ public class FlyingObj
 
         Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
         Vector3d vel = castBody.orbitedBodyRelativeVel*UniCsts.m2km*scaleFactor + speedOfOrbitedBody*UniCsts.m2km*OBsf;
-        rb.AddForce((Vector3)vel, ForceMode.VelocityChange);
+        castBody.rbVelocity = vel;
+        rb.velocity = (Vector3)vel;
+        Debug.Log("vel = " + vel);
+        //rb.AddForce((Vector3)vel, ForceMode.VelocityChange);
 
         if(body is Spaceship)
             InitializeSpaceshipRotation<T1>(castBody, (Vector3)tangentialVec);
@@ -327,7 +330,7 @@ public class FlyingObj
                     GravitationalUpdate<CelestialBody, CelestialBodySettings>(orbitedBody, celestBody);
                 }
                 break;
-            
+
             case UniverseRunner.goTags.Spaceship:
                 // The RigidBody is not Kinematic, we compute the acceleration to then use: 'rb.AddForce(mode=Acceleration)' 
                 Spaceship ship = obj.GetComponent<Spaceship>();
@@ -415,12 +418,12 @@ public class FlyingObj
                 continue;
             }
             if(physicObjArr[i].name.Equals(orbitingBody.orbitalParams.name)) { continue; }
-            
+
             CelestialBody orbitedBody = physicObjArr[i].GetComponent<CelestialBody>();
             Vector3d gravForce = Kepler.GravitationalAcc<T1>(orbitedBody, orbitingBody, orbitingBody.Get_RadialVec()*UniCsts.km2m, false);
             bodiesGravPull_ALL.Add(new CelestialBodyPullForce(orbitedBody, gravForce));
         }
-        
+
         // Sorting the list with index 0 as the weakest grav force (as magnitude)
         bodiesGravPull_ALL.Sort(delegate(CelestialBodyPullForce x, CelestialBodyPullForce y) {
             return x.gravForce.magnitude.CompareTo(y.gravForce.magnitude);
@@ -435,7 +438,7 @@ public class FlyingObj
 
         if(orbitingBody.gravPullList.Length != nbItemsToRetain)
             orbitingBody.gravPullList = new CelestialBodyPullForce[nbItemsToRetain];
-        
+
         for(int j = 0; j < nbItemsToRetain; j++)
             orbitingBody.gravPullList[j] = bodiesGravPull_ALL[j];
     }
@@ -485,16 +488,17 @@ public class FlyingObj
         }
 
         double scaleFactor = orbitingBody.distanceScaleFactor;
+        orbitingBody.orbitedBodyRelativeAcc = stepRes.Item2;
         orbitingBody.orbitedBodyRelativeVel = stepRes.Item1[1];
-        orbitingBody.rbVelocity = orbitingBody.orbitedBodyRelativeVel*scaleFactor + speedOfOrbitedBody;
-        orbitingBody.realPosition = stepRes.Item1[0]*scaleFactor + OBBodyrealPos;
-        orbitingBody.orbitedBodyRelativeAcc = stepRes.Item2*scaleFactor + OBBodyAcc;
+        orbitingBody.rbVelocity = orbitingBody.orbitedBodyRelativeVel*UniCsts.m2km*scaleFactor + speedOfOrbitedBody;
+        orbitingBody.realPosition = stepRes.Item1[0]*UniCsts.m2km*scaleFactor + OBBodyrealPos;
     }
 
     public void ApplyRigbidbodyAccUpdate<T1, T2>(T1 castBody, T2 settings)
     where T1: FlyingObjCommonParams where T2: FlyingObjSettings
     {
         Rigidbody rb = castBody._gameObject.GetComponent<Rigidbody>();
-        rb.AddForce((Vector3)(castBody.orbitedBodyRelativeAcc*UniCsts.m2km*castBody.distanceScaleFactor), ForceMode.Acceleration);
+        Vector3 acc = (Vector3)(castBody.orbitedBodyRelativeAcc*UniCsts.m2km*castBody.distanceScaleFactor);
+        rb.AddForce(acc, ForceMode.Acceleration);
     }
 }
