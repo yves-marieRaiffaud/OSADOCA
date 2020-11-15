@@ -26,6 +26,90 @@ public static class Kepler
     }
 
     /// <summary>
+    /// 'mu' must be specified without its µExponent, 'equaRad' and 'a' must be in meters, 'i' must be in rad
+    /// Returns the derivative of the longitude of the ascending node, in RAD/s.
+    /// </summary>
+    public static double Compute_lAscN_Derivative(double mu, double J2, double equaRad, double e, double a, double i)
+    {
+        double numerator = 3/2 * Mathd.Sqrt(mu*UniCsts.µExponent)*J2*Mathd.Pow(equaRad, 2);
+        double denom = (1 - Mathd.Pow(e, 2)) * Mathd.Pow(a, 7/2);
+        return - Mathd.Cos(i) * numerator/denom;
+    }
+
+    /// <summary>
+    /// 'lAscN_Derivative' must be in RAD/s, 'i' must be in rad
+    /// Returns the derivative of the argument of the periapsis, in RAD/s.
+    /// </summary>
+    public static double Compute_Omega_Derivative(double lAscN_Derivative, double i)
+    {
+        double num = 5/2 * Mathd.Pow(Mathd.Sin(i), 2) - 2d;
+        return lAscN_Derivative * num / Mathd.Cos(i);
+    }
+
+    /// <summary>
+    /// 'h' must be in m2/s, 'mu' in m3/s2 wihtout its µExponent, 'trueAnomaly' in rad
+    /// Returns the radius and velocity vector in the perifocal frame, 'r' the first row in m, 'v' the second row in m/s
+    /// </summary>
+    public static Vector3d[] Get_R_V_Perifocal_Frame(double h, double mu, double e, double trueAnomaly)
+    {
+        Vector3d[] rv = new Vector3d[2];
+        double cNu = Mathd.Cos(trueAnomaly);
+        double sNu = Mathd.Sin(trueAnomaly);
+
+        rv[0] = Mathd.Pow(h,2)/(mu*UniCsts.µExponent) * (1/(1+e*cNu)) * new Vector3d(cNu, sNu, 0d);
+        rv[1] = mu*UniCsts.µExponent/h * new Vector3d(-sNu, e+cNu, 0);
+        return rv;
+    }
+
+    /// <summary>
+    /// 'i' must be in rad, 'omega' (argument of the periapsis) in rad, 'lAscN' in rad
+    /// Returns the transformation matrix from the geocentric frame to the perifocal one.
+    /// </summary>
+    public static Matrix4x4 Get_Geocentric_2_Perifocal_Frame_Matrix(double i, double omega, double lAscN)
+    {
+        float cI = Mathf.Cos((float)i);
+        float sI = Mathf.Sin((float)i);
+        float cO = Mathf.Cos((float)omega);
+        float sO = Mathf.Sin((float)omega);
+        float cL = Mathf.Cos((float)lAscN);
+        float sL = Mathf.Sin((float)lAscN);
+
+        Vector4 c0 = new Vector4(-sL*cI*sO + cL*cO, -sL*cI*cO - cL*sO, sL*sI);
+        Vector4 c1 = new Vector4(cL*cI*sO + sL*cO, cL*cI*cO - sL*sO, -cL*sI);
+        Vector4 c2 = new Vector4(sI*sO, sI*cO, cI);
+        return new Matrix4x4(c0, c1, c2, Vector4.zero);
+    }
+
+    /// <summary>
+    /// 'i' must be in rad, 'omega' (argument of the periapsis) in rad, 'lAscN' in rad
+    /// Returns the transformation matrix from the perifocal frame to the geocentric one.
+    /// </summary>
+    public static Matrix4x4 Get_Perifocal_2_Geocentric_Frame_Matrix(double i, double omega, double lAscN)
+    {
+        return Get_Geocentric_2_Perifocal_Frame_Matrix(i, omega, lAscN).transpose;
+    }
+
+    /// <summary>
+    /// 'rGoecentric' can be in meters or km
+    /// Returns the latitude and longitude, in DEG, from the geocentric coordinates
+    /// </summary>
+    public static Vector2d Geocentric_2_Latitude_Longitude(Vector3d rGeocentric)
+    {
+        double magn = rGeocentric.magnitude;
+        double latitude = Mathd.Asin(rGeocentric.z/magn);
+        double l = rGeocentric.x/magn;
+        double tmpLong = Mathd.Acos(l/Mathd.Cos(latitude));
+
+        double m = rGeocentric.y/magn;
+        double longitude;
+        if(m > 0)
+            longitude = tmpLong;
+        else
+            longitude = 2d*Mathd.PI - tmpLong;
+        return new Vector2d(latitude*UniCsts.rad2deg, longitude*UniCsts.rad2deg);
+    }
+
+    /// <summary>
     /// Method for the non-main Thread. 'r' should be in meters and retrieved with the method 'Get_RadialVec' from the FlyingObjCommonParams interface. 'mu' should be retrived from the orbited CelestialBody 'planetBaseParamsDict'
     /// Returns the acceleration of 'orbitingBody' in m/s^2
     /// </summary>

@@ -16,6 +16,8 @@ public class UI_Mission_Analysis : MonoBehaviour
     private Orbit previewedOrbit;
     private CelestialBody orbitedBody;
     private VectorLine maVectorLine;
+
+    private VectorLine maVectorLine2;
     
 
     void Start()
@@ -25,22 +27,28 @@ public class UI_Mission_Analysis : MonoBehaviour
 
         maVectorLine = new VectorLine("missionAnalysis_FlatMapLine", new List<Vector2>(), 2f);
         maVectorLine.lineType = LineType.Points;
+
+        maVectorLine2 = new VectorLine("missionAnalysis_FlatMapLine2", new List<Vector2>(), 2f);
+        maVectorLine2.lineType = LineType.Points;
     }
 
     public void CloseMissionAnalysisSection()
     {
         sectionMissionAnalysis.SetActive(false);
         maVectorLine.active = false;
+        maVectorLine2.active = false;
     }
 
     public void OpenMissionAnalysisSection()
     {
         sectionMissionAnalysis.SetActive(true);
         maVectorLine.active = true;
+        maVectorLine2.active = true;
 
         GetPreviewedOrbit();
 
         maVectorLine.drawTransform = mapGO.transform;
+        maVectorLine2.drawTransform = mapGO.transform;
         GenerateGroundTracks();
     }
 
@@ -60,108 +68,69 @@ public class UI_Mission_Analysis : MonoBehaviour
     private void GenerateGroundTracks()
     {
         // Creating array for positions, 2 values per degree
-        
-        int nbValues = 720;
+        int nbValuesPerObit = 720;
         double T = previewedOrbit.param.period; // in s
         double e = previewedOrbit.param.e;
-        double a = previewedOrbit.param.a * 1_000d;
-        double i = previewedOrbit.param.i * UniCsts.deg2rad;
-        double nu = previewedOrbit.param.nu * UniCsts.deg2rad;
-        double lAscN = previewedOrbit.param.lAscN * UniCsts.deg2rad;
-        double omega = previewedOrbit.param.omega * UniCsts.deg2rad;
+        double a = previewedOrbit.param.a * 1_000d; // m
+        double i = previewedOrbit.param.i * UniCsts.deg2rad; // rad
+        double nu = previewedOrbit.param.nu * UniCsts.deg2rad; // rad
+        double lAscN = previewedOrbit.param.lAscN * UniCsts.deg2rad; // rad
+        double omega = previewedOrbit.param.omega * UniCsts.deg2rad; // rad
 
-        double tIncr = T/nbValues; // in s
+        double tIncr = T/nbValuesPerObit; // in s
         List<Vector2> pos = new List<Vector2>();
+        List<Vector2> pos2 = new List<Vector2>();
 
         // Compute evolution of the longitude of ascending node
         double mu = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value;
         double J2 = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.jnParams.j2.ToString()].value;
-        double equaRad = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value*1_000d;
-        double revPeriod = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.revolutionPeriod.ToString()].value;
+        double equaRad = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value*1_000d; // m
+        double revPeriod = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.revolutionPeriod.ToString()].value; // days
+        double rotPeriod = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.siderealRotPeriod.ToString()].value; // s
 
         double h = Mathd.Sqrt(mu*UniCsts.µExponent*previewedOrbit.param.rp*1_000d*(1+e));
-        
-        double lAscNPoint = -(3/2 * Mathd.Sqrt(mu*UniCsts.µExponent)*J2*equaRad*equaRad / ((1d-e*e)*Mathd.Pow(a, 7d/2d))) * Mathd.Cos(i); // in rad/s
-        // Compute evolution of the argument of the perigee
-        double omegaPoint = lAscNPoint * (5/2 * Mathd.Pow(Mathd.Sin(i), 2) - 2d) / Mathd.Cos(i); // in rad/s
+        float bodyAngularVel = (float)CelestialBody.Get_Body_Angular_Rotation_Velocity(revPeriod, rotPeriod);
+
+        double lAscNPoint = Kepler.Compute_lAscN_Derivative(mu, J2, equaRad, e, a, i); // rad/s
+        double omegaPoint = Kepler.Compute_Omega_Derivative(lAscNPoint, i); // rad/s
 
         double t0 = Kepler.OrbitalParamsConversion.nu2t(nu, e, T);
-        Debug.Log("t0 = " + t0);
 
-
-        // Taking into account Earth's rotation
-        float omegaE = 2f*Mathf.PI*(1+1/(float)revPeriod)/86400f * (float)tIncr;
-        Debug.Log("omegaE = " + (omegaE*UniCsts.rad2deg));
-        float cOE = Mathf.Cos(omegaE);
-        float sOE = Mathf.Sin(omegaE);
-        Matrix4x4 earthRotMat = new Matrix4x4(new Vector4(cOE,-sOE,0), new Vector4(sOE,cOE,0), new Vector4(0,0,1), Vector4.zero);
-
-
-        for(double t=0d; t<2f*T; t+=tIncr)
+        for(double t=t0; t<T; t+=tIncr)
         {
-            (double, double, double) nuEM = Kepler.OrbitalParamsConversion.t2nuEM(t0 + t, T, e);
+            (double, double, double) nuEM = Kepler.OrbitalParamsConversion.t2nuEM(t, T, e);
             double currNu = nuEM.Item1; // in rad
 
             double updatedLAscN = lAscN + lAscNPoint*tIncr;
             double updatedOmega = omega + omegaPoint*tIncr;
 
-            Vector3 Rx = (float) (h*h/(mu*UniCsts.µExponent)*1/(1+e*Mathd.Cos(currNu))) * new Vector3((float)Mathd.Cos(currNu), (float)Mathd.Sin(currNu), 0);
-            
-            float cO = Mathf.Cos((float)updatedOmega);
-            float sO = Mathf.Sin((float)updatedOmega);
-            float cI = Mathf.Cos((float)i);
-            float sI = Mathf.Sin((float)i);
-            float cL = Mathf.Cos((float)updatedLAscN);
-            float sL = Mathf.Sin((float)updatedLAscN);
+            Vector3d[] rv_perifocal = Kepler.Get_R_V_Perifocal_Frame(h, mu, e, currNu);
+            Matrix4x4 perifocal2Geo_mat = Kepler.Get_Perifocal_2_Geocentric_Frame_Matrix(i, updatedOmega, updatedLAscN);
+            Vector3 rGeocentric_noRot = perifocal2Geo_mat.MultiplyVector((Vector3) rv_perifocal[0]);
 
-            float a0 = cO;
-            float b0 = sO;
-            float c0 = -sO;
-            float d0 = cO;
+            float earthRotAngle = bodyAngularVel * (float)tIncr;
+            float cOE = Mathf.Cos(earthRotAngle);
+            float sOE = Mathf.Sin(earthRotAngle);
+            Matrix4x4 earthRotMat = new Matrix4x4(new Vector4(cOE,-sOE,0), new Vector4(sOE,cOE,0), new Vector4(0,0,1), Vector4.zero);
+            Vector3 rGeocentric = earthRotMat.MultiplyVector(rGeocentric_noRot);
+            Debug.Log("rGeocentric_noRot = " + (rGeocentric_noRot/1000f));
+            Debug.Log("rGeocentric = " + (rGeocentric/1000f));
 
-            float alpha = cI;
-            float beta = sI;
-            float gamma = -sI;
-            float delta = cI;
-
-            float w = cL;
-            float x = sL;
-            float y = -sL;
-            float z = cL;
-
-            Vector4 c1 = new Vector4(a0 + y*b0*alpha, c0 + y*d0*alpha, y*gamma);
-            Vector4 c2 = new Vector4(x*a0 + z*b0*alpha, x*c0 + z*d0*alpha, z*gamma);
-            Vector4 c3 = new Vector4(b0*beta, d0*beta, delta);
-            Matrix4x4 res = new Matrix4x4(c1, c2, c3, Vector4.zero);
-            res = Matrix4x4.Transpose(res);
-
-            Rx = res.MultiplyVector(Rx);
-
-
-            
-            Rx = earthRotMat.MultiplyVector(Rx);
-
-
-
-            float magn = Rx.magnitude;
-            float latitude = Mathf.Asin(Rx.z/magn);
-            float l = Rx.x/magn;
-            float tmpLong = Mathf.Acos(l/Mathf.Cos(latitude));
-            
-            float m = Rx.y/magn;
-            float longitude;
-            if(m > 0)
-                longitude = tmpLong;
-            else
-                longitude = 2f*Mathf.PI - tmpLong;
-
-            Vector2 xyCoord = LaunchPad.RawLatLong_2_XY(new Vector2(1160, 560), latitude*UniCsts.rad2deg, longitude*UniCsts.rad2deg);
-            // Positioning the XY Coords with respect to the bottom left corner of the mzp, not the middle point
+            Vector2d latLong = Kepler.Geocentric_2_Latitude_Longitude(new Vector3d(rGeocentric)); // deg
+            Vector2 xyCoord = LaunchPad.RawLatLong_2_XY(new Vector2(1160, 560), latLong.x, latLong.y);
             xyCoord = xyCoord - new Vector2(580, 280);
 
+            Vector2d latLong2 = Kepler.Geocentric_2_Latitude_Longitude(new Vector3d(rGeocentric_noRot)); // deg
+            Vector2 xyCoord2 = LaunchPad.RawLatLong_2_XY(new Vector2(1160, 560), latLong2.x, latLong2.y);
+            xyCoord2 = xyCoord2 - new Vector2(580, 280);
+
             pos.Add(xyCoord);
+            pos2.Add(xyCoord2);
         }
         maVectorLine.points2 = pos;
         maVectorLine.Draw();
+
+        maVectorLine2.points2 = pos2;
+        maVectorLine2.Draw();
     }
 }

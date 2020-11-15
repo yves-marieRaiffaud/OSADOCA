@@ -623,6 +623,16 @@ public class CelestialBody: MonoBehaviour, FlyingObjCommonParams
         r *= scalingFactor; // km
         return r;
     }
+
+    /// <summary>
+    /// 'revPeriod' is the revolution period around its Star, must be in days
+    /// 'rotPeriod' is the rotation period of the body, in seconds
+    /// Returns the angular velocity at which the body is rotating on its orbit, in RAD/s
+    /// </summary>
+    public static double Get_Body_Angular_Rotation_Velocity(double revPeriod, double rotPeriod)
+    {
+        return 2d*Mathd.PI * (1 + 1/revPeriod) / (rotPeriod);
+    }
 }
 
 [System.Serializable]
