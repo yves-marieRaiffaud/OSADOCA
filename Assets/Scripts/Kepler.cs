@@ -26,14 +26,14 @@ public static class Kepler
     }
 
     /// <summary>
-    /// 'mu' must be specified without its µExponent, 'equaRad' and 'a' must be in meters, 'i' must be in rad
+    /// 'mu' must be specified without its µExponent, 'equaRad' and 'a' must be in km, 'i' must be in rad
     /// Returns the derivative of the longitude of the ascending node, in RAD/s.
     /// </summary>
-    public static double Compute_lAscN_Derivative(double mu, double J2, double equaRad, double e, double a, double i)
+    public static double Compute_lAscN_Derivative(double n, double J2, double equaRad, double e, double a, double i)
     {
-        double numerator = 3/2 * Mathd.Sqrt(mu*UniCsts.µExponent)*J2*Mathd.Pow(equaRad, 2);
-        double denom = (1 - Mathd.Pow(e, 2)) * Mathd.Pow(a, 7/2);
-        return - Mathd.Cos(i) * numerator/denom;
+        Debug.LogFormat("n = {0}, J2 = {1}, equaRad = {2}, e = {3}, a = {4}, i = {5}", n, J2, equaRad, e, a, i);
+        double num = -3/2 * n * Mathd.Pow(equaRad/a, 2) * J2 * Mathd.Cos(i) / Mathd.Pow((1-e*e), 2);
+        return num; // rad/s
     }
 
     /// <summary>
@@ -56,8 +56,8 @@ public static class Kepler
         double cNu = Mathd.Cos(trueAnomaly);
         double sNu = Mathd.Sin(trueAnomaly);
 
-        rv[0] = Mathd.Pow(h,2)/(mu*UniCsts.µExponent) * (1/(1+e*cNu)) * new Vector3d(cNu, sNu, 0d);
-        rv[1] = mu*UniCsts.µExponent/h * new Vector3d(-sNu, e+cNu, 0);
+        rv[0] = Mathd.Pow(10d,-6)*Mathd.Pow(h,2)/(mu*10d) * (1/(1+e*cNu)) * new Vector3d(cNu, sNu, 0d);
+        rv[1] = Mathd.Pow(10d,6)*mu*10d/h * new Vector3d(-sNu, e+cNu, 0);
         return rv;
     }
 
@@ -106,7 +106,7 @@ public static class Kepler
             longitude = tmpLong;
         else
             longitude = 2d*Mathd.PI - tmpLong;
-        return new Vector2d(latitude*UniCsts.rad2deg, longitude*UniCsts.rad2deg);
+        return new Vector2d(latitude*UniCsts.rad2deg, longitude*UniCsts.rad2deg - 180d);
     }
 
     /// <summary>
