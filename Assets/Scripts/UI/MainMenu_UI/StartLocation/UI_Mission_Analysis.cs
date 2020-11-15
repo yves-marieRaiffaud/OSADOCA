@@ -4,12 +4,13 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Mathd_Lib;
 using Vectrosity;
+using Fncs = UsefulFunctions;
 
 public class UI_Mission_Analysis : MonoBehaviour
 {
     public GameObject sectionMissionAnalysis;
     public GameObject sectionInitOrbit;
-    public GameObject mapGO;
+    public RectTransform mapGO;
 
     private UIStartLoc_InitOrbit initOrbitInst;
     private Orbit previewedOrbit;
@@ -21,24 +22,25 @@ public class UI_Mission_Analysis : MonoBehaviour
     {
         if(initOrbitInst == null)
             initOrbitInst = sectionInitOrbit.GetComponent<UIStartLoc_InitOrbit>();
-        
+
+        maVectorLine = new VectorLine("missionAnalysis_FlatMapLine", new List<Vector2>(), 2f);
+        maVectorLine.lineType = LineType.Points;
     }
 
     public void CloseMissionAnalysisSection()
     {
-        sectionInitOrbit.SetActive(true);
         sectionMissionAnalysis.SetActive(false);
+        maVectorLine.active = false;
     }
 
     public void OpenMissionAnalysisSection()
     {
         sectionMissionAnalysis.SetActive(true);
-        sectionInitOrbit.SetActive(false);
+        maVectorLine.active = true;
 
         GetPreviewedOrbit();
-        maVectorLine = new VectorLine("missionAnalysis_FlatMapLine", new List<Vector2>(), 2f);
+
         maVectorLine.drawTransform = mapGO.transform;
-            
         GenerateGroundTracks();
     }
 
@@ -75,6 +77,7 @@ public class UI_Mission_Analysis : MonoBehaviour
         double mu = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].value;
         double J2 = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.jnParams.j2.ToString()].value;
         double equaRad = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.radius.ToString()].value*1_000d;
+        double revPeriod = orbitedBody.settings.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.revolutionPeriod.ToString()].value;
 
         double h = Mathd.Sqrt(mu*UniCsts.µExponent*previewedOrbit.param.rp*1_000d*(1+e));
         
@@ -83,8 +86,18 @@ public class UI_Mission_Analysis : MonoBehaviour
         double omegaPoint = lAscNPoint * (5/2 * Mathd.Pow(Mathd.Sin(i), 2) - 2d) / Mathd.Cos(i); // in rad/s
 
         double t0 = Kepler.OrbitalParamsConversion.nu2t(nu, e, T);
+        Debug.Log("t0 = " + t0);
 
-        for(double t=0d; t<T; t+=tIncr)
+
+        // Taking into account Earth's rotation
+        float omegaE = 2f*Mathf.PI*(1+1/(float)revPeriod)/86400f * (float)tIncr;
+        Debug.Log("omegaE = " + (omegaE*UniCsts.rad2deg));
+        float cOE = Mathf.Cos(omegaE);
+        float sOE = Mathf.Sin(omegaE);
+        Matrix4x4 earthRotMat = new Matrix4x4(new Vector4(cOE,-sOE,0), new Vector4(sOE,cOE,0), new Vector4(0,0,1), Vector4.zero);
+
+
+        for(double t=0d; t<2f*T; t+=tIncr)
         {
             (double, double, double) nuEM = Kepler.OrbitalParamsConversion.t2nuEM(t0 + t, T, e);
             double currNu = nuEM.Item1; // in rad
@@ -124,22 +137,31 @@ public class UI_Mission_Analysis : MonoBehaviour
 
             Rx = res.MultiplyVector(Rx);
 
+
+            
+            Rx = earthRotMat.MultiplyVector(Rx);
+
+
+
             float magn = Rx.magnitude;
             float latitude = Mathf.Asin(Rx.z/magn);
             float l = Rx.x/magn;
             float tmpLong = Mathf.Acos(l/Mathf.Cos(latitude));
             
             float m = Rx.y/magn;
-            float longitude = tmpLong;
+            float longitude;
+            if(m > 0)
+                longitude = tmpLong;
+            else
+                longitude = 2f*Mathf.PI - tmpLong;
 
             Vector2 xyCoord = LaunchPad.RawLatLong_2_XY(new Vector2(1160, 560), latitude*UniCsts.rad2deg, longitude*UniCsts.rad2deg);
-            Debug.Log("Long = " + (longitude*UniCsts.rad2deg) + " ; lat = " + (latitude*UniCsts.rad2deg));
-            Debug.Log("XY Coords = " + xyCoord);
+            // Positioning the XY Coords with respect to the bottom left corner of the mzp, not the middle point
+            xyCoord = xyCoord - new Vector2(580, 280);
 
             pos.Add(xyCoord);
         }
         maVectorLine.points2 = pos;
         maVectorLine.Draw();
-        maVectorLine.active = true;
     }
 }

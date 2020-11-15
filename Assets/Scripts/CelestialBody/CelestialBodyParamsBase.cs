@@ -9,7 +9,7 @@ public class CelestialBodyParamsBase
     // SurfacePressure in Pa, surfaceTemp in K, radiusSOI in radius of the planetary body
     // Axial tilt: the angle between the body equatorial plane and its orbital plane, in °.
     // Radius is the equatorial radius
-    [SerializeField] public enum planetaryParams { radius, polarRadius, inverseFlattening, radiusSOI, axialTilt, siderealRotPeriod, mu, massEarthRatio };
+    [SerializeField] public enum planetaryParams { radius, polarRadius, inverseFlattening, radiusSOI, axialTilt, siderealRotPeriod, revolutionPeriod, mu, massEarthRatio };
 
     [SerializeField] public enum orbitalParams { aphelion, perihelion, i, longAscendingNode, perihelionArg, trueAnomaly };
 
