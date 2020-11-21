@@ -27,18 +27,17 @@ public static class Kepler
 
     /// <summary>
     /// 'mu' must be specified without its µExponent, 'equaRad' and 'a' must be in km, 'i' must be in rad
-    /// Returns the derivative of the longitude of the ascending node, in RAD/s.
+    /// Returns the derivative (rate) of the longitude of the ascending node, in RAD/s.
     /// </summary>
     public static double Compute_lAscN_Derivative(double n, double J2, double equaRad, double e, double a, double i)
     {
-        Debug.LogFormat("n = {0}, J2 = {1}, equaRad = {2}, e = {3}, a = {4}, i = {5}", n, J2, equaRad, e, a, i);
         double num = -3/2 * n * Mathd.Pow(equaRad/a, 2) * J2 * Mathd.Cos(i) / Mathd.Pow((1-e*e), 2);
         return num; // rad/s
     }
 
     /// <summary>
     /// 'lAscN_Derivative' must be in RAD/s, 'i' must be in rad
-    /// Returns the derivative of the argument of the periapsis, in RAD/s.
+    /// Returns the derivative (rate) of the argument of the periapsis, in RAD/s.
     /// </summary>
     public static double Compute_Omega_Derivative(double lAscN_Derivative, double i)
     {
@@ -47,17 +46,20 @@ public static class Kepler
     }
 
     /// <summary>
-    /// 'h' must be in m2/s, 'mu' in m3/s2 wihtout its µExponent, 'trueAnomaly' in rad
-    /// Returns the radius and velocity vector in the perifocal frame, 'r' the first row in m, 'v' the second row in m/s
+    /// 'h' must be in km^2/s, 'mu' in m^3/s^2 wihtout its µExponent, 'trueAnomaly' in rad
+    /// Returns the radius and velocity vector in the perifocal frame, 'r' the first row in meters, 'v' the second row in m/s
     /// </summary>
     public static Vector3d[] Get_R_V_Perifocal_Frame(double h, double mu, double e, double trueAnomaly)
     {
+        // r is the first row, v is the second one
         Vector3d[] rv = new Vector3d[2];
         double cNu = Mathd.Cos(trueAnomaly);
         double sNu = Mathd.Sin(trueAnomaly);
 
+        // Position vector in meters. h must be in km^2/s, mu in m^3/s^2 without its mu exponent 
         rv[0] = Mathd.Pow(10d,-6)*Mathd.Pow(h,2)/(mu*10d) * (1/(1+e*cNu)) * new Vector3d(cNu, sNu, 0d);
-        rv[1] = Mathd.Pow(10d,6)*mu*10d/h * new Vector3d(-sNu, e+cNu, 0);
+        // Velocity vector in m/s
+        rv[1] = Mathd.Pow(10d,6)*mu/h * new Vector3d(-sNu, e+cNu, 0);
         return rv;
     }
 
@@ -158,6 +160,10 @@ public static class Kepler
             return (E2nu(E, e), E);
         }
 
+        /// <summary>
+        /// ONLY FOR ELLIPCTIC ORBIT. Compute the time before/after perigee (depending on the sign of t) from the true anomaly 'nu', the orbit's eccentricity 'e' and the orbital period 'T' in seconds.
+        /// Returns the time t in seconds.
+        /// </summary>
         public static double nu2t(double nu, double e, double T) {
             (double, double) items = nu2M(nu, e);
             double M = items.Item1;
