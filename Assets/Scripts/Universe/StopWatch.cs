@@ -34,14 +34,13 @@ public class StopWatch : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(!isActive) { return; }
+        if(!isActive)
+            return;
         currentTime += Time.fixedDeltaTime; // in s
         string timeString = CurrentStringTime();
-        
+
         if(ui_text != null)
-        {
             ui_text.text = timeString;
-        }
     }
 
     private string CurrentStringTime()

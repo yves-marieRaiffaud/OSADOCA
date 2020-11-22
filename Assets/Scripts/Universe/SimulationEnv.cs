@@ -42,6 +42,7 @@ public class SimulationEnv : ScriptableObject
     //=============================================
     [NonSerialized]
     public StopWatch missionTimer;
+    public UniverseClock universeClock;
     //=============================================
     //=============================================
     //=============================================

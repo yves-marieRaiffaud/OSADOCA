@@ -79,7 +79,7 @@ public class UI_Mission_Analysis : MonoBehaviour
         double T = previewedOrbit.param.period; // in s
         double n = previewedOrbit.n; // rad/s
 
-        double tIncr = T/nbValuesPerObit; // in s
+        double tIncr = 60; //T/nbValuesPerObit; // in s
         List<Vector2> pos = new List<Vector2>();
         //List<Vector2> pos2 = new List<Vector2>();
 
@@ -117,8 +117,9 @@ public class UI_Mission_Analysis : MonoBehaviour
         Debug.Log("h = " + h + " ; bodyAngularVel = " + (bodyAngularVel*UniCsts.rad2deg) + "°/s");
         Debug.Log("lAscNPoint = " + lAscNPoint + "°/s ; omegaPoint = " + omegaPoint + "°/s");
         Debug.Log("t0 = " + t0);
+        Debug.Log("earthRotmat = \n" + earthRotMat);
 
-        for(double t=t0; t<3*T; t+=tIncr)
+        for(double t=t0; t<T; t+=tIncr)
         {
             // Computes the true anomaly, eccentric anomaly and mean anomaly, all in rad, for the current time on the orbit
             (double, double, double) nuEM = Kepler.OrbitalParamsConversion.t2nuEM(t, T, e);
@@ -149,9 +150,9 @@ public class UI_Mission_Analysis : MonoBehaviour
             Debug.Log("updatedLAscN = " + (updatedLAscN*UniCsts.rad2deg) + "°/s ; updatedOmega = " + (updatedOmega*UniCsts.rad2deg) + "°/s");
             Debug.Log("rv_perifocal = " + rv_perifocal[0] + "m\n" + rv_perifocal[1] + "m/s");
             Debug.Log("perifocal2Geo_mat = \n" + perifocal2Geo_mat);
-            Debug.Log("rx step c = " + (rGeocentric_noRot/1000f) + " km");
+            Debug.Log("rGeocentric_noRot = " + (rGeocentric_noRot/1000f) + " km");
             Debug.Log("earthRotAngle = " + (earthRotAngle*UniCsts.rad2deg) + " °");
-            Debug.Log("rx step d = " + (rGeocentric/1000f) + " km");
+            Debug.Log("rGeocentric = " + (rGeocentric/1000f) + " km");
             Debug.Log("xycoord = " + xyCoord + "° ; latlOng = " + latLong + " °");
         }
         maVectorLine.points2 = pos;
