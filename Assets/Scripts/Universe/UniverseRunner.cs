@@ -9,6 +9,7 @@ using UnityEngine.Events;
 [DisallowMultipleComponent, System.Serializable]
 public class UniverseRunner : MonoBehaviour
 {
+    CalendarDate calendar;
     [HideInInspector] public bool simulationEnvFoldout=true; // For universeRunner custom editor
     //======
     [HideInInspector] public SimulationEnv simEnv;

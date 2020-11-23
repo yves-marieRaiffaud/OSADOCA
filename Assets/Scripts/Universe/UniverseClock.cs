@@ -13,6 +13,8 @@ public class UniverseClock : MonoBehaviour
     {
         if(calendarDate == null)
             calendarDate = new CalendarDate("18-09-1997 16:00:00", CalendarDate.DateFormat.ddMMYYYY);
+        calendarDate.Init();
+
         StartCoroutine("UpdateUniverseTimeCoroutine");
     }
 

@@ -106,10 +106,6 @@ public class UniverseRunnerEditor : Editor
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("Spaceship Control", EditorStyles.boldLabel);
         param.shipUseKeyboardControl.value = EditorGUILayout.Toggle("Control ship with keyboard", param.shipUseKeyboardControl.value);
-        
-        EditorGUILayout.Separator();
-        EditorGUILayout.LabelField("Universe Calendar & Clock", EditorStyles.boldLabel);
-        //param.universeClock.calendarDate.dateTimeUnityEditorStr = EditorGUILayout.TextField("Calendar Date & Time", param.universeClock.calendarDate.dateTimeUnityEditorStr);
 
         if(GUI.changed)
         {

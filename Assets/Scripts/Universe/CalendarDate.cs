@@ -7,6 +7,16 @@ using System;
 public class CalendarDate
 {
     public enum DateFormat {ddMMYYYY, YYYYMMdd, MMddYYYY};
+    public DateFormat dateFormat_unityEditor;
+    public string dateString_unityEditor;
+
+    private DateFormat _format;
+    public DateFormat format
+    {
+        get {
+            return _format;
+        }
+    }
 
     private int _year;
     public int year
@@ -64,7 +74,7 @@ public class CalendarDate
         }
     }
 
-    //public string dateTimeUnityEditorStr;
+    
 
     public CalendarDate(int __year, int __month, int __day, int __hour, int __minute, int __second)
     {
@@ -76,8 +86,28 @@ public class CalendarDate
         _second = __second;
         ComputeJulianNumberDate();
     }
-
     public CalendarDate(string dateStr, DateFormat format)
+    {
+        _format = format;
+        ParseString_2_Date(dateStr);
+    }
+    public void Init()
+    {
+        // If the string in the Unity Inpector is not null, we assign the value
+        if(dateString_unityEditor != null && dateString_unityEditor.Length >= 10)
+            AssignNewDateFromString(dateString_unityEditor, dateFormat_unityEditor);
+        else
+            // Else we assign a defualt date and time
+            AssignNewDateFromString("18-09-1997 16:00:00", DateFormat.ddMMYYYY);
+    }
+
+    public void AssignNewDateFromString(string dateStr, DateFormat format)
+    {
+        _format = format;
+        ParseString_2_Date(dateStr);
+    }
+
+    private void ParseString_2_Date(string dateStr)
     {
         // Searching for a 'space' in the string date & time. If there is no space, searching for a 'T' to determine time
         char splitCharacter = ' ';
@@ -91,19 +121,18 @@ public class CalendarDate
             string[] dateTimeStr = dateStr.Split(splitCharacter);
             string date = dateTimeStr[0];
             string time = dateTimeStr[1];
-            Parse_Year_Month_Day(date, format);
+            Parse_Year_Month_Day(date);
             Parse_Time(time);
         }
 
         else {
-            Parse_Year_Month_Day(dateStr, format);
+            Parse_Year_Month_Day(dateStr);
             // Initialize default time at "00:00:00"
             _hour = 0;
             _minute = 0;
             _second = 0;
         }
     }
-
     private void Parse_Time(string time)
     {
         // "12:05:01" == "HH:mm:ss"
@@ -112,13 +141,12 @@ public class CalendarDate
         _minute = int.Parse(splitedTime[1]);
         _second = int.Parse(splitedTime[2]);
     }
-
-    private void Parse_Year_Month_Day(string date, DateFormat format)
+    private void Parse_Year_Month_Day(string date)
     {
         string[] splitedDate = date.Split('-');
         if(splitedDate.Length != 3)
             throw new Exception("Splitted 'dateString' does not have a length of 3. Can't determine day, month and year.");
-        switch(format)
+        switch(_format)
         {
             case DateFormat.ddMMYYYY:
                 _day = int.Parse(splitedDate[0]);
@@ -144,15 +172,6 @@ public class CalendarDate
         _julianDate = (float)jdn + (_hour-12f)/24f + _minute/1440f + _second/86400f;
     }
 
-    public int[] GetTime()
-    {
-        int[] time = new int[3];
-        time[0] = _hour;
-        time[0] = _minute;
-        time[0] = _second;
-        return time;
-    }
-
     public void AddTime(int secondsToAdd)
     {
         // hour, minute, seconds
@@ -163,25 +182,44 @@ public class CalendarDate
         _minute += minuteToAdd;
         _second += secToAdd;
     }
-
-    public override string ToString()
+    public int[] GetTime()
     {
-        return string.Format("{0}-{1}-{2} {3}:{4}:{5}", _day, _month, _year, _hour, _minute, _second);
+        int[] time = new int[3];
+        time[0] = _hour;
+        time[1] = _minute;
+        time[2] = _second;
+        return time;
     }
 
-    public string ToString(DateFormat format)
+    public string Time_ToString()
+    {
+        return string.Format("{0}:{1}:{2}", _hour, _minute, _second);
+    }
+    public string Date_ToString(DateFormat format)
     {
         switch(format)
         {
             case DateFormat.ddMMYYYY:
-                return string.Format("{0}-{1}-{2} {3}:{4}:{5}", _day, _month, _year, _hour, _minute, _second);
+                return string.Format("{0}-{1}-{2}", _day, _month, _year);
             case DateFormat.MMddYYYY:
-                return string.Format("{0}-{1}-{2} {3}:{4}:{5}", _month, _day, _year, _hour, _minute, _second);
+                return string.Format("{0}-{1}-{2}", _month, _day, _year);
             case DateFormat.YYYYMMdd:
-                return string.Format("{0}-{1}-{2} {3}:{4}:{5}", _year, _month, _day, _hour, _minute, _second);
+                return string.Format("{0}-{1}-{2}", _year, _month, _day);
             default:
                 return ToString();
         }
+    }
+    public string Date_ToString()
+    {
+        return Date_ToString(_format);
+    }
+    public override string ToString()
+    {
+        return ToString(_format) + " " + Time_ToString();
+    }
+    public string ToString(DateFormat format)
+    {
+        return Date_ToString(format) + " " + Time_ToString();
     }
 
 }
