@@ -2531,9 +2531,6 @@ MonoBehaviour:
     _type: System.Boolean
     _displayName: Control spaceship with Keyboard
     _category: 4
-  calendarClock:
-    dateFormat_unityEditor: 0
-    dateString_unityEditor: 
 --- !u!1 &1135328023
 GameObject:
   m_ObjectHideFlags: 0
@@ -6437,18 +6434,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 857894606, guid: 43d2017b4fe01da49a1f2a4411ae6535, type: 3}
-      propertyPath: calendarDate.dateTimeUnityEditorStr
-      value: 12-04-2020T20:00:54
-      objectReference: {fileID: 0}
-    - target: {fileID: 857894606, guid: 43d2017b4fe01da49a1f2a4411ae6535, type: 3}
-      propertyPath: calendarDate._format
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 857894606, guid: 43d2017b4fe01da49a1f2a4411ae6535, type: 3}
-      propertyPath: calendarDate.dateString_unityEditor
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 7661806084183194235, guid: 43d2017b4fe01da49a1f2a4411ae6535,
         type: 3}
       propertyPath: simEnv
@@ -6523,6 +6508,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8360470605585384725, guid: 43d2017b4fe01da49a1f2a4411ae6535,
+        type: 3}
+      propertyPath: dateString_unityEditor
+      value: 12-05-2021T16:05:45
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43d2017b4fe01da49a1f2a4411ae6535, type: 3}
