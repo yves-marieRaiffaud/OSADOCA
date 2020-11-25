@@ -214,7 +214,7 @@ public class UniverseRunner : MonoBehaviour
         Spaceship diamantA = GameObject.Find("Diamant_A").GetComponent<Spaceship>();
         Vector3d earthAcc = earth.orbitedBodyRelativeAcc * earth.distanceScaleFactor;
         Vector3d rocketAcc = diamantA.orbitedBodyRelativeAcc * diamantA.distanceScaleFactor;
-        Debug.Log("Earth acc = " + earthAcc + " | rocket acc = " + rocketAcc + "\nEarth mg = " + earthAcc.magnitude + " | rocket acc mg = " + rocketAcc.magnitude);
+        //Debug.Log("Earth acc = " + earthAcc + " | rocket acc = " + rocketAcc + "\nEarth mg = " + earthAcc.magnitude + " | rocket acc mg = " + rocketAcc.magnitude);
         updateFloatingOrigin();
     }
 

@@ -2,10 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Mathd_Lib;
 
 [DisallowMultipleComponent, Serializable]
 public class UniverseClock : MonoBehaviour
 {
+    // Using ISO day of the week == Monday is the first day of the week
+    public enum DayOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
+    private DayOfWeek _currentDayOfWeek;
+    public DayOfWeek currentDayOfWeek
+    {
+        get {
+            return _currentDayOfWeek;
+        }
+    }
+
     public string dateString_unityEditor;
 
     public enum DateFormat {ddMMYYYY, YYYYMMdd, MMddYYYY};
@@ -43,6 +54,7 @@ public class UniverseClock : MonoBehaviour
         }
     }
 
+    [SerializeField]
     private int _hour;
     public int hour
     {
@@ -51,6 +63,7 @@ public class UniverseClock : MonoBehaviour
         }
     }
 
+    [SerializeField]
     private int _minute;
     public int minute
     {
@@ -59,6 +72,7 @@ public class UniverseClock : MonoBehaviour
         }
     }
 
+    [SerializeField]
     private int _second;
     public int second
     {
@@ -76,13 +90,15 @@ public class UniverseClock : MonoBehaviour
         }
     }
 
+    private IEnumerator jdCoroutine;
+
     public void Init()
     {
         // If the string in the Unity Inpector is not null, we assign the value
         if(dateString_unityEditor != null && dateString_unityEditor.Length >= 10)
             AssignNewDateFromString(dateString_unityEditor, dateFormat_unityEditor);
         else
-            // Else we assign a defualt date and time
+            // Else we assign a default date and time
             AssignNewDateFromString("18-09-1997 16:00:00", DateFormat.ddMMYYYY);
     }
 
@@ -90,13 +106,18 @@ public class UniverseClock : MonoBehaviour
     {
         Init();
         ComputeJulianNumberDate();
-        StartCoroutine("UpdateUniverseTimeCoroutine");
+        JD_2_Day_of_Week();
+        jdCoroutine = UpdateUniverseTimeCoroutine();
+        StartCoroutine(jdCoroutine);
     }
 
     private IEnumerator UpdateUniverseTimeCoroutine()
     {
-        yield return new WaitForSeconds(1);
-        AddTime(1);
+        while(true)
+        {
+            AddTime(1);
+            yield return new WaitForSeconds(1f);
+        }
     }
 
     public void AssignNewDateFromString(string dateStr, DateFormat format)
@@ -170,15 +191,54 @@ public class UniverseClock : MonoBehaviour
         _julianDate = (double)jdn + (_hour-12d)/24d + _minute/1440d + _second/86400d;
     }
 
+    private void JD_2_Day_of_Week()
+    {
+        int jdn = (int)_julianDate; // Retrieving only the Julian Date Number (JDN)
+        int w0 = (jdn % 7) + 1;
+        // Using ISO day of the week : first day is Monday
+        switch(w0)
+        {
+            case 1:
+                _currentDayOfWeek = DayOfWeek.Monday;
+                break;
+            case 2:
+                _currentDayOfWeek = DayOfWeek.Tuesday;
+                break;
+            case 3:
+                _currentDayOfWeek = DayOfWeek.Wednesday;
+                break;
+            case 4:
+                _currentDayOfWeek = DayOfWeek.Thursday;
+                break;
+            case 5:
+                _currentDayOfWeek = DayOfWeek.Friday;
+                break;
+            case 6:
+                _currentDayOfWeek = DayOfWeek.Saturday;
+                break;
+            case 7:
+                _currentDayOfWeek = DayOfWeek.Sunday;
+                break;
+        }
+    }
+
     public void AddTime(int secondsToAdd)
     {
-        // hour, minute, seconds
-        int hourToAdd = (int)Mathf.Floor((float)secondsToAdd/3600f);
-        int minuteToAdd = (int)Mathf.Floor((secondsToAdd - 3600f*hourToAdd)/60f);
-        int secToAdd = secondsToAdd - 3600*hourToAdd - 60*minuteToAdd;
-        _hour += hourToAdd;
-        _minute += minuteToAdd;
-        _second += secToAdd;
+        _julianDate += secondsToAdd/86400d;
+        // Update Hour, Minute & Second properties
+        Get_Time_From_JulianDate();
+    }
+
+    private void Get_Time_From_JulianDate()
+    {
+        double decimalPart = _julianDate % 1;
+        double plainHour = decimalPart*24d;
+        _hour = 12 + Mathd.FloorToInt(plainHour);
+        if(_hour > 23)
+            _hour -= 24;
+        double plainMinute = plainHour % 1 * 60;
+        _minute = Mathd.FloorToInt(plainMinute);
+        _second = Mathd.FloorToInt(plainMinute % 1 * 60);
     }
     public int[] GetTime()
     {

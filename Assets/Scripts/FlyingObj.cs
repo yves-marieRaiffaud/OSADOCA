@@ -304,12 +304,12 @@ public class FlyingObj
     public void GravitationalStep()
     {
         // First computing the acceleration updates for each Star, Planet or Spaceship 
-        foreach(Transform obj in universe.physicsObjArray)
-            ComputeNewPosition(obj, obj.tag);
+        //foreach(Transform obj in universe.physicsObjArray)
+            //ComputeNewPosition(obj, obj.tag);
 
         // Once everything has been computed, apply the new accelerations at every objects
-        foreach(Transform obj in universe.physicsObjArray)
-            ApplyNewPosition(obj, obj.tag);
+        //foreach(Transform obj in universe.physicsObjArray)
+            //ApplyNewPosition(obj, obj.tag);
     }
 
     public void ComputeNewPosition(Transform obj, string objTag)
@@ -378,8 +378,8 @@ public class FlyingObj
             if(universe.simEnv.useNBodySimulation.value)
                 Debug.LogError("ERROR");
                 //ComputeGravitationalAccNBODY<T1, T2>(orbitingBody, settings, true);
-            else
-                Kepler.GravitationalAcc<T1>(pullingBody, orbitingBody, orbitingBody.Get_RadialVec()*UniCsts.km2m, true);
+            //else
+                //Kepler.GravitationalAcc<T1>(pullingBody, orbitingBody, orbitingBody.Get_RadialVec()*UniCsts.km2m, true);
                 //UpdateVelocityPos_RK4<T1>(orbitingBody);
         }
     }
