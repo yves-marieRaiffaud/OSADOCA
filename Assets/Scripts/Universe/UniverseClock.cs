@@ -90,6 +90,15 @@ public class UniverseClock : MonoBehaviour
         }
     }
 
+    // Ellapsed time in seconds since the start of the Universe Clock
+    private long _ellapsedTime;
+    public long ellapsedTime
+    {
+        get {
+            return _ellapsedTime;
+        }
+    }
+
     private IEnumerator jdCoroutine;
 
     public void Init()
@@ -108,6 +117,9 @@ public class UniverseClock : MonoBehaviour
         ComputeJulianNumberDate();
         JD_2_Day_of_Week();
         jdCoroutine = UpdateUniverseTimeCoroutine();
+
+        string filepath = "C:\\Users\\Yves-Marie\\Desktop\\OSADOCA\\OSADOCA\\Assets\\Resources\\OrbitalMechanics\\Ephemerides\\Earth_1Min_JD_ICRS_SunBRC_MeanGeoJ2000";
+        EphemReader reader = new EphemReader(this, filepath, true, ';');
         StartCoroutine(jdCoroutine);
     }
 
@@ -225,6 +237,7 @@ public class UniverseClock : MonoBehaviour
     public void AddTime(int secondsToAdd)
     {
         _julianDate += secondsToAdd/86400d;
+        _ellapsedTime += secondsToAdd;
         // Update Hour, Minute & Second properties
         Get_Time_From_JulianDate();
     }
