@@ -100,6 +100,32 @@ public class UniverseClock : MonoBehaviour
     }
 
     private IEnumerator jdCoroutine;
+    private IEnumerator posReaderUpdateCoroutine;
+
+    struct TimerAlarm
+    {
+        long _alarmEllapsedtime;
+        public long alarmEllapsedtime
+        {
+            get {
+                return _alarmEllapsedtime;
+            }
+        }
+
+        Action _callBackFunction;
+        public Action callBackFunction
+        {
+            get {
+                return _callBackFunction;
+            }
+        }
+        public TimerAlarm(long _targetEllapsedTime, Action _callbackFcn) {
+            _alarmEllapsedtime = _targetEllapsedTime;
+            _callBackFunction = _callbackFcn;
+        }
+    };
+
+    List<TimerAlarm> timerCallbacks;
 
     public void Init()
     {
@@ -109,6 +135,7 @@ public class UniverseClock : MonoBehaviour
         else
             // Else we assign a default date and time
             AssignNewDateFromString("18-09-1997 16:00:00", DateFormat.ddMMYYYY);
+        timerCallbacks = new List<TimerAlarm>();
     }
 
     void Awake()
@@ -117,10 +144,16 @@ public class UniverseClock : MonoBehaviour
         ComputeJulianNumberDate();
         JD_2_Day_of_Week();
         jdCoroutine = UpdateUniverseTimeCoroutine();
-
-        string filepath = "C:\\Users\\Yves-Marie\\Desktop\\OSADOCA\\OSADOCA\\Assets\\Resources\\OrbitalMechanics\\Ephemerides\\Earth_1Min_JD_ICRS_SunBRC_MeanGeoJ2000";
-        EphemReader reader = new EphemReader(this, filepath, true, ';');
         StartCoroutine(jdCoroutine);
+    }
+
+    private IEnumerator WaitAndReadNewEphemPosition(float waitTime)
+    {
+        while(true)
+        {
+            // Read new positions here
+            yield return new WaitForSeconds(waitTime);
+        }
     }
 
     private IEnumerator UpdateUniverseTimeCoroutine()
@@ -238,8 +271,32 @@ public class UniverseClock : MonoBehaviour
     {
         _julianDate += secondsToAdd/86400d;
         _ellapsedTime += secondsToAdd;
+
+        // Checking for callbacks at specified timers
+        if(_ellapsedTime == timerCallbacks[0].alarmEllapsedtime) {
+            Action action = timerCallbacks[0].callBackFunction;
+            timerCallbacks.RemoveAt(0);
+            action.Invoke();
+        }
+
         // Update Hour, Minute & Second properties
-        Get_Time_From_JulianDate();
+        //Get_Time_From_JulianDate();
+    }
+
+    public void Add_Timer_Callback(long ellapsedTime, Action callbackAction)
+    {
+        // 'ellapsedTime' is the time in seconds since the beggining of the UniverseClock
+        // 'callbackAction' is the action/function to call when the ellapsedTime is reached
+        long timeToReach = _ellapsedTime + ellapsedTime;
+        int idx = 0;
+        foreach(TimerAlarm item in timerCallbacks)
+        {
+            if(item.alarmEllapsedtime < timeToReach)
+                continue;
+            else
+                timerCallbacks.Insert(idx, new TimerAlarm(ellapsedTime, callbackAction));
+            idx++;
+        }
     }
 
     private void Get_Time_From_JulianDate()
@@ -255,6 +312,7 @@ public class UniverseClock : MonoBehaviour
     }
     public int[] GetTime()
     {
+        Get_Time_From_JulianDate();
         int[] time = new int[3];
         time[0] = _hour;
         time[1] = _minute;
@@ -292,5 +350,4 @@ public class UniverseClock : MonoBehaviour
     {
         return Date_ToString(format) + " " + Time_ToString();
     }
-
 }

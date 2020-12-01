@@ -39,11 +39,12 @@ public class UniverseRunner : MonoBehaviour
     // Class of available reference frames, initialized only once every celestialBody has been initialized (end of Start() method in UniverseRunner)
     public ReferenceFramesList refFrames;
 
-    bool passedFirstFixedUpdate;
+    public UniverseClock universeClock;
+    private IEnumerator posReaderUpdateCoroutine;
     //=========================================
     void Awake()
     {
-        passedFirstFixedUpdate = false;
+        universeClock = GetComponent<UniverseClock>();
 
         InitializeSimulationEnv();
         flyingObjInst = new FlyingObj(this);
@@ -139,10 +140,24 @@ public class UniverseRunner : MonoBehaviour
         UsefulFunctions.parentObj(gameObjectToAdd, parentFolder);
     }
     //=========================================
+    private IEnumerator WaitAndReadNewEphemPosition(float waitTime)
+    {
+        while(true)
+        {
+            // Read new positions here
+            yield return new WaitForSeconds(waitTime);
+        }
+    }
+
     void Start()
     {
         if(startIsDone == null)
             startIsDone = new UnityEvent();
+        
+        string filepath = "C:\\Users\\Yves-Marie\\Desktop\\OSADOCA\\OSADOCA\\Assets\\Resources\\OrbitalMechanics\\Ephemerides\\Earth_1Min_JD_ICRS_SunBRC_MeanGeoJ2000";
+        EphemReader reader = new EphemReader(universeClock, filepath, true, ';');
+        posReaderUpdateCoroutine = WaitAndReadNewEphemPosition(reader.ephemDeltaTime);
+        StartCoroutine(posReaderUpdateCoroutine);
 
         foreach(Transform obj in physicsObjArray)
         {
