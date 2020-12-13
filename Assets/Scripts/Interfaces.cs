@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
 
+public interface UnitInterface{ }
+
 public interface Dynamic_Obj_Common
 {
     GameObject _gameObject {get;}

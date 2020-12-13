@@ -53,8 +53,11 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
     }
 
     public Velocity3d initStartVel;
-    public Vector3d initStartPos;
+    public Distance3d initStartPos;
     public CelestialBody orbitedBody;
+
+    public DoubleNoDim doubleNo;
+    public Pressure pressure;
 
     void Awake()
     {
@@ -67,11 +70,12 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
         _relativeAcc = Vector3d.zero;
 
         // Making sure the specified input spacecraft velocity is in km/s
-        if(!initStartVel.HasUnit(Units.velocity.kms))
-            initStartVel = initStartVel.ConvertTo(Units.velocity.kms);
+        initStartVel = initStartVel.EnsureUnit(Units.velocity.kms);
         _relativeVel = initStartVel.val;
-        
-        _realPosition = initStartPos;
+
+        // Making sure the specified input position is in km
+        initStartPos = initStartPos.EnsureUnit(Units.distance.km);
+        _realPosition = initStartPos.val;
         gameObject.transform.position = (Vector3)_realPosition;
     }
 }

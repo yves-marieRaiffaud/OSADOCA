@@ -4,10 +4,10 @@ using System;
 using System.ComponentModel;
 using UnityEngine;
 using Mathd_Lib;
-using Common = CommonMethods;
+using MathOps = CommonMethods.MathsOps;
 
 [Serializable]
-public class DoubleNoDim
+public class DoubleNoDim : UnitInterface
 {
     [SerializeField]
     double _val;
@@ -36,10 +36,10 @@ public class DoubleNoDim
     }
 
     public override string ToString() {
-        return Common.DoubleToString(val) + " " + unit.ToString();
+        return MathOps.DoubleToString(val) + " " + unit.ToString();
     }
     public string ToString(int significantDigits) {
-        return Common.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
+        return MathOps.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
     }
     public bool HasUnit(Units.noDimension thoughtUnit) {
         bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
@@ -48,7 +48,7 @@ public class DoubleNoDim
 };
 
 [Serializable]
-public class Pressure
+public class Pressure : UnitInterface
 {
     [SerializeField]
     double _val;
@@ -77,10 +77,10 @@ public class Pressure
     }
 
     public override string ToString() {
-        return Common.DoubleToString(val) + " " + unit.ToString();
+        return MathOps.DoubleToString(val) + " " + unit.ToString();
     }
     public string ToString(int significantDigits) {
-        return Common.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
+        return MathOps.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
     }
     public bool HasUnit(Units.pressure thoughtUnit) {
         bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
@@ -93,7 +93,7 @@ public class Pressure
 };
 
 [Serializable]
-public class Distance
+public class Distance : UnitInterface
 {
     [SerializeField]
     double _val;
@@ -122,10 +122,10 @@ public class Distance
     }
 
     public override string ToString() {
-        return Common.DoubleToString(val) + " " + unit.ToString();
+        return MathOps.DoubleToString(val) + " " + unit.ToString();
     }
     public string ToString(int significantDigits) {
-        return Common.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
+        return MathOps.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
     }
     public bool HasUnit(Units.distance thoughtUnit) {
         bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
@@ -136,9 +136,75 @@ public class Distance
         return new Distance(Units.ConvertDistance(unit, outputUnit, val), outputUnit);
     }
 };
+[Serializable]
+public class Distance3d : UnitInterface
+{
+    [SerializeField]
+    Vector3d _val;
+    public Vector3d val
+    {
+        get {
+            return _val;
+        }
+    }
+    public Vector3 val_Vec3
+    {
+        get {
+            return (Vector3)_val;
+        }
+    }
+
+    [SerializeField]
+    Units.distance _unit;
+    public Units.distance unit
+    {
+        get {
+            return _unit;
+        }
+    }
+
+    public Distance3d(double __dx, double __dy, double __dz, Units.distance unit) {
+        _val.x = __dx;
+        _val.y = __dy;
+        _val.z = __dz;
+        _unit = unit;
+    }
+
+    public Distance3d(Vector3d __dVec, Units.distance unit) {
+        _val = __dVec;
+        _unit = unit;
+    }
+
+    public override string ToString() {
+        string dxStr = MathOps.DoubleToString(val.x);
+        string dyStr = MathOps.DoubleToString(val.y);
+        string dzStr = MathOps.DoubleToString(val.z);
+        return String.Format("[{0}-{1}-{2}] {3}", dxStr, dyStr, dzStr, unit.ToString());
+    }
+    public string ToString(int significantDigits) {
+        string dxStr = MathOps.DoubleToSignificantDigits(val.x, significantDigits);
+        string dyStr = MathOps.DoubleToSignificantDigits(val.y, significantDigits);
+        string dzStr = MathOps.DoubleToSignificantDigits(val.z, significantDigits);
+        return String.Format("[{0}-{1}-{2}] {3}", dxStr, dyStr, dzStr, unit.ToString());
+    }
+    public bool HasUnit(Units.distance thoughtUnit) {
+        bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
+        return outBool;
+    }
+    public Distance3d EnsureUnit(Units.distance unitToEnsure) {
+        if(!HasUnit(unitToEnsure))
+            return ConvertTo(unitToEnsure);
+        else
+            return this;
+    }
+
+    public Distance3d ConvertTo(Units.distance outputUnit) {
+        return Units.ConvertDistance3d(unit, outputUnit, val);
+    }
+};
 
 [Serializable]
-public class Angle
+public class Angle : UnitInterface
 {
     [SerializeField]
     double _val;
@@ -167,10 +233,10 @@ public class Angle
     }
 
     public override string ToString() {
-        return Common.DoubleToString(val) + " " + unit.ToString();
+        return MathOps.DoubleToString(val) + " " + unit.ToString();
     }
     public string ToString(int significantDigits) {
-        return Common.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
+        return MathOps.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
     }
     public bool HasUnit(Units.angle thoughtUnit) {
         bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
@@ -183,7 +249,7 @@ public class Angle
 };
 
 [Serializable]
-public class Time_Class
+public class Time_Class : UnitInterface
 {
     [SerializeField]
     double _val;
@@ -212,10 +278,10 @@ public class Time_Class
     }
 
     public override string ToString() {
-        return Common.DoubleToString(val) + " " + unit.ToString();
+        return MathOps.DoubleToString(val) + " " + unit.ToString();
     }
     public string ToString(int significantDigits) {
-        return Common.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
+        return MathOps.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
     }
     public bool HasUnit(Units.time thoughtUnit) {
         bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
@@ -228,7 +294,7 @@ public class Time_Class
 };
 
 [Serializable]
-public class Velocity
+public class Velocity : UnitInterface
 {
     [SerializeField]
     double _val;
@@ -254,10 +320,10 @@ public class Velocity
     }
 
     public override string ToString() {
-        return Common.DoubleToString(val) + " " + unit.ToString();
+        return MathOps.DoubleToString(val) + " " + unit.ToString();
     }
     public string ToString(int significantDigits) {
-        return Common.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
+        return MathOps.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
     }
     public bool HasUnit(Units.velocity thoughtUnit) {
         bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
@@ -269,7 +335,7 @@ public class Velocity
     }
 };
 [Serializable]
-public class Velocity3d
+public class Velocity3d : UnitInterface
 {
     [SerializeField]
     Vector3d _val;
@@ -277,6 +343,12 @@ public class Velocity3d
     {
         get {
             return _val;
+        }
+    }
+    public Vector3 val_Vec3
+    {
+        get {
+            return (Vector3)_val;
         }
     }
 
@@ -301,20 +373,27 @@ public class Velocity3d
     }
 
     public override string ToString() {
-        string vxStr = Common.DoubleToString(val.x);
-        string vyStr = Common.DoubleToString(val.y);
-        string vzStr = Common.DoubleToString(val.x);
+        string vxStr = MathOps.DoubleToString(val.x);
+        string vyStr = MathOps.DoubleToString(val.y);
+        string vzStr = MathOps.DoubleToString(val.x);
         return String.Format("[{0}-{1}-{2}] {3}", vxStr, vyStr, vzStr, unit.ToString());
     }
     public string ToString(int significantDigits) {
-        string vxStr = Common.DoubleToSignificantDigits(val.x, significantDigits);
-        string vyStr = Common.DoubleToSignificantDigits(val.y, significantDigits);
-        string vzStr = Common.DoubleToSignificantDigits(val.z, significantDigits);
+        string vxStr = MathOps.DoubleToSignificantDigits(val.x, significantDigits);
+        string vyStr = MathOps.DoubleToSignificantDigits(val.y, significantDigits);
+        string vzStr = MathOps.DoubleToSignificantDigits(val.z, significantDigits);
         return String.Format("[{0}-{1}-{2}] {3}", vxStr, vyStr, vzStr, unit.ToString());
     }
     public bool HasUnit(Units.velocity thoughtUnit) {
         bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
         return outBool;
+    }
+
+    public Velocity3d EnsureUnit(Units.velocity unitToEnsure) {
+        if(!HasUnit(unitToEnsure))
+            return ConvertTo(unitToEnsure);
+        else
+            return this;
     }
 
     public Velocity3d ConvertTo(Units.velocity outputUnit) {
@@ -323,7 +402,7 @@ public class Velocity3d
 };
 
 [Serializable]
-public class Acceleration
+public class Acceleration : UnitInterface
 {
     [SerializeField]
     double _val;
@@ -349,10 +428,10 @@ public class Acceleration
     }
 
     public override string ToString() {
-        return Common.DoubleToString(val) + " " + unit.ToString();
+        return MathOps.DoubleToString(val) + " " + unit.ToString();
     }
     public string ToString(int significantDigits) {
-        return Common.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
+        return MathOps.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
     }
     public bool HasUnit(Units.acceleration thoughtUnit) {
         bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
@@ -364,7 +443,7 @@ public class Acceleration
     }
 };
 [Serializable]
-public class Acceleration3d
+public class Acceleration3d : UnitInterface
 {
     [SerializeField]
     Vector3d _val;
@@ -372,6 +451,12 @@ public class Acceleration3d
     {
         get {
             return _val;
+        }
+    }
+    public Vector3 val_Vec3
+    {
+        get {
+            return (Vector3)_val;
         }
     }
 
@@ -397,20 +482,26 @@ public class Acceleration3d
     }
 
     public override string ToString() {
-        string axStr = Common.DoubleToString(val.x);
-        string ayStr = Common.DoubleToString(val.y);
-        string azStr = Common.DoubleToString(val.z);
+        string axStr = MathOps.DoubleToString(val.x);
+        string ayStr = MathOps.DoubleToString(val.y);
+        string azStr = MathOps.DoubleToString(val.z);
         return String.Format("[{0}-{1}-{2}] {3}", axStr, ayStr, azStr, unit.ToString());
     }
     public string ToString(int significantDigits) {
-        string axStr = Common.DoubleToSignificantDigits(val.x, significantDigits);
-        string ayStr = Common.DoubleToSignificantDigits(val.y, significantDigits);
-        string azStr = Common.DoubleToSignificantDigits(val.z, significantDigits);
+        string axStr = MathOps.DoubleToSignificantDigits(val.x, significantDigits);
+        string ayStr = MathOps.DoubleToSignificantDigits(val.y, significantDigits);
+        string azStr = MathOps.DoubleToSignificantDigits(val.z, significantDigits);
         return String.Format("[{0}-{1}-{2}] {3}", axStr, ayStr, azStr, unit.ToString());
     }
     public bool HasUnit(Units.acceleration thoughtUnit) {
         bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
         return outBool;
+    }
+    public Acceleration3d EnsureUnit(Units.acceleration unitToEnsure) {
+        if(!HasUnit(unitToEnsure))
+            return ConvertTo(unitToEnsure);
+        else
+            return this;
     }
 
     public Acceleration3d ConvertTo(Units.acceleration outputUnit) {
@@ -419,7 +510,7 @@ public class Acceleration3d
 };
 
 [Serializable]
-public class Force
+public class Force : UnitInterface
 {
     [SerializeField]
     double _val;
@@ -445,10 +536,10 @@ public class Force
     }
 
     public override string ToString() {
-        return Common.DoubleToString(val) + " " + unit.ToString();
+        return MathOps.DoubleToString(val) + " " + unit.ToString();
     }
     public string ToString(int significantDigits) {
-        return Common.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
+        return MathOps.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
     }
     public bool HasUnit(Units.force thoughtUnit) {
         bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
@@ -460,7 +551,7 @@ public class Force
     }
 };
 [Serializable]
-public class Force3d
+public class Force3d : UnitInterface
 {
     [SerializeField]
     Vector3d _val;
@@ -470,7 +561,13 @@ public class Force3d
             return _val;
         }
     }
-    
+    public Vector3 val_Vec3
+    {
+        get {
+            return (Vector3)_val;
+        }
+    }
+
     [SerializeField]
     Units.force _unit;
     public Units.force unit
@@ -493,20 +590,26 @@ public class Force3d
     }
 
     public override string ToString() {
-        string fxStr = Common.DoubleToString(val.x);
-        string fyStr = Common.DoubleToString(val.y);
-        string fzStr = Common.DoubleToString(val.z);
+        string fxStr = MathOps.DoubleToString(val.x);
+        string fyStr = MathOps.DoubleToString(val.y);
+        string fzStr = MathOps.DoubleToString(val.z);
         return String.Format("[{0}-{1}-{2}] {3}", fxStr, fyStr, fzStr, unit.ToString());
     }
     public string ToString(int significantDigits) {
-        string fxStr = Common.DoubleToSignificantDigits(val.x, significantDigits);
-        string fyStr = Common.DoubleToSignificantDigits(val.y, significantDigits);
-        string fzStr = Common.DoubleToSignificantDigits(val.z, significantDigits);
+        string fxStr = MathOps.DoubleToSignificantDigits(val.x, significantDigits);
+        string fyStr = MathOps.DoubleToSignificantDigits(val.y, significantDigits);
+        string fzStr = MathOps.DoubleToSignificantDigits(val.z, significantDigits);
         return String.Format("[{0}-{1}-{2}] {3}", fxStr, fyStr, fzStr, unit.ToString());
     }
     public bool HasUnit(Units.force thoughtUnit) {
         bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
         return outBool;
+    }
+    public Force3d EnsureUnit(Units.force unitToEnsure) {
+        if(!HasUnit(unitToEnsure))
+            return ConvertTo(unitToEnsure);
+        else
+            return this;
     }
 
     public Force3d ConvertTo(Units.force outputUnit) {
@@ -515,7 +618,7 @@ public class Force3d
 };
 
 [Serializable]
-public class Temperature
+public class Temperature : UnitInterface
 {
     [SerializeField]
     double _val;
@@ -541,10 +644,10 @@ public class Temperature
     }
 
     public override string ToString() {
-        return Common.DoubleToString(val) + " " + unit.ToString();
+        return MathOps.DoubleToString(val) + " " + unit.ToString();
     }
     public string ToString(int significantDigits) {
-        return Common.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
+        return MathOps.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
     }
     public bool HasUnit(Units.temperature thoughtUnit) {
         bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
@@ -557,7 +660,7 @@ public class Temperature
 };
 
 [Serializable]
-public class Mass
+public class Mass : UnitInterface
 {
     [SerializeField]
     double _val;
@@ -583,10 +686,10 @@ public class Mass
     }
 
     public override string ToString() {
-        return Common.DoubleToString(val) + " " + unit.ToString();
+        return MathOps.DoubleToString(val) + " " + unit.ToString();
     }
     public string ToString(int significantDigits) {
-        return Common.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
+        return MathOps.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
     }
     public bool HasUnit(Units.mass thoughtUnit) {
         bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
@@ -629,6 +732,11 @@ public static class Units
     public static double ConvertDistance(distance inputUnit, distance outputUnit, double valueToConvert)
     {
         return valueToConvert * distanceUnitsCoefs[inputUnit] / distanceUnitsCoefs[outputUnit];
+    }
+     public static Distance3d ConvertDistance3d(distance inputUnit, distance outputUnit, Vector3d val)
+    {
+        double ratio = distanceUnitsCoefs[inputUnit] / distanceUnitsCoefs[outputUnit];
+        return new Distance3d(val*ratio, outputUnit);
     }
     //=============================================================
     //=======================ANGLE=================================
