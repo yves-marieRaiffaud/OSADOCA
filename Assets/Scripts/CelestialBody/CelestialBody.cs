@@ -52,6 +52,7 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
         }
     }
 
+    public CelestialBody orbitedBody;
     public double mu;
 
     void Awake()

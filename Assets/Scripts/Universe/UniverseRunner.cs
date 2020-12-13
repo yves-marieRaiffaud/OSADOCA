@@ -179,8 +179,10 @@ namespace Universe
 
         void FixedUpdate()
         {
-            flyingDynamics.Gravity_Method(activeSC);
-            PrintAltitude();
+            if(simEnv.simulateGravity.value) {
+                flyingDynamics.GravitationnalStep();
+                PrintAltitude();
+            }
             updateFloatingOrigin();
         }
 

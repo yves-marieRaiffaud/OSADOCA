@@ -6,42 +6,91 @@ using Mathd_Lib;
 //using System.Linq;
 
 using Universe;
+using ObjHd = CommonMethods.ObjectsHandling;
 
 namespace FlyingObjects
 {
     public class FlyingDynamics
     {
         UniverseRunner universeRunner;
-
         public FlyingDynamics(UniverseRunner _universeRunner)
         {
             universeRunner = _universeRunner;
         }
 
-        /*/// <summary>
-        /// Applies the Leapfrog method and move the 'spaceship' to its updated position. Updates the spaceship acceleration, velocity and realPosition members 
-        /// </summary>
-        public void Leapfrog_Method(Spaceship spaceship)
+        public void GravitationnalStep()
         {
-            // Leapfrog integration method here
-            // 1/2 kick
-            spaceship.relativeVel +=  spaceship.relativeAcc * Time.fixedDeltaTime/2d;
-            // Drift
-            spaceship.transform.position += (Vector3) (spaceship.relativeVel*Time.fixedDeltaTime/1000d);
-            spaceship.relativeAcc = Kepler.GetGravAcc(spaceship.transform.position, spaceship.orbitedBody.transform.position, spaceship.orbitedBody.mu);
-            // 1/2 kick
-            spaceship.relativeVel +=  spaceship.relativeAcc * Time.fixedDeltaTime/2d;
-        }*/
+            // First computing the acceleration updates for each Star, Planet or Spaceship 
+            foreach(Transform obj in universeRunner.physicsObjArray)
+                Compute_NewPositions(obj, obj.tag);
 
-        public void Compute_NewPositions()
-        {
-            
+            // Once everything has been computed, apply the new accelerations at every objects
+            foreach(Transform obj in universeRunner.physicsObjArray)
+                Apply_NewPositions(obj, obj.tag);
         }
 
-        public void Gravity_Method(Spaceship spaceship)
+        public void Compute_NewPositions(Transform obj, string objTag)
         {
-            spaceship.relativeAcc = Kepler.GetGravAcc(spaceship.transform.position, spaceship.orbitedBody.transform.position, spaceship.orbitedBody.mu)/1000d;
-            spaceship._rigidbody.AddForce((Vector3) (spaceship.relativeAcc), ForceMode.Acceleration);
+            // Compute acceleration, velocity and the new position of either a Planet or a Spaceship, due to gravitational pull
+            CelestialBody orbitedBody;
+            switch(ObjHd.Str_2_GoTags(objTag))
+            {
+                case UniverseRunner.goTags.Planet:
+                    CelestialBody celestBody = obj.GetComponent<CelestialBody>();
+                    if(celestBody.orbitedBody != null) {
+                        orbitedBody = celestBody.orbitedBody.GetComponent<CelestialBody>();
+                        //GravitationalUpdate<CelestialBody, CelestialBodySettings>(orbitedBody, celestBody);
+                        GravitationalUpdate<CelestialBody>(orbitedBody, celestBody);
+                    }
+                    break;
+
+                case UniverseRunner.goTags.Spaceship:
+                    Spaceship ship = obj.GetComponent<Spaceship>();
+                    orbitedBody = ship.orbitedBody.GetComponent<CelestialBody>();
+                    //GravitationalUpdate<Spaceship, SpaceshipSettings>(orbitedBody, ship);
+                    GravitationalUpdate<Spaceship>(orbitedBody, ship);
+                    break;
+            }
+        }
+
+        public void GravitationalUpdate<T1/*,T2*/>(CelestialBody orbitedBody, T1 orbitingBody)
+        where T1: Dynamic_Obj_Common //where T2: Dynamic_Obj_Settings
+        {
+            if(orbitingBody is T1 && orbitedBody != null)
+            {
+                //T2 settings = GetObjectSettings<T1, T2>(orbitingBody);
+                if(universeRunner.simEnv.useNBodySimulation.value)
+                    Compute_NBody_Grav_Acc<T1/*, T2*/>(orbitedBody, orbitingBody);
+                else
+                    Compute_SingleBody_Grav_Acc<T1/*,T2*/>(orbitedBody, orbitingBody);
+            }
+        }
+
+        public void Apply_NewPositions(Transform obj, string objTag)
+        {
+            switch(ObjHd.Str_2_GoTags(objTag))
+            {
+                case UniverseRunner.goTags.Planet:
+                    CelestialBody celestBody = obj.GetComponent<CelestialBody>();
+                    celestBody._rigidbody.AddForce((Vector3) celestBody.relativeAcc, ForceMode.Acceleration);
+                    break;
+
+                case UniverseRunner.goTags.Spaceship:
+                    Spaceship ship = obj.GetComponent<Spaceship>();
+                    ship._rigidbody.AddForce((Vector3) ship.relativeAcc, ForceMode.Acceleration);
+                    break;
+            }
+        }
+
+        public void Compute_SingleBody_Grav_Acc<T1/*,T2*/>(CelestialBody orbitedBody, T1 orbitingBody)
+        where T1: Dynamic_Obj_Common //where T2: Dynamic_Obj_Settings
+        {
+            orbitingBody.relativeAcc = Kepler.GetGravAcc(orbitingBody._gameObject.transform.position, orbitedBody.transform.position, orbitedBody.mu) * Units.M2KM;
+        }
+        public void Compute_NBody_Grav_Acc<T1/*,T2*/>(CelestialBody orbitedBody, T1 orbitingBody)
+        where T1: Dynamic_Obj_Common //where T2: Dynamic_Obj_Settings
+        {
+            // TO IMPLEMENT HERE
         }
 
     }

@@ -11,10 +11,9 @@ public static class Kepler
     {
         return GetGravAcc(new Vector3d(shipPos), new Vector3d(orbitedBodyPos), orbitedBodyMu);
     }
-
     public static Vector3d GetGravAcc(Vector3d shipPos, Vector3d orbitedBodyPos, double orbitedBodyMu)
     {
-        Vector3d r = (shipPos - orbitedBodyPos)*1000d;
+        Vector3d r = (shipPos - orbitedBodyPos)*Units.KM2M;
         return -orbitedBodyMu * r/Mathd.Pow(r.magnitude, 3);
     }
 }

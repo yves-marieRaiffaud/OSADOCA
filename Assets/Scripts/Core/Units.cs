@@ -722,6 +722,12 @@ public static class Units
     //=======================DISTANCE==============================
     //=============================================================
     public enum distance { cm, m, hm, km, AU };
+    public const double KM2M = 1_000d;
+    public const double M2KM = 0.001d;
+    public const double AU2KM = 149_597_870.0007d;
+    public const double KM2AU = 1d/149_597_870.0007d;
+    public const double AU2M = 149_597_870000.7d;
+    public const double M2AU = 1d/149_597_870000.7d;
     private static Dictionary<distance, double> distanceUnitsCoefs = new Dictionary<distance, double> {
         { distance.cm, 0.1d },
         { distance.m, 1d },
