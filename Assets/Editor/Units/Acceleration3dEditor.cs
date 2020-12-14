@@ -22,7 +22,7 @@ public class Acceleration3dEditor : PropertyDrawer
         var unitRect = new Rect(position.x + position.width*3/4, position.y, position.width/4-2.5f, position.height);
 
         // Draw fields - pass GUIContent.none to each so they are drawn without labels
-        EditorGUI.PropertyField(valueRect, property.FindPropertyRelative("_val"), GUIContent.none);
+        EditorGUI.PropertyField(valueRect, property.FindPropertyRelative("_val3d"), GUIContent.none);
         EditorGUI.PropertyField(unitRect, property.FindPropertyRelative("_unit"), GUIContent.none);
 
         // Set indent back to what it was

@@ -16,8 +16,12 @@ public class DoubleNoDim : UnitInterface
         get {
             return _val;
         }
-        set {
-            _val=value;
+    }
+
+    public Vector3d val3d
+    {
+        get {
+            return Vector3d.NaN();
         }
     }
 
@@ -57,8 +61,12 @@ public class Pressure : UnitInterface
         get {
             return _val;
         }
-        set {
-            _val=value;
+    }
+
+    public Vector3d val3d
+    {
+        get {
+            return Vector3d.NaN();
         }
     }
 
@@ -102,8 +110,12 @@ public class Distance : UnitInterface
         get {
             return _val;
         }
-        set {
-            _val=value;
+    }
+
+    public Vector3d val3d
+    {
+        get {
+            return Vector3d.NaN();
         }
     }
 
@@ -139,18 +151,25 @@ public class Distance : UnitInterface
 [Serializable]
 public class Distance3d : UnitInterface
 {
-    [SerializeField]
-    Vector3d _val;
-    public Vector3d val
+    public double val
     {
         get {
-            return _val;
+            return double.NaN;
+        }
+    }
+
+    [SerializeField]
+    Vector3d _val3d;
+    public Vector3d val3d
+    {
+        get {
+            return _val3d;
         }
     }
     public Vector3 val_Vec3
     {
         get {
-            return (Vector3)_val;
+            return (Vector3)_val3d;
         }
     }
 
@@ -164,27 +183,27 @@ public class Distance3d : UnitInterface
     }
 
     public Distance3d(double __dx, double __dy, double __dz, Units.distance unit) {
-        _val.x = __dx;
-        _val.y = __dy;
-        _val.z = __dz;
+        _val3d.x = __dx;
+        _val3d.y = __dy;
+        _val3d.z = __dz;
         _unit = unit;
     }
 
     public Distance3d(Vector3d __dVec, Units.distance unit) {
-        _val = __dVec;
+        _val3d = __dVec;
         _unit = unit;
     }
 
     public override string ToString() {
-        string dxStr = MathOps.DoubleToString(val.x);
-        string dyStr = MathOps.DoubleToString(val.y);
-        string dzStr = MathOps.DoubleToString(val.z);
+        string dxStr = MathOps.DoubleToString(val3d.x);
+        string dyStr = MathOps.DoubleToString(val3d.y);
+        string dzStr = MathOps.DoubleToString(val3d.z);
         return String.Format("[{0}-{1}-{2}] {3}", dxStr, dyStr, dzStr, unit.ToString());
     }
     public string ToString(int significantDigits) {
-        string dxStr = MathOps.DoubleToSignificantDigits(val.x, significantDigits);
-        string dyStr = MathOps.DoubleToSignificantDigits(val.y, significantDigits);
-        string dzStr = MathOps.DoubleToSignificantDigits(val.z, significantDigits);
+        string dxStr = MathOps.DoubleToSignificantDigits(val3d.x, significantDigits);
+        string dyStr = MathOps.DoubleToSignificantDigits(val3d.y, significantDigits);
+        string dzStr = MathOps.DoubleToSignificantDigits(val3d.z, significantDigits);
         return String.Format("[{0}-{1}-{2}] {3}", dxStr, dyStr, dzStr, unit.ToString());
     }
     public bool HasUnit(Units.distance thoughtUnit) {
@@ -199,7 +218,7 @@ public class Distance3d : UnitInterface
     }
 
     public Distance3d ConvertTo(Units.distance outputUnit) {
-        return Units.ConvertDistance3d(unit, outputUnit, val);
+        return Units.ConvertDistance3d(unit, outputUnit, val3d);
     }
 };
 
@@ -215,6 +234,13 @@ public class Angle : UnitInterface
         }
         set {
             _val=value;
+        }
+    }
+
+    public Vector3d val3d
+    {
+        get {
+            return Vector3d.NaN();
         }
     }
 
@@ -263,6 +289,13 @@ public class Time_Class : UnitInterface
         }
     }
 
+    public Vector3d val3d
+    {
+        get {
+            return Vector3d.NaN();
+        }
+    }
+
     [SerializeField]
     Units.time _unit;
     public Units.time unit
@@ -305,6 +338,13 @@ public class Velocity : UnitInterface
         }
     }
 
+    public Vector3d val3d
+    {
+        get {
+            return Vector3d.NaN();
+        }
+    }
+
     [SerializeField]
     Units.velocity _unit;
     public Units.velocity unit
@@ -337,18 +377,25 @@ public class Velocity : UnitInterface
 [Serializable]
 public class Velocity3d : UnitInterface
 {
-    [SerializeField]
-    Vector3d _val;
-    public Vector3d val
+    public double val
     {
         get {
-            return _val;
+            return double.NaN;
+        }
+    }
+
+    [SerializeField]
+    Vector3d _val3d;
+    public Vector3d val3d
+    {
+        get {
+            return _val3d;
         }
     }
     public Vector3 val_Vec3
     {
         get {
-            return (Vector3)_val;
+            return (Vector3)_val3d;
         }
     }
 
@@ -362,26 +409,26 @@ public class Velocity3d : UnitInterface
     }
 
     public Velocity3d(double __vx, double __vy,double __vz, Units.velocity unit) {
-        _val.x = __vx;
-        _val.y = __vy;
-        _val.z = __vz;
+        _val3d.x = __vx;
+        _val3d.y = __vy;
+        _val3d.z = __vz;
         _unit = unit;
     }
     public Velocity3d(Vector3d __vVec, Units.velocity unit) {
-        _val = __vVec;
+        _val3d = __vVec;
         _unit = unit;
     }
 
     public override string ToString() {
-        string vxStr = MathOps.DoubleToString(val.x);
-        string vyStr = MathOps.DoubleToString(val.y);
-        string vzStr = MathOps.DoubleToString(val.x);
+        string vxStr = MathOps.DoubleToString(val3d.x);
+        string vyStr = MathOps.DoubleToString(val3d.y);
+        string vzStr = MathOps.DoubleToString(val3d.x);
         return String.Format("[{0}-{1}-{2}] {3}", vxStr, vyStr, vzStr, unit.ToString());
     }
     public string ToString(int significantDigits) {
-        string vxStr = MathOps.DoubleToSignificantDigits(val.x, significantDigits);
-        string vyStr = MathOps.DoubleToSignificantDigits(val.y, significantDigits);
-        string vzStr = MathOps.DoubleToSignificantDigits(val.z, significantDigits);
+        string vxStr = MathOps.DoubleToSignificantDigits(val3d.x, significantDigits);
+        string vyStr = MathOps.DoubleToSignificantDigits(val3d.y, significantDigits);
+        string vzStr = MathOps.DoubleToSignificantDigits(val3d.z, significantDigits);
         return String.Format("[{0}-{1}-{2}] {3}", vxStr, vyStr, vzStr, unit.ToString());
     }
     public bool HasUnit(Units.velocity thoughtUnit) {
@@ -397,7 +444,7 @@ public class Velocity3d : UnitInterface
     }
 
     public Velocity3d ConvertTo(Units.velocity outputUnit) {
-        return Units.ConvertVelocity3d(unit, outputUnit, val);
+        return Units.ConvertVelocity3d(unit, outputUnit, val3d);
     }
 };
 
@@ -410,6 +457,13 @@ public class Acceleration : UnitInterface
     {
         get {
             return _val;
+        }
+    }
+
+    public Vector3d val3d
+    {
+        get {
+            return Vector3d.NaN();
         }
     }
 
@@ -445,18 +499,25 @@ public class Acceleration : UnitInterface
 [Serializable]
 public class Acceleration3d : UnitInterface
 {
-    [SerializeField]
-    Vector3d _val;
-    public Vector3d val
+    public double val
     {
         get {
-            return _val;
+            return double.NaN;
+        }
+    }
+
+    [SerializeField]
+    Vector3d _val3d;
+    public Vector3d val3d
+    {
+        get {
+            return _val3d;
         }
     }
     public Vector3 val_Vec3
     {
         get {
-            return (Vector3)_val;
+            return (Vector3)_val3d;
         }
     }
 
@@ -470,27 +531,27 @@ public class Acceleration3d : UnitInterface
     }
 
     public Acceleration3d(double __ax, double __ay, double __az, Units.acceleration unit) {
-        _val.x = __ax;
-        _val.y = __ay;
-        _val.z = __az;
+        _val3d.x = __ax;
+        _val3d.y = __ay;
+        _val3d.z = __az;
         _unit = unit;
     }
 
     public Acceleration3d(Vector3d __aVec, Units.acceleration unit) {
-        _val = __aVec;
+        _val3d = __aVec;
         _unit = unit;
     }
 
     public override string ToString() {
-        string axStr = MathOps.DoubleToString(val.x);
-        string ayStr = MathOps.DoubleToString(val.y);
-        string azStr = MathOps.DoubleToString(val.z);
+        string axStr = MathOps.DoubleToString(val3d.x);
+        string ayStr = MathOps.DoubleToString(val3d.y);
+        string azStr = MathOps.DoubleToString(val3d.z);
         return String.Format("[{0}-{1}-{2}] {3}", axStr, ayStr, azStr, unit.ToString());
     }
     public string ToString(int significantDigits) {
-        string axStr = MathOps.DoubleToSignificantDigits(val.x, significantDigits);
-        string ayStr = MathOps.DoubleToSignificantDigits(val.y, significantDigits);
-        string azStr = MathOps.DoubleToSignificantDigits(val.z, significantDigits);
+        string axStr = MathOps.DoubleToSignificantDigits(val3d.x, significantDigits);
+        string ayStr = MathOps.DoubleToSignificantDigits(val3d.y, significantDigits);
+        string azStr = MathOps.DoubleToSignificantDigits(val3d.z, significantDigits);
         return String.Format("[{0}-{1}-{2}] {3}", axStr, ayStr, azStr, unit.ToString());
     }
     public bool HasUnit(Units.acceleration thoughtUnit) {
@@ -505,7 +566,7 @@ public class Acceleration3d : UnitInterface
     }
 
     public Acceleration3d ConvertTo(Units.acceleration outputUnit) {
-        return Units.ConvertAcceleration3d(unit, outputUnit, val);
+        return Units.ConvertAcceleration3d(unit, outputUnit, val3d);
     }
 };
 
@@ -518,6 +579,13 @@ public class Force : UnitInterface
     {
         get {
             return _val;
+        }
+    }
+
+    public Vector3d val3d
+    {
+        get {
+            return Vector3d.NaN();
         }
     }
 
@@ -553,18 +621,25 @@ public class Force : UnitInterface
 [Serializable]
 public class Force3d : UnitInterface
 {
-    [SerializeField]
-    Vector3d _val;
-    public Vector3d val
+    public double val
     {
         get {
-            return _val;
+            return double.NaN;
+        }
+    }
+
+    [SerializeField]
+    Vector3d _val3d;
+    public Vector3d val3d
+    {
+        get {
+            return _val3d;
         }
     }
     public Vector3 val_Vec3
     {
         get {
-            return (Vector3)_val;
+            return (Vector3)_val3d;
         }
     }
 
@@ -578,27 +653,27 @@ public class Force3d : UnitInterface
     }
 
     public Force3d(double __fx, double __fy,double __fz, Units.force unit) {
-        _val.x = __fx;
-        _val.y = __fy;
-        _val.z = __fz;
+        _val3d.x = __fx;
+        _val3d.y = __fy;
+        _val3d.z = __fz;
         _unit = unit;
     }
 
     public Force3d(Vector3d __fVec, Units.force unit) {
-        _val = __fVec;
+        _val3d = __fVec;
         _unit = unit;
     }
 
     public override string ToString() {
-        string fxStr = MathOps.DoubleToString(val.x);
-        string fyStr = MathOps.DoubleToString(val.y);
-        string fzStr = MathOps.DoubleToString(val.z);
+        string fxStr = MathOps.DoubleToString(val3d.x);
+        string fyStr = MathOps.DoubleToString(val3d.y);
+        string fzStr = MathOps.DoubleToString(val3d.z);
         return String.Format("[{0}-{1}-{2}] {3}", fxStr, fyStr, fzStr, unit.ToString());
     }
     public string ToString(int significantDigits) {
-        string fxStr = MathOps.DoubleToSignificantDigits(val.x, significantDigits);
-        string fyStr = MathOps.DoubleToSignificantDigits(val.y, significantDigits);
-        string fzStr = MathOps.DoubleToSignificantDigits(val.z, significantDigits);
+        string fxStr = MathOps.DoubleToSignificantDigits(val3d.x, significantDigits);
+        string fyStr = MathOps.DoubleToSignificantDigits(val3d.y, significantDigits);
+        string fzStr = MathOps.DoubleToSignificantDigits(val3d.z, significantDigits);
         return String.Format("[{0}-{1}-{2}] {3}", fxStr, fyStr, fzStr, unit.ToString());
     }
     public bool HasUnit(Units.force thoughtUnit) {
@@ -613,7 +688,7 @@ public class Force3d : UnitInterface
     }
 
     public Force3d ConvertTo(Units.force outputUnit) {
-        return Units.ConvertForce3d(unit, outputUnit, val);
+        return Units.ConvertForce3d(unit, outputUnit, val3d);
     }
 };
 
@@ -626,6 +701,13 @@ public class Temperature : UnitInterface
     {
         get {
             return _val;
+        }
+    }
+
+    public Vector3d val3d
+    {
+        get {
+            return Vector3d.NaN();
         }
     }
 
@@ -668,6 +750,13 @@ public class Mass : UnitInterface
     {
         get {
             return _val;
+        }
+    }
+
+    public Vector3d val3d
+    {
+        get {
+            return Vector3d.NaN();
         }
     }
 

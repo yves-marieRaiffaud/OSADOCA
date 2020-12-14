@@ -19,6 +19,18 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
         }
     }
 
+    OrbitalParams _orbitalParams;
+    public OrbitalParams orbitalParams
+    {
+        get {
+            return _orbitalParams;
+        }
+        set {
+            _orbitalParams=value;
+        }
+    }
+
+
     Vector3d _relativeAcc;
     public Vector3d relativeAcc
     {
@@ -56,9 +68,6 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
     public Distance3d initStartPos;
     public CelestialBody orbitedBody;
 
-    public DoubleNoDim doubleNo;
-    public Pressure pressure;
-
     void Awake()
     {
         if(orbitedBody == null)
@@ -71,11 +80,11 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
 
         // Making sure the specified input spacecraft velocity is in km/s
         initStartVel = initStartVel.EnsureUnit(Units.velocity.kms);
-        _relativeVel = initStartVel.val;
+        _relativeVel = initStartVel.val3d;
 
         // Making sure the specified input position is in km
         initStartPos = initStartPos.EnsureUnit(Units.distance.km);
-        _realPosition = initStartPos.val;
+        _realPosition = initStartPos.val3d;
         gameObject.transform.position = (Vector3)_realPosition;
     }
 }

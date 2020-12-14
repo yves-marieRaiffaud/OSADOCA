@@ -9,6 +9,7 @@ using System.IO;
 using FlyingObjects;
 using ComFcn = CommonMethods;
 using UniCsts = UniverseConstants;
+using PlanetsCsts = CelestialBodiesConstants;
 
 namespace Universe
 {
@@ -154,7 +155,7 @@ namespace Universe
                         objTr.position = Vector3.zero;
                         CelestialBody celestBody = objTr.GetComponent<CelestialBody>();
                         if(GameObject.FindGameObjectsWithTag(goTags.Star.ToString()).Length > 0) {
-                            //celestBody.awake();
+                            celestBody.Assign_PlanetDict(PlanetsCsts.planetsDict[celestBody.chosenPredifinedPlanet]);
                             //flyingDynamics.init();
                             celestBody.transform.position = Vector3.zero;
                             celestBody.relativeVel = Vector3d.zero;

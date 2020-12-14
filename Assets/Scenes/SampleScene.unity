@@ -306,24 +306,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initStartVel:
-    _val:
+    _val3d:
       x: 0
       y: 0
-      z: 7784.14
-    _unit: 0
+      z: 7.844111438052
+    _unit: 1
   initStartPos:
-    _val:
-      x: 6578.14
+    _val3d:
+      x: 6478.14
       y: 0
       z: 0
     _unit: 3
   orbitedBody: {fileID: 2013337820}
-  doubleNo:
-    _val: 0
-    _unit: 0
-  pressure:
-    _val: 0
-    _unit: 0
 --- !u!54 &454841546
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -519,10 +513,8 @@ MonoBehaviour:
   boost: 3.5
   positionLerpTime: 0.2
   mouseSensitivityCurve:
-    serializedVersion: 2
     m_Curve:
-    - serializedVersion: 3
-      time: 0
+    - time: 0
       value: 0.5
       inSlope: 0
       outSlope: 5
@@ -530,8 +522,7 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0
       outWeight: 0
-    - serializedVersion: 3
-      time: 1
+    - time: 1
       value: 2.5
       inSlope: 0
       outSlope: 0
@@ -563,7 +554,7 @@ MonoBehaviour:
     _displayName: Simulate gravity
     _category: 1
   useNBodySimulation:
-    _value: 1
+    _value: 0
     _default_value: 0
     _type: System.Boolean
     _displayName: Enable N-Body Simulation
@@ -599,7 +590,7 @@ MonoBehaviour:
     minValue: 1
     maxValue: 100
   timeScale:
-    _value: 1
+    _value: 10
     _default_value: 0
     _type: System.Single
     _displayName: Time scale
@@ -739,6 +730,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b98565eb60a56447b6fce2c6ed4456a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chosenPredifinedPlanet: 4
+  orbitedBody: {fileID: 0}
   mu: 0
 --- !u!54 &2013337821
 Rigidbody:

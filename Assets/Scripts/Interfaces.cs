@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
 
-public interface UnitInterface{ }
+public interface UnitInterface
+{
+    Vector3d val3d {get;}
+    double val {get;}
+}
 
 public interface Dynamic_Obj_Common
 {
     GameObject _gameObject {get;}
     Rigidbody _rigidbody {get;}
+
+    OrbitalParams orbitalParams {get; set;}
 
     Vector3d relativeAcc {get; set;} // Orbited body relative acceleration, m/s2
     Vector3d relativeVel {get; set;} // Orbited body relative velocity, m/s
