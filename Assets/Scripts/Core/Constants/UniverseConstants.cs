@@ -20,4 +20,9 @@ public static class UniverseConstants
 
     // Max distance before offseting every object to bring the camera back at the origin, in Unity units
     public const double dstThreshold = 500d;
+
+    // Vernal Point, very high value on x so that it is located at the infinity
+    // Positive Vernal direction is the intersection between the ecliptic plane and the Earth's equatorial plane
+    // Arbitrarly, the vernal direction is set hereunder in the J2000 frame
+    public static readonly  Vector3d pv_j2000 = new Vector3d(1e100d, 0d, 0d);
 }

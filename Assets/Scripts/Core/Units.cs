@@ -24,6 +24,13 @@ public class DoubleNoDim : UnitInterface
             return Vector3d.NaN();
         }
     }
+    [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
+        }
+    }
 
     [SerializeField]
     Units.noDimension _unit;
@@ -67,6 +74,13 @@ public class Pressure : UnitInterface
     {
         get {
             return Vector3d.NaN();
+        }
+    }
+    [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
         }
     }
 
@@ -116,6 +130,13 @@ public class Distance : UnitInterface
     {
         get {
             return Vector3d.NaN();
+        }
+    }
+    [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
         }
     }
 
@@ -170,6 +191,13 @@ public class Distance3d : UnitInterface
     {
         get {
             return (Vector3)_val3d;
+        }
+    }
+    [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
         }
     }
 
@@ -243,6 +271,13 @@ public class Angle : UnitInterface
             return Vector3d.NaN();
         }
     }
+    [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
+        }
+    }
 
     [SerializeField]
     Units.angle _unit;
@@ -293,6 +328,13 @@ public class Time_Class : UnitInterface
     {
         get {
             return Vector3d.NaN();
+        }
+    }
+    [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
         }
     }
 
@@ -353,6 +395,13 @@ public class Velocity : UnitInterface
             return _unit;
         }
     }
+    [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
+        }
+    }
 
     public Velocity(double value, Units.velocity unit) {
         _val = value;
@@ -396,6 +445,13 @@ public class Velocity3d : UnitInterface
     {
         get {
             return (Vector3)_val3d;
+        }
+    }
+    [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
         }
     }
 
@@ -466,6 +522,13 @@ public class Acceleration : UnitInterface
             return Vector3d.NaN();
         }
     }
+    [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
+        }
+    }
 
     [SerializeField]
     Units.acceleration _unit;
@@ -503,6 +566,13 @@ public class Acceleration3d : UnitInterface
     {
         get {
             return double.NaN;
+        }
+    }
+    [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
         }
     }
 
@@ -574,6 +644,14 @@ public class Acceleration3d : UnitInterface
 public class Force : UnitInterface
 {
     [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
+        }
+    }
+
+    [SerializeField]
     double _val;
     public double val
     {
@@ -621,6 +699,14 @@ public class Force : UnitInterface
 [Serializable]
 public class Force3d : UnitInterface
 {
+    [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
+        }
+    }
+
     public double val
     {
         get {
@@ -696,6 +782,14 @@ public class Force3d : UnitInterface
 public class Temperature : UnitInterface
 {
     [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
+        }
+    }
+
+    [SerializeField]
     double _val;
     public double val
     {
@@ -745,6 +839,14 @@ public class Temperature : UnitInterface
 public class Mass : UnitInterface
 {
     [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
+        }
+    }
+
+    [SerializeField]
     double _val;
     public double val
     {
@@ -787,6 +889,93 @@ public class Mass : UnitInterface
 
     public Mass ConvertTo(Units.mass outputUnit) {
         return new Mass(Units.ConvertMass(unit, outputUnit, val), outputUnit);
+    }
+};
+
+[Serializable]
+public class GravConstant : UnitInterface
+{
+    [SerializeField]
+    public string stringVal
+    {
+        get {
+            return ToString();
+        }
+    }
+
+    [SerializeField]
+    double _val;
+    public double val
+    {
+        get {
+            return _val;
+        }
+    }
+
+    public Vector3d val3d
+    {
+        get {
+            return Vector3d.NaN();
+        }
+    }
+
+    [SerializeField]
+    Units.gravConstant _unit;
+    public Units.gravConstant unit
+    {
+        get {
+            return _unit;
+        }
+    }
+
+    public GravConstant(double value, Units.gravConstant unit) {
+        _val = value;
+        _unit = unit;
+    }
+
+    public override string ToString() {
+        return MathOps.DoubleToString(val) + " " + unit.ToString();
+    }
+    public string ToString(int significantDigits) {
+        return MathOps.DoubleToSignificantDigits(val, significantDigits) + " " + unit.ToString();
+    }
+    public bool HasUnit(Units.mass thoughtUnit) {
+        bool outBool = (thoughtUnit.Equals(unit)) ? true : false;
+        return outBool;
+    }
+
+    public GravConstant ConvertTo(Units.gravConstant outputUnit) {
+        return new GravConstant(Units.ConvertGravConstant(unit, outputUnit, val), outputUnit);
+    }
+};
+
+[Serializable]
+public class String_Unit : UnitInterface
+{
+    [SerializeField]
+    string _stringVal;
+    public string stringVal
+    {
+        get {
+            return _stringVal;
+        }
+    }
+    
+    public double val
+    {
+        get {
+            return 0d;
+        }
+    }
+    public Vector3d val3d
+    {
+        get {
+            return Vector3d.NaN();
+        }
+    }
+
+    public String_Unit(string text) {
+        _stringVal = text;
     }
 };
 
@@ -848,13 +1037,14 @@ public static class Units
     //=============================================================
     //=======================TIME==================================
     //=============================================================
-    public enum time { ms, s, min, h, day };
+    public enum time { ms, s, min, h, day, earthYear };
     private static Dictionary<time, double> timeUnitsCoefs = new Dictionary<time, double> {
         { time.ms, 1d/1_000d },
         { time.s, 1d },
         { time.min, 60d },
         { time.h, 3_600d },
-        { time.day, 86_400d }
+        { time.day, 86_400d },
+        { time.earthYear, 86_400d*365.25d }
     };
     public static double ConvertTime(time inputUnit, time outputUnit, double valueToConvert)
     {
@@ -944,5 +1134,17 @@ public static class Units
     public static double ConvertMass(mass inputUnit, mass outputUnit, double valueToConvert)
     {
         return valueToConvert * massUnitsCoefs[inputUnit] / massUnitsCoefs[outputUnit];
+    }
+    //=============================================================
+    //=======================MASS==================================
+    //=============================================================
+    public enum gravConstant { m3s2, km3s2 };
+    private static Dictionary<gravConstant, double> gravConstantUnitsCoefs = new Dictionary<gravConstant, double> {
+        { gravConstant.m3s2, 1d },
+        { gravConstant.km3s2, 10E9d }
+    };
+    public static double ConvertGravConstant(gravConstant inputUnit, gravConstant outputUnit, double valueToConvert)
+    {
+        return valueToConvert * gravConstantUnitsCoefs[inputUnit] / gravConstantUnitsCoefs[outputUnit];
     }
 }

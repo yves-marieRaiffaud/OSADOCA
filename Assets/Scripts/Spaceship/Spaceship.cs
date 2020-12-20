@@ -2,9 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
+using System.IO;
 
 public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
 {
+    [HideInInspector] public bool orbDataFoldoutBool=true; // For universeRunner custom editor
+    //--------------------
+
     public GameObject _gameObject
     {
         get {
@@ -19,6 +23,7 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
         }
     }
 
+    [SerializeField]
     OrbitalParams _orbitalParams;
     public OrbitalParams orbitalParams
     {
@@ -29,7 +34,13 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
             _orbitalParams=value;
         }
     }
-
+    Orbit _orbit;
+    public Orbit orbit
+    {
+        get {
+            return _orbit;
+        }
+    }
 
     Vector3d _relativeAcc;
     public Vector3d relativeAcc
@@ -66,12 +77,12 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
 
     public Velocity3d initStartVel;
     public Distance3d initStartPos;
-    public CelestialBody orbitedBody;
+    //public CelestialBody orbitedBody;
 
     void Awake()
     {
-        if(orbitedBody == null)
-            Debug.LogErrorFormat("OrbitedBody for {0} is null !", name);
+        //if(orbitedBody == null)
+            //Debug.LogErrorFormat("OrbitedBody for {0} is null !", name);
         if(TryGetComponent<Rigidbody>(out _privateRB)) {}
         else
             Debug.LogErrorFormat("Error while trying to get the rigidbody of {0} via its interface.", name);
@@ -86,5 +97,26 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
         initStartPos = initStartPos.EnsureUnit(Units.distance.km);
         _realPosition = initStartPos.val3d;
         gameObject.transform.position = (Vector3)_realPosition;
+
+        //-----------------------------
+        
+    }
+
+    public void InitOrbit()
+    {
+        string shipOrbitalParamsFilePath = Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams;
+        if(orbitalParams == null || !File.Exists(shipOrbitalParamsFilePath))
+            orbitalParams = ScriptableObject.CreateInstance<OrbitalParams>();
+        JsonUtility.FromJsonOverwrite(File.ReadAllText(shipOrbitalParamsFilePath), orbitalParams);
+        if(orbitalParams.orbitedBody == null)
+            orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
+            
+        _orbit = new Orbit(orbitalParams, orbitalParams.orbitedBody, _gameObject);
+    }
+
+    public void Init_Position()
+    {
+        Vector3d worldPos = Orbit.GetWorldPositionFromOrbit(orbit);
+        transform.position = (Vector3)worldPos + orbit.orbitedBody.transform.position;
     }
 }

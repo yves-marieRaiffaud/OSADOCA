@@ -5,6 +5,7 @@ using Mathd_Lib;
 //using System.IO;
 //using System.Linq;
 
+using KeplerGrav = Kepler.Gravitational;
 using Universe;
 using ObjHd = CommonMethods.ObjectsHandling;
 
@@ -46,7 +47,7 @@ namespace FlyingObjects
 
                 case UniverseRunner.goTags.Spaceship:
                     Spaceship ship = obj.GetComponent<Spaceship>();
-                    orbitedBody = ship.orbitedBody.GetComponent<CelestialBody>();
+                    orbitedBody = ship.orbit.orbitedBody.GetComponent<CelestialBody>();
                     //GravitationalUpdate<Spaceship, SpaceshipSettings>(orbitedBody, ship);
                     GravitationalUpdate<Spaceship>(orbitedBody, ship);
                     break;
@@ -85,7 +86,7 @@ namespace FlyingObjects
         public void Compute_SingleBody_Grav_Acc<T1/*,T2*/>(CelestialBody orbitedBody, T1 orbitingBody)
         where T1: Dynamic_Obj_Common //where T2: Dynamic_Obj_Settings
         {
-            orbitingBody.relativeAcc = Kepler.GetGravAcc(orbitingBody._gameObject.transform.position, orbitedBody.transform.position, orbitedBody.mu) * Units.M2KM;
+            orbitingBody.relativeAcc = KeplerGrav.GetGravAcc(orbitingBody._gameObject.transform.position, orbitedBody.transform.position, orbitedBody.settings.planetaryParams.mu.val) * Units.M2KM;
         }
         public void Compute_NBody_Grav_Acc<T1/*,T2*/>(CelestialBody orbitedBody, T1 orbitingBody)
         where T1: Dynamic_Obj_Common //where T2: Dynamic_Obj_Settings

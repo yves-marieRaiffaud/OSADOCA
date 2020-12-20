@@ -1,0 +1,141 @@
+using UnityEngine;
+using UnityEditor;
+using System.IO;
+using UniCsts = UniverseConstants;
+
+[CustomEditor(typeof(Spaceship),true)]
+public class SpaceshipEditor : Editor
+{
+    Spaceship ship;
+    string shipOrbitalParamsFilePath;
+    //SerializedObject orbParamsSerializedObjs;
+    bool orbDataFoldoutBool;
+
+    void OnEnable()
+    {
+        ship = (Spaceship)target;
+        shipOrbitalParamsFilePath = Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams;
+        CheckCreate_OrbitalParams_SO();
+        //orbParamsSerializedObjs = new SerializedObject(serializedObject.FindProperty("_orbitalParams").objectReferenceValue);
+        orbDataFoldoutBool = ship.orbDataFoldoutBool;
+    }
+
+    void CheckCreate_OrbitalParams_SO()
+    {
+        if(ship.orbitalParams == null || !File.Exists(shipOrbitalParamsFilePath)) {
+            ship.orbitalParams = ScriptableObject.CreateInstance<OrbitalParams>();
+            OrbitalParams.WriteToFileOrbitalParamsSaveData(ship.orbitalParams, shipOrbitalParamsFilePath);
+        }
+        else if(!Application.isPlaying) {
+            JsonUtility.FromJsonOverwrite(File.ReadAllText(shipOrbitalParamsFilePath), ship.orbitalParams);
+        }
+    }
+
+    void OnInspectorUpdate()
+    {
+        this.Repaint();
+    }
+
+    public override void OnInspectorGUI()
+    {
+        //orbParamsSerializedObjs.Update();
+        if (!EditorGUIUtility.wideMode)
+            EditorGUIUtility.wideMode = true;
+
+        using(var check = new EditorGUI.ChangeCheckScope()) {
+            base.OnInspectorGUI();
+        }
+
+        Draw_OrbitalParams_Editor(ship.orbitalParams);
+
+        //orbParamsSerializedObjs.ApplyModifiedProperties();
+    }
+
+    void Draw_OrbitalParams_Editor(OrbitalParams orbParams)
+    {
+        if(orbParams != null) {
+            orbDataFoldoutBool = EditorGUILayout.InspectorTitlebar(orbDataFoldoutBool, orbParams);
+            using(var check = new EditorGUI.ChangeCheckScope()) {
+                if(orbDataFoldoutBool)
+                    Create_OrbitalParams_Editor(orbParams);
+            }
+        }
+        if(GUI.changed) {
+            string filepath = OrbitalParams.WriteToFileOrbitalParamsSaveData(ship.orbitalParams, shipOrbitalParamsFilePath);
+            Debug.Log("OrbitalParams successfully saved at: '" + shipOrbitalParamsFilePath + "'.");
+        }
+    }
+
+    void Create_OrbitalParams_Editor(OrbitalParams orbParams)
+    {
+        //orbParams.orbitedBody = (CelestialBody)EditorGUILayout.ObjectField("Orbited body", orbParams.orbitedBody, typeof(CelestialBody), true);
+        orbParams.orbitedBodyName = EditorGUILayout.TextField("Orbited body name", orbParams.orbitedBodyName);
+        orbParams.orbitDefType = (OrbitalTypes.orbitDefinitionType)EditorGUILayout.EnumPopup("Orbit definition type", orbParams.orbitDefType);
+        orbParams.bodyPosType = (OrbitalTypes.bodyPositionType)EditorGUILayout.EnumPopup("Reference angle on its orbit", orbParams.bodyPosType);
+        orbParams.orbParamsUnits = (OrbitalTypes.orbitalParamsUnits)EditorGUILayout.EnumPopup("Orbit units", orbParams.orbParamsUnits);
+        EditorGUI.BeginDisabledGroup(true);
+        orbParams.orbitRealPredType = (OrbitalTypes.typeOfOrbit)EditorGUILayout.EnumPopup("Type of orbit", orbParams.orbitRealPredType);
+        orbParams.orbitRealPredType = OrbitalTypes.typeOfOrbit.realOrbit;
+        EditorGUI.EndDisabledGroup();
+
+        string distUnit = "(km)";
+        if(orbParams.orbParamsUnits.Equals(OrbitalTypes.orbitalParamsUnits.AU))
+            distUnit = "(AU)";
+
+        orbParams.selectedVectorsDir = (OrbitalTypes.typeOfVectorDir)EditorGUILayout.EnumFlagsField("Orbital directions to draw", orbParams.selectedVectorsDir);
+
+        EditorGUILayout.Separator();
+        EditorGUILayout.LabelField("Rendering Parameters", EditorStyles.boldLabel);
+        orbParams.drawOrbit = EditorGUILayout.Toggle("Render orbit", orbParams.drawOrbit);
+        orbParams.drawDirections = EditorGUILayout.Toggle("Render selected directions", orbParams.drawDirections);
+        orbParams.orbitDrawingResolution = EditorGUILayout.IntField("Rendering resolution", orbParams.orbitDrawingResolution);
+
+        EditorGUILayout.Separator();
+        EditorGUILayout.LabelField("Shape of the Orbit", EditorStyles.boldLabel);
+        switch(orbParams.orbitDefType)
+        {
+            case OrbitalTypes.orbitDefinitionType.rarp:
+                orbParams.ra = EditorGUILayout.DoubleField("ra "+distUnit, orbParams.ra);
+                orbParams.rp = EditorGUILayout.DoubleField("rp "+distUnit, orbParams.rp);
+                break;
+            case OrbitalTypes.orbitDefinitionType.rpe:
+                orbParams.rp = EditorGUILayout.DoubleField("rp "+distUnit, orbParams.rp);
+                orbParams.e = EditorGUILayout.DoubleField("e", orbParams.e);
+                break;
+            case OrbitalTypes.orbitDefinitionType.pe:
+                orbParams.p = EditorGUILayout.DoubleField("p "+distUnit, orbParams.p);
+                orbParams.e = EditorGUILayout.DoubleField("e", orbParams.e);
+                break;
+        }
+
+        EditorGUILayout.Separator();
+        EditorGUILayout.LabelField("Rotation of the Plane of the Orbit", EditorStyles.boldLabel);
+        orbParams.i = EditorGUILayout.DoubleField("i (°)", orbParams.i)*UniCsts.deg2rad;
+        orbParams.lAscN = EditorGUILayout.DoubleField("Longitude of the Ascending Node (°)", orbParams.lAscN)*UniCsts.deg2rad;
+
+        EditorGUILayout.Separator();
+        EditorGUILayout.LabelField("Rotation of the Orbit in its Plane", EditorStyles.boldLabel);
+        orbParams.omega = EditorGUILayout.DoubleField("Argument of the periapsis (°)", orbParams.omega)*UniCsts.deg2rad;
+
+        EditorGUILayout.Separator();
+        EditorGUILayout.LabelField("Position on the orbit", EditorStyles.boldLabel);
+        switch(orbParams.bodyPosType)
+        {
+            case OrbitalTypes.bodyPositionType.nu:
+                orbParams.nu = EditorGUILayout.DoubleField("True Anomaly (°)", orbParams.nu)*UniCsts.deg2rad;
+                break;
+            case OrbitalTypes.bodyPositionType.M:
+                orbParams.M = EditorGUILayout.DoubleField("Mean Anomaly (°)", orbParams.M)*UniCsts.deg2rad;
+                break;
+            case OrbitalTypes.bodyPositionType.E:
+                orbParams.E = EditorGUILayout.DoubleField("Eccentric Anomaly (°)", orbParams.E)*UniCsts.deg2rad;
+                break;
+            case OrbitalTypes.bodyPositionType.L:
+                orbParams.L = EditorGUILayout.DoubleField("Mean Longitude (°)", orbParams.L)*UniCsts.deg2rad;
+                break;
+            case OrbitalTypes.bodyPositionType.t:
+                orbParams.t = EditorGUILayout.DoubleField("Time at perihelion passage (s)", orbParams.t);
+                break;
+        }
+    }
+}

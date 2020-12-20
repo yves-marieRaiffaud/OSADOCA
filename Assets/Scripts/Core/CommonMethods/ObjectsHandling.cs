@@ -21,7 +21,6 @@ namespace CommonMethods
             else
                 return GameObject.Find(gameObjectName);
         }
-
         public static GameObject CreateAssignGameObject(string gameObjectName, GameObject parent)
         {
             GameObject retunedGO = CommonMethods.ObjectsHandling.CreateAssignGameObject(gameObjectName);
@@ -29,6 +28,13 @@ namespace CommonMethods
                 retunedGO.transform.parent = parent.transform;
             return retunedGO;
         }
+        public static GameObject CreateAssignGameObject(string gameObjectName, System.Type componentType)
+    {
+        if(GameObject.Find(gameObjectName) == null)
+            return new GameObject(gameObjectName, componentType);
+        else
+            return GameObject.Find(gameObjectName);
+    }
 
         public static Component CreateAssignComponent(System.Type componentType, GameObject goToCheck)
         {
@@ -50,6 +56,29 @@ namespace CommonMethods
                 return UniverseRunner.goTags.Spaceship;
             else
                 return UniverseRunner.goTags.Star;
+        }
+        public static bool GoTagAndStringAreEqual(UniverseRunner.goTags tags, string stringToCompare)
+        {
+            if(tags.ToString().Equals(stringToCompare))
+                return true;
+            else
+                return false;
+        }
+        public static bool StringIsOneOfTheTwoTags(UniverseRunner.goTags tag1, UniverseRunner.goTags tag2, string stringToCompare)
+        {
+            if(GoTagAndStringAreEqual(tag1, stringToCompare) || GoTagAndStringAreEqual(tag2, stringToCompare))
+                return true;
+            else
+                return false;
+        }
+
+        public static void Check_Create_Directory(string filepath, bool printToDebugLog)
+        {
+            if(!Directory.Exists(filepath)) {
+                Directory.CreateDirectory(filepath);
+                if(printToDebugLog)
+                    Debug.LogFormat("Created directory at path: '{0}'", filepath);
+            }
         }
 
     }

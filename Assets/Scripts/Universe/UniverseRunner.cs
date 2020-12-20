@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mathd_Lib;
 using System.IO;
-//using System.Linq;
+using System.Linq;
 //using UnityEngine.Events;
-
+using Vectrosity;
+using KeplerGrav = Kepler.Gravitational;
 using FlyingObjects;
 using ComFcn = CommonMethods;
 using UniCsts = UniverseConstants;
@@ -57,6 +58,7 @@ namespace Universe
 
             if(earthCB == null || activeSC == null)
                 Debug.LogError("One of the two required GameObject has not been specified");
+            VectorLine.SetCamera3D(playerCamera);
         }
 
         /// <summary>
@@ -142,49 +144,56 @@ namespace Universe
 
         void Start()
         {
+            Debug.Log("start of univberse");
             foreach(Transform objTr in physicsObjArray) {
                 switch(ComFcn.ObjectsHandling.Str_2_GoTags(objTr.tag))
                 {
                     case goTags.Star:
                         objTr.position = Vector3.zero;
                         CelestialBody starBody = objTr.GetComponent<CelestialBody>();
-                        //starBody.Awake();
+                        starBody.Assign_PlanetDict(PlanetsCsts.planetsDict[starBody.chosenPredifinedPlanet]);
                         break;
 
                     case goTags.Planet:
                         objTr.position = Vector3.zero;
                         CelestialBody celestBody = objTr.GetComponent<CelestialBody>();
                         if(GameObject.FindGameObjectsWithTag(goTags.Star.ToString()).Length > 0) {
+                            Debug.Log("Found a star");
                             celestBody.Assign_PlanetDict(PlanetsCsts.planetsDict[celestBody.chosenPredifinedPlanet]);
-                            //flyingDynamics.init();
-                            celestBody.transform.position = Vector3.zero;
-                            celestBody.relativeVel = Vector3d.zero;
+                            celestBody.Init_Orbit();
+                            celestBody.Init_Position();
                         }
                         else {
+                            celestBody.Assign_PlanetDict(PlanetsCsts.planetsDict[celestBody.chosenPredifinedPlanet]);
+                            celestBody.Init_Orbit();
                             celestBody.transform.position = Vector3.zero;
                             celestBody.relativeVel = Vector3d.zero;
                         }
                         break;
 
                     case goTags.Spaceship:
+                        Debug.Log("ship universe init");
                         Spaceship ship = objTr.GetComponent<Spaceship>();
+                        ship.InitOrbit();
+                        ship.Init_Position();
                         //flyingDynamics.init();
                         break;
                 }
             }
 
             // Init spaceship movement
-            activeSC.relativeAcc = Kepler.GetGravAcc(activeSC.transform.position, activeSC.orbitedBody.transform.position, activeSC.orbitedBody.mu);
+            activeSC.relativeAcc = KeplerGrav.GetGravAcc(activeSC.transform.position, activeSC.orbit.orbitedBody.transform.position, activeSC.orbit.orbitedBody.settings.planetaryParams.mu.val);
             activeSC._rigidbody.AddForce((Vector3) activeSC.relativeVel, ForceMode.VelocityChange);
         }
 
         void FixedUpdate()
         {
+            UpdateFloatingOrigin();
             if(simEnv.simulateGravity.value) {
                 flyingDynamics.GravitationnalStep();
                 PrintAltitude();
             }
-            updateFloatingOrigin();
+            
         }
 
         private void PrintAltitude()
@@ -192,9 +201,10 @@ namespace Universe
             Debug.LogFormat("h = {0} km", (double) (activeSC.transform.position - earthCB.transform.position).magnitude);
         }
 
-        private void updateFloatingOrigin()
+        private void UpdateFloatingOrigin()
         {
             Vector3 originOffset = playerCamera.transform.position;
+            Debug.Log("originOffset = " + originOffset);
             float dstFromOrigin = originOffset.magnitude;
             if(dstFromOrigin > UniCsts.dstThreshold)
             {
@@ -204,6 +214,5 @@ namespace Universe
                 universeOffset += originOffset;
             }
         }
-    
     }
 }

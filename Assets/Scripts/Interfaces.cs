@@ -7,6 +7,7 @@ public interface UnitInterface
 {
     Vector3d val3d {get;}
     double val {get;}
+    string stringVal {get;}
 }
 
 public interface Dynamic_Obj_Common
@@ -15,6 +16,7 @@ public interface Dynamic_Obj_Common
     Rigidbody _rigidbody {get;}
 
     OrbitalParams orbitalParams {get; set;}
+    Orbit orbit {get;}
 
     Vector3d relativeAcc {get; set;} // Orbited body relative acceleration, m/s2
     Vector3d relativeVel {get; set;} // Orbited body relative velocity, m/s

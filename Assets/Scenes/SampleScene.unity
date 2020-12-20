@@ -153,7 +153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   simulationEnvFoldout: 1
   universeClock: {fileID: 0}
-  simEnv: {fileID: 1879430063}
+  simEnv: {fileID: 2036009799}
   universeOffset: {x: 0, y: 0, z: 0}
   earthCB: {fileID: 2013337820}
   activeSC: {fileID: 454841545}
@@ -177,7 +177,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &81350254
 MonoBehaviour:
@@ -291,7 +291,7 @@ Transform:
   m_Children:
   - {fileID: 1685031865}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &454841545
 MonoBehaviour:
@@ -305,6 +305,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ef6d5ddc5bf9264c81ac80c278cdb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orbDataFoldoutBool: 1
+  _orbitalParams: {fileID: 1283321320}
   initStartVel:
     _val3d:
       x: 0
@@ -317,7 +319,6 @@ MonoBehaviour:
       y: 0
       z: 0
     _unit: 3
-  orbitedBody: {fileID: 2013337820}
 --- !u!54 &454841546
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -382,6 +383,176 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &882257442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
+  planetaryParams:
+    radius:
+      _val: 6378.137
+      _unit: 3
+    polarRadius:
+      _val: 6356.752
+      _unit: 3
+    radiusSOI:
+      _val: 120000
+      _unit: 3
+    inverseFlattening:
+      _val: 298.257223563
+      _unit: 0
+    axialTilt:
+      _val: 23.4392811
+      _unit: 0
+    siderealRotPeriod:
+      _val: 86164.09
+      _unit: 1
+    revolutionPeriod:
+      _val: 365.26
+      _unit: 4
+    mu:
+      _val: 39.86004418
+      _unit: 0
+    massEarthRatio:
+      _val: 1
+      _unit: 0
+    isRockyBody: 0
+  lightOrbitalParams:
+    orbitedBodyName:
+      _stringVal: Sun
+    apoapsis:
+      _val: 1.067
+      _unit: 4
+    periapsis:
+      _val: 0.92329
+      _unit: 4
+    i:
+      _val: 7.155
+      _unit: 0
+    lAscN:
+      _val: 174.9
+      _unit: 0
+    periapsisArg:
+      _val: 288.1
+      _unit: 0
+    trueAnomaly:
+      _val: 0
+      _unit: 0
+  surfaceParams:
+    surfPressure:
+      _val: 1015
+      _unit: 1
+    surfDensity:
+      _val: 1.217
+      _unit: 0
+    surfTemp:
+      _val: 288
+      _unit: 1
+    maxAtmoHeight:
+      _val: 100
+      _unit: 0
+    highestBumpAlt:
+      _val: 8.848
+      _unit: 0
+  jns:
+    j2:
+      _val: 1082.63
+      _unit: 0
+    j3:
+      _val: 0
+      _unit: 0
+    j4:
+      _val: 0
+      _unit: 0
+    j5:
+      _val: 0
+      _unit: 0
+    j6:
+      _val: 0
+      _unit: 0
+--- !u!114 &1283321320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc5dfbab4e7130f489da98a0f1d7b414, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orbitedBodyName: Earth
+  orbitedBody: {fileID: 0}
+  orbitDefType: 0
+  bodyPosType: 0
+  orbParamsUnits: 0
+  orbitRealPredType: 0
+  selectedVectorsDir: 0
+  drawOrbit: 1
+  drawDirections: 0
+  orbitDrawingResolution: 300
+  ra: 6478
+  rp: 6478
+  p: 0
+  e: 0
+  a: 0
+  b: 0
+  c: 0
+  i: 0
+  lAscN: 0
+  omega: 0
+  nu: 0
+  M: 0
+  E: 0
+  L: 0
+  t: 0
+  period: 0
+  n: 0
+  vp:
+    x: 0
+    y: 0
+    z: 0
+  vpAxisRight:
+    x: 0
+    y: 0
+    z: 0
+  vpAxisUp:
+    x: 0
+    y: 0
+    z: 0
+  ascendingNodeLineDir:
+    x: 0
+    y: 0
+    z: 0
+  apogeeLineDir:
+    x: 0
+    y: 0
+    z: 0
+  orbitPlane:
+    forwardVec:
+      x: NaN
+      y: NaN
+      z: NaN
+    rightVec:
+      x: NaN
+      y: NaN
+      z: NaN
+    point:
+      x: NaN
+      y: NaN
+      z: NaN
+    normal:
+      x: 0
+      y: 0
+      z: 0
 --- !u!1 &1685031861
 GameObject:
   m_ObjectHideFlags: 0
@@ -510,119 +681,151 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be76e5f14cfee674cb30b491fb72b09b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boost: 3.5
-  positionLerpTime: 0.2
-  mouseSensitivityCurve:
-    m_Curve:
-    - time: 0
-      value: 0.5
-      inSlope: 0
-      outSlope: 5
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - time: 1
-      value: 2.5
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  rotationLerpTime: 0.01
-  invertY: 0
---- !u!114 &1879430063
+--- !u!1 &1707185600
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1707185606}
+  - component: {fileID: 1707185605}
+  - component: {fileID: 1707185604}
+  - component: {fileID: 1707185603}
+  - component: {fileID: 1707185602}
+  - component: {fileID: 1707185601}
+  m_Layer: 0
+  m_Name: Sun
+  m_TagString: Star
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!54 &1707185601
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707185600}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &1707185602
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1707185600}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57b141c85dbfe5e40a697fa5fcc93a63, type: 3}
+  m_Script: {fileID: 11500000, guid: 1b98565eb60a56447b6fce2c6ed4456a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simulateGravity:
-    _value: 1
-    _default_value: 0
-    _type: System.Boolean
-    _displayName: Simulate gravity
-    _category: 1
-  useNBodySimulation:
-    _value: 0
-    _default_value: 0
-    _type: System.Boolean
-    _displayName: Enable N-Body Simulation
-    _category: 1
-  NBODYSIM_NB_BODY:
-    _value: 3
-    _default_value: 0
-    _type: System.Int32
-    _displayName: N-Body Value
-    _category: 1
-    minValue: 1
-    maxValue: 10
-  useTargetFrameRate:
-    _value: 0
-    _default_value: 0
-    _type: System.Boolean
-    _displayName: Enable FPS targetting
-    _category: 2
-  targetFrameRate:
-    _value: 60
-    _default_value: 0
-    _type: System.Int32
-    _displayName: Target FPS value
-    _category: 2
-    minValue: 1
-    maxValue: 100
-  physicsUpdateRate:
-    _value: 50
-    _default_value: 0
-    _type: System.Int32
-    _displayName: Physics update frequency
-    _category: 2
-    minValue: 1
-    maxValue: 100
-  timeScale:
-    _value: 10
-    _default_value: 0
-    _type: System.Single
-    _displayName: Time scale
-    _category: 2
-    minValue: 0.1
-    maxValue: 10
-  perturbationsToCompute:
-    _value:
-      enumList:
-      - optionString: Jn
-        optionIsSelected: 0
-      - optionString: Lift/Drag
-        optionIsSelected: 1
-      - optionString: Solar Pressure
-        optionIsSelected: 0
-    _default_value:
-      enumList:
-      - optionString: Jn
-        optionIsSelected: 0
-      - optionString: Lift/Drag
-        optionIsSelected: 1
-      - optionString: Solar Pressure
-        optionIsSelected: 0
-    _type: 
-    _displayName: Perturbations to compute
-    _category: 3
-  shipUseKeyboardControl:
-    _value: 0
-    _default_value: 0
-    _type: System.Boolean
-    _displayName: Control spaceship with Keyboard
-    _category: 4
+  orbDataFoldoutBool: 1
+  settings: {fileID: 0}
+  equatorialPlane:
+    forwardVec:
+      x: NaN
+      y: NaN
+      z: NaN
+    rightVec:
+      x: NaN
+      y: NaN
+      z: NaN
+    point:
+      x: NaN
+      y: NaN
+      z: NaN
+    normal:
+      x: 0
+      y: 0
+      z: 0
+  usePredefinedPlanet: 0
+  chosenPredifinedPlanet: 1
+  orbitedBody: {fileID: 0}
+--- !u!135 &1707185603
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707185600}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1707185604
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707185600}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &1707185605
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707185600}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1707185606
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707185600}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 12756, y: 12756, z: 12756}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2013337815
 GameObject:
   m_ObjectHideFlags: 0
@@ -716,7 +919,7 @@ Transform:
   m_LocalScale: {x: 12756, y: 12756, z: 12756}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2013337820
 MonoBehaviour:
@@ -730,9 +933,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b98565eb60a56447b6fce2c6ed4456a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orbDataFoldoutBool: 1
+  settings: {fileID: 882257442}
+  equatorialPlane:
+    forwardVec:
+      x: NaN
+      y: NaN
+      z: NaN
+    rightVec:
+      x: NaN
+      y: NaN
+      z: NaN
+    point:
+      x: NaN
+      y: NaN
+      z: NaN
+    normal:
+      x: 0
+      y: 0
+      z: 0
+  usePredefinedPlanet: 0
   chosenPredifinedPlanet: 4
-  orbitedBody: {fileID: 0}
-  mu: 0
+  orbitedBody: {fileID: 1707185602}
 --- !u!54 &2013337821
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -749,6 +971,94 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2036009799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57b141c85dbfe5e40a697fa5fcc93a63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  simulateGravity:
+    _value: 1
+    _default_value: 0
+    _type: System.Boolean
+    _displayName: Simulate gravity
+    _category: 1
+  useNBodySimulation:
+    _value: 0
+    _default_value: 0
+    _type: System.Boolean
+    _displayName: Enable N-Body Simulation
+    _category: 1
+  NBODYSIM_NB_BODY:
+    _value: 3
+    _default_value: 0
+    _type: System.Int32
+    _displayName: N-Body Value
+    _category: 1
+    minValue: 1
+    maxValue: 10
+  useTargetFrameRate:
+    _value: 0
+    _default_value: 0
+    _type: System.Boolean
+    _displayName: Enable FPS targetting
+    _category: 2
+  targetFrameRate:
+    _value: 60
+    _default_value: 0
+    _type: System.Int32
+    _displayName: Target FPS value
+    _category: 2
+    minValue: 1
+    maxValue: 100
+  physicsUpdateRate:
+    _value: 50
+    _default_value: 0
+    _type: System.Int32
+    _displayName: Physics update frequency
+    _category: 2
+    minValue: 1
+    maxValue: 100
+  timeScale:
+    _value: 1
+    _default_value: 0
+    _type: System.Single
+    _displayName: Time scale
+    _category: 2
+    minValue: 0.1
+    maxValue: 10
+  perturbationsToCompute:
+    _value:
+      enumList:
+      - optionString: Jn
+        optionIsSelected: 0
+      - optionString: Lift/Drag
+        optionIsSelected: 1
+      - optionString: Solar Pressure
+        optionIsSelected: 0
+    _default_value:
+      enumList:
+      - optionString: Jn
+        optionIsSelected: 0
+      - optionString: Lift/Drag
+        optionIsSelected: 1
+      - optionString: Solar Pressure
+        optionIsSelected: 0
+    _type: 
+    _displayName: Perturbations to compute
+    _category: 3
+  shipUseKeyboardControl:
+    _value: 0
+    _default_value: 0
+    _type: System.Boolean
+    _displayName: Control spaceship with Keyboard
+    _category: 4
 --- !u!1 &2138677391
 GameObject:
   m_ObjectHideFlags: 0

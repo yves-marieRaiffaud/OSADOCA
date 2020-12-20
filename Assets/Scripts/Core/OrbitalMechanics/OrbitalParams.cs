@@ -4,7 +4,7 @@ using UnityEngine;
 using Mathd_Lib;
 using MathsOps = CommonMethods.MathsOps;
 
-[CreateAssetMenu()]
+[CreateAssetMenu(), System.Serializable]
 public class OrbitalParams : ScriptableObject
 {
     public string orbitedBodyName;
@@ -32,20 +32,21 @@ public class OrbitalParams : ScriptableObject
     public double c; // Distance focus-centre of the ellispe, km or AU
 
     // Rotation of the plane of the orbit
-    public double i; // Inclination, degree
-    public double lAscN; // Longitude of the ascending node, degree
+    public double i; // Inclination, rad
+    public double lAscN; // Longitude of the ascending node, rad
     
     // Rotation of the orbit in its plane
-    public double omega; // Argument of the perihelion, degree
+    public double omega; // Argument of the perihelion, rad
 
     // Position of the body on the ellipse
-    public double nu; // True anomaly, degree
-    public double M; // Mean Anomaly, degree
-    public double E; // Eccentric anomaly, degree
-    public double L; // Mean Longitude, degree
-    public double t; // Time at perihelion passage
+    public double nu; // True anomaly, rad
+    public double M; // Mean Anomaly, rad
+    public double E; // Eccentric anomaly, rad
+    public double L; // Mean Longitude, rad
+    public double t; // Time at perihelion passage, seconds
     //==============
     public double period; // Orbtial period, seconds
+    public double n; // Mean motion, rad/s
     //==============
     public Vector3d vp; // Vernal Point
     public Vector3d vpAxisRight; // Perpendicular vector of vp
@@ -72,7 +73,6 @@ public class OrbitalParams : ScriptableObject
         {OrbitalTypes.typeOfOrbit.predictedOrbit, "Predicted"}
     };
     //==============
-    public bool showInfoPanel=false;
 
     public struct OrbitalStateVector {
         ReferenceFrame frame;
@@ -86,6 +86,16 @@ public class OrbitalParams : ScriptableObject
             v = _v;
             //epoch = _epoch;
         }
+    }
+
+    /// <summary>
+    /// Function called to save the specified OrbitalParams 'data' to disk by writing the orbitalParams JSON file that will be read when intializaing the ship/celestial body orbital params
+    /// </summary>
+    public static string WriteToFileOrbitalParamsSaveData(OrbitalParams data, string filepath)
+    {
+        // Save the file and returns the filepath
+        File.WriteAllText(filepath, JsonUtility.ToJson(data, true));
+        return filepath;
     }
 }
 

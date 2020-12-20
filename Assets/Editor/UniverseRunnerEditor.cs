@@ -43,14 +43,12 @@ public class UniverseRunnerEditor : Editor
         simEnvSerializedObjs.Update();
         //==================================
         if (!EditorGUIUtility.wideMode)
-        {
             EditorGUIUtility.wideMode = true;
-        }
-        using(var check = new EditorGUI.ChangeCheckScope())
-        {
+
+        using(var check = new EditorGUI.ChangeCheckScope()) {
             base.OnInspectorGUI();
         }
-        
+
         DrawUniverseRunnerSettingsEditor(universe.simEnv);
         //==================================
         simEnvSerializedObjs.ApplyModifiedProperties();
@@ -58,15 +56,11 @@ public class UniverseRunnerEditor : Editor
 
     private void DrawUniverseRunnerSettingsEditor(SimulationEnv settings)
     {
-        if(settings != null)
-        {
+        if(settings != null) {
             simEnvFoldoutBool = EditorGUILayout.InspectorTitlebar(simEnvFoldoutBool, settings);
-            using(var check = new EditorGUI.ChangeCheckScope())
-            {   
+            using(var check = new EditorGUI.ChangeCheckScope()) {
                 if(simEnvFoldoutBool)
-                {
                     CreateUniverseRunnerSettingsEditor(settings);
-                }
             }
         } 
     }
