@@ -1,14 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 using Mathd_Lib;
 using distance = Units.distance;
+using angle = Units.angle;
 
 public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
 {
-    [HideInInspector] public bool orbDataFoldoutBool=true; // For universeRunner custom editor
-    //--------------------
-
     [HideInInspector] public CelestialBodySettings settings;
 
     public GameObject _gameObject
@@ -41,9 +40,12 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
         get {
             return _orbit;
         }
+        set {
+            _orbit=value;
+        }
     }
 
-
+    [SerializeField]
     Vector3d _relativeAcc;
     public Vector3d relativeAcc
     {
@@ -55,6 +57,7 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
         }
     }
 
+    [SerializeField]
     Vector3d _relativeVel;
     public Vector3d relativeVel
     {
@@ -66,6 +69,7 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
         }
     }
 
+    [SerializeField]
     Vector3d _realPosition;
     public Vector3d realPosition
     {
@@ -79,10 +83,8 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
 
     [HideInInspector] public OrbitPlane equatorialPlane;
 
-
     public bool usePredefinedPlanet=true;
     [HideInInspector] public CelestialBodiesConstants.planets chosenPredifinedPlanet;
-    [HideInInspector] public Dictionary<string, UnitInterface> planetBaseParamsDict;
 
     [HideInInspector] public CelestialBody orbitedBody;
 
@@ -91,66 +93,48 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
         if(TryGetComponent<Rigidbody>(out _privateRB)) {}
         else
             Debug.LogErrorFormat("Error while trying to get the rigidbody of {0} via its interface.", name);
-
-        _relativeAcc = Vector3d.zero;
-        _relativeVel = Vector3d.zero;
-        _privateRB.velocity = Vector3.zero;
-        _realPosition = Vector3d.zero;
+        if(settings == null)
+            settings = ScriptableObject.CreateInstance<CelestialBodySettings>();
+        if(_orbitalParams == null)
+            _orbitalParams = ScriptableObject.CreateInstance<OrbitalParams>();
 
         // Initializing equatorial plane, making sure it is back at its default values
         equatorialPlane.forwardVec = new Vector3d(1d, 0d, 0d);
         equatorialPlane.rightVec = new Vector3d(0d, 0d, 1d);
         equatorialPlane.normal = new Vector3d(0d, 1d, 0d);
         equatorialPlane.point = new Vector3d(0d, 0d, 0d);
-
-        /*string celestBodyOrbitalParamsFilePath = Application.persistentDataPath + Filepaths.celestBody_orbitalParams_p1 + name + Filepaths.celestBody_orbitalParams_p2;
-        if(orbitalParams == null || !File.Exists(shipOrbitalParamsFilePath))
-            orbitalParams = ScriptableObject.CreateInstance<OrbitalParams>();
-        JsonUtility.FromJsonOverwrite(File.ReadAllText(shipOrbitalParamsFilePath), orbitalParams);
-        orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();*/
     }
 
     /// <summary>
-    /// Assigning the corresponding dictionnary with respect to the chosen predifined planet. If no predefinied 
+    /// Initializing the settings variable of the CelestialBody object, by reading its corresponding JSON CelestialBodySettings file.
     /// </summary>
-    public void Assign_PlanetDict(Dictionary<string, UnitInterface> refDictOrbParams)
+    public void Init_CelestialBodySettings()
     {
-        planetBaseParamsDict = refDictOrbParams;
-    }
+        // Filepath of the CelestialBodySettings JSON file correpsonding to the this.name object
+        string filepath = Application.persistentDataPath + Filepaths.celestBody_Folder + name + Filepaths.celestBodySettingsFile;
+        JsonUtility.FromJsonOverwrite(File.ReadAllText(filepath), settings);
 
-    public void Init_Orbit()
-    {
-        if(_orbitalParams == null)
-            _orbitalParams = ScriptableObject.CreateInstance<OrbitalParams>();
-        if(_orbitalParams.orbitedBody == null)
-            _orbitalParams.orbitedBody = orbitedBody;
+        if(_orbitalParams.orbitedBody == null && !settings.lightOrbitalParams.orbitedBodyName.stringVal.Equals("None"))
+            _orbitalParams.orbitedBody = GameObject.Find(settings.lightOrbitalParams.orbitedBodyName.stringVal).GetComponent<CelestialBody>();
 
-        // Called only if 'usePredefinedPlanet' is true
-        // Copying orbital values from the planet dictionary to the orbitalParams scriptable object
         _orbitalParams.orbitRealPredType = OrbitalTypes.typeOfOrbit.realOrbit;
         _orbitalParams.orbitDefType = OrbitalTypes.orbitDefinitionType.rarp;
         _orbitalParams.bodyPosType = OrbitalTypes.bodyPositionType.nu;
 
-        if((planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.apoapsis.ToString()] as Distance).HasUnit(distance.km))
+        if(settings.lightOrbitalParams.apoapsis.HasUnit(distance.km))
             _orbitalParams.orbParamsUnits = OrbitalTypes.orbitalParamsUnits.km;
         else
             _orbitalParams.orbParamsUnits = OrbitalTypes.orbitalParamsUnits.AU;
 
-        _orbitalParams.ra = planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.apoapsis.ToString()].val;
-        _orbitalParams.rp = planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.periapsis.ToString()].val;
-        _orbitalParams.i = planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.i.ToString()].val;
-        _orbitalParams.lAscN = planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.lAscN.ToString()].val;
-        _orbitalParams.omega = planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.periapsisArg.ToString()].val;
-        _orbitalParams.nu = planetBaseParamsDict[CelestialBodyParamsBase.orbitalParams.trueAnomaly.ToString()].val;
+        _orbitalParams.ra = settings.lightOrbitalParams.apoapsis.ConvertTo(distance.AU).val;
+        _orbitalParams.rp = settings.lightOrbitalParams.periapsis.ConvertTo(distance.AU).val;
+        _orbitalParams.i = settings.lightOrbitalParams.i.ConvertTo(angle.radian).val;
+        _orbitalParams.lAscN = settings.lightOrbitalParams.lAscN.ConvertTo(angle.radian).val;
+        _orbitalParams.omega = settings.lightOrbitalParams.periapsisArg.ConvertTo(angle.radian).val;
+        _orbitalParams.nu = settings.lightOrbitalParams.trueAnomaly.ConvertTo(angle.radian).val;
 
-        _orbit = new Orbit(orbitalParams, orbitalParams.orbitedBody, _gameObject);
+        // If no JSON file is found matching the name of the this.name, thus need to compare the name of the celestialBody with the list of planets.
+        // If one planet from the list matches the name of the this.name, need to copy its dictionary values to the settings variable of 'this'
+        // And finally, need to save the settings object to disk by creating and saving its corresponding JSON file (will howevre work without this in the editor, but not at deployement).
     }
-
-    public void Init_Position()
-    {
-        Vector3d worldPos = Orbit.GetWorldPositionFromOrbit(orbit);
-        Debug.Log("worldPos for " + name + ": " + worldPos);
-        transform.position = (Vector3)worldPos + orbitedBody.transform.position;
-    }
-
 }

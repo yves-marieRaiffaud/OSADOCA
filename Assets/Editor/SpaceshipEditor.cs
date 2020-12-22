@@ -17,7 +17,7 @@ public class SpaceshipEditor : Editor
         shipOrbitalParamsFilePath = Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams;
         CheckCreate_OrbitalParams_SO();
         //orbParamsSerializedObjs = new SerializedObject(serializedObject.FindProperty("_orbitalParams").objectReferenceValue);
-        orbDataFoldoutBool = ship.orbDataFoldoutBool;
+        orbDataFoldoutBool = ship.orbitalParams.orbDataFoldoutBool;
     }
 
     void CheckCreate_OrbitalParams_SO()
@@ -54,9 +54,9 @@ public class SpaceshipEditor : Editor
     void Draw_OrbitalParams_Editor(OrbitalParams orbParams)
     {
         if(orbParams != null) {
-            orbDataFoldoutBool = EditorGUILayout.InspectorTitlebar(orbDataFoldoutBool, orbParams);
+            orbParams.orbDataFoldoutBool = EditorGUILayout.InspectorTitlebar(orbParams.orbDataFoldoutBool, orbParams);
             using(var check = new EditorGUI.ChangeCheckScope()) {
-                if(orbDataFoldoutBool)
+                if(orbParams.orbDataFoldoutBool)
                     Create_OrbitalParams_Editor(orbParams);
             }
         }
@@ -110,28 +110,28 @@ public class SpaceshipEditor : Editor
 
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("Rotation of the Plane of the Orbit", EditorStyles.boldLabel);
-        orbParams.i = EditorGUILayout.DoubleField("i (°)", orbParams.i)*UniCsts.deg2rad;
-        orbParams.lAscN = EditorGUILayout.DoubleField("Longitude of the Ascending Node (°)", orbParams.lAscN)*UniCsts.deg2rad;
+        orbParams.i = EditorGUILayout.DoubleField("i (rad)", orbParams.i);
+        orbParams.lAscN = EditorGUILayout.DoubleField("Longitude of the Ascending Node (rad)", orbParams.lAscN);
 
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("Rotation of the Orbit in its Plane", EditorStyles.boldLabel);
-        orbParams.omega = EditorGUILayout.DoubleField("Argument of the periapsis (°)", orbParams.omega)*UniCsts.deg2rad;
+        orbParams.omega = EditorGUILayout.DoubleField("Argument of the periapsis (rad)", orbParams.omega);
 
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("Position on the orbit", EditorStyles.boldLabel);
         switch(orbParams.bodyPosType)
         {
             case OrbitalTypes.bodyPositionType.nu:
-                orbParams.nu = EditorGUILayout.DoubleField("True Anomaly (°)", orbParams.nu)*UniCsts.deg2rad;
+                orbParams.nu = EditorGUILayout.DoubleField("True Anomaly (rad)", orbParams.nu);
                 break;
             case OrbitalTypes.bodyPositionType.M:
-                orbParams.M = EditorGUILayout.DoubleField("Mean Anomaly (°)", orbParams.M)*UniCsts.deg2rad;
+                orbParams.M = EditorGUILayout.DoubleField("Mean Anomaly (rad)", orbParams.M);
                 break;
             case OrbitalTypes.bodyPositionType.E:
-                orbParams.E = EditorGUILayout.DoubleField("Eccentric Anomaly (°)", orbParams.E)*UniCsts.deg2rad;
+                orbParams.E = EditorGUILayout.DoubleField("Eccentric Anomaly (rad)", orbParams.E);
                 break;
             case OrbitalTypes.bodyPositionType.L:
-                orbParams.L = EditorGUILayout.DoubleField("Mean Longitude (°)", orbParams.L)*UniCsts.deg2rad;
+                orbParams.L = EditorGUILayout.DoubleField("Mean Longitude (rad)", orbParams.L);
                 break;
             case OrbitalTypes.bodyPositionType.t:
                 orbParams.t = EditorGUILayout.DoubleField("Time at perihelion passage (s)", orbParams.t);

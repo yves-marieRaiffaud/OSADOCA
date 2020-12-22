@@ -118,18 +118,17 @@ namespace Universe
             rb.drag = 0f;
             rb.angularDrag = 0f;
             rb.interpolation = RigidbodyInterpolation.Interpolate;
-            rb.isKinematic = false;
+            rb.isKinematic = true;
             rb.useGravity = false;
             rb.detectCollisions = true;
+            rb.constraints = RigidbodyConstraints.None;
 
             if(physicGameObject.CompareTag(goTags.Star.ToString()) || physicGameObject.CompareTag(goTags.Planet.ToString())) {
                 rb.mass = 1e9f;
                 rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
-                rb.constraints = RigidbodyConstraints.None;
             }
             else if(physicGameObject.CompareTag(goTags.Spaceship.ToString())) {
                 rb.mass = 10f;
-                rb.constraints = RigidbodyConstraints.FreezeRotation; // Freezing rotation of the S/C
                 rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
             }
         }
@@ -144,56 +143,55 @@ namespace Universe
 
         void Start()
         {
-            Debug.Log("start of univberse");
             foreach(Transform objTr in physicsObjArray) {
                 switch(ComFcn.ObjectsHandling.Str_2_GoTags(objTr.tag))
                 {
                     case goTags.Star:
-                        objTr.position = Vector3.zero;
                         CelestialBody starBody = objTr.GetComponent<CelestialBody>();
-                        starBody.Assign_PlanetDict(PlanetsCsts.planetsDict[starBody.chosenPredifinedPlanet]);
+                        starBody._rigidbody.MovePosition(Vector3.zero);
+                        starBody.Init_CelestialBodySettings();
                         break;
 
                     case goTags.Planet:
-                        objTr.position = Vector3.zero;
                         CelestialBody celestBody = objTr.GetComponent<CelestialBody>();
                         if(GameObject.FindGameObjectsWithTag(goTags.Star.ToString()).Length > 0) {
-                            Debug.Log("Found a star");
-                            celestBody.Assign_PlanetDict(PlanetsCsts.planetsDict[celestBody.chosenPredifinedPlanet]);
-                            celestBody.Init_Orbit();
-                            celestBody.Init_Position();
+                            celestBody.Init_CelestialBodySettings();
+                            flyingDynamics.Init_FlyingObject<CelestialBody>(celestBody);
                         }
-                        else {
-                            celestBody.Assign_PlanetDict(PlanetsCsts.planetsDict[celestBody.chosenPredifinedPlanet]);
-                            celestBody.Init_Orbit();
-                            celestBody.transform.position = Vector3.zero;
-                            celestBody.relativeVel = Vector3d.zero;
-                        }
+                        else
+                            Debug.LogError("ERROR, could not found any Sun in the scene.");
                         break;
 
                     case goTags.Spaceship:
-                        Debug.Log("ship universe init");
                         Spaceship ship = objTr.GetComponent<Spaceship>();
-                        ship.InitOrbit();
-                        ship.Init_Position();
-                        //flyingDynamics.init();
+                        flyingDynamics.Init_FlyingObject<Spaceship>(ship);
                         break;
                 }
             }
 
-            // Init spaceship movement
-            activeSC.relativeAcc = KeplerGrav.GetGravAcc(activeSC.transform.position, activeSC.orbit.orbitedBody.transform.position, activeSC.orbit.orbitedBody.settings.planetaryParams.mu.val);
-            activeSC._rigidbody.AddForce((Vector3) activeSC.relativeVel, ForceMode.VelocityChange);
+            foreach(Transform objTr in physicsObjArray) {
+                switch(ComFcn.ObjectsHandling.Str_2_GoTags(objTr.tag))
+                {
+                    case goTags.Planet:
+                        CelestialBody celestBody = objTr.GetComponent<CelestialBody>();
+                        flyingDynamics.Init_State_Variables<CelestialBody>(celestBody);
+                        break;
+
+                    case goTags.Spaceship:
+                        Spaceship ship = objTr.GetComponent<Spaceship>();
+                        flyingDynamics.Init_State_Variables<Spaceship>(ship);
+                        break;
+                }
+            }
         }
 
         void FixedUpdate()
         {
-            UpdateFloatingOrigin();
             if(simEnv.simulateGravity.value) {
                 flyingDynamics.GravitationnalStep();
                 PrintAltitude();
             }
-            
+            UpdateFloatingOrigin();
         }
 
         private void PrintAltitude()
@@ -204,12 +202,26 @@ namespace Universe
         private void UpdateFloatingOrigin()
         {
             Vector3 originOffset = playerCamera.transform.position;
-            Debug.Log("originOffset = " + originOffset);
             float dstFromOrigin = originOffset.magnitude;
             if(dstFromOrigin > UniCsts.dstThreshold)
             {
                 foreach(Transform t in physicsObjArray) {
                     t.position -= originOffset; // Offset every Star, Planet and Spaceship
+                    switch(ComFcn.ObjectsHandling.Str_2_GoTags(t.tag))
+                    {
+                        case goTags.Star:
+                            CelestialBody star = t.GetComponent<CelestialBody>();
+                            star.realPosition -= originOffset;
+                            break;
+                        case goTags.Planet:
+                            CelestialBody celestBody = t.GetComponent<CelestialBody>();
+                            celestBody.realPosition -= originOffset;
+                            break;
+                        case goTags.Spaceship:
+                            Spaceship ship = t.GetComponent<Spaceship>();
+                            ship.realPosition -= originOffset;
+                            break;
+                    }
                 }
                 universeOffset += originOffset;
             }

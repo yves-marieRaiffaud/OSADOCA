@@ -19,7 +19,7 @@ public static class UniverseConstants
 
 
     // Max distance before offseting every object to bring the camera back at the origin, in Unity units
-    public const double dstThreshold = 500d;
+    public const double dstThreshold = 30_000d;
 
     // Vernal Point, very high value on x so that it is located at the infinity
     // Positive Vernal direction is the intersection between the ecliptic plane and the Earth's equatorial plane

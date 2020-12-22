@@ -7,6 +7,8 @@ using MathsOps = CommonMethods.MathsOps;
 [CreateAssetMenu(), System.Serializable]
 public class OrbitalParams : ScriptableObject
 {
+    [System.NonSerialized] public bool orbDataFoldoutBool=true; // For universeRunner custom editor
+    //---------------------------
     public string orbitedBodyName;
     public CelestialBody orbitedBody;
 

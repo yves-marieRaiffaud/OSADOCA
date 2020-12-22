@@ -27,13 +27,11 @@ public class CelestialBodyEditor : Editor
 
     void CheckCreate_CelestialBodySettings_SO()
     {
-        if(celestBody.settings == null || !File.Exists(celestBodySettingsFilePath)) {
+        if(!File.Exists(celestBodySettingsFilePath)) {
             celestBody.settings = ScriptableObject.CreateInstance<CelestialBodySettings>();
             CelestialBodySettings.WriteToFile_CelestialBodySettings_SaveData(celestBody.settings, celestBodySettingsFilePath);
         }
-        else {
-            JsonUtility.FromJsonOverwrite(File.ReadAllText(celestBodySettingsFilePath), celestBody.settings);
-        }
+        JsonUtility.FromJsonOverwrite(File.ReadAllText(celestBodySettingsFilePath), celestBody.settings);
     }
 
     void OnInspectorUpdate()

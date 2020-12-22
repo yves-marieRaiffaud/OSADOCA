@@ -42,7 +42,7 @@ public static class CelestialBodiesConstants
         { CelestialBodyParamsBase.planetaryParams.mu.ToString()                 , new GravConstant(13_271_244.0018d, gravConst.m3s2) }, // m3/s2
         { CelestialBodyParamsBase.planetaryParams.massEarthRatio.ToString()     , new DoubleNoDim(333_000d) },
 
-        { CelestialBodyParamsBase.orbitalParams.orbitedBodyName.ToString()      , new String_Unit("Sun")  },
+        { CelestialBodyParamsBase.orbitalParams.orbitedBodyName.ToString()      , new String_Unit("None")  },
         { CelestialBodyParamsBase.orbitalParams.apoapsis.ToString()             , new Distance(0d, distance.AU) },
         { CelestialBodyParamsBase.orbitalParams.periapsis.ToString()            , new Distance(0d, distance.AU) },
         { CelestialBodyParamsBase.orbitalParams.i.ToString()                    , new Angle(0d, angle.degree) },

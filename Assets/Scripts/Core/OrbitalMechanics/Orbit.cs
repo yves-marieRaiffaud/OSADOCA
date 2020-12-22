@@ -65,7 +65,7 @@ public class Orbit
             a_km *= Units.AU2KM;
 
         if(orbitedBody != null) {
-            param.period = OrbTime.amu_2_T(a_km, orbitedBody.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.mu.ToString()].val);
+            param.period = OrbTime.amu_2_T(a_km, orbitedBody.settings.planetaryParams.mu.val*UniCsts.µExponent);
             param.n = OrbTime.T_2_n(param.period);
         }
         else {
@@ -200,26 +200,17 @@ public class Orbit
     void Init_LineRenderer()
     {
         lineRendererPts = new List<Vector3>();
-        _lineRenderer = new VectorLine("orbit", lineRendererPts, 2.5f);
+        _lineRenderer = new VectorLine("Orbit_" + orbitingGO.name , lineRendererPts, 10f);
 
-        /*lineRendererGO.layer = 10; // Layer 10 is 'Orbit' Layer (which is not rendered in teh background camera)
-        lineRendererGO.tag = UniverseRunner.goTags.Orbit.ToString();
-
-        lineRenderer = lineRendererGO.GetComponent<LineRenderer>();
-        lineRenderer.useWorldSpace = false;
-        lineRenderer.loop = true;
-        lineRenderer.receiveShadows = false;
-        lineRenderer.generateLightingData = false;
-        lineRenderer.shadowCastingMode = ShadowCastingMode.Off;
-        lineRenderer.widthCurve = AnimationCurve.Constant(0f, 1f, 1f);
-        lineRenderer.sharedMaterial = Resources.Load(Filepaths.DEBUG_orbitMaterial, typeof(Material)) as Material;
-        if(!orbitedBody.spawnAsSimpleSphere) {
-            // Execute only if we are in the simulation. Else, the GameObject 'Orbits' does not exist
-            lineRenderer.transform.parent = GameObject.Find("Orbits").transform;
+        GameObject orbitGO;
+        if(!orbitedBody.transform.Find("Orbit")) {
+            orbitGO = new GameObject("Orbit");
+            orbitGO.transform.parent = orbitedBody.transform;
         }
         else
-            lineRenderer.transform.parent = GameObject.Find("Planets_Rendering").transform;*/
-        //lineRenderer.transform.parent = GameObject.Find("Orbits").transform;
+            orbitGO = orbitedBody.transform.Find("Orbit").gameObject;
+
+        _lineRenderer.drawTransform = orbitGO.transform;
     }
 
     void Draw_Orbit()
@@ -272,17 +263,17 @@ public class Orbit
         // 5
         // Taking into account the axial tilt of the planet
         // Will be used to rotate the equatorial plane/equatorial vectors
-        Quaterniond equatorialAdjustment = Quaterniond.Identity;
+        /*Quaterniond equatorialAdjustment = Quaterniond.Identity;
         if(!orbitedBody.tag.Equals(UniverseRunner.goTags.Star.ToString()) )//&& !orbitedBody.spawnAsSimpleSphere)
         {
             //Vector3d tangentialVec = orbitedBody.orbit.ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.tangentialVec);
             Vector3d tangentialVec = orbitedBody.orbit.ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.tangentialVec);
-            double orbitedBodyAxialTilt = orbitedBody.planetBaseParamsDict[CelestialBodyParamsBase.planetaryParams.axialTilt.ToString()].val;
+            double orbitedBodyAxialTilt = orbitedBody.settings.planetaryParams.axialTilt.val;
             equatorialAdjustment = Quaterniond.AngleAxis(orbitedBodyAxialTilt, -tangentialVec).GetNormalized();
         }
         orbitedBody.equatorialPlane.forwardVec = equatorialAdjustment * orbitedBody.equatorialPlane.forwardVec;
         orbitedBody.equatorialPlane.rightVec = equatorialAdjustment * orbitedBody.equatorialPlane.rightVec;
-        orbitedBody.equatorialPlane.normal = equatorialAdjustment * orbitedBody.equatorialPlane.normal;
+        orbitedBody.equatorialPlane.normal = equatorialAdjustment * orbitedBody.equatorialPlane.normal;*/
         
         // Rotation Quaternion of the complete rotation (first inclination, then perihelion argument,
         // then longitude of the ascending node
@@ -303,7 +294,7 @@ public class Orbit
         _lineRenderer.Draw3D();
         // 4
         // normalUp vector has changed after the rotation by longAscendingNodeRot.
-        orbitNormalUp = equatorialAdjustment * longAscendingNodeRot * orbitNormalUp;
+        orbitNormalUp = /*equatorialAdjustment * */longAscendingNodeRot * orbitNormalUp;
         param.apogeeLineDir = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.apogeeLine);
         Vector3d orbitPlaneRightVec = Vector3d.Cross(param.apogeeLineDir, orbitNormalUp);
 
@@ -315,6 +306,9 @@ public class Orbit
             param.ascendingNodeLineDir = Vector3d.Cross(param.apogeeLineDir, orbitNormalUp).normalized; // Orbit is circular (coincident planes) or does not intersect equatorial plane
     }
 
+    /// <summary>
+    /// Returns the world position, in km, of the object relative to its orbitedBody
+    /// </summary>
     public static Vector3d GetWorldPositionFromOrbit(Orbit orbit)
     {
         // Return the Vector3d position in the world (X,Y,Z) from the position of the body on its orbit
@@ -334,6 +328,26 @@ public class Orbit
         worldPos = r*cosNu*fVec + r*Mathd.Sin(posValue)*rVec;
         worldPos = orbit.orbitRot * worldPos;// * orbit.scalingFactor;
         return worldPos;
+    }
+
+    public Velocity GetRadialSpeed()
+    {
+        double sF = 1d;
+        if(param.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU)
+            sF = Units.AU2KM;
+
+        double radialVel = Mathd.Pow(10,5) * Math.Sqrt(orbitedBody.settings.planetaryParams.mu.val/(param.p*sF)) * param.e*Mathd.Sin(param.nu);
+        return new Velocity(radialVel, Units.velocity.ms);
+    }
+
+    public Velocity GetTangentialSpeed()
+    {
+        double sF = 1d;
+        if(param.orbParamsUnits == OrbitalTypes.orbitalParamsUnits.AU)
+            sF = Units.AU2KM;
+
+        double tangentialVel = Mathd.Pow(10,5) * Math.Sqrt(orbitedBody.settings.planetaryParams.mu.val/(param.p*sF)) * (1 + param.e*Mathd.Cos(param.nu));
+        return new Velocity(tangentialVel, Units.velocity.ms);
     }
 
 }

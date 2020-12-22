@@ -16,7 +16,7 @@ public interface Dynamic_Obj_Common
     Rigidbody _rigidbody {get;}
 
     OrbitalParams orbitalParams {get; set;}
-    Orbit orbit {get;}
+    Orbit orbit {get; set;}
 
     Vector3d relativeAcc {get; set;} // Orbited body relative acceleration, m/s2
     Vector3d relativeVel {get; set;} // Orbited body relative velocity, m/s

@@ -964,7 +964,7 @@ public class String_Unit : UnitInterface
     public double val
     {
         get {
-            return 0d;
+            return double.NaN;
         }
     }
     public Vector3d val3d
