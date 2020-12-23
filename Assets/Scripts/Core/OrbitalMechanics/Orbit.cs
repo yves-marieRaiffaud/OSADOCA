@@ -29,17 +29,13 @@ public class Orbit
     }
 
     public CelestialBody orbitedBody;
-    public GameObject orbitingGO;
     public Dynamic_Obj_Common orbitingInterface;
     public Quaterniond orbitRot; // Rotation from XZ ellipse to XYZ ellipse by applying i, Omega, omega
-
-    //public string suffixGO; // Suffix used for every gameObject that is created and parented to the spaceship
 
     public Orbit(OrbitalParams orbitalParams, CelestialBody celestialBody, GameObject orbitingBody)
     {
         param = orbitalParams;
-        orbitingGO = orbitingBody;
-        orbitingInterface = orbitingGO.GetComponent<Dynamic_Obj_Common>();
+        orbitingInterface = orbitingBody.GetComponent<Dynamic_Obj_Common>();
         orbitedBody = celestialBody;
 
         switch(param.orbitDefType)
@@ -136,12 +132,12 @@ public class Orbit
             {
                 case OrbitalTypes.typeOfVectorDir.vernalPoint:
                     return (UniCsts.pv_j2000 - orbitingInterface.realPosition).normalized;
-                
+
                 case OrbitalTypes.typeOfVectorDir.vpAxisRight:
                     if(!Vector3d.IsValid(param.vp))
                         ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vernalPoint);
                     return new Vector3d(param.vp.y, param.vp.z, param.vp.x).normalized;
-                
+
                 case OrbitalTypes.typeOfVectorDir.vpAxisUp:
                     if(!Vector3d.IsValid(param.vp))
                         ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vernalPoint);
@@ -187,7 +183,7 @@ public class Orbit
     void Init_LineRenderer()
     {
         lineRendererPts = new List<Vector3>();
-        _lineRenderer = new VectorLine("Orbit_" + orbitingGO.name , lineRendererPts, 10f);
+        _lineRenderer = new VectorLine("Orbit_" + orbitingInterface._gameObject.name , lineRendererPts, 10f);
 
         GameObject orbitGO;
         if(!orbitedBody.transform.Find("Orbit")) {

@@ -10,16 +10,12 @@ public class UniverseRunnerEditor : Editor
     SerializedObject simEnvSerializedObjs;
     string simSettingsFilePath;
 
-    bool simEnvFoldoutBool;
-
     private void OnEnable()
     {
         universe = (UniverseRunner)target;
         simSettingsFilePath = Application.persistentDataPath + Filepaths.simulation_settings;
         CheckCreateSimEnvSettingsFile();
         simEnvSerializedObjs = new SerializedObject(serializedObject.FindProperty("simEnv").objectReferenceValue);
-
-        simEnvFoldoutBool = universe.simulationEnvFoldout;
     }
 
     private void CheckCreateSimEnvSettingsFile()
@@ -57,9 +53,9 @@ public class UniverseRunnerEditor : Editor
     private void DrawUniverseRunnerSettingsEditor(SimulationEnv settings)
     {
         if(settings != null) {
-            simEnvFoldoutBool = EditorGUILayout.InspectorTitlebar(simEnvFoldoutBool, settings);
+            universe.simEnv.simulationEnvFoldout = EditorGUILayout.InspectorTitlebar(universe.simEnv.simulationEnvFoldout, settings);
             using(var check = new EditorGUI.ChangeCheckScope()) {
-                if(simEnvFoldoutBool)
+                if(universe.simEnv.simulationEnvFoldout)
                     CreateUniverseRunnerSettingsEditor(settings);
             }
         } 

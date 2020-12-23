@@ -9,6 +9,9 @@ public enum SimSettingCategory { UI, NBodyEngine, Physics, Perturbations, Spaces
 [CreateAssetMenu(), Serializable]
 public class SimulationEnv : ScriptableObject
 {
+    [NonSerialized] public bool simulationEnvFoldout=true; // For universeRunner custom editor only
+    //=======================
+    //=======================
     public static string[] simSettingCategoryLabels = new string[] {"UI", "NBody Simulator Engine", "Physics", "Perturbations", "Spaceship Control"};
     //---------------------------------------------
     // Class containing every variables needed to define the simulation environment

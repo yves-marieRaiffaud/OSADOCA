@@ -17,8 +17,6 @@ namespace Universe
     [DisallowMultipleComponent, System.Serializable]
     public class UniverseRunner : MonoBehaviour
     {
-        [HideInInspector] public bool simulationEnvFoldout=true; // For universeRunner custom editor
-
         // Keeping date and time of the current state of the universe
         [HideInInspector] public UniverseClock universeClock;
         [HideInInspector] public SimulationEnv simEnv;
@@ -40,7 +38,7 @@ namespace Universe
         [HideInInspector] public GameObject orbitFolder; // GameObject containing every orbits, both drawn and only computed orbits
 
         public List<Rigidbody> physicsRigidbodies;
-        public List<Transform> physicsObjArray;
+        public List<Dynamic_Obj_Common> physicsObjArray;
 
         void Awake()
         {
@@ -51,7 +49,7 @@ namespace Universe
 
             // Ordering hierarchy tree
             physicsObjGO = ComFcn.ObjectsHandling.CreateAssignGameObject(folderNames.PhysicsObjs.ToString());
-            physicsObjArray = new List<Transform>();
+            physicsObjArray = new List<Dynamic_Obj_Common>();
             physicsRigidbodies = new List<Rigidbody>();
             InitFolders();
             FillFolders();
@@ -75,8 +73,6 @@ namespace Universe
                 Application.targetFrameRate = simEnv.targetFrameRate.value;
             Time.fixedDeltaTime = 1f/simEnv.physicsUpdateRate.value;
             Time.timeScale = simEnv.timeScale.value;
-            //if(GameObject.Find("missionTimer") != null)
-              //  simEnv.missionTimer = GameObject.Find("missionTimer").GetComponent<StopWatch>();
         }
 
         void InitFolders()
@@ -131,23 +127,23 @@ namespace Universe
         {
             // Add the GameObject to all of the physics list (list of Transforms, Rigidbody)
             physicsRigidbodies.Add(gameObjectToAdd.GetComponent<Rigidbody>());
-            physicsObjArray.Add(gameObjectToAdd.transform);
+            physicsObjArray.Add(gameObjectToAdd.GetComponent<Dynamic_Obj_Common>());
             ComFcn.ObjectsHandling.ParentObj(gameObjectToAdd, parentFolder);
         }
 
         void Start()
         {
-            foreach(Transform objTr in physicsObjArray) {
-                switch(ComFcn.ObjectsHandling.Str_2_GoTags(objTr.tag))
+            foreach(Dynamic_Obj_Common obj in physicsObjArray) {
+                switch(ComFcn.ObjectsHandling.Str_2_GoTags(obj._gameObject.transform.tag))
                 {
                     case goTags.Star:
-                        CelestialBody starBody = objTr.GetComponent<CelestialBody>();
+                        CelestialBody starBody = (CelestialBody)obj;
                         starBody._rigidbody.MovePosition(Vector3.zero);
                         starBody.Init_CelestialBodySettings();
                         break;
 
                     case goTags.Planet:
-                        CelestialBody celestBody = objTr.GetComponent<CelestialBody>();
+                        CelestialBody celestBody = (CelestialBody)obj;
                         if(GameObject.FindGameObjectsWithTag(goTags.Star.ToString()).Length > 0) {
                             celestBody.Init_CelestialBodySettings();
                             flyingDynamics.Init_FlyingObject<CelestialBody>(celestBody);
@@ -157,27 +153,19 @@ namespace Universe
                         break;
 
                     case goTags.Spaceship:
-                        Spaceship ship = objTr.GetComponent<Spaceship>();
+                        Spaceship ship = (Spaceship)obj;
                         flyingDynamics.Init_FlyingObject<Spaceship>(ship);
                         break;
                 }
             }
 
-            foreach(Transform objTr in physicsObjArray) {
-                switch(ComFcn.ObjectsHandling.Str_2_GoTags(objTr.tag))
-                {
-                    case goTags.Planet:
-                        CelestialBody celestBody = objTr.GetComponent<CelestialBody>();
-                        flyingDynamics.Init_State_Variables<CelestialBody>(celestBody);
-                        break;
-
-                    case goTags.Spaceship:
-                        Spaceship ship = objTr.GetComponent<Spaceship>();
-                        flyingDynamics.Init_State_Variables<Spaceship>(ship);
-                        break;
+            // Once every objects has been positioned in the scene, we can initialize the 'relativeAcc' variable of every object (Planet & Spaceship)
+            foreach(Dynamic_Obj_Common obj in physicsObjArray)
+            {
+                if(obj._gameObject.transform.tag != goTags.Star.ToString()) {
+                    flyingDynamics.Init_State_Variables<Dynamic_Obj_Common>(obj);
                 }
             }
-            UpdateFloatingOrigin();
         }
 
         void FixedUpdate()
@@ -200,23 +188,9 @@ namespace Universe
             float dstFromOrigin = originOffset.magnitude;
             if(dstFromOrigin > UniCsts.dstThreshold)
             {
-                foreach(Transform t in physicsObjArray) {
-                    t.position -= originOffset; // Offset every Star, Planet and Spaceship
-                    switch(ComFcn.ObjectsHandling.Str_2_GoTags(t.tag))
-                    {
-                        case goTags.Star:
-                            CelestialBody star = t.GetComponent<CelestialBody>();
-                            star.realPosition -= originOffset;
-                            break;
-                        case goTags.Planet:
-                            CelestialBody celestBody = t.GetComponent<CelestialBody>();
-                            celestBody.realPosition -= originOffset;
-                            break;
-                        case goTags.Spaceship:
-                            Spaceship ship = t.GetComponent<Spaceship>();
-                            ship.realPosition -= originOffset;
-                            break;
-                    }
+                foreach(Dynamic_Obj_Common t in physicsObjArray) {
+                    t._gameObject.transform.position -= originOffset; // Offset every Star, Planet and Spaceship
+                    t.realPosition -= originOffset;
                 }
                 universeOffset += originOffset;
             }

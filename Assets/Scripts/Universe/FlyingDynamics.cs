@@ -56,35 +56,26 @@ namespace FlyingObjects
         public void GravitationnalStep()
         {
             // First computing the acceleration updates for each Star, Planet or Spaceship 
-            foreach(Transform obj in universeRunner.physicsObjArray)
-                Compute_NewPositions(obj, obj.tag);
+            foreach(Dynamic_Obj_Common obj in universeRunner.physicsObjArray) {
+                if(obj._gameObject.transform.tag != UniverseRunner.goTags.Star.ToString())
+                    Compute_NewPositions(obj);
+            }
 
             // Once everything has been computed, apply the new accelerations at every objects
-            foreach(Transform obj in universeRunner.physicsObjArray)
-                Apply_NewPositions(obj, obj.tag);
+            foreach(Dynamic_Obj_Common obj in universeRunner.physicsObjArray) {
+                if(obj._gameObject.transform.tag != UniverseRunner.goTags.Star.ToString())
+                    Apply_NewPositions(obj);
+            }
         }
         //-------------------------------------------
         //-------------------------------------------
-        public void Compute_NewPositions(Transform obj, string objTag)
+        public void Compute_NewPositions(Dynamic_Obj_Common obj)
         {
             // Compute acceleration, velocity and the new position of either a Planet or a Spaceship, due to gravitational pull
-            CelestialBody orbitedBody;
-            switch(ObjHd.Str_2_GoTags(objTag))
-            {
-                case UniverseRunner.goTags.Planet:
-                    CelestialBody celestBody = obj.GetComponent<CelestialBody>();
-                    if(celestBody.orbitedBody != null) {
-                        orbitedBody = celestBody.orbitedBody.GetComponent<CelestialBody>();
-                        GravitationalUpdate<CelestialBody>(orbitedBody, celestBody);
-                    }
-                    break;
-
-                case UniverseRunner.goTags.Spaceship:
-                    Spaceship ship = obj.GetComponent<Spaceship>();
-                    orbitedBody = ship.orbit.orbitedBody.GetComponent<CelestialBody>();
-                    GravitationalUpdate<Spaceship>(orbitedBody, ship);
-                    break;
-            }
+            if(obj.orbit.orbitedBody != null)
+                GravitationalUpdate<Dynamic_Obj_Common>(obj.orbit.orbitedBody, obj);
+            else
+                Debug.LogWarningFormat("WARNING ! 'orbit.orbitedBody' of {0} is null. Cannot continue with the 'NewPositions' method.",obj._gameObject.name);
         }
         public void GravitationalUpdate<T1>(CelestialBody orbitedBody, T1 orbitingBody)
         where T1: Dynamic_Obj_Common
@@ -113,26 +104,19 @@ namespace FlyingObjects
         }
         //-------------------------------------------
         //-------------------------------------------
-        public void Apply_NewPositions(Transform obj, string objTag)
+        public void Apply_NewPositions(Dynamic_Obj_Common obj)
         {
-            switch(ObjHd.Str_2_GoTags(objTag))
-            {
-                case UniverseRunner.goTags.Planet:
-                    CelestialBody celestBody = obj.GetComponent<CelestialBody>();
-                    celestBody._rigidbody.MovePosition((Vector3)celestBody.realPosition);
-                    Compute_Second_Part_Leapfrog<CelestialBody>(celestBody.orbit.orbitedBody, celestBody);
-                    break;
+            obj._rigidbody.MovePosition((Vector3)obj.realPosition);
+            if(obj.orbit.orbitedBody != null)
+                Compute_Second_Part_Leapfrog<Dynamic_Obj_Common>(obj.orbit.orbitedBody, obj);
+            else
+                Debug.LogWarningFormat("WARNING ! 'orbit.orbitedBody' of {0} is null. Cannot continue with the 'ApplyNewPositions' method and run 'Compute_Second_Part_Leapfrog()'.", obj._gameObject.name);
 
-                case UniverseRunner.goTags.Spaceship:
-                    Spaceship ship = obj.GetComponent<Spaceship>();
-                    ship._rigidbody.MovePosition((Vector3)ship.realPosition);
-                    Compute_Second_Part_Leapfrog<Spaceship>(ship.orbit.orbitedBody, ship);
-                    break;
-            }
         }
         public void Compute_Second_Part_Leapfrog<T1>(CelestialBody orbitedBody, T1 orbitingBody)
         where T1: Dynamic_Obj_Common
         {
+            // Update acceleration
             orbitingBody.relativeAcc = KeplerGrav.GetGravAcc(orbitingBody.realPosition, orbitedBody.realPosition, orbitedBody.settings.planetaryParams.mu.val*UniCsts.µExponent) * Units.M2KM;
             orbitingBody.relativeAcc += orbitedBody.relativeAcc;
             // 1/2 kick
