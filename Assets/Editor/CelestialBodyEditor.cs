@@ -50,14 +50,20 @@ public class CelestialBodyEditor : Editor
             base.OnInspectorGUI();
         }
 
-        if(!celestBody.usePredefinedPlanet)
+        if(!celestBody.usePredefinedPlanet && !celestBody.spawnAsUIPlanet)
             Draw_Dict_PlanetaryParams(celestBody.settings);
-        else
+        else if(celestBody.usePredefinedPlanet)
             Handle_Predefined_Planet_Selection();
+        else if(!celestBody.usePredefinedPlanet && celestBody.spawnAsUIPlanet)
+            Debug.LogError("ERROR ! You cannot use an unpredefined planet with the 'spawnAsUIPlanet' flag that is used for UI. Cannot continue.");
         
         if(GUI.changed) {
-            string filepath = CelestialBodySettings.WriteToFile_CelestialBodySettings_SaveData(celestBody.settings, celestBodySettingsFilePath);
-            Debug.Log("OrbitalParams successfully saved at: '" + celestBodySettingsFilePath + "'.");
+            if(celestBody.spawnAsUIPlanet)
+                Debug.LogWarningFormat("WARNING ! GUI has changed for body '{0}', but 'spawAsUIPlanet' is selected. Thus, changes are not being saved to disk.", celestBody._gameObject.name);
+            else {
+                string filepath = CelestialBodySettings.WriteToFile_CelestialBodySettings_SaveData(celestBody.settings, celestBodySettingsFilePath);
+                Debug.Log("CelestialBodySettings successfully saved at: '" + celestBodySettingsFilePath + "'.");
+            }
         }
 
         settingsObj.ApplyModifiedProperties();
@@ -66,6 +72,12 @@ public class CelestialBodyEditor : Editor
     void Handle_Predefined_Planet_Selection()
     {
         celestBody.chosenPredifinedPlanet = (CelestialBodiesConstants.planets)EditorGUILayout.EnumPopup("Predefined planet", celestBody.chosenPredifinedPlanet);
+        
+        if(celestBody.chosenPredifinedPlanet == CelestialBodiesConstants.planets.None) {
+            Debug.LogWarningFormat("WARNING ! You have selected the 'None' predefined planet for body named {0}. Cannot continue.", celestBody._gameObject.name);
+            return;
+        }
+        
         // FILLING THE celestBody.settings
         // Planetary Params
         celestBody.settings.planetaryParams.radius = (Distance)PlDict.planetsDict[celestBody.chosenPredifinedPlanet][CelestialBodyParamsBase.planetaryParams.radius.ToString()];

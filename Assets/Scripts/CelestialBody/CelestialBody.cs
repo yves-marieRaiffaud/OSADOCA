@@ -83,6 +83,8 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
 
     [HideInInspector] public OrbitPlane equatorialPlane;
 
+    public bool spawnAsUIPlanet=false;
+
     public bool usePredefinedPlanet=true;
     [HideInInspector] public CelestialBodiesConstants.planets chosenPredifinedPlanet;
 
@@ -90,19 +92,31 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
 
     void Awake()
     {
-        if(TryGetComponent<Rigidbody>(out _privateRB)) {}
-        else
-            Debug.LogErrorFormat("Error while trying to get the rigidbody of {0} via its interface.", name);
         if(settings == null)
             settings = ScriptableObject.CreateInstance<CelestialBodySettings>();
         if(_orbitalParams == null)
             _orbitalParams = ScriptableObject.CreateInstance<OrbitalParams>();
+
+        SetMaterial();
+
+        if(spawnAsUIPlanet)
+            return;
+        // Code below only executed is 'spawnAsUIPlanet' is NOT SELECTED
+        if(TryGetComponent<Rigidbody>(out _privateRB)) {}
+        else
+            Debug.LogErrorFormat("Error while trying to get the rigidbody of {0} via its interface.", name);
 
         // Initializing equatorial plane, making sure it is back at its default values
         equatorialPlane.forwardVec = new Vector3d(1d, 0d, 0d);
         equatorialPlane.rightVec = new Vector3d(0d, 0d, 1d);
         equatorialPlane.normal = new Vector3d(0d, 1d, 0d);
         equatorialPlane.point = new Vector3d(0d, 0d, 0d);
+    }
+
+    void SetMaterial()
+    {
+        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        meshRenderer.sharedMaterial = Resources.Load<Material>(Filepaths.RSC_PlanetsMaterials + name + "_mat");
     }
 
     /// <summary>

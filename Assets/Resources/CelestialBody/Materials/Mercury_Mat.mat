@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Mercury_Mat
+  m_Shader: {fileID: -6465566751694194690, guid: 9fac313e7ebe6964db5820e7aed1f268,
+    type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - Texture2D_9578AE0E:
+        m_Texture: {fileID: 2800000, guid: f5d3ce040c3ec4b48b84c964cc50a7ec, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_CA56C792:
+        m_Texture: {fileID: 2800000, guid: 8735af00722e5cf4bbc0afa29529309a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - Vector1_320FAB2C: 1
+    - Vector1_57782D45: 1
+    - Vector1_57C572FE: 2
+    - Vector1_993DB92A: 1
+    m_Colors:
+    - Color_45801085: {r: 0, g: 0, b: 0, a: 0}
+    - Vector2_3D21372F: {r: 1, g: 1, b: 0, a: 0}
