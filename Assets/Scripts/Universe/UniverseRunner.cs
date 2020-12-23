@@ -60,22 +60,19 @@ namespace Universe
                 Debug.LogError("One of the two required GameObject has not been specified");
             VectorLine.SetCamera3D(playerCamera);
         }
-
         /// <summary>
         /// Reading the JSON simEnv file from disk and applying the read parameters to the current Unity Application
         /// </summary>
         void InitSimEnv()
         {
-            if(simEnv == null) {
+            if(simEnv == null)
                 simEnv = ScriptableObject.CreateInstance<SimulationEnv>();
-            }
             // Reading the simEnv JSON file from disk 
             string simEnvFilepath = Application.persistentDataPath + Filepaths.simulation_settings;
             JsonUtility.FromJsonOverwrite(File.ReadAllText(simEnvFilepath), simEnv);
 
-            if(simEnv.useTargetFrameRate.value) {
+            if(simEnv.useTargetFrameRate.value)
                 Application.targetFrameRate = simEnv.targetFrameRate.value;
-            }
             Time.fixedDeltaTime = 1f/simEnv.physicsUpdateRate.value;
             Time.timeScale = simEnv.timeScale.value;
             //if(GameObject.Find("missionTimer") != null)
@@ -89,7 +86,6 @@ namespace Universe
             spaceshipFolder = ComFcn.ObjectsHandling.CreateAssignGameObject(folderNames.Spaceships.ToString(), physicsObjGO);
             orbitFolder = ComFcn.ObjectsHandling.CreateAssignGameObject(folderNames.Orbits.ToString());
         }
-
         void FillFolders()
         {
             // FILLING ORDER: Stars, Planets, Spaceships
@@ -110,7 +106,6 @@ namespace Universe
                 AddGameObjectToPhysicsFolders(vessel, spaceshipFolder);
             }
         }
-
         void InitializeRigidbody(GameObject physicGameObject)
         {
             // Initialize everything of the rigidbody except its mass as its need to access the object Settings (done in 'Start' of the UniverseRunner)
@@ -132,7 +127,6 @@ namespace Universe
                 rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
             }
         }
-
         public void AddGameObjectToPhysicsFolders(GameObject gameObjectToAdd, GameObject parentFolder)
         {
             // Add the GameObject to all of the physics list (list of Transforms, Rigidbody)
@@ -183,6 +177,7 @@ namespace Universe
                         break;
                 }
             }
+            UpdateFloatingOrigin();
         }
 
         void FixedUpdate()
@@ -196,7 +191,7 @@ namespace Universe
 
         private void PrintAltitude()
         {
-            Debug.LogFormat("h = {0} km", (double) (activeSC.transform.position - earthCB.transform.position).magnitude);
+            Debug.LogFormat("h = {0} km", (double) (activeSC.realPosition - earthCB.realPosition).magnitude);
         }
 
         private void UpdateFloatingOrigin()

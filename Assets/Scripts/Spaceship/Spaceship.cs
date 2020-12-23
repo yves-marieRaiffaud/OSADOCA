@@ -84,9 +84,6 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
         else
             Debug.LogErrorFormat("Error while trying to get the rigidbody of {0} via its interface.", name);
 
-        //_relativeAcc = Vector3d.zero;
-        //_gameObject.transform.position = (Vector3)_realPosition;
-
         string shipOrbitalParamsFilePath = Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams;
         if(orbitalParams == null || !File.Exists(shipOrbitalParamsFilePath))
             orbitalParams = ScriptableObject.CreateInstance<OrbitalParams>();

@@ -30,6 +30,7 @@ public class Orbit
 
     public CelestialBody orbitedBody;
     public GameObject orbitingGO;
+    public Dynamic_Obj_Common orbitingInterface;
     public Quaterniond orbitRot; // Rotation from XZ ellipse to XYZ ellipse by applying i, Omega, omega
 
     //public string suffixGO; // Suffix used for every gameObject that is created and parented to the spaceship
@@ -38,6 +39,7 @@ public class Orbit
     {
         param = orbitalParams;
         orbitingGO = orbitingBody;
+        orbitingInterface = orbitingGO.GetComponent<Dynamic_Obj_Common>();
         orbitedBody = celestialBody;
 
         switch(param.orbitDefType)
@@ -133,7 +135,7 @@ public class Orbit
             switch(vecType)
             {
                 case OrbitalTypes.typeOfVectorDir.vernalPoint:
-                    return (UniCsts.pv_j2000 - new Vector3d(orbitingGO.transform.position)).normalized;
+                    return (UniCsts.pv_j2000 - orbitingInterface.realPosition).normalized;
                 
                 case OrbitalTypes.typeOfVectorDir.vpAxisRight:
                     if(!Vector3d.IsValid(param.vp))
@@ -147,7 +149,6 @@ public class Orbit
 
                 case OrbitalTypes.typeOfVectorDir.apogeeLine:
                     if(lineRenderer != null)
-                        //return new Vector3d(lineRenderer.GetPosition((int)(lineRenderer.positionCount/2)) - orbitedBody.transform.position).normalized;
                         return new Vector3d(lineRendererPts[lineRendererPts.Count/2]).normalized;
                     return new Vector3d(double.NaN, double.NaN, double.NaN);
 
@@ -167,31 +168,17 @@ public class Orbit
                     }
 
                 case OrbitalTypes.typeOfVectorDir.radialVec:
-                    return new Vector3d(orbitedBody.transform.position - orbitingGO.transform.position).normalized;
+                    return (orbitedBody.realPosition - orbitingInterface.realPosition).normalized;
 
                 case OrbitalTypes.typeOfVectorDir.tangentialVec:
                     Vector3d radial = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.radialVec);
                     return Vector3d.Cross(radial, param.orbitPlane.normal).normalized;
 
                 case OrbitalTypes.typeOfVectorDir.velocityVec:
-                    if(ObjHand.GoTagAndStringAreEqual(UniverseRunner.goTags.Spaceship, orbitingGO.tag)) {
-                        Spaceship ship = orbitingGO.GetComponent<Spaceship>();
-                        return ship.relativeVel.normalized;
-                    }
-                    else {
-                        CelestialBody body = orbitingGO.GetComponent<CelestialBody>();
-                        return body.relativeVel.normalized;
-                    }
+                    return orbitingInterface.relativeVel.normalized;
 
                 case OrbitalTypes.typeOfVectorDir.accelerationVec:
-                    if(ObjHand.GoTagAndStringAreEqual(UniverseRunner.goTags.Spaceship, orbitingGO.tag)) {
-                        Spaceship ship = orbitingGO.GetComponent<Spaceship>();
-                        return ship.relativeAcc.normalized;
-                    }
-                    else {
-                        CelestialBody body = orbitingGO.GetComponent<CelestialBody>();
-                        return body.relativeAcc.normalized;
-                    }
+                    return orbitingInterface.relativeAcc.normalized;
             }
         }
         return new Vector3d(double.NaN, double.NaN, double.NaN);

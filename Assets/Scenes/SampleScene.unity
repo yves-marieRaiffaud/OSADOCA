@@ -135,73 +135,73 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
   planetaryParams:
     radius:
-      _val: 0
-      _unit: 0
+      _val: 6378.137
+      _unit: 3
     polarRadius:
-      _val: 0
-      _unit: 0
+      _val: 6356.752
+      _unit: 3
     radiusSOI:
-      _val: 0
-      _unit: 0
+      _val: 120000
+      _unit: 3
     inverseFlattening:
-      _val: 0
+      _val: 298.257223563
       _unit: 0
     axialTilt:
-      _val: 0
+      _val: 23.4392811
       _unit: 0
     siderealRotPeriod:
-      _val: 0
-      _unit: 0
+      _val: 86164.09
+      _unit: 1
     revolutionPeriod:
-      _val: 0
-      _unit: 0
+      _val: 365.26
+      _unit: 4
     mu:
-      _val: 0
+      _val: 39.86004418
       _unit: 0
     massEarthRatio:
-      _val: 0
+      _val: 1
       _unit: 0
     isRockyBody: 0
   lightOrbitalParams:
     orbitedBodyName:
-      _stringVal: 
+      _stringVal: Sun
     apoapsis:
-      _val: 0
-      _unit: 0
+      _val: 1.067
+      _unit: 4
     periapsis:
-      _val: 0
-      _unit: 0
+      _val: 0.92329
+      _unit: 4
     i:
-      _val: 0
+      _val: 7.155
       _unit: 0
     lAscN:
-      _val: 0
+      _val: 174.9
       _unit: 0
     periapsisArg:
-      _val: 0
+      _val: 288.1
       _unit: 0
     trueAnomaly:
       _val: 0
       _unit: 0
   surfaceParams:
     surfPressure:
-      _val: 0
-      _unit: 0
+      _val: 1015
+      _unit: 1
     surfDensity:
-      _val: 0
+      _val: 1.217
       _unit: 0
     surfTemp:
-      _val: 0
-      _unit: 0
+      _val: 288
+      _unit: 1
     maxAtmoHeight:
-      _val: 0
+      _val: 100
       _unit: 0
     highestBumpAlt:
-      _val: 0
+      _val: 8.848
       _unit: 0
   jns:
     j2:
-      _val: 0
+      _val: 1082.63
       _unit: 0
     j3:
       _val: 0
@@ -400,6 +400,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _orbitalParams: {fileID: 1283321320}
+  _relativeAcc:
+    x: 0
+    y: 0
+    z: 0
+  _relativeVel:
+    x: 0
+    y: 0
+    z: 0
+  _realPosition:
+    x: 0
+    y: 0
+    z: 0
 --- !u!54 &454841546
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -552,7 +564,6 @@ GameObject:
   - component: {fileID: 1685031864}
   - component: {fileID: 1685031863}
   - component: {fileID: 1685031862}
-  - component: {fileID: 1685031866}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -656,18 +667,6 @@ Transform:
   m_Father: {fileID: 454841544}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1685031866
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1685031861}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be76e5f14cfee674cb30b491fb72b09b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1707185600
 GameObject:
   m_ObjectHideFlags: 0
@@ -718,6 +717,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings: {fileID: 1897654713}
+  _relativeAcc:
+    x: 0
+    y: 0
+    z: 0
+  _relativeVel:
+    x: 0
+    y: 0
+    z: 0
+  _realPosition:
+    x: 0
+    y: 0
+    z: 0
   equatorialPlane:
     forwardVec:
       x: NaN
@@ -1014,6 +1025,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings: {fileID: 36441000}
+  _relativeAcc:
+    x: 0
+    y: 0
+    z: 0
+  _relativeVel:
+    x: 0
+    y: 0
+    z: 0
+  _realPosition:
+    x: 0
+    y: 0
+    z: 0
   equatorialPlane:
     forwardVec:
       x: NaN
@@ -1105,7 +1128,7 @@ MonoBehaviour:
     minValue: 1
     maxValue: 100
   timeScale:
-    _value: 60
+    _value: 1
     _default_value: 0
     _type: System.Single
     _displayName: Time scale
