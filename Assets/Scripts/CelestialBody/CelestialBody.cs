@@ -128,8 +128,10 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
         string filepath = Application.persistentDataPath + Filepaths.celestBody_Folder + name + Filepaths.celestBodySettingsFile;
         JsonUtility.FromJsonOverwrite(File.ReadAllText(filepath), settings);
 
-        if(_orbitalParams.orbitedBody == null && !settings.lightOrbitalParams.orbitedBodyName.stringVal.Equals("None"))
-            _orbitalParams.orbitedBody = GameObject.Find(settings.lightOrbitalParams.orbitedBodyName.stringVal).GetComponent<CelestialBody>();
+        if(!spawnAsUIPlanet) {
+            if(_orbitalParams.orbitedBody == null && !settings.lightOrbitalParams.orbitedBodyName.stringVal.Equals("None"))
+                _orbitalParams.orbitedBody = GameObject.Find(settings.lightOrbitalParams.orbitedBodyName.stringVal).GetComponent<CelestialBody>();
+        }
 
         _orbitalParams.orbitRealPredType = OrbitalTypes.typeOfOrbit.realOrbit;
         _orbitalParams.orbitDefType = OrbitalTypes.orbitDefinitionType.rarp;

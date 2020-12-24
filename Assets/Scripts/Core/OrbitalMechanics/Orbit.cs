@@ -333,4 +333,8 @@ public class Orbit
         return new Velocity(tangentialVel, Units.velocity.ms);
     }
 
+    public void UpdateLineRendererPos()
+    {
+        
+    }
 }

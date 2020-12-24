@@ -8,7 +8,7 @@ using MathsOps = CommonMethods.MathsOps;
 public class OrbitalParams : ScriptableObject
 {
     [System.NonSerialized] public bool orbDataFoldoutBool=true; // For universeRunner custom editor
-    //---------------------------
+    //--------------
     public string orbitedBodyName;
     public CelestialBody orbitedBody;
 
@@ -21,8 +21,7 @@ public class OrbitalParams : ScriptableObject
     public bool drawOrbit=true;
     public bool drawDirections=false;
     public int orbitDrawingResolution=300;
-
-    //==============
+    //--------------
     // Shape of the orbit
     // Units of the parameters depend on the enum 'orbitalParamsUnits'
     public double ra; // km or AU, Radius of the aphelion: from the centre of the body to the aphelion of its orbit
@@ -46,10 +45,10 @@ public class OrbitalParams : ScriptableObject
     public double E; // Eccentric anomaly, rad
     public double L; // Mean Longitude, rad
     public double t; // Time at perihelion passage, seconds
-    //==============
+    //--------------
     public double period; // Orbtial period, seconds
     public double n; // Mean motion, rad/s
-    //==============
+    //--------------
     public Vector3d vp; // Vernal Point
     public Vector3d vpAxisRight; // Perpendicular vector of vp
     public Vector3d vpAxisUp; // Perpendicualr vector of vp and vpAxisRight
@@ -57,7 +56,7 @@ public class OrbitalParams : ScriptableObject
     public Vector3d apogeeLineDir; // Apsides Line
 
     public OrbitPlane orbitPlane;
-    //==============
+    //--------------
     public Dictionary <OrbitalTypes.typeOfVectorDir, string> suffixVectorDir = new Dictionary<OrbitalTypes.typeOfVectorDir, string>(){
         {OrbitalTypes.typeOfVectorDir.vernalPoint,       "VP_"},
         {OrbitalTypes.typeOfVectorDir.vpAxisRight,       "VPAxisRight_"},
@@ -74,8 +73,7 @@ public class OrbitalParams : ScriptableObject
         {OrbitalTypes.typeOfOrbit.realOrbit,      "Real"},
         {OrbitalTypes.typeOfOrbit.predictedOrbit, "Predicted"}
     };
-    //==============
-
+    //--------------
     public struct OrbitalStateVector {
         ReferenceFrame frame;
         Vector3d r;
@@ -104,9 +102,9 @@ public class OrbitalParams : ScriptableObject
 [System.Serializable]
 public struct OrbitalParamsSaveData
 {
-    //=========================================
+    //-----------------------------------------
     public const int NB_PARAMS=17; // Won't be serialized and won't be saved. Used only to set the size of the array passed in the constructor
-    //=========================================
+    //-----------------------------------------
     [SerializeField] private string orbitedBodyName;
     
     [SerializeField] private string orbitDefTypeInt;
@@ -152,8 +150,8 @@ public struct OrbitalParamsSaveData
         this.omegaDouble               = values[15];
         this.nuDouble                  = values[16];
     }
-
-    //========================================================================
+    //--------------------------------------
+    //--------------------------------------
     public static OrbitalParams LoadObjectFromJSON(string filepath)
     {
         OrbitalParamsSaveData loadedData = JsonUtility.FromJson<OrbitalParamsSaveData>(File.ReadAllText(filepath));

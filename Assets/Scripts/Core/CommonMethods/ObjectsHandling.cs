@@ -72,6 +72,53 @@ namespace CommonMethods
                 return false;
         }
 
+        public static CelestialBodiesConstants.planets Str_2_Planet(string goTag)
+        {
+            string[] planetsName = Enum.GetNames(typeof(CelestialBodiesConstants.planets));
+            for(int idx=0; idx<planetsName.Length; idx++) {
+                if(goTag.Equals(planetsName[idx]))
+                    return (CelestialBodiesConstants.planets)idx;
+            }
+            return CelestialBodiesConstants.planets.None;
+        }
+
+        private static (T,bool) Generic_Str_2_Enum<T>(string enumString)
+        where T : Enum
+        {
+            // return the correpsonding or the default Enum object, and the bool indicating if an exact match has been found, or if the default value is returned
+            string[] stringArr = Enum.GetNames(typeof(T));
+            for(int idx=0; idx<stringArr.Length; idx++) {
+                if(enumString.Equals(stringArr[idx]))
+                    return ((T)Enum.ToObject(typeof(T), idx), true); // 'true' to indicate that the enum object matching the string 'enumString' has been found
+            }
+            return ((T)Enum.ToObject(typeof(T), 0), false); // 'false' to indicate that the default value is returned
+        }
+        public static OrbitalTypes.orbitDefinitionType Str_2_OrbitDefinitionType(string stringEnum)
+        {
+            (OrbitalTypes.orbitDefinitionType,bool) res = Generic_Str_2_Enum<OrbitalTypes.orbitDefinitionType>(stringEnum);
+            if(res.Item2)
+                return res.Item1; // If we found the Enum object mathcing 'stringEnum'
+            else
+                return OrbitalTypes.orbitDefinitionType.rarp; // Default value to return
+        }
+        public static OrbitalTypes.orbitalParamsUnits Str_2_OrbitalParamsUnit(string stringEnum)
+        {
+            (OrbitalTypes.orbitalParamsUnits,bool) res = Generic_Str_2_Enum<OrbitalTypes.orbitalParamsUnits>(stringEnum);
+            if(res.Item2)
+                return res.Item1; // If we found the Enum object mathcing 'stringEnum'
+            else
+                return OrbitalTypes.orbitalParamsUnits.km; // Default value to return
+            
+        }
+        public static OrbitalTypes.bodyPositionType Str_2_BodyPosType(string stringEnum)
+        {
+            (OrbitalTypes.bodyPositionType,bool) res = Generic_Str_2_Enum<OrbitalTypes.bodyPositionType>(stringEnum);
+            if(res.Item2)
+                return res.Item1; // If we found the Enum object mathcing 'stringEnum'
+            else
+                return OrbitalTypes.bodyPositionType.nu; // Default value to return
+        }
+
         public static void Check_Create_Directory(string filepath, bool printToDebugLog)
         {
             if(!Directory.Exists(filepath)) {
