@@ -36,6 +36,7 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\ALibs\JsonHelper.cs" />
      <Compile Include="Assets\Scripts\ALibs\Mathd.cs" />
      <Compile Include="Assets\Scripts\ALibs\Quaterniond.cs" />
      <Compile Include="Assets\Scripts\ALibs\Vector2d.cs" />
@@ -47,6 +48,7 @@
      <Compile Include="Assets\Scripts\CelestialBody\PlanetsFunctions.cs" />
      <Compile Include="Assets\Scripts\Core\CommonMethods\MathsOps.cs" />
      <Compile Include="Assets\Scripts\Core\CommonMethods\ObjectsHandling.cs" />
+     <Compile Include="Assets\Scripts\Core\CommonMethods\UI_Methods.cs" />
      <Compile Include="Assets\Scripts\Core\Constants\UniverseConstants.cs" />
      <Compile Include="Assets\Scripts\Core\ExtensionMethods.cs" />
      <Compile Include="Assets\Scripts\Core\Filepaths\Filepaths.cs" />
@@ -64,6 +66,19 @@
      <Compile Include="Assets\Scripts\Core\Units.cs" />
      <Compile Include="Assets\Scripts\Interfaces.cs" />
      <Compile Include="Assets\Scripts\Spaceship\Spaceship.cs" />
+     <Compile Include="Assets\Scripts\UI\Custom_UI\ButtonTooltip.cs" />
+     <Compile Include="Assets\Scripts\UI\Custom_UI\CustomShaped_Buttons.cs" />
+     <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSButton.cs" />
+     <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSDropdown.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\LaunchPad\LaunchPad.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\LaunchPad\LaunchPadList.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UIStartLoc_InitOrbit.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UIStartLoc_InitPlanetarySurf.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UIStartLoc_Panel.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UI_Image_OrbitPreview_Script.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UI_OrbitPreview_MouseOrbit.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UI_planetMap_PointerEvents.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\UIMainMenu.cs" />
      <Compile Include="Assets\Scripts\Universe\FlyingDynamics.cs" />
      <Compile Include="Assets\Scripts\Universe\SimulationEnv.cs" />
      <Compile Include="Assets\Scripts\Universe\UniverseRunner.cs" />

@@ -78,8 +78,16 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
         }
     }
 
+    [SerializeField]
+    public bool spawnAs_UI_SC=false;
+
     void Awake()
     {
+        if(spawnAs_UI_SC) {
+            realPosition = Vector3d.zero;
+            return;
+        }
+
         if(TryGetComponent<Rigidbody>(out _privateRB)) {}
         else
             Debug.LogErrorFormat("Error while trying to get the rigidbody of {0} via its interface.", name);

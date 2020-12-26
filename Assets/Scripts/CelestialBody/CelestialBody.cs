@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System;
 using Mathd_Lib;
 using distance = Units.distance;
 using angle = Units.angle;
@@ -90,6 +91,17 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
 
     [HideInInspector] public CelestialBody orbitedBody;
 
+    [HideInInspector,NonSerialized] GameObject _orbitFolderGO;
+    public GameObject orbitFolderGO
+    {
+        get {
+            return _orbitFolderGO;
+        }
+        set {
+            _orbitFolderGO=value;
+        }
+    }
+
     void Awake()
     {
         if(settings == null)
@@ -99,18 +111,21 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
 
         SetMaterial();
 
-        if(spawnAsUIPlanet)
-            return;
-        // Code below only executed is 'spawnAsUIPlanet' is NOT SELECTED
-        if(TryGetComponent<Rigidbody>(out _privateRB)) {}
-        else
-            Debug.LogErrorFormat("Error while trying to get the rigidbody of {0} via its interface.", name);
-
         // Initializing equatorial plane, making sure it is back at its default values
         equatorialPlane.forwardVec = new Vector3d(1d, 0d, 0d);
         equatorialPlane.rightVec = new Vector3d(0d, 0d, 1d);
         equatorialPlane.normal = new Vector3d(0d, 1d, 0d);
         equatorialPlane.point = new Vector3d(0d, 0d, 0d);
+
+        if(spawnAsUIPlanet) {
+            realPosition = Vector3d.zero;
+            return;
+        }
+
+        // Code below only executed is 'spawnAsUIPlanet' is NOT SELECTED
+        if(TryGetComponent<Rigidbody>(out _privateRB)) {}
+        else
+            Debug.LogErrorFormat("Error while trying to get the rigidbody of {0} via its interface.", name);
     }
 
     void SetMaterial()

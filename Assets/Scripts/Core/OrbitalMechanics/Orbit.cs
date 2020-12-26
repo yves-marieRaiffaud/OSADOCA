@@ -32,7 +32,7 @@ public class Orbit
     public Dynamic_Obj_Common orbitingInterface;
     public Quaterniond orbitRot; // Rotation from XZ ellipse to XYZ ellipse by applying i, Omega, omega
 
-    public Orbit(OrbitalParams orbitalParams, CelestialBody celestialBody, GameObject orbitingBody)
+    public Orbit(OrbitalParams orbitalParams, CelestialBody celestialBody, GameObject orbitingBody, VectorLine __lineRenderer=null)
     {
         param = orbitalParams;
         orbitingInterface = orbitingBody.GetComponent<Dynamic_Obj_Common>();
@@ -117,8 +117,11 @@ public class Orbit
         param.vpAxisRight = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisRight);
         param.vpAxisUp = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.vpAxisUp);
 
-        //suffixGO = orbitingGO.name + "Orbit" + param.suffixOrbitType[param.orbitRealPredType];
-        Init_LineRenderer();
+        lineRendererPts = new List<Vector3>();
+        if(__lineRenderer != null)
+            _lineRenderer = __lineRenderer;
+        else
+            Init_LineRenderer();
         Draw_Orbit();
         //DebugOrbitalParams();
     }
@@ -182,18 +185,25 @@ public class Orbit
 
     void Init_LineRenderer()
     {
-        lineRendererPts = new List<Vector3>();
-        _lineRenderer = new VectorLine("Orbit_" + orbitingInterface._gameObject.name , lineRendererPts, 10f);
+        string lineName = "Orbit_" + orbitingInterface._gameObject.name;
+        _lineRenderer = new VectorLine(lineName , lineRendererPts, 5f);
+        _lineRenderer.lineType = LineType.Continuous;
+        _lineRenderer.layer = Filepaths.engineLayersToInt[Filepaths.EngineLayersName.Orbit];
+        _lineRenderer.drawTransform = orbitedBody.transform;
+        _lineRenderer.SetColor(Color.yellow);
 
-        GameObject orbitGO;
-        if(!orbitedBody.transform.Find("Orbit")) {
-            orbitGO = new GameObject("Orbit");
-            orbitGO.transform.parent = orbitedBody.transform;
+        // Creating the 'Orbit' within the CelestialBody is not yet created
+        if(orbitedBody.orbitFolderGO == null) {
+            orbitedBody.orbitFolderGO = new GameObject("Orbit");
+            orbitedBody.orbitFolderGO.transform.SetParent(orbitedBody.transform, false);
+            orbitedBody.orbitFolderGO.transform.localPosition = Vector3.zero;
+            orbitedBody.orbitFolderGO.transform.localScale = Vector3.one;
+            orbitedBody.orbitFolderGO.tag = UniverseRunner.goTags.Orbit.ToString();
+            orbitedBody.orbitFolderGO.layer = Filepaths.engineLayersToInt[Filepaths.EngineLayersName.Orbit];
         }
-        else
-            orbitGO = orbitedBody.transform.Find("Orbit").gameObject;
-
-        _lineRenderer.drawTransform = orbitGO.transform;
+        // Parenting the Vectorline GameObject to the orbitedBody 'Orbit' folder
+        GameObject lineRendererGO = GameObject.Find(lineName);
+        lineRendererGO.tag = UniverseRunner.goTags.Orbit.ToString();
     }
 
     void Draw_Orbit()
@@ -262,6 +272,13 @@ public class Orbit
         // then longitude of the ascending node
         orbitRot = rot * iRot;
 
+        // Depending if we are calling the Orbit class from the UI Main Menu or from the Simulation, we must divide every points of the orbit
+        // by a factor: either the localScale of the orbited CelestialBody if we are in sim (sim planets have a local scale equal to their diameter in km)
+        // , or the diameter of the orbited CelestialBody if we are in the UI Main Menu (UI planets have a diameter of 1).
+        double pointScaler = orbitedBody.transform.localScale.x; // we are in sim
+        if(orbitedBody.spawnAsUIPlanet)
+            pointScaler = 2d*orbitedBody.settings.planetaryParams.radius.val; // we are in the UI Main Menu
+
         // Drawing the ellipse
         for(int i = 0; i < param.orbitDrawingResolution; i++)
         {
@@ -270,11 +287,13 @@ public class Orbit
             double z = Mathd.Sin(theta)*tmp_p/(1 + param.e*Mathd.Cos(theta));
 
             Vector3d noRotPoint = orbitedBody.equatorialPlane.forwardVec * x + orbitedBody.equatorialPlane.rightVec * z;
-            lineRendererPts.Add( (Vector3)(orbitRot * (noRotPoint /* *scalingFactor*/)) );
+            noRotPoint /= pointScaler;
+            lineRendererPts.Add( (Vector3)(orbitRot * (noRotPoint)));
         }
-
+        lineRendererPts.Add(lineRendererPts[0]); // Adding at the end the first point to close the ellipse
         _lineRenderer.points3 = lineRendererPts;
-        _lineRenderer.Draw3D();
+        _lineRenderer.Draw3DAuto();
+
         // 4
         // normalUp vector has changed after the rotation by longAscendingNodeRot.
         orbitNormalUp = /*equatorialAdjustment * */longAscendingNodeRot * orbitNormalUp;
@@ -333,8 +352,4 @@ public class Orbit
         return new Velocity(tangentialVel, Units.velocity.ms);
     }
 
-    public void UpdateLineRendererPos()
-    {
-        
-    }
 }

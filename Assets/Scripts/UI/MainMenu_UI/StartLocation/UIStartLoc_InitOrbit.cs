@@ -207,8 +207,12 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         OrbitalParams orbitalParams = Create_OrbitalParams_File();
         if(ORBITAL_PARAMS_VALID)
         {
-            previewedOrbit = new Orbit(orbitalParams, orbitedBody, orbitingSpacecraft);
-            previewedOrbit.UpdateLineRendererPos();
+            if(previewedOrbit != null)
+                previewedOrbit = new Orbit(orbitalParams, orbitedBody, orbitingSpacecraft, previewedOrbit.lineRenderer);
+            else
+                previewedOrbit = new Orbit(orbitalParams, orbitedBody, orbitingSpacecraft);
+            
+            //previewedOrbit.UpdateLineRendererPos();
             UpdateSpacecraftPosition();
             UpdatePinpointsPosition();
             UpdateOrbitInfoValues();
@@ -275,6 +279,9 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     {
         OrbitalTypes.bodyPositionType inputPosType = ObjHand.Str_2_BodyPosType(bodyPosType.options[bodyPosType.value].text);
         Vector3d shipWorldPos = Orbit.GetWorldPositionFromOrbit(previewedOrbit);
+        Debug.Log("shipWorldPos = " + shipWorldPos);
+        shipWorldPos /= 2d*previewedOrbit.orbitedBody.settings.planetaryParams.radius.val;
+        shipWorldPos *= previewedOrbit.orbitedBody.transform.localScale.x;
         orbitingSpacecraft.transform.position = (Vector3) shipWorldPos + orbitedBody.gameObject.transform.position;
     }
     void UpdatePinpointsPosition()
@@ -286,14 +293,19 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
             double bodyRadius = previewedOrbit.orbitedBody.settings.planetaryParams.radius.val;
             if((previewedOrbit.param.rp - bodyRadius) > 0d) {
                 ShowPinpoint(perihelionPinpoint);
-                perihelionPinpoint.transform.position = orbitedBody.gameObject.transform.position + previewedOrbit.lineRenderer.points3[0];
+                Vector3 uiPos = previewedOrbit.lineRenderer.points3[0];
+                uiPos *= previewedOrbit.orbitedBody.transform.localScale.x;
+                perihelionPinpoint.transform.position = orbitedBody.gameObject.transform.position + uiPos;
             }
             else
                 HidePinpoint(perihelionPinpoint);
 
             if((previewedOrbit.param.ra - bodyRadius) > 0d) {
                 ShowPinpoint(aphelionPinpoint);
-                aphelionPinpoint.transform.position = orbitedBody.gameObject.transform.position + previewedOrbit.lineRenderer.points3[(int)(previewedOrbit.lineRenderer.points3.Count/2)];
+                Vector3 uiPos = previewedOrbit.lineRenderer.points3[(int)(previewedOrbit.lineRenderer.points3.Count/2)];
+                uiPos *= previewedOrbit.orbitedBody.transform.localScale.x;
+
+                aphelionPinpoint.transform.position = orbitedBody.gameObject.transform.position + uiPos;
             }
             else
                 HidePinpoint(aphelionPinpoint);

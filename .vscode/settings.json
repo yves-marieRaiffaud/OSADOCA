@@ -59,7 +59,13 @@
         "Assets/Scenes":true,
         "Assets/Presets":true,
         "Assets/Materials":true,
-        "Assets/Settings":true
+        "Assets/Settings":true,
+        "Assets/TextMesh Pro":true,,
+        "Assets/Plugins":true,
+        "Assets/Resources":true,
+        "Assets/Samples":true,
+        "Assets/Files_InGame":true,
+        "OSADOCA_Reborn.sln":true
     },
     "git.ignoreLimitWarning": true
 }
