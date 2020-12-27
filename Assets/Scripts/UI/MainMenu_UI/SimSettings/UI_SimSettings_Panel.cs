@@ -81,14 +81,13 @@ public class UI_SimSettings_Panel : MonoBehaviour
                     addRight = false;
                 }
 
-                if(justAddedCategoryTitle) { yPosition -= 80; }
-                else if(!justAddedCategoryTitle && addLeft) {
+                if(justAddedCategoryTitle)
                     yPosition -= 80;
-                }
-                if(addLeft) {
+                else if(!justAddedCategoryTitle && addLeft)
+                    yPosition -= 80;
+                if(addLeft)
                     // Add vertical separator between two settings on the same line
                     AddSeparator(yPosition, prefab_verticalSeparator);
-                }
                 // Adding the setting prefab
                 UIAddNewSimSetting_Int(setting, yPosition, addLeft);
                 //===============
@@ -103,10 +102,9 @@ public class UI_SimSettings_Panel : MonoBehaviour
                 SimSettingBool setting = (SimSettingBool) property.GetValue(simulationEnv);
                 if(currCategoryBeingDrawn == -1 || (int)setting.category != currCategoryBeingDrawn)
                 {
-                    if(currCategoryBeingDrawn != -1) {
+                    if(currCategoryBeingDrawn != -1)
                         // Add horizontal separator at the end of the previous category
                         AddSeparator(yPosition-100, prefab_horizontalSeparator);
-                    }
                     // Need to add the Subsection label
                     if(yPosition != initialTopMargin) { yPosition -= 120; }
                     UIAddNewCategoryTitle((int)setting.category, yPosition);
@@ -115,10 +113,10 @@ public class UI_SimSettings_Panel : MonoBehaviour
                     addRight = false;
                 }
 
-                if(justAddedCategoryTitle) { yPosition -= 80; }
-                else if(!justAddedCategoryTitle && addLeft) {
+                if(justAddedCategoryTitle)
                     yPosition -= 80;
-                }
+                else if(!justAddedCategoryTitle && addLeft)
+                    yPosition -= 80;
                 if(addLeft) {
                     // Add vertical separator between two settings on the same line
                     AddSeparator(yPosition, prefab_verticalSeparator);
@@ -243,8 +241,7 @@ public class UI_SimSettings_Panel : MonoBehaviour
         RectTransform rectTransform = section_Panel.GetComponent<RectTransform>();
 
         int xPosition = 30; // Padding of the prefab
-        if(addLeft)
-        {
+        if(addLeft) {
             rectTransform.anchorMin = new Vector2(0f, 1f);
             rectTransform.anchorMax = new Vector2(0f, 1f);
             rectTransform.pivot = new Vector2(0f, 1f);
@@ -325,11 +322,8 @@ public class UI_SimSettings_Panel : MonoBehaviour
             toggleSwitch.Toggle(toggleSwitch.isOn);
             UpdateSimSettingBoolValue(setting, toggleSwitch);
             SaveSettingsToFile();
-            Debug.Log("has clicked a param");
-            if(useKeyboardEvent != null && setting.displayName.Equals("Control spaceship with Keyboard")) {
-                Debug.Log("has clicked the use keyboard toggle");
+            if(useKeyboardEvent != null && setting.displayName.Equals("Control spaceship with Keyboard"))
                 useKeyboardEvent.Invoke(toggleSwitch.isOn);
-            }
         });
 
         Button revert_btn = boolSectionPanel.transform.Find("Revert_btn").GetComponent<Button>();
@@ -546,20 +540,16 @@ public class UI_SimSettings_Panel : MonoBehaviour
         Vector3 interCompSpacing = new Vector3(0f, 10f, 0f);
         foreach(KeyValuePair<string, bool> pair in infoStrings)
         {
-            if(isIndex0) {
+            if(isIndex0)
                 pos = horizontalSepBotPos - interCompSpacing;
-            }
             else {
-                if(lastSpawedWasFormula) {
+                if(lastSpawedWasFormula)
                     pos = lastSpawnedGO.transform.position - new Vector3(0f, (int)(lastFormulaTxt.preferredHeight), 0f) - interCompSpacing;
-                }
-                else {
+                else
                     pos = lastSpawnedGO.transform.position - new Vector3(0f, (int)(lastTMPTxt.preferredHeight), 0f) - interCompSpacing;
-                }
             }
 
-            if(pair.Value)
-            {
+            if(pair.Value) {
                 // It is a formula
                 lastSpawnedGO = GameObject.Instantiate(prefab_moreInfo_formula, pos, Quaternion.identity, moreInfoSetting_Panel);
                 lastFormulaTxt = lastSpawnedGO.GetComponent<TEXDraw>();
@@ -585,14 +575,12 @@ public class UI_SimSettings_Panel : MonoBehaviour
     //=============================================================================================
     private void OnRevert_BtnClick<T>(T defaultValue, params object[] objToChange)
     {
-        if(defaultValue is bool)
-        {
+        if(defaultValue is bool) {
             // Only one passed obj : the toggle component
             ToggleSwitch toggleSwitch = (ToggleSwitch)(dynamic)objToChange[0];
             toggleSwitch.isOn = (bool)(dynamic)defaultValue;
         }
-        else if(defaultValue is float)
-        {
+        else if(defaultValue is float) {
             // For float, first obj is the slider, second obj is the float input field
             float val = (float)(dynamic)defaultValue;
             Slider floatSlider = (Slider)(dynamic)objToChange[0];
@@ -600,8 +588,7 @@ public class UI_SimSettings_Panel : MonoBehaviour
             TMPro.TMP_InputField inputField = (TMPro.TMP_InputField)(dynamic)objToChange[1];
             inputField.text = MathOps.FloatToSignificantDigits(val, 5);
         }
-        else if(defaultValue is int)
-        {
+        else if(defaultValue is int) {
             // For int, first obj is the slider, second obj is the int input field
             float val = (int)(dynamic)defaultValue;
             Slider intSlider = (Slider)(dynamic)objToChange[0];
@@ -609,8 +596,7 @@ public class UI_SimSettings_Panel : MonoBehaviour
             TMPro.TMP_InputField inputField = (TMPro.TMP_InputField)(dynamic)objToChange[1];
             inputField.text = defaultValue.ToString();
         }
-        else if(defaultValue is SimSettingEnumDictionary)
-        {
+        else if(defaultValue is SimSettingEnumDictionary) {
             // For int, first obj is the MSDropdown
             SimSettingEnumDictionary val = (SimSettingEnumDictionary)(dynamic)defaultValue;
             MSDropdown dropdown = (MSDropdown)(dynamic)objToChange[0];
