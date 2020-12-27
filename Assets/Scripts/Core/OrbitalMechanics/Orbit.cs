@@ -243,21 +243,21 @@ public class Orbit
         aphelionNoRot.y = orbitedBody.transform.position.y;
         param.apogeeLineDir = (aphelionNoRot - orbitedBody.transform.position).normalized;
         param.ascendingNodeLineDir = Vector3d.Cross(param.apogeeLineDir, param.vpAxisUp).normalized;
-        Quaterniond iRot = Quaterniond.AngleAxis(param.i, param.ascendingNodeLineDir).GetNormalized();
+        Quaterniond iRot = Quaterniond.AngleAxis(param.i*UniCsts.rad2deg, param.ascendingNodeLineDir).GetNormalized();
 
         param.apogeeLineDir = iRot * param.apogeeLineDir;
 
         // 3
         Vector3d orbitNormalUp = Vector3d.Cross(param.ascendingNodeLineDir, param.apogeeLineDir).normalized;
-        Quaterniond perihelionArgRot = Quaterniond.AngleAxis(90d - param.omega, orbitNormalUp).GetNormalized();
-        Quaterniond longAscendingNodeRot = Quaterniond.AngleAxis(-(param.lAscN + 90d), param.vpAxisUp).GetNormalized();
+        Quaterniond perihelionArgRot = Quaterniond.AngleAxis(90d - param.omega*UniCsts.rad2deg, orbitNormalUp).GetNormalized();
+        Quaterniond longAscendingNodeRot = Quaterniond.AngleAxis(-(param.lAscN*UniCsts.rad2deg + 90d), param.vpAxisUp).GetNormalized();
         Quaterniond rot = (longAscendingNodeRot*perihelionArgRot).GetNormalized();
 
         // 5
         // Taking into account the axial tilt of the planet
         // Will be used to rotate the equatorial plane/equatorial vectors
-        /*Quaterniond equatorialAdjustment = Quaterniond.Identity;
-        if(!orbitedBody.tag.Equals(UniverseRunner.goTags.Star.ToString()) )//&& !orbitedBody.spawnAsSimpleSphere)
+        Quaterniond equatorialAdjustment = Quaterniond.Identity;
+        if(!orbitedBody.tag.Equals(UniverseRunner.goTags.Star.ToString()) && !orbitedBody.spawnAsUIPlanet)
         {
             //Vector3d tangentialVec = orbitedBody.orbit.ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.tangentialVec);
             Vector3d tangentialVec = orbitedBody.orbit.ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.tangentialVec);
@@ -266,7 +266,7 @@ public class Orbit
         }
         orbitedBody.equatorialPlane.forwardVec = equatorialAdjustment * orbitedBody.equatorialPlane.forwardVec;
         orbitedBody.equatorialPlane.rightVec = equatorialAdjustment * orbitedBody.equatorialPlane.rightVec;
-        orbitedBody.equatorialPlane.normal = equatorialAdjustment * orbitedBody.equatorialPlane.normal;*/
+        orbitedBody.equatorialPlane.normal = equatorialAdjustment * orbitedBody.equatorialPlane.normal;
         
         // Rotation Quaternion of the complete rotation (first inclination, then perihelion argument,
         // then longitude of the ascending node
@@ -296,7 +296,7 @@ public class Orbit
 
         // 4
         // normalUp vector has changed after the rotation by longAscendingNodeRot.
-        orbitNormalUp = /*equatorialAdjustment * */longAscendingNodeRot * orbitNormalUp;
+        orbitNormalUp = equatorialAdjustment * longAscendingNodeRot * orbitNormalUp;
         param.apogeeLineDir = ComputeDirectionVector(OrbitalTypes.typeOfVectorDir.apogeeLine);
         Vector3d orbitPlaneRightVec = Vector3d.Cross(param.apogeeLineDir, orbitNormalUp);
 
@@ -328,7 +328,9 @@ public class Orbit
         Vector3d rVec = orbit.orbitedBody.equatorialPlane.rightVec;
 
         worldPos = r*cosNu*fVec + r*Mathd.Sin(posValue)*rVec;
-        worldPos = orbit.orbitRot * worldPos;// * orbit.scalingFactor;
+        Debug.Log("method World Pos = " + worldPos);
+        worldPos = orbit.orbitRot * worldPos;
+        Debug.Log("method 1 World Pos = " + worldPos);
         return worldPos;
     }
 

@@ -211,8 +211,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 previewedOrbit = new Orbit(orbitalParams, orbitedBody, orbitingSpacecraft, previewedOrbit.lineRenderer);
             else
                 previewedOrbit = new Orbit(orbitalParams, orbitedBody, orbitingSpacecraft);
-            
-            //previewedOrbit.UpdateLineRendererPos();
+
             UpdateSpacecraftPosition();
             UpdatePinpointsPosition();
             UpdateOrbitInfoValues();
@@ -277,9 +276,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     //------------------------------------
     void UpdateSpacecraftPosition()
     {
-        OrbitalTypes.bodyPositionType inputPosType = ObjHand.Str_2_BodyPosType(bodyPosType.options[bodyPosType.value].text);
         Vector3d shipWorldPos = Orbit.GetWorldPositionFromOrbit(previewedOrbit);
-        Debug.Log("shipWorldPos = " + shipWorldPos);
         shipWorldPos /= 2d*previewedOrbit.orbitedBody.settings.planetaryParams.radius.val;
         shipWorldPos *= previewedOrbit.orbitedBody.transform.localScale.x;
         orbitingSpacecraft.transform.position = (Vector3) shipWorldPos + orbitedBody.gameObject.transform.position;
@@ -304,7 +301,6 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 ShowPinpoint(aphelionPinpoint);
                 Vector3 uiPos = previewedOrbit.lineRenderer.points3[(int)(previewedOrbit.lineRenderer.points3.Count/2)];
                 uiPos *= previewedOrbit.orbitedBody.transform.localScale.x;
-
                 aphelionPinpoint.transform.position = orbitedBody.gameObject.transform.position + uiPos;
             }
             else
@@ -370,8 +366,11 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         }
 
         MathOps.ParseStringToDouble(inclination_field.text, out orbitalParams.i);
+        orbitalParams.i *= UniCsts.deg2rad;
         MathOps.ParseStringToDouble(lAscN_field.text, out orbitalParams.lAscN);
+        orbitalParams.lAscN *= UniCsts.deg2rad;
         MathOps.ParseStringToDouble(periapsisArg_field.text, out orbitalParams.omega);
+        orbitalParams.omega *= UniCsts.deg2rad;
 
         orbitalParams.bodyPosType = ObjHand.Str_2_BodyPosType(bodyPosType.options[bodyPosType.value].text);
 
@@ -380,18 +379,22 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
             case 0:
                 // nu, true anomaly
                 MathOps.ParseStringToDouble(bodyPos_field.text, out orbitalParams.nu);
+                orbitalParams.nu *= UniCsts.deg2rad;
                 break;
             case 1:
                 // M, mean anomaly
                 MathOps.ParseStringToDouble(bodyPos_field.text, out orbitalParams.M);
+                orbitalParams.M *= UniCsts.deg2rad;
                 break;
             case 2:
                 // E, eccentric anomaly
                 MathOps.ParseStringToDouble(bodyPos_field.text, out orbitalParams.E);
+                orbitalParams.E *= UniCsts.deg2rad;
                 break;
             case 3:
                 // L, mean longitude
                 MathOps.ParseStringToDouble(bodyPos_field.text, out orbitalParams.L);
+                orbitalParams.L *= UniCsts.deg2rad;
                 break;
             case 4:
                 // T, time of passage at the perihelion

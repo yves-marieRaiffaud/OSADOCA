@@ -264,6 +264,12 @@
     <Reference Include="ICSharpCode.NRefactory">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA_Reborn/OSADOCA_Reborn/Library/PackageCache/com.unity.render-pipelines.core@7.3.1/Editor/ShaderGenerator/ICSharpCode.NRefactory.dll</HintPath>
     </Reference>
+    <Reference Include="DOTweenEditor">
+        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA_Reborn/OSADOCA_Reborn/Assets/Plugins/Demigiant/DOTween/Editor/DOTweenEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTween">
+        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA_Reborn/OSADOCA_Reborn/Assets/Plugins/Demigiant/DOTween/DOTween.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA_Reborn/OSADOCA_Reborn/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
     </Reference>
@@ -683,9 +689,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{4b715c5a-cf89-a19d-a3f0-22a56b054017}</Project>
+      <Name>Assembly-CSharp-firstpass</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
     <ProjectReference Include="Assembly-CSharp.csproj">
       <Project>{f2f20b92-29cd-9329-d433-5ecad824e736}</Project>
       <Name>Assembly-CSharp</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="Assembly-CSharp-Editor-firstpass.csproj">
+      <Project>{eff2fee4-fc4b-e156-512a-447a211e3540}</Project>
+      <Name>Assembly-CSharp-Editor-firstpass</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
