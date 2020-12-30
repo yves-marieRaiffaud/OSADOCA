@@ -44,10 +44,13 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     public TMPro.TMP_Text info_orbitShape_p2_val;
     public TMPro.TMP_Text info_orbitShape_p2_unit;
 
+    public TMPro.TMP_Text info_orbit_a_txt;
     public TMPro.TMP_Text info_orbit_a_val;
     public TMPro.TMP_Text info_orbit_a_unit;
+    public TMPro.TMP_Text info_orbit_b_txt;
     public TMPro.TMP_Text info_orbit_b_val;
     public TMPro.TMP_Text info_orbit_b_unit;
+    public TMPro.TMP_Text info_orbit_c_txt;
     public TMPro.TMP_Text info_orbit_c_val;
     public TMPro.TMP_Text info_orbit_c_unit;
 
@@ -64,8 +67,14 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     public TMPro.TMP_Text info_bodyPos_p4_val;
     public TMPro.TMP_Text info_bodyPos_p4_unit;
 
+    public TMPro.TMP_Text info_meanMotion_txt;
     public TMPro.TMP_Text info_meanMotion_val;
+    public TMPro.TMP_Text info_meanMotion_unit;
+    public TMPro.TMP_Text info_orbitalPeriod_txt;
     public TMPro.TMP_Text info_orbitalPeriod_val;
+    public TMPro.TMP_Text info_orbitalPeriod_unit;
+
+    public TMPro.TMP_Text empty_info_txt; // Text field for when there is no orbit info to dusplay
     //==================================================================
     [Header("Orbit Preview UI Elements")]
     public RectTransform perihelionPinpoint;
@@ -95,32 +104,57 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         OnUnitsDropdownValueChanged();
         OnBodyPosDropdownValueChanged();
     }
+
+    public void UpdateApsidesNames()
+    {
+        string apoStr = "Apoastron";
+        string periStr = "Periastron";
+        if(orbitedBody != null) {
+            CelestialBodiesConstants.planets orbitedPl = ObjHand.Str_2_Planet(orbitedBody.name);
+            apoStr = CelestialBodiesConstants.planetsApsidesNames[orbitedPl][CelestialBodiesConstants.apsides.apo];
+            periStr = CelestialBodiesConstants.planetsApsidesNames[orbitedPl][CelestialBodiesConstants.apsides.peri];
+        }
+
+        switch(orbitDefType.value) {
+            case 0:
+                orbitShape_p1_txt.text = apoStr;
+                orbitShape_p2_txt.text = periStr;
+                break;
+            case 1:
+                orbitShape_p1_txt.text = apoStr;
+                break;
+        }
+    }
     void OnOrbitDefTypeDropdownValueChanged()
     {
+        string apoStr = "Apoastron";
+        string periStr = "Periastron";
+
         // Updating text depending on the 'orbitDefinitionType'
         switch(orbitDefType.value) {
             case 0:
                 // 'rarp' enum
-                orbitShape_p1_txt.text = "Aphelion";
+                orbitShape_p1_txt.text = apoStr;
                 surnameOrbitShape_p1 = "ra";
-                orbitShape_p2_txt.text = "Perihelion";
+                orbitShape_p2_txt.text = periStr;
                 surnameOrbitShape_p2 = "rp";
                 break;
             case 1:
                 // 'rpe' enum
-                orbitShape_p1_txt.text = "Perihelion";
+                orbitShape_p1_txt.text = periStr;
                 surnameOrbitShape_p1 = "rp";
-                orbitShape_p2_txt.text = "Excentricity";
+                orbitShape_p2_txt.text = "Eccentricity";
                 surnameOrbitShape_p2 = "e";
                 break;
             case 2:
                 // 'pe' enum
                 orbitShape_p1_txt.text = "Semi-latus rectum";
                 surnameOrbitShape_p1 = "p";
-                orbitShape_p2_txt.text = "Excentricity"; 
+                orbitShape_p2_txt.text = "Eccentricity"; 
                 surnameOrbitShape_p2 = "e";
                 break;
         }
+        UpdateApsidesNames();
         // Every time the orbitDefType as changed, the placeholder shall be updated
         OnUnitsDropdownValueChanged();
     }
@@ -207,10 +241,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         OrbitalParams orbitalParams = Create_OrbitalParams_File();
         if(ORBITAL_PARAMS_VALID)
         {
-            if(previewedOrbit != null)
-                previewedOrbit = new Orbit(orbitalParams, orbitedBody, orbitingSpacecraft, previewedOrbit.lineRenderer);
-            else
-                previewedOrbit = new Orbit(orbitalParams, orbitedBody, orbitingSpacecraft);
+            previewedOrbit = new Orbit(orbitalParams, orbitedBody, orbitingSpacecraft);
 
             UpdateSpacecraftPosition();
             UpdatePinpointsPosition();
@@ -231,20 +262,28 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     void CheckForEmptyFields()
     {
         // Inserting a 0 as the default value for each empty field when the UpdateOrbit button is pressed
-        float tmpRes=0f;
-        MathOps.ParseStringToFloat(orbitShape_p1_field.text,out tmpRes);
-        float aphelion = tmpRes;
-        if(orbitShape_p1_field.text.Equals("") || MathOps.FloatsAreEqual(tmpRes, 0f, 0.1f))
-            // Cannot have an aphelion value of 0
-            ORBITAL_PARAMS_VALID = false;
+        double tmp_ra_p=0d;
+        MathOps.ParseStringToDouble(orbitShape_p1_field.text, out tmp_ra_p);
+        if(orbitShape_p1_field.text.Equals(""))
+            ORBITAL_PARAMS_VALID = false; // Cannot have an aphelion 'ra' or a semilatus rectum 'p' value of 0
 
-        MathOps.ParseStringToFloat(orbitShape_p2_field.text,out tmpRes);
-        if(orbitShape_p2_field.text.Equals("") || MathOps.FloatsAreEqual(tmpRes, 0f, 0.1f))
-            // Cannot have a perihelion value of 0
-            ORBITAL_PARAMS_VALID = false;
-
-        /*if(aphelion-tmpRes < Mathf.Epsilon)
-            ORBITAL_PARAMS_VALID = false;*/
+        if(!ObjHand.Str_2_OrbitDefinitionType(orbitDefType.options[orbitDefType.value].text).Equals(OrbitalTypes.orbitDefinitionType.rarp)) {
+            if(orbitShape_p2_field.text.Equals(""))
+                orbitShape_p2_field.text = "0"; // Assigning default value of 0 rad to eccentricity
+            else {
+                double tmp_e=0d;
+                MathOps.ParseStringToDouble(orbitShape_p2_field.text, out tmp_e);
+                if(!MathOps.isInRange(tmp_e, 0f, 1f, MathOps.isInRangeFlags.lowerIncluded_UpperExcluded))
+                    ORBITAL_PARAMS_VALID = false; // Cannot have an eccentricity < 0 or >= 1
+            }
+        }
+        else {
+            // orbitShape_p2_txt is 'rp', the altitude of the perihelion/periapsis
+            double tmp_rp=0d;
+            MathOps.ParseStringToDouble(orbitShape_p2_field.text, out tmp_rp);
+            if(MathOps.DoubleIsGreaterThan(tmp_rp, tmp_ra_p))
+                ORBITAL_PARAMS_VALID = false; // 'rp' is greater than 'ra' ==> not possible
+        }
 
         // Allowing to have not specified the other fields (i, lAscN, omega & bodyPosition): they are thus all set to 0
         if(inclination_field.text.Equals(""))
@@ -283,7 +322,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     void UpdatePinpointsPosition()
     {
         // Positioning the perihelion and aphelion pinpoints in world space
-        // Can only do so IF the excentricity e > 0 (if e=0, there is no aphelion nor perihelion as orbit is circular)
+        // Can only do so IF the eccentricity e > 0 (if e=0, there is no aphelion nor perihelion as orbit is circular)
         if(previewedOrbit.param.e > 0d)
         {
             double bodyRadius = previewedOrbit.orbitedBody.settings.planetaryParams.radius.val;
@@ -404,6 +443,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     }
     void UpdateOrbitInfoValues()
     {
+        empty_info_txt.text = "";
         // Updating the OrbitShape fields
         switch(orbitDefType.value)
         {
@@ -430,8 +470,11 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 break;
         }
         // Updating the OrbitShape 'a'; 'b' & 'c' fields
+        info_orbit_a_txt.text = "a";
         info_orbit_a_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.a, UniCsts.UI_SIGNIFICANT_DIGITS);
+        info_orbit_b_txt.text = "b";
         info_orbit_b_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.b, UniCsts.UI_SIGNIFICANT_DIGITS);
+        info_orbit_c_txt.text = "c";
         info_orbit_c_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.c, UniCsts.UI_SIGNIFICANT_DIGITS);
         // Updating the body position type fields
         switch(bodyPosType.value)
@@ -440,15 +483,15 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 // 'nu' == true anomaly, thus displaying info M;E;L;t
                 info_bodyPos_p1_txt.text = "M";
                 info_bodyPos_p1_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.M, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p1_unit.text = "deg";
+                info_bodyPos_p1_unit.text = "rad";
 
                 info_bodyPos_p2_txt.text = "E";
                 info_bodyPos_p2_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.E, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p2_unit.text = "deg";
+                info_bodyPos_p2_unit.text = "rad";
 
                 info_bodyPos_p3_txt.text = "L";
                 info_bodyPos_p3_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.L, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p3_unit.text = "deg";
+                info_bodyPos_p3_unit.text = "rad";
 
                 info_bodyPos_p4_txt.text = "t";
                 info_bodyPos_p4_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.t, UniCsts.UI_SIGNIFICANT_DIGITS);
@@ -458,15 +501,15 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 // 'M' == mean anomaly, thus displaying info nu;E;L;t
                 info_bodyPos_p1_txt.text = "nu";
                 info_bodyPos_p1_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.nu, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p1_unit.text = "deg";
+                info_bodyPos_p1_unit.text = "rad";
 
                 info_bodyPos_p2_txt.text = "E";
                 info_bodyPos_p2_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.E, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p2_unit.text = "deg";
+                info_bodyPos_p2_unit.text = "rad";
 
                 info_bodyPos_p3_txt.text = "L";
                 info_bodyPos_p3_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.L, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p3_unit.text = "deg";
+                info_bodyPos_p3_unit.text = "rad";
 
                 info_bodyPos_p4_txt.text = "t";
                 info_bodyPos_p4_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.t, UniCsts.UI_SIGNIFICANT_DIGITS);
@@ -476,15 +519,15 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 // 'E' == eccentric anomaly, thus displaying info nu;M;L;t
                 info_bodyPos_p1_txt.text = "nu";
                 info_bodyPos_p1_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.nu, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p1_unit.text = "deg";
+                info_bodyPos_p1_unit.text = "rad";
 
                 info_bodyPos_p2_txt.text = "M";
                 info_bodyPos_p2_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.M, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p2_unit.text = "deg";
+                info_bodyPos_p2_unit.text = "rad";
 
                 info_bodyPos_p3_txt.text = "L";
                 info_bodyPos_p3_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.L, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p3_unit.text = "deg";
+                info_bodyPos_p3_unit.text = "rad";
 
                 info_bodyPos_p4_txt.text = "t";
                 info_bodyPos_p4_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.t, UniCsts.UI_SIGNIFICANT_DIGITS);
@@ -494,15 +537,15 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 // 'L' == mean longitude, thus displaying info nu;M;E;t
                 info_bodyPos_p1_txt.text = "nu";
                 info_bodyPos_p1_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.nu, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p1_unit.text = "deg";
+                info_bodyPos_p1_unit.text = "rad";
 
                 info_bodyPos_p2_txt.text = "M";
                 info_bodyPos_p2_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.M, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p2_unit.text = "deg";
+                info_bodyPos_p2_unit.text = "rad";
 
                 info_bodyPos_p3_txt.text = "E";
                 info_bodyPos_p3_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.E, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p3_unit.text = "deg";
+                info_bodyPos_p3_unit.text = "rad";
 
                 info_bodyPos_p4_txt.text = "t";
                 info_bodyPos_p4_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.t, UniCsts.UI_SIGNIFICANT_DIGITS);
@@ -512,24 +555,28 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 // 't' == time of passage at perigee, thus displaying info nu;M;E;L
                 info_bodyPos_p1_txt.text = "nu";
                 info_bodyPos_p1_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.nu, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p1_unit.text = "deg";
+                info_bodyPos_p1_unit.text = "rad";
 
                 info_bodyPos_p2_txt.text = "M";
                 info_bodyPos_p2_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.M, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p2_unit.text = "deg";
+                info_bodyPos_p2_unit.text = "rad";
 
                 info_bodyPos_p3_txt.text = "E";
                 info_bodyPos_p3_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.E, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p3_unit.text = "deg";
+                info_bodyPos_p3_unit.text = "rad";
 
                 info_bodyPos_p4_txt.text = "L";
                 info_bodyPos_p4_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.L, UniCsts.UI_SIGNIFICANT_DIGITS);
-                info_bodyPos_p4_unit.text = "deg";
+                info_bodyPos_p4_unit.text = "rad";
                 break;
         }
         // Updating the last two remaining fields: mean motion & orbital period
+        info_meanMotion_txt.text = "Mean motion";
         info_meanMotion_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.n*UniCsts.rad2deg, UniCsts.UI_SIGNIFICANT_DIGITS); // to °/s
+        info_meanMotion_unit.text = "rad/s";
+        info_orbitalPeriod_txt.text = "Orbital period";
         info_orbitalPeriod_val.text = MathOps.DoubleToSignificantDigits(previewedOrbit.param.period, UniCsts.UI_SIGNIFICANT_DIGITS);
+        info_orbitalPeriod_unit.text = "s";
     }
     void UpdateOrbitInfoUnits()
     {
@@ -577,12 +624,15 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         info_orbitShape_p2_unit.text = "";
         info_orbitShape_p2_val.text = "";
 
+        info_orbit_a_txt.text = "";
         info_orbit_a_unit.text = "";
         info_orbit_a_val.text = "";
 
+        info_orbit_b_txt.text = "";
         info_orbit_b_unit.text = "";
         info_orbit_b_val.text = "";
 
+        info_orbit_c_txt.text = "";
         info_orbit_c_unit.text = "";
         info_orbit_c_val.text = "";
 
@@ -602,7 +652,14 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
         info_bodyPos_p4_unit.text = "";
         info_bodyPos_p4_val.text = "";
 
+        info_meanMotion_txt.text = "";
         info_meanMotion_val.text = "";
+        info_meanMotion_unit.text = "";
+
+        info_orbitalPeriod_txt.text = "";
         info_orbitalPeriod_val.text = "";
+        info_orbitalPeriod_unit.text = "";
+
+        empty_info_txt.text = "Use the 'Orbit Definition Panel' to define a new orbit.";
     }
 }

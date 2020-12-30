@@ -77,7 +77,7 @@ public class CelestialBodyEditor : Editor
             Debug.LogWarningFormat("WARNING ! You have selected the 'None' predefined planet for body named {0}. Cannot continue.", celestBody._gameObject.name);
             return;
         }
-        
+
         // FILLING THE celestBody.settings
         // Planetary Params
         celestBody.settings.planetaryParams.radius = (Distance)PlDict.planetsDict[celestBody.chosenPredifinedPlanet][CelestialBodyParamsBase.planetaryParams.radius.ToString()];

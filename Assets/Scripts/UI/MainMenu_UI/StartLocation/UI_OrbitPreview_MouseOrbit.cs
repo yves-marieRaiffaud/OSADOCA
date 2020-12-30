@@ -84,8 +84,8 @@ public class UI_OrbitPreview_MouseOrbit : MonoBehaviour
 
     private void UpdatePreviewedOrbit_lineRendererWidth()
     {
-        //if(sectionInitOrbitUIPanel.previewedOrbit != null && sectionInitOrbitUIPanel.previewedOrbit.lineRenderer != null)
-            //sectionInitOrbitUIPanel.previewedOrbit.lineRenderer.widthMultiplier = 0.004f * distance;
+        if(sectionInitOrbitUIPanel.previewedOrbit != null && sectionInitOrbitUIPanel.previewedOrbit.lineRenderer != null)
+            sectionInitOrbitUIPanel.previewedOrbit.lineRenderer.widthMultiplier = 0.004f * distance;
     }
 
     private void UpdatePreviewedOrbit_Spacecraft()

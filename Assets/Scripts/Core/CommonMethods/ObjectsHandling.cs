@@ -74,12 +74,11 @@ namespace CommonMethods
 
         public static CelestialBodiesConstants.planets Str_2_Planet(string goTag)
         {
-            string[] planetsName = Enum.GetNames(typeof(CelestialBodiesConstants.planets));
-            for(int idx=0; idx<planetsName.Length; idx++) {
-                if(goTag.Equals(planetsName[idx]))
-                    return (CelestialBodiesConstants.planets)idx;
-            }
-            return CelestialBodiesConstants.planets.None;
+            (CelestialBodiesConstants.planets,bool) res = Generic_Str_2_Enum<CelestialBodiesConstants.planets>(goTag);
+            if(res.Item2)
+                return res.Item1; // If we found the Enum object mathcing 'stringEnum'
+            else
+                return CelestialBodiesConstants.planets.Earth; // Default value to return
         }
 
         private static (T,bool) Generic_Str_2_Enum<T>(string enumString)

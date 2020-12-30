@@ -15,6 +15,62 @@ using TFunc = System.Func<dynamic, dynamic, dynamic>;
 
 public static class CelestialBodiesConstants
 {
+    public enum apsides { peri, apo }
+
+
+    private static readonly Dictionary<apsides, string> sunApsidesNames = new Dictionary<apsides, string> {
+        { apsides.peri, "Perihelion" },
+        { apsides.apo , "Aphelion" }
+    };
+    private static readonly Dictionary<apsides, string> mercuryApsidesNames = new Dictionary<apsides, string> {
+        { apsides.peri, "Perihermion" },
+        { apsides.apo , "Apohermion" }
+    };
+    private static readonly Dictionary<apsides, string> venusApsidesNames = new Dictionary<apsides, string> {
+        { apsides.peri, "Pericythe" },
+        { apsides.apo , "Apocythe" }
+    };
+    private static readonly Dictionary<apsides, string> earthApsidesNames = new Dictionary<apsides, string> {
+        { apsides.peri, "Perigee" },
+        { apsides.apo , "Apogee" }
+    };
+    private static readonly Dictionary<apsides, string> moonApsidesNames = new Dictionary<apsides, string> {
+        { apsides.peri, "Periselene" },
+        { apsides.apo , "Aposelene" }
+    };
+    private static readonly Dictionary<apsides, string> marsApsidesNames = new Dictionary<apsides, string> {
+        { apsides.peri, "Periareion" },
+        { apsides.apo , "Apoareion" }
+    };
+    private static readonly Dictionary<apsides, string> jupiterApsidesNames = new Dictionary<apsides, string> {
+        { apsides.peri, "Perijove" },
+        { apsides.apo , "Apojove" }
+    };
+    private static readonly Dictionary<apsides, string> saturnApsidesNames = new Dictionary<apsides, string> {
+        { apsides.peri, "Perikronos" },
+        { apsides.apo , "Apokronos" }
+    };
+    private static readonly Dictionary<apsides, string> uranusApsidesNames = new Dictionary<apsides, string> {
+        { apsides.peri, "Periuranion" },
+        { apsides.apo , "Apouranion" }
+    };
+    private static readonly Dictionary<apsides, string> neptuneApsidesNames = new Dictionary<apsides, string> {
+        { apsides.peri, "Periposeidion" },
+        { apsides.apo , "Apoposeidion" }
+    };
+    public static readonly Dictionary<planets, Dictionary<apsides, string>> planetsApsidesNames = new Dictionary<planets, Dictionary<apsides, string>> {
+        { planets.Sun      , sunApsidesNames },
+        { planets.Mercury  , mercuryApsidesNames },
+        { planets.Venus    , venusApsidesNames },
+        { planets.Earth    , earthApsidesNames },
+        //{ planets.Moon,  moonApsidesNames },
+        { planets.Mars     , marsApsidesNames },
+        { planets.Jupiter  , jupiterApsidesNames },
+        { planets.Saturn   , saturnApsidesNames },
+        { planets.Neptune  , neptuneApsidesNames },
+        { planets.Uranus   , uranusApsidesNames }
+    };
+
     // PLANETS - STARS RELATED PARAMETERS
     public enum planets { None, Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune }
 
@@ -31,7 +87,7 @@ public static class CelestialBodiesConstants
     // All distance in AU or degrees
     // i is inclination with respect to the Sun's equator
 
-    public static Dictionary<string, UnitInterface> sunBaseParams = new Dictionary<string, UnitInterface> {
+    private static Dictionary<string, UnitInterface> sunBaseParams = new Dictionary<string, UnitInterface> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(695_700d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(695_700d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(20_000d) },
@@ -65,7 +121,7 @@ public static class CelestialBodiesConstants
         { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(0d) }
     };
 
-    public static Dictionary<string, UnitInterface> mercuryBaseParams = new Dictionary<string, UnitInterface> {
+    private static Dictionary<string, UnitInterface> mercuryBaseParams = new Dictionary<string, UnitInterface> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(2_439.7d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(2_439.7d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(0d) },
@@ -99,7 +155,7 @@ public static class CelestialBodiesConstants
         { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(1d) }
     };
 
-    public static Dictionary<string, UnitInterface> venusBaseParams = new Dictionary<string, UnitInterface> {
+    private static Dictionary<string, UnitInterface> venusBaseParams = new Dictionary<string, UnitInterface> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(6_051.8d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(6_051.8d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(0d) },
@@ -133,7 +189,7 @@ public static class CelestialBodiesConstants
         { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(1d) }
     };
 
-    public static Dictionary<string, UnitInterface> earthBaseParams = new Dictionary<string, UnitInterface> {
+    private static Dictionary<string, UnitInterface> earthBaseParams = new Dictionary<string, UnitInterface> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(6_378.137d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(6_356.752d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(298.257223563d) },
@@ -167,7 +223,7 @@ public static class CelestialBodiesConstants
         { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(1d) }
     };
 
-    public static Dictionary<string, UnitInterface> marsBaseParams = new Dictionary<string, UnitInterface> {
+    private static Dictionary<string, UnitInterface> marsBaseParams = new Dictionary<string, UnitInterface> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(3396.2d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(3376.2d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(16.9779d) },
@@ -201,7 +257,7 @@ public static class CelestialBodiesConstants
         { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(1d) }
     };
 
-    public static Dictionary<string, UnitInterface> jupiterBaseParams = new Dictionary<string, UnitInterface> {
+    private static Dictionary<string, UnitInterface> jupiterBaseParams = new Dictionary<string, UnitInterface> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(71_492d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(66_854d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(15.4154d) },
@@ -235,7 +291,7 @@ public static class CelestialBodiesConstants
         { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(0d) }
     };
 
-    public static Dictionary<string, UnitInterface> saturnBaseParams = new Dictionary<string, UnitInterface> {
+    private static Dictionary<string, UnitInterface> saturnBaseParams = new Dictionary<string, UnitInterface> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(60_268d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(54_364d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(10.2082d) },
@@ -269,7 +325,7 @@ public static class CelestialBodiesConstants
         { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(0d) }
     };
 
-    public static Dictionary<string, UnitInterface> uranusBaseParams = new Dictionary<string, UnitInterface> {
+    private static Dictionary<string, UnitInterface> uranusBaseParams = new Dictionary<string, UnitInterface> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(25_559d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(24_973d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(43.61098d) },
@@ -303,7 +359,7 @@ public static class CelestialBodiesConstants
         { CelestialBodyParamsBase.otherParams.isRockyBody.ToString()            , new DoubleNoDim(0d) }
     };
 
-    public static Dictionary<string, UnitInterface> neptuneBaseParams = new Dictionary<string, UnitInterface> {
+    private static Dictionary<string, UnitInterface> neptuneBaseParams = new Dictionary<string, UnitInterface> {
         { CelestialBodyParamsBase.planetaryParams.radius.ToString()             , new Distance(24_764d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.polarRadius.ToString()        , new Distance(24_341d, distance.km) },
         { CelestialBodyParamsBase.planetaryParams.inverseFlattening.ToString()  , new DoubleNoDim(58.54808d) },

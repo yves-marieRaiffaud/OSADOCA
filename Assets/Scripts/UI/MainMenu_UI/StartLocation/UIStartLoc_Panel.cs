@@ -174,6 +174,7 @@ public class UIStartLoc_Panel : MonoBehaviour
             }
         }
 
+        UI_initOrbitScript.UpdateApsidesNames();
         // Redraw the orbit to take into account the change of planet
         if(!UI_initOrbitScript.InputFieldsAreAllEmpty())
             // Update only if some values have been entered. Avoid drawing an orbit of ra=rp=0 km when first selecting the planet

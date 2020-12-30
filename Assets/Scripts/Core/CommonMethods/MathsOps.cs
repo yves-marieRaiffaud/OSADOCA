@@ -103,7 +103,7 @@ namespace CommonMethods
             return true;
         }
 
-        public static bool FloatsAreEqual(float a, float b, float tolerance=0.00001f)
+        public static bool FloatsAreEqual(float a, float b, float tolerance=float.Epsilon)
         {
             if(Mathf.Abs(a - b) <= tolerance)
                 return true;
@@ -114,6 +114,48 @@ namespace CommonMethods
         {
             if(Mathd.Abs(a - b) <= tolerance)
                 return true; 
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Returns the boolean indicating if float 'a' is greater than float 'b', with respect to the specified tolerance.
+        /// </summary>
+        public static bool FloatIsGreaterThan(float a, float b, float tolerance=float.Epsilon)
+        {
+            if(a-b > tolerance)
+                return true;
+            else
+                return false;
+        }
+        /// <summary>
+        /// Returns the boolean indicating if float 'a' is smaller than float 'b', with respect to the specified tolerance.
+        /// </summary>
+        public static bool FloatIsSmallerThan(float a, float b, float tolerance=float.Epsilon)
+        {
+            if(a-b < tolerance)
+                return true;
+            else
+                return false;
+        }
+        
+        /// <summary>
+        /// Returns the boolean indicating if double 'a' is smaller than double 'b', with respect to the specified tolerance.
+        /// </summary>
+        public static bool DoubleIsSmallerThan(double a, double b, double tolerance=double.Epsilon)
+        {
+            if(a-b < tolerance)
+                return true;
+            else
+                return false;
+        }
+        /// <summary>
+        /// Returns the boolean indicating if double 'a' is greater than double 'b', with respect to the specified tolerance.
+        /// </summary>
+        public static bool DoubleIsGreaterThan(double a, double b, double tolerance=double.Epsilon)
+        {
+            if(a-b > tolerance)
+                return true;
             else
                 return false;
         }
