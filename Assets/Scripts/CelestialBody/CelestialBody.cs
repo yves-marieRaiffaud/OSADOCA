@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System;
+
 using Mathd_Lib;
+using Universe;
+using ObjHand = CommonMethods.ObjectsHandling;
 using distance = Units.distance;
 using angle = Units.angle;
 
@@ -117,6 +120,7 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
         equatorialPlane.normal = new Vector3d(0d, 1d, 0d);
         equatorialPlane.point = new Vector3d(0d, 0d, 0d);
 
+        Create_OrbitFolder();
         if(spawnAsUIPlanet) {
             realPosition = Vector3d.zero;
             return;
@@ -132,6 +136,20 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
     {
         MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = Resources.Load<Material>(Filepaths.RSC_PlanetsMaterials + name + "_mat");
+    }
+
+    void Create_OrbitFolder()
+    {
+        string orbitFolderName = UniverseRunner.goTags.Orbit.ToString();
+        if(_gameObject.transform.Find(orbitFolderName) == null) {
+            _orbitFolderGO = new GameObject(orbitFolderName);
+            _orbitFolderGO.transform.parent = _gameObject.transform;
+            _orbitFolderGO.transform.localPosition = Vector3.zero;
+            _orbitFolderGO.transform.localScale = Vector3.one;
+            _orbitFolderGO.transform.rotation = Quaternion.identity;
+        }
+        else
+            _orbitFolderGO = _gameObject.transform.Find(orbitFolderName).gameObject;
     }
 
     /// <summary>

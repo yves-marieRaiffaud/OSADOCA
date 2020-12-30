@@ -255,6 +255,12 @@
     <Reference Include="UnityEditor.Android.Extensions">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="DOTween">
+        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA_Reborn/OSADOCA_Reborn/Assets/Plugins/Demigiant/DOTween/DOTween.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenEditor">
+        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA_Reborn/OSADOCA_Reborn/Assets/Plugins/Demigiant/DOTween/Editor/DOTweenEditor.dll</HintPath>
+    </Reference>
     <Reference Include="Vectrosity">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA_Reborn/OSADOCA_Reborn/Assets/Plugins/Vectrosity/Plugins/Vectrosity.dll</HintPath>
     </Reference>
@@ -263,12 +269,6 @@
     </Reference>
     <Reference Include="ICSharpCode.NRefactory">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA_Reborn/OSADOCA_Reborn/Library/PackageCache/com.unity.render-pipelines.core@7.3.1/Editor/ShaderGenerator/ICSharpCode.NRefactory.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTweenEditor">
-        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA_Reborn/OSADOCA_Reborn/Assets/Plugins/Demigiant/DOTween/Editor/DOTweenEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTween">
-        <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA_Reborn/OSADOCA_Reborn/Assets/Plugins/Demigiant/DOTween/DOTween.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
         <HintPath>C:/Users/Yves-Marie/Desktop/OSADOCA/OSADOCA_Reborn/OSADOCA_Reborn/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>

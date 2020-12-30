@@ -9,7 +9,7 @@ public static class Filepaths
     // RELATIVE TO THE 'resources' FOLDER. TO USE WITH 'Resources.Load<>()'
     //public const string RSC_defaultHeightMap = "CelestialBody/default_heightMap";
 
-    //public const string RSC_orbitMaterial = "OrbitalMechanics/OrbitMaterial";
+    public const string RSC_orbitMaterial = "OrbitalMechanics/OrbitMat";
 
     public const string RSC_PlanetsMaterials = "CelestialBody/Materials/";
     // with the name of the planet afterwards for 'DEBUG_UIPlanetaryMaps'

@@ -277,7 +277,6 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     void UpdateSpacecraftPosition()
     {
         Vector3d shipWorldPos = Orbit.GetWorldPositionFromOrbit(previewedOrbit);
-        shipWorldPos /= 2d*previewedOrbit.orbitedBody.settings.planetaryParams.radius.val;
         shipWorldPos *= previewedOrbit.orbitedBody.transform.localScale.x;
         orbitingSpacecraft.transform.position = (Vector3) shipWorldPos + orbitedBody.gameObject.transform.position;
     }
@@ -290,7 +289,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
             double bodyRadius = previewedOrbit.orbitedBody.settings.planetaryParams.radius.val;
             if((previewedOrbit.param.rp - bodyRadius) > 0d) {
                 ShowPinpoint(perihelionPinpoint);
-                Vector3 uiPos = previewedOrbit.lineRenderer.points3[0];
+                Vector3 uiPos = previewedOrbit.lineRenderer.GetPosition(0);
                 uiPos *= previewedOrbit.orbitedBody.transform.localScale.x;
                 perihelionPinpoint.transform.position = orbitedBody.gameObject.transform.position + uiPos;
             }
@@ -299,7 +298,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
 
             if((previewedOrbit.param.ra - bodyRadius) > 0d) {
                 ShowPinpoint(aphelionPinpoint);
-                Vector3 uiPos = previewedOrbit.lineRenderer.points3[(int)(previewedOrbit.lineRenderer.points3.Count/2)];
+                Vector3 uiPos = previewedOrbit.lineRenderer.GetPosition((int)(previewedOrbit.lineRenderer.positionCount/2));
                 uiPos *= previewedOrbit.orbitedBody.transform.localScale.x;
                 aphelionPinpoint.transform.position = orbitedBody.gameObject.transform.position + uiPos;
             }

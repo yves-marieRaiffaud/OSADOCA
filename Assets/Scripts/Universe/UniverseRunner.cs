@@ -35,7 +35,7 @@ namespace Universe
         [HideInInspector] public GameObject planetsFolder; // GameObject containing every orbiting Planets
         [HideInInspector] public GameObject starFolder; // GameObject containing every Star(s)
         [HideInInspector] public GameObject spaceshipFolder; // GameObject containing every spaceship/spacecraft
-        [HideInInspector] public GameObject orbitFolder; // GameObject containing every orbits, both drawn and only computed orbits
+        //[HideInInspector] public GameObject orbitFolder; // GameObject containing every orbits, both drawn and only computed orbits
 
         public List<Rigidbody> physicsRigidbodies;
         public List<Dynamic_Obj_Common> physicsObjArray;
@@ -80,7 +80,7 @@ namespace Universe
             starFolder = ComFcn.ObjectsHandling.CreateAssignGameObject(folderNames.Stars.ToString(), physicsObjGO);
             planetsFolder = ComFcn.ObjectsHandling.CreateAssignGameObject(folderNames.Planets.ToString(), physicsObjGO);
             spaceshipFolder = ComFcn.ObjectsHandling.CreateAssignGameObject(folderNames.Spaceships.ToString(), physicsObjGO);
-            orbitFolder = ComFcn.ObjectsHandling.CreateAssignGameObject(folderNames.Orbits.ToString());
+            //orbitFolder = ComFcn.ObjectsHandling.CreateAssignGameObject(folderNames.Orbits.ToString());
         }
         void FillFolders()
         {
