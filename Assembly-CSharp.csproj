@@ -70,6 +70,7 @@
      <Compile Include="Assets\Scripts\UI\Custom_UI\CustomShaped_Buttons.cs" />
      <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSButton.cs" />
      <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSDropdown.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\ControlBarCheck.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\ToggleSwitch.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\UI_SimSettings_Panel.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\LaunchPad\LaunchPad.cs" />

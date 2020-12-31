@@ -14,13 +14,13 @@ public class UIMainMenu : MonoBehaviour
     public Button btn_SimSettings;
     public Button btn_Fly;
 
-    //[Header("Control Bar Script")]
-    //public ControlBarCheck controlBarCheckScript;
+    [Header("Control Bar Script")]
+    public ControlBarCheck controlBarCheckScript;
 
     [Header("Panel for the 4 Main Menus")]
     [Tooltip("GameObject named 'Panel_StartLoc' located under the 'Submenus_PanelContent' GameObject")]
     public GameObject panel_StartLoc;
-    //UIStartLoc_Panel startLocPanelScript;
+    UIStartLoc_Panel startLocPanelScript;
 
     [Tooltip("GameObject named 'Panel_Spacecraft' located under the 'Submenus_PanelContent' GameObject")]
     public GameObject panel_Spacecraft;
@@ -32,7 +32,7 @@ public class UIMainMenu : MonoBehaviour
 
     [Tooltip("GameObject named 'Panel_SimSettings' located under the 'Submenus_PanelContent' GameObject")]
     public GameObject panel_SimSettings;
-    //UI_SimSettings_Panel simSettingsPanelScript;
+    UI_SimSettings_Panel simSettingsPanelScript;
 
     // Int that represent which menu is currently selected/displayed
     // 0 : Start location panel
@@ -49,17 +49,17 @@ public class UIMainMenu : MonoBehaviour
     {
         flyBtnIsAlreadyReady = false;
 
-        /*startLocPanelScript = GetComponent<UIStartLoc_Panel>();
+        startLocPanelScript = GetComponent<UIStartLoc_Panel>();
         startLocPanelScript.panelIsFullySetUp.AddListener(HandleControlBarTriangleColor);
 
-        spaceshipPanelScript = GetComponent<UI_Spaceship_Panel>();
-        spaceshipPanelScript.panelIsFullySetUp.AddListener(HandleControlBarTriangleColor);
+        //spaceshipPanelScript = GetComponent<UI_Spaceship_Panel>();
+        //spaceshipPanelScript.panelIsFullySetUp.AddListener(HandleControlBarTriangleColor);
 
-        matlabPanelScript = GetComponent<UI_Matlab_Panel>();
-        matlabPanelScript.panelIsFullySetUp.AddListener(HandleControlBarTriangleColor);
+        //matlabPanelScript = GetComponent<UI_Matlab_Panel>();
+        //matlabPanelScript.panelIsFullySetUp.AddListener(HandleControlBarTriangleColor);
 
         simSettingsPanelScript = GetComponent<UI_SimSettings_Panel>();
-        simSettingsPanelScript.panelIsFullySetUp.AddListener(HandleControlBarTriangleColor);*/
+        simSettingsPanelScript.panelIsFullySetUp.AddListener(HandleControlBarTriangleColor);
 
         InitMainButtons();
         StartCoroutine(FLY_CheckUpdate());
@@ -87,8 +87,8 @@ public class UIMainMenu : MonoBehaviour
         {
             yield return new WaitForSeconds(0.5f);
             // Forcing every panel to send their control check before actually checking
-            /*if(simSettingsPanelScript.useKeyboardEvent != null)
-                simSettingsPanelScript.useKeyboardEvent.AddListener(ToggleUseKeyboardSimSettingPanel);*/
+            if(simSettingsPanelScript.useKeyboardEvent != null)
+                simSettingsPanelScript.useKeyboardEvent.AddListener(ToggleUseKeyboardSimSettingPanel);
         }
     }
     void ToggleUseKeyboardSimSettingPanel(bool paramBoolValue)
@@ -107,8 +107,8 @@ public class UIMainMenu : MonoBehaviour
         if(!isReady)
             return;
         // Gathering the orbitalParams/PlanetarySurface data
-        /*UIStartLoc_Panel startLocPanelScript = gameObject.GetComponent<UIStartLoc_Panel>();
-        startLocPanelScript.On_FLY_click_GatherOrbitalParams();*/
+        UIStartLoc_Panel startLocPanelScript = gameObject.GetComponent<UIStartLoc_Panel>();
+        startLocPanelScript.On_FLY_click_GatherOrbitalParams();
 
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Loading the simulation scene
     }
@@ -124,43 +124,43 @@ public class UIMainMenu : MonoBehaviour
     bool CheckFLYReadinessForCoroutine()
     {
         return false;
-        /*bool startLocOK = startLocPanelScript.SendControlBarTriangleUpdate();
-        bool shipOK = spaceshipPanelScript.SendControlBarTriangleUpdate();
-        bool matlabOK = matlabPanelScript.SendControlBarTriangleUpdate();
+        bool startLocOK = startLocPanelScript.SendControlBarTriangleUpdate();
+        //bool shipOK = spaceshipPanelScript.SendControlBarTriangleUpdate();
+        //bool matlabOK = matlabPanelScript.SendControlBarTriangleUpdate();
         bool simSettingsOK = simSettingsPanelScript.SendControlBarTriangleUpdate();
 
         bool outputValue = false;
 
-        if(startLocOK && shipOK && matlabOK && simSettingsOK && !flyBtnIsAlreadyReady) {
+        if(startLocOK && /*shipOK && matlabOK &&*/ simSettingsOK && !flyBtnIsAlreadyReady) {
             controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(true);
             flyBtnIsAlreadyReady = true;
             outputValue = true;
         }
-        else if((!startLocOK || !shipOK || !matlabOK || !simSettingsOK) && flyBtnIsAlreadyReady) {
+        else if((!startLocOK || /*!shipOK || !matlabOK ||*/ !simSettingsOK) && flyBtnIsAlreadyReady) {
             controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(false);
             flyBtnIsAlreadyReady = false;
             outputValue = false;
         }
-        return outputValue;*/
+        return outputValue;
     }
     bool CheckFLYReadiness()
     {
         return false;
-        /*bool startLocOK = startLocPanelScript.SendControlBarTriangleUpdate();
-        bool shipOK = spaceshipPanelScript.SendControlBarTriangleUpdate();
-        bool matlabOK = matlabPanelScript.SendControlBarTriangleUpdate();
+        bool startLocOK = startLocPanelScript.SendControlBarTriangleUpdate();
+        //bool shipOK = spaceshipPanelScript.SendControlBarTriangleUpdate();
+        //bool matlabOK = matlabPanelScript.SendControlBarTriangleUpdate();
         bool simSettingsOK = simSettingsPanelScript.SendControlBarTriangleUpdate();
 
         bool outputValue = false;
 
-        if(startLocOK && shipOK && matlabOK && simSettingsOK) {
+        if(startLocOK && /*shipOK && matlabOK &&*/ simSettingsOK) {
             outputValue = true;
         }
-        else if(!startLocOK || !shipOK || !matlabOK || !simSettingsOK) {
+        else if(!startLocOK || /*!shipOK || !matlabOK ||*/ !simSettingsOK) {
             controlBarCheckScript.ControlBarSet_ReadyTo_FLY_Color(false);
             outputValue = false;
         }
-        return outputValue;*/
+        return outputValue;
     }
     //---------------------------------------------
     //---------------------------------------------
@@ -207,7 +207,7 @@ public class UIMainMenu : MonoBehaviour
     void HandleControlBarTriangleColor(int mainPanelIdentifier, int boolPanelIsSetUp)
     {
         bool panelIsSetUpBool = boolPanelIsSetUp == 1 ? true:false;
-        /*switch(mainPanelIdentifier)
+        switch(mainPanelIdentifier)
         {
             case 0:
                 // 'startLocation' panel has fired its event
@@ -225,11 +225,11 @@ public class UIMainMenu : MonoBehaviour
                 // 'SimSettings' panel has fired its event
                 controlBarCheckScript.ChangeTriangleColor(controlBarCheckScript.triangle_SimSettings_Img, panelIsSetUpBool);
                 break;
-        }*/
+        }
     }
     void HandleControlBarLineColor(int selectedMenuItem)
     {
-        /*switch(selectedMenuItem)
+        switch(selectedMenuItem)
         {
             case 0:
                 // "StartLocation" panel selected
@@ -260,6 +260,6 @@ public class UIMainMenu : MonoBehaviour
                 controlBarCheckScript.ControlBarMatchTriangleColor(controlBarCheckScript.controlBar_Matlab_Img, controlBarCheckScript.triangle_Matlab_Img);
                 simSettingsPanelScript.UpdateParameters();
                 break;
-        }*/
+        }
     }
 }
