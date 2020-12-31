@@ -55,7 +55,9 @@
         "Logs/":true,
         "Packages/":true,
         "Assembly-CSharp-Editor.csproj":true,
+        "Assembly-CSharp-Editor-firstpass.csproj":true,
         "Assembly-CSharp.csproj":true,
+        "Assembly-CSharp-firstpass.csproj":true,
         "Assets/Scenes":true,
         "Assets/Presets":true,
         "Assets/Materials":true,
@@ -65,7 +67,8 @@
         "Assets/Resources":true,
         "Assets/Samples":true,
         "Assets/Files_InGame":true,
-        "OSADOCA_Reborn.sln":true
+        "OSADOCA_Reborn.sln":true,
+        "Assets/Prefabs":true
     },
     "git.ignoreLimitWarning": true
 }

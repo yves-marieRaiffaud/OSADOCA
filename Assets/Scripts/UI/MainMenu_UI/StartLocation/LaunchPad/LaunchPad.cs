@@ -20,7 +20,7 @@ public class LaunchPad
         }
     }
 
-    private string _name;
+    [SerializeField] private string _name;
     public string name
     {
         get {
@@ -28,7 +28,7 @@ public class LaunchPad
         }
     }
 
-    private string _planet;
+    [SerializeField] private string _planet;
     public string planet
     {
         get {
@@ -36,7 +36,7 @@ public class LaunchPad
         }
     }
 
-    private string _country;
+    [SerializeField] private string _country;
     public string country
     {
         get {
@@ -44,7 +44,7 @@ public class LaunchPad
         }
     }
 
-    private string _operationalDate;
+    [SerializeField] private string _operationalDate;
     public string operationalDate
     {
         get {
@@ -52,7 +52,7 @@ public class LaunchPad
         }
     }
     
-    private string _supervision;
+    [SerializeField] private string _supervision;
     public string supervision
     {
         get {
@@ -60,7 +60,7 @@ public class LaunchPad
         }
     }
     
-    private double _latitude;
+    [SerializeField] private double _latitude;
     public double latitude
     {
         get {
@@ -68,7 +68,7 @@ public class LaunchPad
         }
     }
 
-    private double _longitude;
+    [SerializeField] private double _longitude;
     public double longitude
     {
         get {
@@ -76,7 +76,7 @@ public class LaunchPad
         }
     }
     
-    private double _eastwardBoost;
+    [SerializeField] private double _eastwardBoost;
     public double eastwardBoost
     {
         get {

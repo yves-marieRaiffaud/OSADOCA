@@ -150,54 +150,6 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         }
     }
     
-    
-    void SelectLastLaunchPadInList()
-    {
-        // By default, display the last launchPad in the array
-        if(launchPadGOs.Count > 0 && launchPadInstances.Count > 0) {
-            launchPadGOs.ElementAt(launchPadGOs.Count-1).GetComponent<Button>().Select();
-            OnLaunchPadClick(launchPadInstances.ElementAt(launchPadInstances.Count-1));
-        }
-    }
-
-    
-    
-    private void InitMapSizeVariables()
-    {
-        Vector2 planetMapPanelSize = planetMap.parent.GetComponent<RectTransform>().sizeDelta;
-        float mapWidth = planetMapPanelSize.x - planetMap.offsetMin.x - planetMap.offsetMax.x;
-        float mapHeight = planetMapPanelSize.y - planetMap.offsetMin.y - planetMap.offsetMax.y;
-        mapSize = new Vector2(mapWidth, mapHeight);
-
-        mapBottomLeftCorner = new Vector3(planetMap.parent.position.x - mapSize.x/2, planetMap.parent.position.y - mapSize.y/2);
-    }
-
-
-    void OnLaunchPadClick(LaunchPad clickedLP)
-    {
-        currSelectedLaunchpad = clickedLP;
-        hasALaunchPadSelected = true;
-
-        lp_name_val.text = clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.name];
-        lp_country_val.text = clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.country];
-        lp_agency_val.text = clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.supervision];
-        lp_operationalDate_val.text = clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.operationalDate];
-        lp_longitude_val.text = MathOps.StringToSignificantDigits(clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.longitude], UniCsts.UI_SIGNIFICANT_DIGITS) + " °";
-        lp_latitude_val.text = MathOps.StringToSignificantDigits(clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.latitude], UniCsts.UI_SIGNIFICANT_DIGITS) + " °";
-        lp_eastwardBoost_val.text = MathOps.StringToSignificantDigits(clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.eastwardBoost], UniCsts.UI_SIGNIFICANT_DIGITS) + " m/s";
-    
-        // Sending 1 as the 'initPlanetary' identifier and 1 as the panel IS set-up
-        if(panelIsFullySetUp != null)
-            panelIsFullySetUp.Invoke(1, 1);
-    }
-
-    public bool TriggerPanelIsSetBoolEvent()
-    {
-        if(panelIsFullySetUp != null && hasALaunchPadSelected && !launchPadAlreadyInCreationAndMoving)
-            panelIsFullySetUp.Invoke(1, Convert.ToInt32(hasALaunchPadSelected));
-        return hasALaunchPadSelected;
-    }
-
     void AddLaunchPad(LaunchPad launchPad, bool addAsCustomLaunchPad)
     {
         Vector2 launchPad_XY_Pos = launchPad.LatitudeLongitude_2_XY(mapSize);
@@ -239,6 +191,49 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         launchPadGOs.Add(launchPad_GO);
         launchPadInstances.Add(launchPad);
     }
+    
+    void SelectLastLaunchPadInList()
+    {
+        // By default, display the last launchPad in the array
+        if(launchPadGOs.Count > 0 && launchPadInstances.Count > 0) {
+            launchPadGOs.ElementAt(launchPadGOs.Count-1).GetComponent<Button>().Select();
+            OnLaunchPadClick(launchPadInstances.ElementAt(launchPadInstances.Count-1));
+        }
+    }
+
+    private void InitMapSizeVariables()
+    {
+        Vector2 planetMapPanelSize = planetMap.parent.GetComponent<RectTransform>().sizeDelta;
+        float mapWidth = planetMapPanelSize.x - planetMap.offsetMin.x - planetMap.offsetMax.x;
+        float mapHeight = planetMapPanelSize.y - planetMap.offsetMin.y - planetMap.offsetMax.y;
+        mapSize = new Vector2(mapWidth, mapHeight);
+
+        mapBottomLeftCorner = new Vector3(planetMap.parent.position.x - mapSize.x/2, planetMap.parent.position.y - mapSize.y/2);
+    }
+
+    void OnLaunchPadClick(LaunchPad clickedLP)
+    {
+        currSelectedLaunchpad = clickedLP;
+        hasALaunchPadSelected = true;
+
+        lp_name_val.text = clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.name];
+        lp_country_val.text = clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.country];
+        lp_agency_val.text = clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.supervision];
+        lp_operationalDate_val.text = clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.operationalDate];
+        lp_longitude_val.text = MathOps.StringToSignificantDigits(clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.longitude], UniCsts.UI_SIGNIFICANT_DIGITS) + " °";
+        lp_latitude_val.text = MathOps.StringToSignificantDigits(clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.latitude], UniCsts.UI_SIGNIFICANT_DIGITS) + " °";
+        lp_eastwardBoost_val.text = MathOps.StringToSignificantDigits(clickedLP.launchPadParamsDict[LaunchPad.launchPadParams.eastwardBoost], UniCsts.UI_SIGNIFICANT_DIGITS) + " m/s";
+    
+        // Sending 1 as the 'initPlanetary' identifier and 1 as the panel IS set-up
+        if(panelIsFullySetUp != null)
+            panelIsFullySetUp.Invoke(1, 1);
+    }
+    public bool TriggerPanelIsSetBoolEvent()
+    {
+        if(panelIsFullySetUp != null && hasALaunchPadSelected && !launchPadAlreadyInCreationAndMoving)
+            panelIsFullySetUp.Invoke(1, Convert.ToInt32(hasALaunchPadSelected));
+        return hasALaunchPadSelected;
+    }
     //=============================================================================================
     //=============================================================================================
     //=============================================================================================
@@ -273,6 +268,24 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
             // Right mouse button has been released but still withing the rectTransform
             launchPadAlreadyInCreationAndMoving = false;
         }
+    }
+    void CreateNewEmptyLaunchPad()
+    {
+        LaunchPad launchPad = new LaunchPad(LaunchPad.GetEmptyLaunchPadDict(currPlanetSelectedName));
+        lp_name_input.text = LaunchPad.newLaunchPadDefaultName;
+
+        GameObject launchPad_GO = Instantiate(launchPadPrefabCustom, new Vector3(Input.mousePosition.x, Input.mousePosition.y), Quaternion.identity);
+        launchPad_GO.name = launchPad.launchPadParamsDict[LaunchPad.launchPadParams.name];
+        launchPad_GO.transform.parent = planetMap.gameObject.transform;
+
+        Button launchPad_btn = launchPad_GO.GetComponent<Button>();
+        launchPad_btn.onClick.AddListener(delegate { OnLaunchPadClick(launchPad); });
+
+        launchPadGOs.Add(launchPad_GO);
+        launchPadInstances.Add(launchPad);
+
+        UpdateLaunchPadInCreationLatitudeLongitude();
+        launchPad.ComputeEastwardBoost();
     }
 
     public void AddNewLaunchPad_OnCancelClick()
@@ -329,15 +342,13 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         }
         return true;
     }
-
     string AddLaunchPadDataToJSON(LaunchPad lauchPadToAdd)
     {
         LaunchPad[] arrayToWrite;
         LaunchPad[] prevLPs = LaunchPad.ReadCustomLaunchPadsFromJSON();
         if(prevLPs == null)
             arrayToWrite = new LaunchPad[1]; // There is only the new data to append to a new file
-        else
-        {
+        else {
             arrayToWrite = new LaunchPad[prevLPs.Length + 1];
             // Copying previous launchPads to the array that will be written
             for(int i = 0; i < prevLPs.Length; i++)
@@ -346,7 +357,7 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         // Adding the new launchPad to the array
         arrayToWrite[arrayToWrite.Length-1] = lauchPadToAdd;
         string filepath = Application.persistentDataPath + Filepaths.userAdded_launchPads;
-        File.WriteAllText(filepath, JsonHelper.ToJson(arrayToWrite, true));
+        File.WriteAllText(filepath, JsonHelper.ToJson<LaunchPad>(arrayToWrite, true));
         return filepath;
     }
 
@@ -360,7 +371,6 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         else
             lp_eastwardBoost_NEWLP_val.text = MathOps.DoubleToSignificantDigits(launchPad.eastwardBoost, UniCsts.UI_SIGNIFICANT_DIGITS);
     }
-
     void UpdateLaunchPadInCreationPosition()
     {
         // The launchPad being created is the last element added to the List
@@ -370,7 +380,6 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
 
         launchPadGOs.ElementAt(launchPadGOs.Count-1).transform.position = newPosition;
     }
-
     void UpdateLaunchPadInCreationLatitudeLongitude()
     {
         float mouseX = launchPadGOs.ElementAt(launchPadGOs.Count-1).transform.position.x - planetMap.position.x;
@@ -385,24 +394,5 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
         launchPad.launchPadParamsDict[LaunchPad.launchPadParams.longitude] = MathOps.DoubleToString(latLong.y);
         launchPad.ComputeEastwardBoost();
         launchPad.InitVariables();
-    }
-
-    void CreateNewEmptyLaunchPad()
-    {
-        LaunchPad launchPad = new LaunchPad(LaunchPad.GetEmptyLaunchPadDict(currPlanetSelectedName));
-        lp_name_input.text = LaunchPad.newLaunchPadDefaultName;
-
-        GameObject launchPad_GO = Instantiate(launchPadPrefabCustom, new Vector3(Input.mousePosition.x, Input.mousePosition.y), Quaternion.identity);
-        launchPad_GO.name = launchPad.launchPadParamsDict[LaunchPad.launchPadParams.name];
-        launchPad_GO.transform.parent = planetMap.gameObject.transform;
-
-        Button launchPad_btn = launchPad_GO.GetComponent<Button>();
-        launchPad_btn.onClick.AddListener(delegate { OnLaunchPadClick(launchPad); });
-
-        launchPadGOs.Add(launchPad_GO);
-        launchPadInstances.Add(launchPad);
-
-        UpdateLaunchPadInCreationLatitudeLongitude();
-        launchPad.ComputeEastwardBoost();
     }
 }
