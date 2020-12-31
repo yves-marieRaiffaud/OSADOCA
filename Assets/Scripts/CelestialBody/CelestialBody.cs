@@ -145,7 +145,8 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
             _orbitFolderGO = new GameObject(orbitFolderName);
             _orbitFolderGO.transform.parent = _gameObject.transform;
             _orbitFolderGO.transform.localPosition = Vector3.zero;
-            _orbitFolderGO.transform.localScale = Vector3.one;
+            float orbitFolderScaleGO = 1f/transform.localScale.x;
+            _orbitFolderGO.transform.localScale = new Vector3(orbitFolderScaleGO,orbitFolderScaleGO,orbitFolderScaleGO);
             _orbitFolderGO.transform.rotation = Quaternion.identity;
         }
         else

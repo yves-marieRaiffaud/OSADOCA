@@ -65,6 +65,7 @@
      <Compile Include="Assets\Scripts\Core\Time\UniverseClock.cs" />
      <Compile Include="Assets\Scripts\Core\Units.cs" />
      <Compile Include="Assets\Scripts\Interfaces.cs" />
+     <Compile Include="Assets\Scripts\Spaceship\ShipCamHandling.cs" />
      <Compile Include="Assets\Scripts\Spaceship\Spaceship.cs" />
      <Compile Include="Assets\Scripts\UI\Custom_UI\ButtonTooltip.cs" />
      <Compile Include="Assets\Scripts\UI\Custom_UI\CustomShaped_Buttons.cs" />
@@ -84,6 +85,7 @@
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\UIMainMenu.cs" />
      <Compile Include="Assets\Scripts\Universe\FlyingDynamics.cs" />
      <Compile Include="Assets\Scripts\Universe\SimulationEnv.cs" />
+     <Compile Include="Assets\Scripts\Universe\StarDome.cs" />
      <Compile Include="Assets\Scripts\Universe\UniverseRunner.cs" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />

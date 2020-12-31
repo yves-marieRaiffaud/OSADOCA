@@ -329,7 +329,6 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
             if((previewedOrbit.param.rp - bodyRadius) > 0d) {
                 ShowPinpoint(perihelionPinpoint);
                 Vector3 uiPos = previewedOrbit.lineRenderer.GetPosition(0);
-                uiPos *= previewedOrbit.orbitedBody.transform.localScale.x;
                 perihelionPinpoint.transform.position = orbitedBody.gameObject.transform.position + uiPos;
             }
             else
@@ -338,7 +337,6 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
             if((previewedOrbit.param.ra - bodyRadius) > 0d) {
                 ShowPinpoint(aphelionPinpoint);
                 Vector3 uiPos = previewedOrbit.lineRenderer.GetPosition((int)(previewedOrbit.lineRenderer.positionCount/2));
-                uiPos *= previewedOrbit.orbitedBody.transform.localScale.x;
                 aphelionPinpoint.transform.position = orbitedBody.gameObject.transform.position + uiPos;
             }
             else

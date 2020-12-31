@@ -273,7 +273,7 @@ public class Orbit
         // , or the diameter of the orbited CelestialBody if we are in the UI Main Menu (UI planets have a diameter of 1).
         double pointScaler = 1d; // we are in sim
         if(orbitedBody.spawnAsUIPlanet)
-            pointScaler = 2d*orbitedBody.settings.planetaryParams.radius.val; // we are in the UI Main Menu
+            pointScaler = 2d*orbitedBody.settings.planetaryParams.radius.val/orbitedBody.transform.localScale.x; // we are in the UI Main Menu
 
         // Drawing the ellipse
         for(int i = 0; i < param.orbitDrawingResolution; i++)
@@ -283,8 +283,9 @@ public class Orbit
             double z = Mathd.Sin(theta)*tmp_p/(1 + param.e*Mathd.Cos(theta));
 
             Vector3d noRotPoint = orbitedBody.equatorialPlane.forwardVec * x + orbitedBody.equatorialPlane.rightVec * z;
-            noRotPoint /= pointScaler;
-            lineRendererPts.Add( (Vector3)(orbitRot * (noRotPoint)));
+            if(orbitedBody.spawnAsUIPlanet)
+                noRotPoint /= pointScaler; // only for orbits drawn in the UI Main Menu
+            lineRendererPts.Add((Vector3)(orbitRot * (noRotPoint)));
         }
         lineRendererPts.Add(lineRendererPts[0]); // Adding at the end the first point to close the ellipse
         _lineRenderer.positionCount = param.orbitDrawingResolution;
