@@ -32,7 +32,7 @@ public class UI_SimSettings_Panel : MonoBehaviour
     private int currCategoryBeingDrawn;
     private int yPosition;
 
-    public MainPanelIsSetUp panelIsFullySetUp;
+    [HideInInspector] public MainPanelIsSetUp panelIsFullySetUp;
     public UseKeyboardSimSettingEvent useKeyboardEvent;
 
     void Start()

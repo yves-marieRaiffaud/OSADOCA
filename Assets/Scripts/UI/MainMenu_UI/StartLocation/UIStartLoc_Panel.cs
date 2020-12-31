@@ -25,7 +25,7 @@ public class UIStartLoc_Panel : MonoBehaviour
     public TMPro.TMP_Dropdown startLocPlanetSelectorDropdown;
     //----------------------
     //----------------------
-    public MainPanelIsSetUp panelIsFullySetUp;
+    [HideInInspector] public MainPanelIsSetUp panelIsFullySetUp;
     private string lastSelectedPlanetName;
     //----------------------
     //----------------------
