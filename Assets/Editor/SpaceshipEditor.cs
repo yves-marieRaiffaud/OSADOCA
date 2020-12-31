@@ -16,10 +16,8 @@ public class SpaceshipEditor : Editor
         ship = (Spaceship)target;
         shipOrbitalParamsFilePath = Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams;
         CheckCreate_OrbitalParams_SO();
-        //orbParamsSerializedObjs = new SerializedObject(serializedObject.FindProperty("_orbitalParams").objectReferenceValue);
         orbDataFoldoutBool = ship.orbitalParams.orbDataFoldoutBool;
     }
-
     void CheckCreate_OrbitalParams_SO()
     {
         if(ship.orbitalParams == null || !File.Exists(shipOrbitalParamsFilePath)) {
@@ -35,7 +33,6 @@ public class SpaceshipEditor : Editor
     {
         this.Repaint();
     }
-
     public override void OnInspectorGUI()
     {
         //orbParamsSerializedObjs.Update();
@@ -46,8 +43,10 @@ public class SpaceshipEditor : Editor
             base.OnInspectorGUI();
         }
 
-        Draw_OrbitalParams_Editor(ship.orbitalParams);
-
+        if(!ship.spawnAs_UI_SC) {
+            Draw_OrbitalParams_Editor(ship.orbitalParams);
+            Handle_Info_Panel_Foldout();
+        }
         //orbParamsSerializedObjs.ApplyModifiedProperties();
     }
 
@@ -65,7 +64,6 @@ public class SpaceshipEditor : Editor
             Debug.Log("OrbitalParams successfully saved at: '" + shipOrbitalParamsFilePath + "'.");
         }
     }
-
     void Create_OrbitalParams_Editor(OrbitalParams orbParams)
     {
         //orbParams.orbitedBody = (CelestialBody)EditorGUILayout.ObjectField("Orbited body", orbParams.orbitedBody, typeof(CelestialBody), true);
@@ -137,5 +135,17 @@ public class SpaceshipEditor : Editor
                 orbParams.t = EditorGUILayout.DoubleField("Time at perihelion passage (s)", orbParams.t);
                 break;
         }
+    }
+
+    void Handle_Info_Panel_Foldout()
+    {
+        ship.inspectorFoldout_showInfo = EditorGUILayout.Foldout(ship.inspectorFoldout_showInfo, "Show info");
+        if(!ship.inspectorFoldout_showInfo)
+            return;
+        EditorGUI.BeginDisabledGroup(true);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_relativeAcc"), new GUIContent("Relative Acc (km/s)"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_relativeVel"), new GUIContent("Absolute Velocity (km/s)"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_realPosition"), new GUIContent("Unity World Position"));
+        EditorGUI.EndDisabledGroup();
     }
 }

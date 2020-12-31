@@ -56,7 +56,10 @@ public class CelestialBodyEditor : Editor
             Handle_Predefined_Planet_Selection();
         else if(!celestBody.usePredefinedPlanet && celestBody.spawnAsUIPlanet)
             Debug.LogError("ERROR ! You cannot use an unpredefined planet with the 'spawnAsUIPlanet' flag that is used for UI. Cannot continue.");
-        
+
+        if(!celestBody.spawnAsUIPlanet)
+            Handle_Info_Panel_Foldout();
+
         if(GUI.changed) {
             if(celestBody.spawnAsUIPlanet)
                 Debug.LogWarningFormat("WARNING ! GUI has changed for body '{0}', but 'spawAsUIPlanet' is selected. Thus, changes are not being saved to disk.", celestBody._gameObject.name);
@@ -137,5 +140,17 @@ public class CelestialBodyEditor : Editor
 
         SerializedProperty jnsObj = settingsObj.FindProperty("jns");
         EditorGUILayout.PropertyField(jnsObj, true);
+    }
+
+    void Handle_Info_Panel_Foldout()
+    {
+        celestBody.inspectorFoldout_showInfo = EditorGUILayout.Foldout(celestBody.inspectorFoldout_showInfo, "Show info");
+        if(!celestBody.inspectorFoldout_showInfo)
+            return;
+        EditorGUI.BeginDisabledGroup(true);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_relativeAcc"), new GUIContent("Relative Acc (km/s)"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_relativeVel"), new GUIContent("Absolute Velocity (km/s)"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_realPosition"), new GUIContent("Unity World Position"));
+        EditorGUI.EndDisabledGroup();
     }
 }

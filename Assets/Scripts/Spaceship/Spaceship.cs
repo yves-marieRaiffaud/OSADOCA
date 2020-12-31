@@ -6,6 +6,9 @@ using System.IO;
 
 public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
 {
+    [SerializeField, HideInInspector]
+    public bool inspectorFoldout_showInfo=false; // Only for development in the inspector
+
     public GameObject _gameObject
     {
         get {
@@ -42,7 +45,7 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
         }
     }
 
-    [SerializeField]
+    [SerializeField, HideInInspector]
     Vector3d _relativeAcc;
     public Vector3d relativeAcc
     {
@@ -54,7 +57,7 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
         }
     }
 
-    [SerializeField]
+    [SerializeField, HideInInspector]
     Vector3d _relativeVel;
     public Vector3d relativeVel
     {
@@ -66,7 +69,7 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
         }
     }
 
-    [SerializeField]
+    [SerializeField, HideInInspector]
     Vector3d _realPosition;
     public Vector3d realPosition
     {

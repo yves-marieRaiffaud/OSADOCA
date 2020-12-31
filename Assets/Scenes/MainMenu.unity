@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000000, guid: 29540fadac0e7b4438890cf8f20d0f60,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -2533,6 +2533,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b98565eb60a56447b6fce2c6ed4456a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inspectorFoldout_showInfo: 0
   settings: {fileID: 2057160082}
   _relativeAcc:
     x: 0
@@ -3274,6 +3275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b98565eb60a56447b6fce2c6ed4456a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inspectorFoldout_showInfo: 0
   settings: {fileID: 2057160082}
   _relativeAcc:
     x: 0
@@ -6561,6 +6563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b98565eb60a56447b6fce2c6ed4456a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inspectorFoldout_showInfo: 0
   settings: {fileID: 2057160082}
   _relativeAcc:
     x: 0
@@ -7147,6 +7150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b98565eb60a56447b6fce2c6ed4456a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inspectorFoldout_showInfo: 0
   settings: {fileID: 2057160082}
   _relativeAcc:
     x: 0
@@ -7818,6 +7822,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b98565eb60a56447b6fce2c6ed4456a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inspectorFoldout_showInfo: 0
   settings: {fileID: 2057160082}
   _relativeAcc:
     x: 0
@@ -10094,6 +10099,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ef6d5ddc5bf9264c81ac80c278cdb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inspectorFoldout_showInfo: 0
   _orbitalParams: {fileID: 1652252381}
   _relativeAcc:
     x: 0
@@ -13104,6 +13110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b98565eb60a56447b6fce2c6ed4456a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inspectorFoldout_showInfo: 0
   settings: {fileID: 2057160082}
   _relativeAcc:
     x: 0
@@ -16528,6 +16535,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b98565eb60a56447b6fce2c6ed4456a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inspectorFoldout_showInfo: 0
   settings: {fileID: 978750791}
   _relativeAcc:
     x: 0
@@ -21783,6 +21791,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b98565eb60a56447b6fce2c6ed4456a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inspectorFoldout_showInfo: 0
   settings: {fileID: 2057160082}
   _relativeAcc:
     x: 0
@@ -27656,10 +27665,10 @@ MonoBehaviour:
   orbitDrawingResolution: 300
   ra: 6478
   rp: 6478
-  p: 0
+  p: 6478
   e: 0
-  a: 0
-  b: 0
+  a: 6478
+  b: 6478
   c: 0
   i: 0
   lAscN: 0
@@ -27669,45 +27678,45 @@ MonoBehaviour:
   E: 0
   L: 0
   t: 0
-  period: 0
-  n: 0
+  period: 0.00000005188865862630668
+  n: 121089775.03639938
   vp:
-    x: 0
+    x: 1
     y: 0
     z: 0
   vpAxisRight:
     x: 0
     y: 0
-    z: 0
+    z: 1
   vpAxisUp:
     x: 0
-    y: 0
+    y: 1
     z: 0
   ascendingNodeLineDir:
-    x: 0
+    x: -0.5726955825470001
     y: 0
-    z: 0
+    z: -0.8197681194893788
   apogeeLineDir:
-    x: 0
-    y: 0
-    z: 0
+    x: -0.9528087311057416
+    y: 0.17527054568118555
+    z: 0.2478623766231694
   orbitPlane:
     forwardVec:
-      x: NaN
-      y: NaN
-      z: NaN
+      x: -0.9528087311057416
+      y: 0.17527054568118555
+      z: 0.2478623766231694
     rightVec:
-      x: NaN
-      y: NaN
-      z: NaN
+      x: -0.19217540070961175
+      y: 0.2838033402667751
+      z: -0.9394276339428818
     point:
-      x: NaN
-      y: NaN
-      z: NaN
+      x: -6172.294921875
+      y: 1135.402587890625
+      z: 1605.6524658203125
     normal:
-      x: 0
-      y: 0
-      z: 0
+      x: -0.2349981644412709
+      y: -0.9427279034111808
+      z: -0.23672761317428292
 --- !u!1 &1654952288
 GameObject:
   m_ObjectHideFlags: 0
@@ -31746,6 +31755,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b98565eb60a56447b6fce2c6ed4456a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inspectorFoldout_showInfo: 0
   settings: {fileID: 1284951420}
   _relativeAcc:
     x: 0
@@ -34048,73 +34058,73 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
   planetaryParams:
     radius:
-      _val: 0
-      _unit: 0
+      _val: 6378.137
+      _unit: 3
     polarRadius:
-      _val: 0
-      _unit: 0
+      _val: 6356.752
+      _unit: 3
     radiusSOI:
-      _val: 0
-      _unit: 0
+      _val: 120000
+      _unit: 3
     inverseFlattening:
-      _val: 0
+      _val: 298.257223563
       _unit: 0
     axialTilt:
-      _val: 0
+      _val: 23.4392811
       _unit: 0
     siderealRotPeriod:
-      _val: 0
-      _unit: 0
+      _val: 86164.09
+      _unit: 1
     revolutionPeriod:
-      _val: 0
-      _unit: 0
+      _val: 365.26
+      _unit: 4
     mu:
-      _val: 0
+      _val: 39.86004418
       _unit: 0
     massEarthRatio:
-      _val: 0
+      _val: 1
       _unit: 0
     isRockyBody: 0
   lightOrbitalParams:
     orbitedBodyName:
-      _stringVal: 
+      _stringVal: Sun
     apoapsis:
-      _val: 0
-      _unit: 0
+      _val: 1.067
+      _unit: 4
     periapsis:
-      _val: 0
-      _unit: 0
+      _val: 0.92329
+      _unit: 4
     i:
-      _val: 0
+      _val: 7.155
       _unit: 0
     lAscN:
-      _val: 0
+      _val: 174.9
       _unit: 0
     periapsisArg:
-      _val: 0
+      _val: 288.1
       _unit: 0
     trueAnomaly:
       _val: 0
       _unit: 0
   surfaceParams:
     surfPressure:
-      _val: 0
-      _unit: 0
+      _val: 1015
+      _unit: 1
     surfDensity:
-      _val: 0
+      _val: 1.217
       _unit: 0
     surfTemp:
-      _val: 0
-      _unit: 0
+      _val: 288
+      _unit: 1
     maxAtmoHeight:
-      _val: 0
+      _val: 100
       _unit: 0
     highestBumpAlt:
-      _val: 0
+      _val: 8.848
       _unit: 0
   jns:
     j2:
-      _val: 0
+      _val: 1082.63
       _unit: 0
     j3:
       _val: 0

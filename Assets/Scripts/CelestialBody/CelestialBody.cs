@@ -12,6 +12,7 @@ using angle = Units.angle;
 
 public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
 {
+    [SerializeField, HideInInspector] public bool inspectorFoldout_showInfo=false;
     [HideInInspector] public CelestialBodySettings settings;
 
     public GameObject _gameObject
@@ -49,7 +50,7 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
         }
     }
 
-    [SerializeField]
+    [SerializeField, HideInInspector]
     Vector3d _relativeAcc;
     public Vector3d relativeAcc
     {
@@ -61,7 +62,7 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
         }
     }
 
-    [SerializeField]
+    [SerializeField, HideInInspector]
     Vector3d _relativeVel;
     public Vector3d relativeVel
     {
@@ -73,7 +74,7 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
         }
     }
 
-    [SerializeField]
+    [SerializeField, HideInInspector]
     Vector3d _realPosition;
     public Vector3d realPosition
     {
