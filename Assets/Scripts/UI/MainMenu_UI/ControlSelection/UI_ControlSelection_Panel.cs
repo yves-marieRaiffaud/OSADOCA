@@ -52,13 +52,12 @@ public class UI_ControlSelection_Panel : MonoBehaviour
 
 
         // Initializing every panel that have been detected in the 'controlAlgoPanel_TR' panel
-        for(int idx=0; idx<controlAlgoPanel_TR.childCount; idx++)
+        /*for(int idx=0; idx<controlAlgoPanel_TR.childCount; idx++)
         {
             GameObject panel = controlAlgoPanel_TR.GetChild(idx).gameObject; // The com object
             TMP_InputField ipInputField = panel.transform.Find("IP_Panel/IP_input").GetComponent<TMP_InputField>();
             
-        }
-
+        }*/
 
         shipControlModeDropdown.onValueChanged.AddListener(delegate{
             ToggleControlTypePanels(shipControlModeDropdown.value);

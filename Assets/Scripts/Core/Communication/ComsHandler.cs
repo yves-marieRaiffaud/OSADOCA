@@ -15,10 +15,6 @@ namespace Communication
 
         [Header("UniverseRunner Instance")]
         public UniverseRunner universe;
-
-        
-
-
         //=============
         [Header("UDP Data Visualization Sender")]
         public bool enableDataVisSenderChannel;
@@ -114,7 +110,7 @@ namespace Communication
             //============
             if(enableDataVisSenderChannel)
             {
-                ComProtocol protocol= ComProtocol.UDPSender;
+                ComProtocol protocol= ComProtocol.UDP_Sender;
                 ComConectionType coType = ComConectionType.dataVisualization;
                 ComSendReceiveType srType = ComSendReceiveType.classExplicit;
                 ComChannelParams dataParams = new ComChannelParams("169.254.183.22", 25010, protocol, coType, srType, 25010);
@@ -125,7 +121,7 @@ namespace Communication
             {
                 simEnvCoroutine = SimulationEnv_Sending_Coroutine();
                 //shipDeltaRotCoroutine = universe.activeSC.DeltaRotation_Coroutine(senderFrequencySimEnv);
-                ComProtocol protocol= ComProtocol.TCPIP;
+                ComProtocol protocol= ComProtocol.TCPIP_Sender;
                 ComConectionType coType = ComConectionType.simulationEnv;
                 ComSendReceiveType srType = ComSendReceiveType.sendOnly;
                 ComChannelParams dataParams = new ComChannelParams("169.254.183.22", 25011, protocol, coType, srType, 25011);
@@ -139,7 +135,7 @@ namespace Communication
             //======
             if(enableControlAlgoTCPServer)
             {
-                ComProtocol protocol= ComProtocol.TCPIP;
+                ComProtocol protocol= ComProtocol.TCPIP_Receiver;
                 ComConectionType coType = ComConectionType.shipControlOrders;
                 ComSendReceiveType srType = ComSendReceiveType.receiveOnly;
                 ComChannelParams dataParams = new ComChannelParams("169.254.183.22", 25012, protocol, coType, srType, 25012);

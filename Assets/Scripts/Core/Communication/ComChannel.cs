@@ -9,9 +9,19 @@ using System;
 
 namespace Communication
 {
-    public enum ComProtocol { UDPSender, UDPReceiver, TCPIP };
-    public enum ComConectionType { dataVisualization, simulationEnv, shipControlOrders };
-    public enum ComSendReceiveType { sendOnly, receiveOnly, sendReceive, classExplicit };
+    public enum ComProtocol { UDP_Sender, UDP_Receiver, TCPIP_Sender, TCPIP_Receiver }
+    [Flags] public enum ComConectionType { dataVisualization=1, simulationEnv=2, shipControlOrders=4 }
+    public enum ComSendReceiveType { sendOnly, receiveOnly, sendReceive, classExplicit }
+
+    public class ComChannel
+    {
+        public static readonly Dictionary<ComProtocol, ComConectionType> comEnumsCombinations = new Dictionary<ComProtocol, ComConectionType> {
+            { ComProtocol.UDP_Sender    , ComConectionType.dataVisualization|ComConectionType.simulationEnv },
+            { ComProtocol.UDP_Receiver  , ComConectionType.shipControlOrders },
+            { ComProtocol.TCPIP_Sender  , ComConectionType.dataVisualization|ComConectionType.simulationEnv },
+            { ComProtocol.TCPIP_Receiver, ComConectionType.shipControlOrders }
+        };
+    }
 
     public class ComChannel<T>
     {

@@ -81,7 +81,7 @@ namespace CommonMethods
                 return CelestialBodiesConstants.planets.Earth; // Default value to return
         }
 
-        private static (T,bool) Generic_Str_2_Enum<T>(string enumString)
+        internal static (T,bool) Generic_Str_2_Enum<T>(string enumString)
         where T : Enum
         {
             // return the correpsonding or the default Enum object, and the bool indicating if an exact match has been found, or if the default value is returned
