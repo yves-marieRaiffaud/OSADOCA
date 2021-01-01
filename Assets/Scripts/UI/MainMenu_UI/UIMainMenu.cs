@@ -110,7 +110,7 @@ public class UIMainMenu : MonoBehaviour
         UIStartLoc_Panel startLocPanelScript = gameObject.GetComponent<UIStartLoc_Panel>();
         startLocPanelScript.On_FLY_click_GatherOrbitalParams();
 
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Loading the simulation scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Loading the simulation scene
     }
     IEnumerator FLY_CheckUpdate()
     {

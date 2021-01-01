@@ -9,12 +9,14 @@ using System;
 
 namespace Communication
 {
+    public enum ComProtocol { UDPSender, UDPReceiver, TCPIP };
     public enum ComConectionType { dataVisualization, simulationEnv, shipControlOrders };
     public enum ComSendReceiveType { sendOnly, receiveOnly, sendReceive, classExplicit };
 
     public class ComChannel<T>
     {
         //====================
+        public ComProtocol protocol;
         public ComConectionType connectionType;
         public ComSendReceiveType sendReceiveType;
         //====================
@@ -82,6 +84,7 @@ namespace Communication
             port = parameters.port;
             defaultIP = parameters.defaultIP;
             defaultPort = parameters.defaultPort;
+            protocol = parameters.protocol;
             connectionType = parameters.connectionType;
             sendReceiveType = parameters.sendReceiveType;
             //======
@@ -98,10 +101,7 @@ namespace Communication
                 channelObj = (T)Convert.ChangeType(new UDPReceiver(IP, port), typeof(T));
 
             else if(typeof(T) == typeof(TCPServer))
-            {
                 channelObj = (T)Convert.ChangeType(new TCPServer(port, sendReceiveType, IP), typeof(T));
-            }
-                
         }
     }
     //=================================
@@ -115,15 +115,17 @@ namespace Communication
         public int defaultPort;
         public int port;
         //========
+        public ComProtocol protocol;
         public ComConectionType connectionType;
         public ComSendReceiveType sendReceiveType;
         //========
-        public ComChannelParams(string _IP, int _port, ComConectionType _coType, ComSendReceiveType _sendReceiveType, int _defaultPort, string _defaultIP="127.0.0.1")
+        public ComChannelParams(string _IP, int _port, ComProtocol _protocol, ComConectionType _coType, ComSendReceiveType _sendReceiveType, int _defaultPort, string _defaultIP="127.0.0.1")
         {
-            this.defaultIP = _defaultIP;
-            this.IP = _IP;
-            this.defaultPort = _defaultPort;
-            this.port = _port;
+            defaultIP = _defaultIP;
+            IP = _IP;
+            defaultPort = _defaultPort;
+            port = _port;
+            protocol = _protocol;
             connectionType = _coType;
             sendReceiveType = _sendReceiveType;
         }

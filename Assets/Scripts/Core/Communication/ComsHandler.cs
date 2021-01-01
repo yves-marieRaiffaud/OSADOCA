@@ -15,6 +15,10 @@ namespace Communication
 
         [Header("UniverseRunner Instance")]
         public UniverseRunner universe;
+
+        
+
+
         //=============
         [Header("UDP Data Visualization Sender")]
         public bool enableDataVisSenderChannel;
@@ -69,7 +73,6 @@ namespace Communication
             data = AssembleStringList(stringsToAssembleList);
             return data;
         }
-
         private string AssembleStringList(List<string> stringsToAssembleList)
         {
             string txt = "";
@@ -85,17 +88,14 @@ namespace Communication
             }
             return txt;
         }
-
         private string Format_Vector3d(Vector3d inputVec, int nbDigits)
         {
             return MathsOps.DoubleToSignificantDigits(inputVec.x, nbDigits) + SENDER_DELIMITER + MathsOps.DoubleToSignificantDigits(inputVec.y, nbDigits) + SENDER_DELIMITER + MathsOps.DoubleToSignificantDigits(inputVec.z, nbDigits);
         }
-
         private string Format_Quaterniond(Quaterniond inputVec, int nbDigits)
         {
             return MathsOps.DoubleToSignificantDigits(inputVec.X, nbDigits) + SENDER_DELIMITER + MathsOps.DoubleToSignificantDigits(inputVec.Y, nbDigits) + SENDER_DELIMITER + MathsOps.DoubleToSignificantDigits(inputVec.Z, nbDigits) + SENDER_DELIMITER + MathsOps.DoubleToSignificantDigits(inputVec.W, nbDigits);
         }
-
         private IEnumerator SimulationEnv_Sending_Coroutine()
         {
             while (true)
@@ -114,9 +114,10 @@ namespace Communication
             //============
             if(enableDataVisSenderChannel)
             {
+                ComProtocol protocol= ComProtocol.UDPSender;
                 ComConectionType coType = ComConectionType.dataVisualization;
                 ComSendReceiveType srType = ComSendReceiveType.classExplicit;
-                ComChannelParams dataParams = new ComChannelParams("169.254.183.22", 25010, coType, srType, 25010);
+                ComChannelParams dataParams = new ComChannelParams("169.254.183.22", 25010, protocol, coType, srType, 25010);
                 dataVisSenderChannel = new ComChannel<UDPSender>(dataParams);
             }
             //======
@@ -124,9 +125,10 @@ namespace Communication
             {
                 simEnvCoroutine = SimulationEnv_Sending_Coroutine();
                 //shipDeltaRotCoroutine = universe.activeSC.DeltaRotation_Coroutine(senderFrequencySimEnv);
+                ComProtocol protocol= ComProtocol.TCPIP;
                 ComConectionType coType = ComConectionType.simulationEnv;
                 ComSendReceiveType srType = ComSendReceiveType.sendOnly;
-                ComChannelParams dataParams = new ComChannelParams("169.254.183.22", 25011, coType, srType, 25011);
+                ComChannelParams dataParams = new ComChannelParams("169.254.183.22", 25011, protocol, coType, srType, 25011);
                 simEnvTCPServer = new ComChannel<TCPServer>(dataParams);
                 if(simEnvTCPServer != null) {
                     StartCoroutine(simEnvCoroutine);
@@ -137,9 +139,10 @@ namespace Communication
             //======
             if(enableControlAlgoTCPServer)
             {
+                ComProtocol protocol= ComProtocol.TCPIP;
                 ComConectionType coType = ComConectionType.shipControlOrders;
                 ComSendReceiveType srType = ComSendReceiveType.receiveOnly;
-                ComChannelParams dataParams = new ComChannelParams("169.254.183.22", 25012, coType, srType, 25012);
+                ComChannelParams dataParams = new ComChannelParams("169.254.183.22", 25012, protocol, coType, srType, 25012);
                 controlAlgoTCPServer = new ComChannel<TCPServer>(dataParams);
             }
         }

@@ -1,15 +1,18 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-//using UseFncs = UsefulFunctions;
+using ComOps = CommonMethods.CommunicationOps;
 using Communication;
+using TMPro;
 using System;
 
 public class UI_ControlSelection_Panel : MonoBehaviour
 {
     // This script is attached to the 'MainPanel' GameObject
     //=============================================================================================
-    /*[Header("Spaceship Control Panels")]
+    [Tooltip("RectTransform of the 'ControlAlgo_Panel' that contains the every com panels")]
+    public RectTransform controlAlgoPanel_TR;
+    [Header("Spaceship Control Panels")]
     public GameObject remoteConnectionControlPanel;
     public GameObject keyboardControlPanel;
 
@@ -19,7 +22,7 @@ public class UI_ControlSelection_Panel : MonoBehaviour
     //=======================
     [Header("Matlab Communication Handler Script")]
     [Tooltip("MatlabComHandler script instance located in the 'MatlabCom_Handler' GameObject")]
-    public MatlabComHandler comHandler;
+    public ComsHandler comHandler;
 
     [Header("Data Visualization Sender Fields")]
     public TMPro.TMP_InputField ipDataVisuInputField;
@@ -47,12 +50,23 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         if(panelIsFullySetUp == null)
             panelIsFullySetUp = new MainPanelIsSetUp();
 
+
+        // Initializing every panel that have been detected in the 'controlAlgoPanel_TR' panel
+        for(int idx=0; idx<controlAlgoPanel_TR.childCount; idx++)
+        {
+            GameObject panel = controlAlgoPanel_TR.GetChild(idx).gameObject; // The com object
+            TMP_InputField ipInputField = panel.transform.Find("IP_Panel/IP_input").GetComponent<TMP_InputField>();
+            
+        }
+
+
         shipControlModeDropdown.onValueChanged.AddListener(delegate{
             ToggleControlTypePanels(shipControlModeDropdown.value);
             SaveSimulationEnvParams();
         });
         InitControlModeDropdownFromSavedParams();
 
+        
         //=======================
         //=======================
         ipDataVisuInputField.onValueChanged.AddListener(delegate{
@@ -143,9 +157,9 @@ public class UI_ControlSelection_Panel : MonoBehaviour
 
     void InitControlModeDropdownFromSavedParams()
     {
-        SimulationEnv simulationEnv = UseFncs.GetSimEnvObjectFrom_ReadUserParams();
+        /*SimulationEnv simulationEnv = UseFncs.GetSimEnvObjectFrom_ReadUserParams();
         bool useKeyboardParamvalue = simulationEnv.shipUseKeyboardControl.value;
-        shipControlModeDropdown.value = Convert.ToInt32(!useKeyboardParamvalue);
+        shipControlModeDropdown.value = Convert.ToInt32(!useKeyboardParamvalue);*/
     }
 
     bool Get_UseKeyboard_SimSettingValue_FromDropdown()
@@ -170,21 +184,21 @@ public class UI_ControlSelection_Panel : MonoBehaviour
     void SaveSimulationEnvParams()
     {
         // Get fresh simulationEnv values, in case some params were modified when switching between tabs
-        SimulationEnv simulationEnv = UseFncs.GetSimEnvObjectFrom_ReadUserParams();
+        /*SimulationEnv simulationEnv = UseFncs.GetSimEnvObjectFrom_ReadUserParams();
         // From the retrieved instance, only change the params that were modified in this tab
         simulationEnv.shipUseKeyboardControl.value = Get_UseKeyboard_SimSettingValue_FromDropdown();
         string filepath = UsefulFunctions.WriteToFileSimuSettingsSaveData(simulationEnv);
-        Debug.Log("SimSettings has succesfuly been saved at : '" + filepath + "'."); 
+        Debug.Log("SimSettings has succesfuly been saved at : '" + filepath + "'."); */
     }
     //=======================
     //=======================
     //=======================
     //=======================
-    private void UpdateConnectionChannel<T>(MatlabComChannel<T> channel, TMPro.TMP_InputField ipField, TMPro.TMP_InputField portField)
+    private void UpdateConnectionChannel<T>(ComChannel<T> channel, TMPro.TMP_InputField ipField, TMPro.TMP_InputField portField)
     where T : SenderReceiverBaseChannel
     {
         channel.IP = ipField.text;
-        if(!UseFncs.IP_AddressIsValid(channel.IP))
+        if(!ComOps.IP_AddressIsValid(channel.IP))
             return;
         int parsedPort;
         if(int.TryParse(portField.text, out parsedPort))
@@ -194,7 +208,7 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         }
     }
 
-    private void OnRevertBtnClick<T>(MatlabComChannel<T> channel, TMPro.TMP_InputField fieldIP, TMPro.TMP_InputField fieldPort)
+    private void OnRevertBtnClick<T>(ComChannel<T> channel, TMPro.TMP_InputField fieldIP, TMPro.TMP_InputField fieldPort)
     where T : SenderReceiverBaseChannel
     {
         fieldIP.text = channel.defaultIP;
@@ -202,26 +216,23 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         UpdateConnectionChannel(channel, fieldIP, fieldPort);
     }
 
-    private void OnTestConnectionClick<T>(MatlabComChannel<T> channelToTest)
+    private void OnTestConnectionClick<T>(ComChannel<T> channelToTest)
     where T : SenderReceiverBaseChannel
     {
-        if(typeof(T) == typeof(UDPSender))
-        {
+        if(typeof(T) == typeof(UDPSender)) {
             UDPSender sender = channelToTest.channelObj as UDPSender;
             if(sender == null)
                 Debug.LogWarning("UDPSender 'sender' is null. Can not send 'TEST' message to target.");
             sender.Send("TEST");
             Debug.Log("A test message has been sent using UDP at IP: " + sender.IP + " and port: " + sender.port + ". Channel open status is " + sender.channelIsOpen);
         }
-        else if(typeof(T) == typeof(UDPReceiver))
-        {
+        else if(typeof(T) == typeof(UDPReceiver)) {
             UDPReceiver receiver = channelToTest.channelObj as UDPReceiver;
         }
-        else if(typeof(T) == typeof(TCPServer))
-        {
+        else if(typeof(T) == typeof(TCPServer)) {
             TCPServer server = channelToTest.channelObj as TCPServer;
             server.Send("TEST");
             Debug.Log("A test message has been sent using TCP/IP at IP: " + server.IP + " and port: " + server.port);
         }
-    }*/
+    }
 }
