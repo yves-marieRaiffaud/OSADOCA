@@ -79,7 +79,9 @@
      <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSButton.cs" />
      <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSDropdown.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\ControlBarCheck.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\ControlSelection\ComsOverallHandler.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\ControlSelection\OnEnableDisable_ControlAnimations.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\ControlSelection\UI_ComPanelHandler.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\ControlSelection\UI_ControlSelection_Panel.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\ToggleSwitch.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\SimSettings\UI_SimSettings_Panel.cs" />

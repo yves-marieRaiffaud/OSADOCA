@@ -135,7 +135,6 @@ namespace MSDropdownNamespace
 
         private void ClearDropdownGOs()
         {
-
             foreach(Transform child in contentGO.transform)
             {
                 Destroy(child.gameObject);

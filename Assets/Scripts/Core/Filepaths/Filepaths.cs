@@ -27,6 +27,8 @@ public static class Filepaths
     public const string simulation_settings = "/simulation_settings.json";
 
     public const string userAdded_launchPads = "/custom_launchPads.json";
+
+    public const string comsPanel_params = "/comsPanels_params.json";
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
     public enum EngineLayersName { Spaceship, CelestialBody, Orbit, StarDome, SpaceshipVectors };

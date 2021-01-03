@@ -10,10 +10,11 @@ using System;
 namespace Communication
 {
     public enum ComProtocol { UDP_Sender, UDP_Receiver, TCPIP_Sender, TCPIP_Receiver }
-    [Flags] public enum ComConectionType { dataVisualization=1, simulationEnv=2, shipControlOrders=4 }
+    [Flags] public enum ComConectionType { None=0, dataVisualization=1, simulationEnv=2, shipControlOrders=4 }
     public enum ComSendReceiveType { sendOnly, receiveOnly, sendReceive, classExplicit }
+    [Flags] public enum ComDataFields { None=0, shipAcc=1, shipVel=2, shipVelIncr=4, shipPos=8, shipDeltaRot=16 };
 
-    public class ComChannel
+    public class ComChannelDict
     {
         public static readonly Dictionary<ComProtocol, ComConectionType> comEnumsCombinations = new Dictionary<ComProtocol, ComConectionType> {
             { ComProtocol.UDP_Sender    , ComConectionType.dataVisualization|ComConectionType.simulationEnv },
@@ -23,16 +24,13 @@ namespace Communication
         };
     }
 
-    public class ComChannel<T>
+    public abstract class ComChannel {}
+
+    public class ComChannel<T> : ComChannel where T: SenderReceiverBaseChannel
     {
-        //====================
-        public ComProtocol protocol;
-        public ComConectionType connectionType;
-        public ComSendReceiveType sendReceiveType;
-        //====================
-        //====================
-        // T is either the 'UDPReceiver', 'UDPSender' or 'TCPServer' object
-        private T _channelObj;
+        public ComChannelParams comParams;
+
+        private T _channelObj; // T is either the 'UDPReceiver', 'UDPSender' or 'TCPServer' object
         public T channelObj
         {
             get {
@@ -42,62 +40,47 @@ namespace Communication
                 _channelObj=value;
             }
         }
-        //====
-        private string _IP;
+
         public string IP
         {
             get {
-                return _IP;
+                return comParams.IP;
             }
             set {
-                _IP=value;
+                comParams.IP=value;
             }
         }
-        //====
-        private int _port;
         public int port
         {
             get {
-                return _port;
+                return comParams.port;
             }
             set {
-                _port=value;
+                comParams.port=value;
             }
         }
-        //====
-        private string _defaultIP;
         public string defaultIP
         {
             get {
-                return _defaultIP;
+                return comParams.defaultIP;
             }
             set {
-                _defaultIP=value;
+                comParams.defaultIP=value;
             }
         }
-        //====
-        private int _defaultPort;
         public int defaultPort
         {
             get {
-                return _defaultPort;
+                return comParams.defaultPort;
             }
             set {
-                _defaultPort=value;
+                comParams.defaultPort=value;
             }
         }
-        //====================
-        //====================
+
         public ComChannel(ComChannelParams parameters)
         {
-            IP = parameters.IP;
-            port = parameters.port;
-            defaultIP = parameters.defaultIP;
-            defaultPort = parameters.defaultPort;
-            protocol = parameters.protocol;
-            connectionType = parameters.connectionType;
-            sendReceiveType = parameters.sendReceiveType;
-            //======
+            comParams = parameters;
             if((ComOps.IP_AddressIsValid(IP) && port > -1) || typeof(T) == typeof(TCPServer))
                 InitChannelObj();
         }
@@ -111,7 +94,7 @@ namespace Communication
                 channelObj = (T)Convert.ChangeType(new UDPReceiver(IP, port), typeof(T));
 
             else if(typeof(T) == typeof(TCPServer))
-                channelObj = (T)Convert.ChangeType(new TCPServer(port, sendReceiveType, IP), typeof(T));
+                channelObj = (T)Convert.ChangeType(new TCPServer(port, comParams.sendReceiveType, IP), typeof(T));
         }
     }
     //=================================
@@ -121,15 +104,16 @@ namespace Communication
     {
         public string defaultIP;
         public string IP;
-        //========
+
         public int defaultPort;
         public int port;
-        //========
+
         public ComProtocol protocol;
         public ComConectionType connectionType;
         public ComSendReceiveType sendReceiveType;
-        //========
-        public ComChannelParams(string _IP, int _port, ComProtocol _protocol, ComConectionType _coType, ComSendReceiveType _sendReceiveType, int _defaultPort, string _defaultIP="127.0.0.1")
+        public ComDataFields dataFields;
+
+        public ComChannelParams(string _IP, int _port, ComProtocol _protocol, ComConectionType _coType, ComDataFields _dataFields, ComSendReceiveType _sendReceiveType, int _defaultPort, string _defaultIP="127.0.0.1")
         {
             defaultIP = _defaultIP;
             IP = _IP;
@@ -137,9 +121,8 @@ namespace Communication
             port = _port;
             protocol = _protocol;
             connectionType = _coType;
+            dataFields = _dataFields;
             sendReceiveType = _sendReceiveType;
         }
     }
-    //=================================
-    //=================================
 }

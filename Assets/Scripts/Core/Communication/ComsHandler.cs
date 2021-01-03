@@ -110,16 +110,16 @@ namespace Communication
             //============
             if(enableDataVisSenderChannel)
             {
-                ComProtocol protocol= ComProtocol.UDP_Sender;
+                /*ComProtocol protocol= ComProtocol.UDP_Sender;
                 ComConectionType coType = ComConectionType.dataVisualization;
                 ComSendReceiveType srType = ComSendReceiveType.classExplicit;
                 ComChannelParams dataParams = new ComChannelParams("169.254.183.22", 25010, protocol, coType, srType, 25010);
-                dataVisSenderChannel = new ComChannel<UDPSender>(dataParams);
+                dataVisSenderChannel = new ComChannel<UDPSender>(dataParams);*/
             }
             //======
             if(enableSimEnvTCPServer)
             {
-                simEnvCoroutine = SimulationEnv_Sending_Coroutine();
+                /*simEnvCoroutine = SimulationEnv_Sending_Coroutine();
                 //shipDeltaRotCoroutine = universe.activeSC.DeltaRotation_Coroutine(senderFrequencySimEnv);
                 ComProtocol protocol= ComProtocol.TCPIP_Sender;
                 ComConectionType coType = ComConectionType.simulationEnv;
@@ -130,16 +130,16 @@ namespace Communication
                     StartCoroutine(simEnvCoroutine);
                     //StartCoroutine(shipDeltaRotCoroutine);
                     simEnvCoroutineIsRunning = true;
-                }
+                }*/
             }
             //======
             if(enableControlAlgoTCPServer)
             {
-                ComProtocol protocol= ComProtocol.TCPIP_Receiver;
+                /*ComProtocol protocol= ComProtocol.TCPIP_Receiver;
                 ComConectionType coType = ComConectionType.shipControlOrders;
                 ComSendReceiveType srType = ComSendReceiveType.receiveOnly;
                 ComChannelParams dataParams = new ComChannelParams("169.254.183.22", 25012, protocol, coType, srType, 25012);
-                controlAlgoTCPServer = new ComChannel<TCPServer>(dataParams);
+                controlAlgoTCPServer = new ComChannel<TCPServer>(dataParams);*/
             }
         }
 

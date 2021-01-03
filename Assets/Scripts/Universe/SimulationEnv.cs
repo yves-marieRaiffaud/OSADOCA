@@ -206,8 +206,7 @@ public struct stringBoolStruct
         optionString = _optionString;
         optionIsSelected = _optionIsSelected;
     }
-    public override string ToString()
-    {
+    public override string ToString() {
         return "Option: " + optionString + "; Bool value: " + optionIsSelected; 
     }
 }

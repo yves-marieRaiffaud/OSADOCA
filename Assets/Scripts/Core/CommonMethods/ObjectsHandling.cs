@@ -92,6 +92,22 @@ namespace CommonMethods
             }
             return ((T)Enum.ToObject(typeof(T), 0), false); // 'false' to indicate that the default value is returned
         }
+        internal static (T,bool) Generic_Str_2_FlagedEnum<T>(string enumString)
+        {
+            // return the correpsonding or the default Enum object, and the bool indicating if an exact match has been found, or if the default value is returned
+            string[] stringArr = Enum.GetNames(typeof(T));
+            int stringIdx = 0;
+            if(enumString.Equals(stringArr[stringIdx]))
+                return ((T)Enum.ToObject(typeof(T), 0), true);
+
+            stringIdx=1;
+            for(int idx=1; idx< Math.Pow(2,stringArr.Length); idx*=2) {
+                if(enumString.Equals(stringArr[stringIdx]))
+                    return ((T)Enum.ToObject(typeof(T), idx), true); // 'true' to indicate that the enum object matching the string 'enumString' has been found
+                stringIdx += 1;
+            }
+            return ((T)Enum.ToObject(typeof(T), 0), false); // 'false' to indicate that the default value is returned
+        }
         public static OrbitalTypes.orbitDefinitionType Str_2_OrbitDefinitionType(string stringEnum)
         {
             (OrbitalTypes.orbitDefinitionType,bool) res = Generic_Str_2_Enum<OrbitalTypes.orbitDefinitionType>(stringEnum);

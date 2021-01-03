@@ -9,10 +9,11 @@ using System.Text;
 
 namespace Communication
 {
+    [Serializable]
     public class TCPServer : SenderReceiverBaseChannel
     {
         // Defines the IPs that the server can accept
-        private string _IP;
+        [SerializeField] private string _IP;
         public string IP
         {
             get {
@@ -22,7 +23,7 @@ namespace Communication
                 _IP=value;
             }
         }
-        private int _port;
+        [SerializeField] private int _port;
         public int port
         {
             get {

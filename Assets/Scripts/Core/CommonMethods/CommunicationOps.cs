@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Mathd_Lib;
 using System.Text.RegularExpressions;
 using Communication;
+using UnityEngine;
+using System;
+using System.Globalization;
 
 namespace CommonMethods
 {
@@ -21,6 +24,36 @@ namespace CommonMethods
                 return res.Item1; // If we found the Enum object mathcing 'stringEnum'
             else
                 return ComProtocol.TCPIP_Sender; // Default value to return
+        }
+        public static ComConectionType Str_2_ComConnectionType(string stringEnum)
+        {
+            (ComConectionType,bool) res = ObjectsHandling.Generic_Str_2_FlagedEnum<ComConectionType>(stringEnum);
+            if(res.Item2)
+                return res.Item1; // If we found the Enum object mathcing 'stringEnum'
+            else
+                return ComConectionType.dataVisualization; // Default value to return
+        }
+        public static ComDataFields Str_2_ComDataFields(string stringEnum)
+        {
+            (ComDataFields,bool) res = ObjectsHandling.Generic_Str_2_FlagedEnum<ComDataFields>(stringEnum);
+            if(res.Item2)
+                return res.Item1; // If we found the Enum object mathcing 'stringEnum'
+            else
+                return ComDataFields.shipAcc; // Default value to return
+        }
+
+        public static ComDataFields MS_Dropdown_2_ComDataField(List<stringBoolStruct> msDrop_options)
+        {
+            ComDataFields outDataFields = ComDataFields.None;
+            foreach(stringBoolStruct pair in msDrop_options) {
+                if(pair.optionIsSelected) {
+                    if(outDataFields == ComDataFields.None)
+                        outDataFields = Str_2_ComDataFields(pair.optionString);
+                    else
+                        outDataFields = outDataFields & Str_2_ComDataFields(pair.optionString);
+                }
+            }
+            return outDataFields;
         }
     }
 }
