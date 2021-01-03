@@ -98,7 +98,6 @@ namespace Communication
         }
     }
     //=================================
-    //=================================
     [Serializable]
     public struct ComChannelParams
     {

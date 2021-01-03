@@ -30,6 +30,7 @@ public class UI_ControlSelection_Panel : MonoBehaviour
     public MainPanelIsSetUp panelIsFullySetUp;
 
     GameObject addPanel_GO;
+    ComsOverallHandler comsHandler;
 
 
     void Start()
@@ -37,16 +38,17 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         if(panelIsFullySetUp == null)
             panelIsFullySetUp = new MainPanelIsSetUp();
 
+        comsHandler = GameObject.Find("ComsHandler").GetComponent<ComsOverallHandler>();
+
         shipControlModeDropdown.onValueChanged.AddListener(delegate{
             ToggleControlTypePanels(shipControlModeDropdown.value);
             SaveSimulationEnvParams();
         });
         InitControlModeDropdownFromSavedParams();
 
-        Load_ComsPanels_FromDisk();
-        Add_AddPanelToScrollView();
+        Load_ComsPanels_FromDisk(); // Read the saved JSON containing the comPanels parameters, else spawning the default panels
+        Add_AddPanelToScrollView(); // Adding an 'AddButton' panel at the end of the scroll view to be able to add new comPanel
 
-        //Save_ComsPanels_2_Disk();
         
         //=======================
         //=======================
@@ -119,42 +121,28 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         else
             return false;
     }
-    void SaveSimulationEnvParams()
-    {
-        // Get fresh simulationEnv values, in case some params were modified when switching between tabs
-        /*SimulationEnv simulationEnv = UseFncs.GetSimEnvObjectFrom_ReadUserParams();
-        // From the retrieved instance, only change the params that were modified in this tab
-        simulationEnv.shipUseKeyboardControl.value = Get_UseKeyboard_SimSettingValue_FromDropdown();
-        string filepath = UsefulFunctions.WriteToFileSimuSettingsSaveData(simulationEnv);
-        Debug.Log("SimSettings has succesfuly been saved at : '" + filepath + "'."); */
-    }
-
-    
-
     public bool SendControlBarTriangleUpdate()
     {
         return CheckPanels_SetUp();
     }
-
     bool Check_Keyboard_Control_SetUp()
     {
         return true;
     }
-
     bool Check_ControlAlgo_Control_SetUp()
     {
         return false;
     }
 
-    
-
-    void InitControlModeDropdownFromSavedParams()
+    void SaveSimulationEnvParams()
     {
-        /*SimulationEnv simulationEnv = UseFncs.GetSimEnvObjectFrom_ReadUserParams();
-        bool useKeyboardParamvalue = simulationEnv.shipUseKeyboardControl.value;
-        shipControlModeDropdown.value = Convert.ToInt32(!useKeyboardParamvalue);*/
+        // Get fresh simulationEnv values, in case some params were modified when switching between tabs
+        SimulationEnv simulationEnv = SimulationEnv.GetSimEnvObjectFrom_ReadUserParams();
+        // From the retrieved instance, only change the params that were modified in this tab
+        simulationEnv.shipUseKeyboardControl.value = Get_UseKeyboard_SimSettingValue_FromDropdown();
+        string filepath = SimulationEnv.WriteToFileSimuSettingsSaveData(simulationEnv);
+        Debug.Log("SimSettings has succesfuly been saved at : '" + filepath + "'.");
     }
-
     bool Get_UseKeyboard_SimSettingValue_FromDropdown()
     {
         bool useKeyboardControlBool;
@@ -173,7 +161,13 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         }
         return useKeyboardControlBool;
     }
-
+    void InitControlModeDropdownFromSavedParams()
+    {
+        SimulationEnv simulationEnv = SimulationEnv.GetSimEnvObjectFrom_ReadUserParams();
+        bool useKeyboardParamvalue = simulationEnv.shipUseKeyboardControl.value;
+        shipControlModeDropdown.value = Convert.ToInt32(!useKeyboardParamvalue);
+    }
+    //=======================
     //=======================
     private void UpdateConnectionChannel<T>(ComChannel<T> channel, TMPro.TMP_InputField ipField, TMPro.TMP_InputField portField)
     where T : SenderReceiverBaseChannel
@@ -217,7 +211,9 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         }
     }
 
-
+    //=======================
+    //=======================
+    // UI HANDLING
     public void Save_ComsPanels_2_Disk()
     {
         List<PanelSavingStruct> dataToSave = new List<PanelSavingStruct>();
@@ -258,8 +254,12 @@ public class UI_ControlSelection_Panel : MonoBehaviour
     }
     void Remove_Every_ComPanels()
     {
+        // removing every comPanel, keeping only the 'Add' panel button
         for(int idx=0; idx<scrollRectPanel_TR.childCount; idx++) {
-            GameObject.Destroy(scrollRectPanel_TR.GetChild(idx).gameObject);
+            UI_ComPanelHandler comPanel;
+            bool res = scrollRectPanel_TR.GetChild(idx).TryGetComponent<UI_ComPanelHandler>(out comPanel);
+            if(res)
+                GameObject.Destroy(scrollRectPanel_TR.GetChild(idx).gameObject);
         }
     }
 
@@ -269,15 +269,19 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         itemGO.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f,0f);
         UI_ComPanelHandler itemComOb = itemGO.GetComponent<UI_ComPanelHandler>();
         itemComOb.Start();
-        itemComOb.mainToggleSwitch.Toggle(toggleSwitch);
-        //itemComOb.mainToggleSwitch.isOn = toggleSwitch;
+        itemComOb.mainToggleSwitch.isOn = toggleSwitch;
+
         itemComOb.protDropdown.value = itemComOb.protDropdown.options.FindIndex(option => option.text == protocol.ToString());
         itemComOb.protDropdown.RefreshShownValue(); // Will call the action related to the protDropdown onValueChanged
         itemComOb.dataTypeDropdown.value = itemComOb.dataTypeDropdown.options.FindIndex(option => option.text == comDataType.ToString());
         itemComOb.dataTypeDropdown.RefreshShownValue(); // Will call the action related to the protDropdown onValueChanged
         itemComOb.ipField.text = ip;
         itemComOb.portField.text = port.ToString();
+
+        itemComOb.Create_ComObj();
+
         itemComOb.hasBeenModified.AddListener(Save_ComsPanels_2_Disk);
+        itemComOb.removedPanelEvent.AddListener(OnPanelRemoved);
         return itemComOb;
     }
 
@@ -286,8 +290,10 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         // Adding the AddPanel prefab to the scrollView, after having loaded the saved comParams
         addPanel_GO = GameObject.Instantiate(addPanelPrefab, Vector3.zero, Quaternion.identity, scrollRectPanel_TR);
         addPanel_GO.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f,0f);
-        addPanel_GO.transform.Find("btn").GetComponent<Button>().onClick.AddListener(AddNewComPanel);
-
+        addPanel_GO.transform.Find("btn").GetComponent<Button>().onClick.AddListener(delegate {
+            AddNewComPanel();
+            Save_ComsPanels_2_Disk();
+        });
     }
     void AddNewComPanel()
     {
@@ -295,7 +301,18 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         UI_ComPanelHandler newPanel = AddComPanelInstance(false, ComProtocol.UDP_Sender, "127.0.0.1", 5012, ComConectionType.dataVisualization);
         addPanel_GO.transform.SetAsLastSibling(); // Make sure the addPanel is the last panel in the group layout canvas
     }
-
-
+    void OnPanelRemoved(int removedIndex)
+    {
+        // When a panel is removed from the UI Group Layout, the removed panel sends its channelIdx. This method thus reassigns the indexes for the comsHandler.channels of the other panels
+        for(int idx=0; idx<scrollRectPanel_TR.childCount; idx++) {
+            UI_ComPanelHandler comPanel;
+            bool res = scrollRectPanel_TR.GetChild(idx).TryGetComponent<UI_ComPanelHandler>(out comPanel);
+            if(res) {
+                if(comPanel.channelIdx > removedIndex)
+                    comPanel.channelIdx -= 1;
+            }
+        }
+        Save_ComsPanels_2_Disk(); // Saving changes
+    }
 
 }

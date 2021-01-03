@@ -12,10 +12,15 @@ using UnityEngine.Events;
 
 public class UI_ComPanelHandler : MonoBehaviour
 {
+    internal ComPanelIsRemoved removedPanelEvent;
+
     bool isAlreadyAwaken=false;
     internal UnityEvent hasBeenModified;
 
+    // Persistent object to handle coms in every scenes (positioned in the DontDestroyOnLoad folder)
     ComsOverallHandler comsHandler;
+
+    internal int channelIdx; // Index of the object linked ComChannel<T> to this UI panel from the 'List<ComChannel> channels' from 'comsHandler'  
 
     RectTransform disabledPanel;
     RectTransform enabledPanel;
@@ -41,16 +46,23 @@ public class UI_ComPanelHandler : MonoBehaviour
         if(!isAlreadyAwaken) {
             if(hasBeenModified == null)
                 hasBeenModified = new UnityEvent();
+
+            if(removedPanelEvent == null)
+                removedPanelEvent = new ComPanelIsRemoved();
+
             Assign_Variables();
             Init_Variables();
+
+            isAlreadyAwaken = true;
         }
-        isAlreadyAwaken = true;
     }
     void Assign_Variables()
     {
         comsHandler = GameObject.Find("ComsHandler").GetComponent<ComsOverallHandler>();
 
         disabledPanel = transform.Find("Disabled").GetComponent<RectTransform>();
+        enabledPanel = transform.Find("Enabled").GetComponent<RectTransform>();
+
         disabledPanelTxt = transform.Find("Disabled/DisabledChannel_txt").GetComponent<TMP_Text>();
         removePanelBtn = transform.Find("Disabled/RemovePanel_btn").GetComponent<Button>();
         removePanelBtn.onClick.AddListener(delegate {
@@ -59,12 +71,12 @@ public class UI_ComPanelHandler : MonoBehaviour
 
         panelTitle = transform.Find("Title_Toggle_Panel/Panel_Title").GetComponent<TMP_Text>();
         mainToggleSwitch = transform.Find("Title_Toggle_Panel/Panel_OverallToggle/Toggle").GetComponent<ToggleSwitch>();
+        mainToggleSwitch.Awake(); // Calling the Awake method as the object is not active --> won't initialize its onX & offX correctly otherwise
         mainToggleSwitch.onValueChanged.AddListener(delegate {
             OnToggleSwitch_Clicked();
             ModifiedPanel_Event();
             });
 
-        enabledPanel = transform.Find("Enabled").GetComponent<RectTransform>();
         protDropdown = transform.Find("Enabled/Protocol_Panel/Protocol_Dropdown").GetComponent<TMP_Dropdown>();
         protDropdown.ClearOptions();
         protDropdown.onValueChanged.AddListener(delegate {
@@ -178,7 +190,34 @@ public class UI_ComPanelHandler : MonoBehaviour
     }
     void OnRemovePanelBtn_Clicked()
     {
-        GameObject.Destroy(gameObject);
+        GameObject.DestroyImmediate(gameObject);
+        removedPanelEvent.Invoke(channelIdx);
+    }
+
+    internal void Create_ComObj()
+    {
+        string ip = ipField.text;
+        int port = int.Parse(portField.text);
+        ComProtocol prot = ComOps.Str_2_ComProtocol(protDropdown.options[protDropdown.value].text);
+        ComConectionType coType = ComOps.Str_2_ComConnectionType(dataTypeDropdown.options[dataTypeDropdown.value].text);
+        //----------------------------------------------------------
+        ComDataFields dataFields= ComDataFields.None; // TO MODIFIY
+        //----------------------------------------------------------
+        ComSendReceiveType sendReceiveType;
+        if(prot.Equals(ComProtocol.UDP_Receiver) || prot.Equals(ComProtocol.UDP_Sender))
+            sendReceiveType = ComSendReceiveType.classExplicit;
+        else {
+            // Is TCPIP_Sender or TCPIP_Receiver
+            if(coType.Equals(ComConectionType.shipControlOrders))
+                sendReceiveType = ComSendReceiveType.receiveOnly;
+            else if(coType.Equals(ComConectionType.simulationEnv))
+                sendReceiveType = ComSendReceiveType.sendOnly;
+            else
+                sendReceiveType = ComSendReceiveType.sendOnly; // DataVizualisation
+        }
+
+        ComChannelParams channelParams = new ComChannelParams(ip, port, prot, coType, dataFields, sendReceiveType, 5012);
+        channelIdx = comsHandler.Add_ComObject(channelParams);
     }
 
     public PanelSavingStruct Get_PanelSavingStruct()

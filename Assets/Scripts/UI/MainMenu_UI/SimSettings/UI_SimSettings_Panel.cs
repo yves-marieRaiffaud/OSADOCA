@@ -33,7 +33,7 @@ public class UI_SimSettings_Panel : MonoBehaviour
     private int yPosition;
 
     [HideInInspector] public MainPanelIsSetUp panelIsFullySetUp;
-    public UseKeyboardSimSettingEvent useKeyboardEvent;
+    internal UseKeyboardSimSettingEvent useKeyboardEvent;
 
     void Start()
     {

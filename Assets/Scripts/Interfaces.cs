@@ -60,3 +60,5 @@ public class MainPanelIsSetUp : UnityEvent<int, int>{}
 
 // Event sending a bool of the value of the parameter 'use keyboard to control the spaceship'
 public class UseKeyboardSimSettingEvent : UnityEvent<bool>{}
+// Panel sending its channelIdx when it is deleted from the UI Main Menu Group Layout
+public class ComPanelIsRemoved : UnityEvent<int>{}

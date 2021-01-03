@@ -36,17 +36,23 @@ public class ToggleSwitch : MonoBehaviour, IPointerDownHandler
 
     public UnityEvent onValueChanged;
 
-    private void OnEnable() {
+    void OnEnable() {
         Toggle(isOn);
     }
 
-    void Awake()
+    internal void Awake()
     {
         if(onValueChanged == null)
             onValueChanged = new UnityEvent();
 
-        offX = toggleIndicator.anchoredPosition.x;
-        onX = offX + 80f;
+        if(isOn) {
+            onX = toggleIndicator.anchoredPosition.x;
+            offX = onX - 80f;
+        }
+        else {
+            offX = toggleIndicator.anchoredPosition.x;
+            onX = offX + 80f;
+        }
     }
 
     public void Toggle(bool value)
