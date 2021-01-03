@@ -24,11 +24,18 @@ namespace Communication
         };
     }
 
-    public abstract class ComChannel {}
-
-    public class ComChannel<T> : ComChannel where T: SenderReceiverBaseChannel
+    public class ComChannel<T> : ComChannelInterface where T: SenderReceiverBaseChannel
     {
-        public ComChannelParams comParams;
+        ComChannelParams _comParams;
+        public ComChannelParams comParams
+        {
+            get {
+                return _comParams;
+            }
+            set {
+                _comParams=value;
+            }
+        }
 
         private T _channelObj; // T is either the 'UDPReceiver', 'UDPSender' or 'TCPServer' object
         public T channelObj
@@ -40,6 +47,12 @@ namespace Communication
                 _channelObj=value;
             }
         }
+        public SenderReceiverBaseChannel channelObj_generic
+        {
+            get {
+                return (SenderReceiverBaseChannel) _channelObj;
+            }
+        }
 
         public string IP
         {
@@ -47,7 +60,7 @@ namespace Communication
                 return comParams.IP;
             }
             set {
-                comParams.IP=value;
+                _comParams.IP=value;
             }
         }
         public int port
@@ -56,7 +69,7 @@ namespace Communication
                 return comParams.port;
             }
             set {
-                comParams.port=value;
+                _comParams.port=value;
             }
         }
         public string defaultIP
@@ -65,7 +78,7 @@ namespace Communication
                 return comParams.defaultIP;
             }
             set {
-                comParams.defaultIP=value;
+                _comParams.defaultIP=value;
             }
         }
         public int defaultPort
@@ -74,7 +87,7 @@ namespace Communication
                 return comParams.defaultPort;
             }
             set {
-                comParams.defaultPort=value;
+                _comParams.defaultPort=value;
             }
         }
 
@@ -84,7 +97,6 @@ namespace Communication
             if((ComOps.IP_AddressIsValid(IP) && port > -1) || typeof(T) == typeof(TCPServer))
                 InitChannelObj();
         }
-
         public void InitChannelObj()
         {
             if(typeof(T) == typeof(UDPSender))

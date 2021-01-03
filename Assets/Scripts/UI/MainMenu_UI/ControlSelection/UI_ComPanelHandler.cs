@@ -9,11 +9,11 @@ using MSDropdownNamespace;
 using System;
 using UnityEngine.Playables;
 using UnityEngine.Events;
+using ComChannelGeneric = Communication.ComChannelInterface;
 
 public class UI_ComPanelHandler : MonoBehaviour
 {
     internal ComPanelIsRemoved removedPanelEvent;
-
     bool isAlreadyAwaken=false;
     internal UnityEvent hasBeenModified;
 
@@ -40,7 +40,8 @@ public class UI_ComPanelHandler : MonoBehaviour
     Button removePanelBtn;
     Button defaultBtn;
     Button testBtn;
-
+    //=======================
+    //=======================
     internal void Start()
     {
         if(!isAlreadyAwaken) {
@@ -96,13 +97,13 @@ public class UI_ComPanelHandler : MonoBehaviour
 
         defaultBtn = transform.Find("Enabled/Btns_Panel/Default_btn").GetComponent<Button>();
         defaultBtn.onClick.AddListener(delegate {
-            OnDefaultBtn_Clicked();
+            OnDefaultBtn_Clicked(comsHandler.channels[channelIdx], ipField, portField);
             ModifiedPanel_Event();
             });
 
         testBtn = transform.Find("Enabled/Btns_Panel/Test_btn").GetComponent<Button>();
         testBtn.onClick.AddListener(delegate {
-            OnTestBtn_Clicked();
+            OnTestConnectionClick(comsHandler.channels[channelIdx]);
             ModifiedPanel_Event();
             });
 
@@ -166,6 +167,8 @@ public class UI_ComPanelHandler : MonoBehaviour
             panelTitle.text = "Sim Environment";
         else if(chosenCoType.Equals(ComConectionType.shipControlOrders))
             panelTitle.text = "Ship Control Orders";
+        else if(chosenCoType.Equals(ComConectionType.None))
+            panelTitle.text = "None";
 
         OnDataToSend_ValueChanged();
     }
@@ -180,14 +183,6 @@ public class UI_ComPanelHandler : MonoBehaviour
         dataToSendReceive_MSDrop.SetOptions(opts);
     }
 
-    void OnDefaultBtn_Clicked()
-    {
-        Debug.Log("Clicked on the default button !");
-    }
-    void OnTestBtn_Clicked()
-    {
-        Debug.Log("Clicked on the test button !");
-    }
     void OnRemovePanelBtn_Clicked()
     {
         GameObject.DestroyImmediate(gameObject);
@@ -219,7 +214,49 @@ public class UI_ComPanelHandler : MonoBehaviour
         ComChannelParams channelParams = new ComChannelParams(ip, port, prot, coType, dataFields, sendReceiveType, 5012);
         channelIdx = comsHandler.Add_ComObject(channelParams);
     }
-
+    //=======================
+    //=======================
+    // CONNECTIONS HANDLING
+    void OnDefaultBtn_Clicked(ComChannelGeneric channel, TMP_InputField fieldIP, TMP_InputField fieldPort)
+    {
+        fieldIP.text = channel.defaultIP;
+        fieldPort.text = channel.defaultPort.ToString();
+        UpdateConnectionChannel(channel, fieldIP, fieldPort);
+    }
+    void UpdateConnectionChannel(ComChannelInterface channel, TMP_InputField ipField, TMP_InputField portField)
+    {
+        channel.IP = ipField.text;
+        if(!ComOps.IP_AddressIsValid(channel.IP))
+            return;
+        int parsedPort;
+        if(int.TryParse(portField.text, out parsedPort)) {
+            channel.port = int.Parse(portField.text);
+            channel.InitChannelObj();
+        }
+    }
+    void OnTestConnectionClick(ComChannelGeneric channelToTest)
+    {
+        Debug.Log("channelIdx = " + channelIdx);
+        UpdateConnectionChannel(channelToTest, ipField, portField);
+        Debug.Log("channelToTest.comParams.protocol = " + channelToTest.comParams.protocol);
+        if(channelToTest.comParams.protocol.Equals(ComProtocol.UDP_Sender)) {
+            UDPSender sender = channelToTest.channelObj_generic as UDPSender;
+            if(sender == null)
+                Debug.LogWarning("UDPSender 'sender' is null. Can not send 'TEST' message to target.");
+            sender.Send("TEST");
+            Debug.Log("A test message has been sent using UDP at IP: " + sender.IP + " and port: " + sender.port + ". Channel open status is " + sender.channelIsOpen);
+        }
+        else if(channelToTest.comParams.protocol.Equals(ComProtocol.UDP_Receiver)) {
+            UDPReceiver receiver = channelToTest.channelObj_generic as UDPReceiver;
+        }
+        else if(channelToTest.comParams.protocol.Equals(ComProtocol.TCPIP_Sender)) {
+            TCPServer server = channelToTest.channelObj_generic as TCPServer;
+            server.Send("TEST");
+            Debug.Log("A test message has been sent using TCP/IP at IP: " + server.IP + " and port: " + server.port);
+        }
+    }
+    //=======================
+    //=======================
     public PanelSavingStruct Get_PanelSavingStruct()
     {
         bool comIsEnabled = mainToggleSwitch.isOn;

@@ -20,7 +20,7 @@ public class UI_ControlSelection_Panel : MonoBehaviour
     public GameObject keyboardControlPanel;
 
     [Header("Control Mode Dropdown")]
-    public TMPro.TMP_Dropdown shipControlModeDropdown;
+    public TMP_Dropdown shipControlModeDropdown;
 
     [Header("Com Panel Prefab")]
     public GameObject comPanelPrefab;
@@ -31,7 +31,6 @@ public class UI_ControlSelection_Panel : MonoBehaviour
 
     GameObject addPanel_GO;
     ComsOverallHandler comsHandler;
-
 
     void Start()
     {
@@ -48,29 +47,8 @@ public class UI_ControlSelection_Panel : MonoBehaviour
 
         Load_ComsPanels_FromDisk(); // Read the saved JSON containing the comPanels parameters, else spawning the default panels
         Add_AddPanelToScrollView(); // Adding an 'AddButton' panel at the end of the scroll view to be able to add new comPanel
-
-        
-        //=======================
-        //=======================
-        /*ipDataVisuInputField.onValueChanged.AddListener(delegate{
-            UpdateConnectionChannel(comHandler.dataVisSenderChannel, ipDataVisuInputField, portDataVisuInputField);
-        });
-        portDataVisuInputField.onValueChanged.AddListener(delegate{
-            UpdateConnectionChannel(comHandler.dataVisSenderChannel, ipDataVisuInputField, portDataVisuInputField);
-        });
-        //===========
-        //===========
-        dataVisuTest_btn.onClick.AddListener(delegate{OnTestConnectionClick(comHandler.dataVisSenderChannel);});
-        simEnvTest_btn.onClick.AddListener(delegate{OnTestConnectionClick(comHandler.simEnvTCPServer);});
-        controlAlgoTest_btn.onClick.AddListener(delegate{OnTestConnectionClick(comHandler.controlAlgoTCPServer);});
-
-        dataVisuRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.dataVisSenderChannel, ipDataVisuInputField, portDataVisuInputField);});
-        */
-        //simEnvRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.simEnvSenderChannel, ipSimEnvInputField, portSimEnvInputField);});
-        //controlAlgoRevert_btn.onClick.AddListener(delegate{OnRevertBtnClick(comHandler.controlAlgoReceiverChannel, ipControlAlgoInputField, portControlAlgoInputField);});
-        //=======================
-        //=======================
-        //ToggleControlTypePanels(1); // Init at remote connections
+        //==================
+        //==================
         shipControlModeDropdown.value = 1;
         CheckPanels_SetUp();
     }
@@ -133,7 +111,9 @@ public class UI_ControlSelection_Panel : MonoBehaviour
     {
         return false;
     }
-
+    //=======================
+    //=======================
+    // SIMULATION ENV SAVING
     void SaveSimulationEnvParams()
     {
         // Get fresh simulationEnv values, in case some params were modified when switching between tabs
@@ -167,50 +147,6 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         bool useKeyboardParamvalue = simulationEnv.shipUseKeyboardControl.value;
         shipControlModeDropdown.value = Convert.ToInt32(!useKeyboardParamvalue);
     }
-    //=======================
-    //=======================
-    private void UpdateConnectionChannel<T>(ComChannel<T> channel, TMPro.TMP_InputField ipField, TMPro.TMP_InputField portField)
-    where T : SenderReceiverBaseChannel
-    {
-        channel.IP = ipField.text;
-        if(!ComOps.IP_AddressIsValid(channel.IP))
-            return;
-        int parsedPort;
-        if(int.TryParse(portField.text, out parsedPort))
-        {
-            channel.port = int.Parse(portField.text);
-            channel.InitChannelObj();
-        }
-    }
-
-    private void OnRevertBtnClick<T>(ComChannel<T> channel, TMPro.TMP_InputField fieldIP, TMPro.TMP_InputField fieldPort)
-    where T : SenderReceiverBaseChannel
-    {
-        fieldIP.text = channel.defaultIP;
-        fieldPort.text = channel.defaultPort.ToString();
-        UpdateConnectionChannel(channel, fieldIP, fieldPort);
-    }
-
-    private void OnTestConnectionClick<T>(ComChannel<T> channelToTest)
-    where T : SenderReceiverBaseChannel
-    {
-        if(typeof(T) == typeof(UDPSender)) {
-            UDPSender sender = channelToTest.channelObj as UDPSender;
-            if(sender == null)
-                Debug.LogWarning("UDPSender 'sender' is null. Can not send 'TEST' message to target.");
-            sender.Send("TEST");
-            Debug.Log("A test message has been sent using UDP at IP: " + sender.IP + " and port: " + sender.port + ". Channel open status is " + sender.channelIsOpen);
-        }
-        else if(typeof(T) == typeof(UDPReceiver)) {
-            UDPReceiver receiver = channelToTest.channelObj as UDPReceiver;
-        }
-        else if(typeof(T) == typeof(TCPServer)) {
-            TCPServer server = channelToTest.channelObj as TCPServer;
-            server.Send("TEST");
-            Debug.Log("A test message has been sent using TCP/IP at IP: " + server.IP + " and port: " + server.port);
-        }
-    }
-
     //=======================
     //=======================
     // UI HANDLING
@@ -300,9 +236,19 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         // Adding a new comPanel because the addPanel button has been clicked, and moving AddPanel button to the end of the scrollView
         UI_ComPanelHandler newPanel = AddComPanelInstance(false, ComProtocol.UDP_Sender, "127.0.0.1", 5012, ComConectionType.dataVisualization);
         addPanel_GO.transform.SetAsLastSibling(); // Make sure the addPanel is the last panel in the group layout canvas
+        Check_AddPanel_MaxNBPanels();
+    }
+    void Check_AddPanel_MaxNBPanels()
+    {
+        if(comsHandler.channels.Count == ComsOverallHandler.maxNBConnections-1)
+            addPanel_GO.SetActive(!addPanel_GO.activeSelf);
     }
     void OnPanelRemoved(int removedIndex)
     {
+        Check_AddPanel_MaxNBPanels();
+
+        comsHandler.channels.RemoveAt(removedIndex);
+
         // When a panel is removed from the UI Group Layout, the removed panel sends its channelIdx. This method thus reassigns the indexes for the comsHandler.channels of the other panels
         for(int idx=0; idx<scrollRectPanel_TR.childCount; idx++) {
             UI_ComPanelHandler comPanel;
@@ -314,5 +260,4 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         }
         Save_ComsPanels_2_Disk(); // Saving changes
     }
-
 }

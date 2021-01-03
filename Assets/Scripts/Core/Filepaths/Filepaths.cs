@@ -28,7 +28,7 @@ public static class Filepaths
 
     public const string userAdded_launchPads = "/custom_launchPads.json";
 
-    public const string comsPanel_params = "/comsPanels_params.json";
+    public const string comsPanel_params = "/communication_remoteControl.json";
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
     public enum EngineLayersName { Spaceship, CelestialBody, Orbit, StarDome, SpaceshipVectors };

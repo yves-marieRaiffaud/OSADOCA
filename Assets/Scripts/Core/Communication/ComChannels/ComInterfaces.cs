@@ -12,6 +12,18 @@ namespace Communication
         int port {get; set;}
     }
 
+    public interface ComChannelInterface
+    {
+        SenderReceiverBaseChannel channelObj_generic {get;}
+        ComChannelParams comParams {get; set;}
+        string IP {get; set;}
+        int port {get; set;}
+        string defaultIP {get; set;}
+        int defaultPort {get; set;}
+
+        void InitChannelObj();
+    }
+
     [Serializable]
     public class OnDataReceivedEvent : UnityEvent<string> {}
 }
