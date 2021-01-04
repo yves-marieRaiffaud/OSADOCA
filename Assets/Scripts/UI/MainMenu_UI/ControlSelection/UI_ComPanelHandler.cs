@@ -1,14 +1,14 @@
+using TMPro;
+using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using System.Linq;
-using ComOps = CommonMethods.CommunicationOps;
-using Communication;
-using TMPro;
-using MSDropdownNamespace;
-using System;
-using UnityEngine.Playables;
 using UnityEngine.Events;
+using System.Collections.Generic;
+
+using Communication;
+using MSDropdownNamespace;
+using ComOps = CommonMethods.CommunicationOps;
 using ComChannelGeneric = Communication.ComChannelInterface;
 
 public class UI_ComPanelHandler : MonoBehaviour
@@ -130,6 +130,8 @@ public class UI_ComPanelHandler : MonoBehaviour
 
     void OnToggleSwitch_Clicked()
     {
+        if(comsHandler.channels != null && comsHandler.channels.Count > 0)
+            comsHandler.channels[channelIdx].channelObj_generic.isActive = mainToggleSwitch.isOn;
         disabledPanel.gameObject.SetActive(!mainToggleSwitch.isOn);
         enabledPanel.gameObject.SetActive(mainToggleSwitch.isOn);
     }
@@ -213,6 +215,7 @@ public class UI_ComPanelHandler : MonoBehaviour
 
         ComChannelParams channelParams = new ComChannelParams(ip, port, prot, coType, dataFields, sendReceiveType, 5012);
         channelIdx = comsHandler.Add_ComObject(channelParams);
+        comsHandler.channels[channelIdx].channelObj_generic.isActive = mainToggleSwitch.isOn;
     }
     //=======================
     //=======================
@@ -254,6 +257,20 @@ public class UI_ComPanelHandler : MonoBehaviour
             server.Send("TEST");
             Debug.Log("A test message has been sent using TCP/IP at IP: " + server.IP + " and port: " + server.port);
         }
+    }
+    //=======================
+    //=======================
+    internal static bool ComChannelInterface_Is_Outgoing_SimEnv(ComChannelInterface comObj)
+    {
+        if(comObj.comParams.connectionType.Equals(ComConectionType.simulationEnv) && comObj.channelObj_generic.isActive)
+            return true;
+        return false;
+    }
+    internal static bool ComChannelInterface_Is_Incoming_ShipOrders(ComChannelInterface comObj)
+    {
+        if(comObj.comParams.connectionType.Equals(ComConectionType.shipControlOrders) && comObj.channelObj_generic.isActive)
+            return true;
+        return false;
     }
     //=======================
     //=======================

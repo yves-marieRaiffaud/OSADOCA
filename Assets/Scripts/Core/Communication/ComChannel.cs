@@ -3,8 +3,6 @@ using UnityEngine.UI;
 using System.IO;
 using System.Collections.Generic;
 using ComOps = CommonMethods.CommunicationOps;
-using System.Net;
-using System.Net.Sockets;
 using System;
 
 namespace Communication

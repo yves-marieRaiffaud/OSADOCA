@@ -31,6 +31,17 @@ namespace Communication
                 _port=value;
             }
         }
+        
+        bool _isActive;
+        public bool isActive
+        {
+            get {
+                return _isActive;
+            }
+            set {
+                _isActive=value;
+            }
+        }
         //========
         private IPEndPoint _RemoteEndPoint;
         private UdpClient _TransmitClient;
@@ -55,39 +66,36 @@ namespace Communication
         //=======================
         public void Send(byte[] val)
         {
-            if(!channelIsOpen) {
-                Debug.LogWarning("Channel of type UDPSender at IP:" + IP + " and port: " + port + " is closed. The 'Send' method can not be used while the channel is closed.");
-                return;
-            }
-            try
+            if(_isActive)
             {
-                _TransmitClient.Send(val, val.Length);
-            }
-            catch (Exception err)
-            {
-                Debug.Log("<color=red>" + err.Message + "</color>");
+                if(!channelIsOpen) {
+                    Debug.LogWarning("Channel of type UDPSender at IP:" + IP + " and port: " + port + " is closed. The 'Send' method can not be used while the channel is closed.");
+                    return;
+                }
+                try {
+                    _TransmitClient.Send(val, val.Length);
+                }
+                catch (Exception err) {
+                    Debug.Log("<color=red>" + err.Message + "</color>");
+                }
             }
         }
-        
         public void Send(double val)
         {
             byte[] data = BitConverter.GetBytes(val);
             Send(data);
         }
-
         public void Send(double[] val)
         {
             byte[] blockData = new byte[val.Length * sizeof(double)];
             Buffer.BlockCopy(val, 0, blockData, 0, blockData.Length);
             Send(blockData);
         }
-
         public void Send(string val)
         {
             byte[] data = Encoding.ASCII.GetBytes(val);
             Send(data);
         }
-
         public void Send(string[] val)
         {
             List<byte> byteList = new List<byte>();
@@ -113,12 +121,10 @@ namespace Communication
         /// </summary>
         public void Terminate()
         {
-            try
-            {
+            try {
                 _TransmitClient.Close();
             }
-            catch (Exception err)
-            {
+            catch (Exception err) {
                 Debug.Log("<color=red>" + err.Message + "</color>");
             }
         }

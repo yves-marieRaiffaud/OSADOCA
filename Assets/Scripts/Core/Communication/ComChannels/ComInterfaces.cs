@@ -10,6 +10,7 @@ namespace Communication
     {
         string IP {get; set;}
         int port {get; set;}
+        bool isActive {get; set;}
     }
 
     public interface ComChannelInterface

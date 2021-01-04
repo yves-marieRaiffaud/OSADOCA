@@ -34,7 +34,18 @@ namespace Communication
             }
         }
         
-        public bool serverIsActive
+        bool _isActive;
+        public bool isActive
+        {
+            get {
+                return _isActive;
+            }
+            set {
+                _isActive=value;
+            }
+        }
+
+        public bool serverIsConnected
         {
             get {
                 return server.Server.Connected;
@@ -67,11 +78,9 @@ namespace Communication
             serverThread.IsBackground = true;
             serverThread.Start();
         }
-
         private void StartServer()
         {
-            try
-            {
+            try {
                 server = new TcpListener(IPAddress.Parse(IP), port);
                 Debug.Log("Started Server listening IP: " + IP);
                 server.Start();
@@ -81,41 +90,39 @@ namespace Communication
                 String data = null;
 
                 // Enter the listening loop.
-                while(true)
-                {
-                    Debug.Log("Waiting for a connection on port " + port + "...");
-
-                    // Perform a blocking call to accept requests.
-                    // You could also use server.AcceptSocket() here.
-                    tcpClient = server.AcceptTcpClient();
-                    Debug.Log("Connected!");
-                    data = null;
-
-                    // Get a stream object for reading and writing
-                    matlabStream = tcpClient.GetStream();
-
-                    if(sendReceiveType == ComSendReceiveType.sendOnly)
-                        continue;
-                    int i;
-                    // Loop to receive all the data sent by the client.
-                    while((i = matlabStream.Read(bytes, 0, bytes.Length))!=0)
+                while(true) {
+                    if(_isActive)
                     {
-                        // Translate data bytes to a ASCII string.
-                        data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                        lastReceivedData = data;
+                        Debug.Log("Waiting for a connection on port " + port + "...");
+                        // Perform a blocking call to accept requests.
+                        // You could also use server.AcceptSocket() here.
+                        tcpClient = server.AcceptTcpClient();
+                        Debug.Log("Connected!");
+                        data = null;
+                        //--------------------
+                        // Get a stream object for reading and writing
+                        matlabStream = tcpClient.GetStream();
+                        //--------------------
+                        if(sendReceiveType == ComSendReceiveType.sendOnly)
+                            continue;
+                        int i;
+                        // Loop to receive all the data sent by the client.
+                        while((i = matlabStream.Read(bytes, 0, bytes.Length))!=0) {
+                            // Translate data bytes to a ASCII string.
+                            data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                            lastReceivedData = data;
 
-                        if(onDataReceivedEvent != null)
-                            onDataReceivedEvent.Invoke(data);
+                            if(onDataReceivedEvent != null)
+                                onDataReceivedEvent.Invoke(data);
+                        }
+                        tcpClient.Close();
                     }
-                    tcpClient.Close();
                 }
             }
-            catch(SocketException e)
-            {
+            catch(SocketException e) {
                 Debug.Log("SocketException: " + e);
             }
-            finally
-            {
+            finally {
                 server.Stop();
             }
         }
@@ -130,44 +137,40 @@ namespace Communication
         //=============
         public void Send(byte[] val)
         {
-            if(sendReceiveType == ComSendReceiveType.receiveOnly)
-                return;
-            try
+            if(_isActive)
             {
-                matlabStream.Write(val, 0, val.Length);
-            }
-            catch (Exception err)
-            {
-                Debug.Log("<color=red>" + err.Message + "</color>");
+                if(sendReceiveType == ComSendReceiveType.receiveOnly)
+                    return;
+                try {
+                    matlabStream.Write(val, 0, val.Length);
+                }
+                catch (Exception err) {
+                    Debug.Log("<color=red>" + err.Message + "</color>");
+                }
             }
         }
-
         public void Send(double val)
         {
             byte[] data = BitConverter.GetBytes(val);
             Send(data);
         }
-
         public void Send(double[] val)
         {
             byte[] blockData = new byte[val.Length * sizeof(double)];
             Buffer.BlockCopy(val, 0, blockData, 0, blockData.Length);
             Send(blockData);
         }
-
         public void Send(string val)
         {
             byte[] data = Encoding.ASCII.GetBytes(val);
             Send(data);
         }
-
         public void Send(string[] val)
         {
             List<byte> byteList = new List<byte>();
             byte[] spaceASCIIBytes = Encoding.ASCII.GetBytes(" ");
 
-            foreach(string stringItem in val)
-            {
+            foreach(string stringItem in val) {
                 foreach(byte byteItem in Encoding.ASCII.GetBytes(stringItem))
                     byteList.Add(byteItem);
                 // Add a space ' ' between each sent string
@@ -183,14 +186,12 @@ namespace Communication
         //=============
         public void StopServer()
         {
-            try
-            {
+            try {
                 server.Stop();
                 serverThread.Abort();
                 serverThread = null;
             }
-            catch(SocketException e)
-            {
+            catch(SocketException e) {
                 Debug.Log("SocketException: " + e);
             }
         }

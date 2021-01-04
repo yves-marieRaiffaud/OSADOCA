@@ -22,7 +22,6 @@ public class ComsOverallHandler : MonoBehaviour
         channels = new List<ComChannelInterface>();
     }
 
-    // TO FIX: wrong int index
     public int Add_ComObject(ComChannelParams comChannelParams)
     {
         // Method that creates a new com objects with the speciied ComChannelParams and returns the int index of the object in the 'channels' List<ComChannel>
@@ -36,7 +35,7 @@ public class ComsOverallHandler : MonoBehaviour
                 channels.Add(new ComChannel<UDPReceiver>(comChannelParams));
                 Debug.Log("UDP_Receiver added = " + (channels.Count-1));
                 break;
-            case ComProtocol.TCPIP_Sender | ComProtocol.TCPIP_Receiver:
+            case ComProtocol.TCPIP_Sender: case ComProtocol.TCPIP_Receiver:
                 channels.Add(new ComChannel<TCPServer>(comChannelParams));
                 Debug.Log("TCPServer added = " + (channels.Count-1));
                 break;

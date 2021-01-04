@@ -52,6 +52,7 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         shipControlModeDropdown.value = 1;
         CheckPanels_SetUp();
     }
+
     void ToggleControlTypePanels(int selectedDropdownIdx)
     {
         switch(selectedDropdownIdx)
@@ -109,7 +110,21 @@ public class UI_ControlSelection_Panel : MonoBehaviour
     }
     bool Check_ControlAlgo_Control_SetUp()
     {
-        return false;
+        // In order to return true to the remote connection panel:
+        // One of the connection must be  an outgoing connection sending the simulationEnv (either UDP_Sender or TCP_Sender)
+        // One of the connection must be an  incoming connection receiving the shipControlOrders (either UDP_Receiver or TCP_Receiver)
+        bool simEnv_OK = false;
+        bool shipOrders_OK = false;
+        foreach(ComChannelInterface comItem in comsHandler.channels) {
+            if(UI_ComPanelHandler.ComChannelInterface_Is_Incoming_ShipOrders(comItem))
+                shipOrders_OK = true;
+            if(UI_ComPanelHandler.ComChannelInterface_Is_Outgoing_SimEnv(comItem))
+                simEnv_OK = true;
+        }
+        if(simEnv_OK && shipOrders_OK)
+            return true;
+        else
+            return false;
     }
     //=======================
     //=======================
@@ -153,10 +168,11 @@ public class UI_ControlSelection_Panel : MonoBehaviour
     public void Save_ComsPanels_2_Disk()
     {
         List<PanelSavingStruct> dataToSave = new List<PanelSavingStruct>();
-        for(int idx=0; idx<scrollRectPanel_TR.childCount; idx++)
+        foreach(Transform child in scrollRectPanel_TR)//for(int idx=0; idx<scrollRectPanel_TR.childCount; idx++)
         {
             UI_ComPanelHandler comPanel;
-            bool res = scrollRectPanel_TR.GetChild(idx).TryGetComponent<UI_ComPanelHandler>(out comPanel);
+            bool res = child.TryGetComponent<UI_ComPanelHandler>(out comPanel);
+            //bool res = scrollRectPanel_TR.GetChild(idx).TryGetComponent<UI_ComPanelHandler>(out comPanel);
             if(res)
                 dataToSave.Add(comPanel.Get_PanelSavingStruct());
         }
@@ -191,11 +207,12 @@ public class UI_ControlSelection_Panel : MonoBehaviour
     void Remove_Every_ComPanels()
     {
         // removing every comPanel, keeping only the 'Add' panel button
-        for(int idx=0; idx<scrollRectPanel_TR.childCount; idx++) {
+        foreach(Transform child in scrollRectPanel_TR)
+        {
             UI_ComPanelHandler comPanel;
-            bool res = scrollRectPanel_TR.GetChild(idx).TryGetComponent<UI_ComPanelHandler>(out comPanel);
+            bool res = child.TryGetComponent<UI_ComPanelHandler>(out comPanel);
             if(res)
-                GameObject.Destroy(scrollRectPanel_TR.GetChild(idx).gameObject);
+                GameObject.Destroy(child.gameObject);
         }
     }
 
@@ -246,13 +263,13 @@ public class UI_ControlSelection_Panel : MonoBehaviour
     void OnPanelRemoved(int removedIndex)
     {
         Check_AddPanel_MaxNBPanels();
-
         comsHandler.channels.RemoveAt(removedIndex);
 
         // When a panel is removed from the UI Group Layout, the removed panel sends its channelIdx. This method thus reassigns the indexes for the comsHandler.channels of the other panels
-        for(int idx=0; idx<scrollRectPanel_TR.childCount; idx++) {
+        foreach(Transform child in scrollRectPanel_TR)
+        {
             UI_ComPanelHandler comPanel;
-            bool res = scrollRectPanel_TR.GetChild(idx).TryGetComponent<UI_ComPanelHandler>(out comPanel);
+            bool res = child.TryGetComponent<UI_ComPanelHandler>(out comPanel);
             if(res) {
                 if(comPanel.channelIdx > removedIndex)
                     comPanel.channelIdx -= 1;

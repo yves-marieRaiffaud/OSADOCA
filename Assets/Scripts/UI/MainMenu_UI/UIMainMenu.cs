@@ -44,6 +44,7 @@ public class UIMainMenu : MonoBehaviour
     [HideInInspector] public RectTransform activeContentPanel; // Panel containing all the sub panels for each menu
     //===================    
     bool flyBtnIsAlreadyReady;
+    bool hasInitColorBars=false;
 
     void Start()
     {
@@ -78,6 +79,20 @@ public class UIMainMenu : MonoBehaviour
         // I don't know why this behaviour is happening (animation is triggered even when 'OnenableDisable_ControlAnimation' code is commented out)
         OnMainMenuButtonClick(3);
         OnMainMenuButtonClick(0);
+    }
+    void InitColorBars()
+    {
+        int selectedIdx=0;
+        if(panel_StartLoc.activeSelf)
+            selectedIdx = 0;
+        else if(panel_Spacecraft.activeSelf)
+            selectedIdx = 1;
+        else if(panel_ControlSelection.activeSelf)
+            selectedIdx = 3;
+        else if(panel_SimSettings.activeSelf)
+            selectedIdx = 4;
+        HandleControlBarLineColor(selectedIdx);
+        hasInitColorBars = true;
     }
     //---------------------------------------------
     //---------------------------------------------
@@ -140,6 +155,11 @@ public class UIMainMenu : MonoBehaviour
             flyBtnIsAlreadyReady = false;
             outputValue = false;
         }
+
+        // Run only once during the first time to init the colors of the ColorBar
+        if(!hasInitColorBars)
+            InitColorBars();
+
         return outputValue;
     }
     bool CheckFLYReadiness()
