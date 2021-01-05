@@ -55,7 +55,7 @@
      <Compile Include="Assets\Scripts\Core\Communication\ComChannels\TCPServer.cs" />
      <Compile Include="Assets\Scripts\Core\Communication\ComChannels\UDPReceiver.cs" />
      <Compile Include="Assets\Scripts\Core\Communication\ComChannels\UDPSender.cs" />
-     <Compile Include="Assets\Scripts\Core\Communication\ComsHandler.cs" />
+     <Compile Include="Assets\Scripts\Core\Communication\ComsCoroutines.cs" />
      <Compile Include="Assets\Scripts\Core\Constants\UniverseConstants.cs" />
      <Compile Include="Assets\Scripts\Core\ExtensionMethods.cs" />
      <Compile Include="Assets\Scripts\Core\Filepaths\Filepaths.cs" />

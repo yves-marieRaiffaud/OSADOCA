@@ -143,5 +143,12 @@ namespace CommonMethods
             }
         }
 
+        public static IEnumerable<Enum> GetEnumFlags(Enum input)
+        {
+            foreach (Enum value in Enum.GetValues(input.GetType()))
+                if (input.HasFlag(value))
+                    yield return value;
+        }
+
     }
 }

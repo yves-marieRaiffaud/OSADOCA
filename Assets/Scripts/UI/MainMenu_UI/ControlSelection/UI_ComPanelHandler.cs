@@ -198,7 +198,7 @@ public class UI_ComPanelHandler : MonoBehaviour
         ComProtocol prot = ComOps.Str_2_ComProtocol(protDropdown.options[protDropdown.value].text);
         ComConectionType coType = ComOps.Str_2_ComConnectionType(dataTypeDropdown.options[dataTypeDropdown.value].text);
         //----------------------------------------------------------
-        ComDataFields dataFields= ComDataFields.None; // TO MODIFIY
+        Enum dataFields = null; // TO MODIFIY
         //----------------------------------------------------------
         ComSendReceiveType sendReceiveType;
         if(prot.Equals(ComProtocol.UDP_Receiver) || prot.Equals(ComProtocol.UDP_Sender))

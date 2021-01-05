@@ -33,24 +33,45 @@ namespace CommonMethods
             else
                 return ComConectionType.dataVisualization; // Default value to return
         }
-        public static ComDataFields Str_2_ComDataFields(string stringEnum)
+        public static ComDataFieldsIn Str_2_ComDataFieldsIn(string stringEnum)
         {
-            (ComDataFields,bool) res = ObjectsHandling.Generic_Str_2_FlagedEnum<ComDataFields>(stringEnum);
+            (ComDataFieldsIn,bool) res = ObjectsHandling.Generic_Str_2_FlagedEnum<ComDataFieldsIn>(stringEnum);
             if(res.Item2)
                 return res.Item1; // If we found the Enum object mathcing 'stringEnum'
             else
-                return ComDataFields.shipAcc; // Default value to return
+                return ComDataFieldsIn.None; // Default value to return
+        }
+        public static ComDataFieldsOut Str_2_ComDataFieldsOut(string stringEnum)
+        {
+            (ComDataFieldsOut,bool) res = ObjectsHandling.Generic_Str_2_FlagedEnum<ComDataFieldsOut>(stringEnum);
+            if(res.Item2)
+                return res.Item1; // If we found the Enum object mathcing 'stringEnum'
+            else
+                return ComDataFieldsOut.None; // Default value to return
         }
 
-        public static ComDataFields MS_Dropdown_2_ComDataField(List<stringBoolStruct> msDrop_options)
+        public static ComDataFieldsOut MS_Dropdown_2_ComDataFieldOut(List<stringBoolStruct> msDrop_options)
         {
-            ComDataFields outDataFields = ComDataFields.None;
+            ComDataFieldsOut outDataFields = ComDataFieldsOut.None;
             foreach(stringBoolStruct pair in msDrop_options) {
                 if(pair.optionIsSelected) {
-                    if(outDataFields == ComDataFields.None)
-                        outDataFields = Str_2_ComDataFields(pair.optionString);
+                    if(outDataFields == ComDataFieldsOut.None)
+                        outDataFields = Str_2_ComDataFieldsOut(pair.optionString);
                     else
-                        outDataFields = outDataFields & Str_2_ComDataFields(pair.optionString);
+                        outDataFields = outDataFields & Str_2_ComDataFieldsOut(pair.optionString);
+                }
+            }
+            return outDataFields;
+        }
+        public static ComDataFieldsIn MS_Dropdown_2_ComDataFieldIn(List<stringBoolStruct> msDrop_options)
+        {
+            ComDataFieldsIn outDataFields = ComDataFieldsIn.None;
+            foreach(stringBoolStruct pair in msDrop_options) {
+                if(pair.optionIsSelected) {
+                    if(outDataFields == ComDataFieldsIn.None)
+                        outDataFields = Str_2_ComDataFieldsIn(pair.optionString);
+                    else
+                        outDataFields = outDataFields & Str_2_ComDataFieldsIn(pair.optionString);
                 }
             }
             return outDataFields;

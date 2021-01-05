@@ -10,7 +10,10 @@ namespace Communication
     public enum ComProtocol { UDP_Sender, UDP_Receiver, TCPIP_Sender, TCPIP_Receiver }
     [Flags] public enum ComConectionType { None=0, dataVisualization=1, simulationEnv=2, shipControlOrders=4 }
     public enum ComSendReceiveType { sendOnly, receiveOnly, sendReceive, classExplicit }
-    [Flags] public enum ComDataFields { None=0, shipAcc=1, shipVel=2, shipVelIncr=4, shipPos=8, shipDeltaRot=16 };
+
+    // Enum containing both the 'incomingDataFields' & the 'outgoingDataFields'
+    [Flags] public enum ComDataFieldsOut { None=0, shipAcc=1, shipVel=2, shipVelIncr=4, shipPos=8, shipDeltaRot=16 };
+    [Flags] public enum ComDataFieldsIn { None=0, propulsionIsOn=1 };
 
     public class ComChannelDict
     {
@@ -120,9 +123,9 @@ namespace Communication
         public ComProtocol protocol;
         public ComConectionType connectionType;
         public ComSendReceiveType sendReceiveType;
-        public ComDataFields dataFields;
+        public Enum dataFields;
 
-        public ComChannelParams(string _IP, int _port, ComProtocol _protocol, ComConectionType _coType, ComDataFields _dataFields, ComSendReceiveType _sendReceiveType, int _defaultPort, string _defaultIP="127.0.0.1")
+        public ComChannelParams(string _IP, int _port, ComProtocol _protocol, ComConectionType _coType, Enum _dataFields, ComSendReceiveType _sendReceiveType, int _defaultPort, string _defaultIP="127.0.0.1")
         {
             defaultIP = _defaultIP;
             IP = _IP;

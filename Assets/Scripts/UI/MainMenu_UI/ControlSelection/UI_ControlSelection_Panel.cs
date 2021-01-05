@@ -216,7 +216,7 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         }
     }
 
-    UI_ComPanelHandler AddComPanelInstance(bool toggleSwitch, ComProtocol protocol, string ip, int port, ComConectionType comDataType=ComConectionType.None, ComDataFields dataFields=ComDataFields.None)
+    UI_ComPanelHandler AddComPanelInstance(bool toggleSwitch, ComProtocol protocol, string ip, int port, ComConectionType comDataType=ComConectionType.None, Enum dataFields=null)
     {
         GameObject itemGO = GameObject.Instantiate(comPanelPrefab, Vector3.zero, Quaternion.identity, scrollRectPanel_TR);
         itemGO.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f,0f);
