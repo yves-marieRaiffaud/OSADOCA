@@ -263,7 +263,7 @@ public class UI_ControlSelection_Panel : MonoBehaviour
     void OnPanelRemoved(int removedIndex)
     {
         Check_AddPanel_MaxNBPanels();
-        comsHandler.channels.RemoveAt(removedIndex);
+        comsHandler.Remove_ComObject_At_Index(removedIndex);
 
         // When a panel is removed from the UI Group Layout, the removed panel sends its channelIdx. This method thus reassigns the indexes for the comsHandler.channels of the other panels
         foreach(Transform child in scrollRectPanel_TR)
