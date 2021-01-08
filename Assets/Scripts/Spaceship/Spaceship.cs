@@ -118,7 +118,8 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
         string shipOrbitalParamsFilePath = Application.persistentDataPath + Filepaths.shipToLoad_orbitalParams;
         if(orbitalParams == null || !File.Exists(shipOrbitalParamsFilePath))
             orbitalParams = ScriptableObject.CreateInstance<OrbitalParams>();
-        JsonUtility.FromJsonOverwrite(File.ReadAllText(shipOrbitalParamsFilePath), orbitalParams);
+        
+        orbitalParams = OrbitalParamsSaveData.LoadObjectFromJSON(shipOrbitalParamsFilePath);
         if(orbitalParams.orbitedBody == null)
             orbitalParams.orbitedBody = GameObject.Find(orbitalParams.orbitedBodyName).GetComponent<CelestialBody>();
     }

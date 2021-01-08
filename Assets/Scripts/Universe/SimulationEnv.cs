@@ -213,7 +213,6 @@ public struct stringBoolStruct
 [Serializable]
 public struct SimSettingEnumDictionary
 {
-    //public Dictionary<string, bool> enumDict;
     [SerializeField]
     public List<stringBoolStruct> enumList;
     public SimSettingEnumDictionary(List<stringBoolStruct> stringValues)

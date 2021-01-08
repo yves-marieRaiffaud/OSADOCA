@@ -26,7 +26,6 @@ namespace FlyingObjects
         {
             // INIT ORBIT
             body.orbit = new Orbit(body.orbitalParams, body.orbitalParams.orbitedBody, body._gameObject);
-
             // INIT POSITION
             Vector3d worldPos = Orbit.GetWorldPositionFromOrbit(body.orbit);
             body.realPosition = worldPos + body.orbit.orbitedBody.realPosition;

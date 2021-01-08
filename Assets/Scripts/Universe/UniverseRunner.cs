@@ -37,7 +37,6 @@ namespace Universe
         [HideInInspector] public GameObject planetsFolder; // GameObject containing every orbiting Planets
         [HideInInspector] public GameObject starFolder; // GameObject containing every Star(s)
         [HideInInspector] public GameObject spaceshipFolder; // GameObject containing every spaceship/spacecraft
-        //[HideInInspector] public GameObject orbitFolder; // GameObject containing every orbits, both drawn and only computed orbits
 
         public List<Rigidbody> physicsRigidbodies;
         public List<Dynamic_Obj_Common> physicsObjArray;
@@ -171,7 +170,6 @@ namespace Universe
             }
 
             comsHandler.Start_ComChannels();
-            //comsHandler.StartCoroutine(comsHandler.SimEnv_Coroutine());
         }
 
         void FixedUpdate()

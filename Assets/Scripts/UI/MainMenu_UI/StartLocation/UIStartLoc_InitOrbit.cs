@@ -378,8 +378,8 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 MathOps.ParseStringToDouble(orbitShape_p2_field.text, out orbitalParams.rp);
 
                 // Converting entered altitude to a proper distance with respect to the planet centre
-                orbitalParams.ra += scaleFactor*orbitedBody.settings.planetaryParams.radius.val;
-                orbitalParams.rp += scaleFactor*orbitedBody.settings.planetaryParams.radius.val;
+                //orbitalParams.ra += scaleFactor*orbitedBody.settings.planetaryParams.radius.val;
+                //orbitalParams.rp += scaleFactor*orbitedBody.settings.planetaryParams.radius.val;
                 if(orbitalParams.ra < Mathd.Epsilon)
                     ORBITAL_PARAMS_VALID = false;
                 break;
