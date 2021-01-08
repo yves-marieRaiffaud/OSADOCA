@@ -225,6 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c353cbdfebd9347bd6b38dfabef996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  comsHandler: {fileID: 0}
   universeClock: {fileID: 0}
   simEnv: {fileID: 2036009799}
   universeOffset: {x: 0, y: 0, z: 0}
@@ -467,88 +468,6 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
-  planetaryParams:
-    radius:
-      _val: 0
-      _unit: 0
-    polarRadius:
-      _val: 0
-      _unit: 0
-    radiusSOI:
-      _val: 0
-      _unit: 0
-    inverseFlattening:
-      _val: 0
-      _unit: 0
-    axialTilt:
-      _val: 0
-      _unit: 0
-    siderealRotPeriod:
-      _val: 0
-      _unit: 0
-    revolutionPeriod:
-      _val: 0
-      _unit: 0
-    mu:
-      _val: 0
-      _unit: 0
-    massEarthRatio:
-      _val: 0
-      _unit: 0
-    isRockyBody: 0
-  lightOrbitalParams:
-    orbitedBodyName:
-      _stringVal: 
-    apoapsis:
-      _val: 0
-      _unit: 0
-    periapsis:
-      _val: 0
-      _unit: 0
-    i:
-      _val: 0
-      _unit: 0
-    lAscN:
-      _val: 0
-      _unit: 0
-    periapsisArg:
-      _val: 0
-      _unit: 0
-    trueAnomaly:
-      _val: 0
-      _unit: 0
-  surfaceParams:
-    surfPressure:
-      _val: 0
-      _unit: 0
-    surfDensity:
-      _val: 0
-      _unit: 0
-    surfTemp:
-      _val: 0
-      _unit: 0
-    maxAtmoHeight:
-      _val: 0
-      _unit: 0
-    highestBumpAlt:
-      _val: 0
-      _unit: 0
-  jns:
-    j2:
-      _val: 0
-      _unit: 0
-    j3:
-      _val: 0
-      _unit: 0
-    j4:
-      _val: 0
-      _unit: 0
-    j5:
-      _val: 0
-      _unit: 0
-    j6:
-      _val: 0
-      _unit: 0
 --- !u!114 &1283321320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1342,88 +1261,6 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
-  planetaryParams:
-    radius:
-      _val: 6378.137
-      _unit: 3
-    polarRadius:
-      _val: 6356.752
-      _unit: 3
-    radiusSOI:
-      _val: 120000
-      _unit: 3
-    inverseFlattening:
-      _val: 298.257223563
-      _unit: 0
-    axialTilt:
-      _val: 23.4392811
-      _unit: 0
-    siderealRotPeriod:
-      _val: 86164.09
-      _unit: 1
-    revolutionPeriod:
-      _val: 365.26
-      _unit: 4
-    mu:
-      _val: 39.86004418
-      _unit: 0
-    massEarthRatio:
-      _val: 1
-      _unit: 0
-    isRockyBody: 0
-  lightOrbitalParams:
-    orbitedBodyName:
-      _stringVal: Sun
-    apoapsis:
-      _val: 1.067
-      _unit: 4
-    periapsis:
-      _val: 0.92329
-      _unit: 4
-    i:
-      _val: 7.155
-      _unit: 0
-    lAscN:
-      _val: 174.9
-      _unit: 0
-    periapsisArg:
-      _val: 288.1
-      _unit: 0
-    trueAnomaly:
-      _val: 0
-      _unit: 0
-  surfaceParams:
-    surfPressure:
-      _val: 1015
-      _unit: 1
-    surfDensity:
-      _val: 1.217
-      _unit: 0
-    surfTemp:
-      _val: 288
-      _unit: 1
-    maxAtmoHeight:
-      _val: 100
-      _unit: 0
-    highestBumpAlt:
-      _val: 8.848
-      _unit: 0
-  jns:
-    j2:
-      _val: 1082.63
-      _unit: 0
-    j3:
-      _val: 0
-      _unit: 0
-    j4:
-      _val: 0
-      _unit: 0
-    j5:
-      _val: 0
-      _unit: 0
-    j6:
-      _val: 0
-      _unit: 0
 --- !u!1 &2138677391
 GameObject:
   m_ObjectHideFlags: 0

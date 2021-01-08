@@ -11,7 +11,7 @@ namespace Communication
 {
     public class ComsCoroutine : MonoBehaviour
     {
-        public const string SENDER_DELIMITER = ";";
+        /*public const string SENDER_DELIMITER = ";";
 
         [Header("UniverseRunner Instance")]
         public UniverseRunner universe;
@@ -165,6 +165,6 @@ namespace Communication
                 if(controlAlgoTCPServer.channelObj != null)
                     controlAlgoTCPServer.channelObj.StopServer();
             }
-        }
+        }*/
     }
 }

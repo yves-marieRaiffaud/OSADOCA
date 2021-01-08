@@ -17,6 +17,8 @@ namespace Universe
     [DisallowMultipleComponent, System.Serializable]
     public class UniverseRunner : MonoBehaviour
     {
+        public ComsOverallHandler comsHandler;
+
         // Keeping date and time of the current state of the universe
         [HideInInspector] public UniverseClock universeClock;
         [HideInInspector] public SimulationEnv simEnv;
@@ -42,6 +44,7 @@ namespace Universe
 
         void Awake()
         {
+            comsHandler = GameObject.Find("ComsHandler").GetComponent<ComsOverallHandler>();
             universeClock = GetComponent<UniverseClock>(); // First action to do: starting the universe clock
             InitSimEnv(); // Applying the simulation parameters to the application
             flyingDynamics = new FlyingDynamics(this);
@@ -166,6 +169,8 @@ namespace Universe
                     flyingDynamics.Init_State_Variables<Dynamic_Obj_Common>(obj);
                 }
             }
+
+            comsHandler.StartCoroutine(comsHandler.SimEnv_Coroutine());
         }
 
         void FixedUpdate()

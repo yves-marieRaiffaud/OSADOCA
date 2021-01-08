@@ -15,6 +15,7 @@ public class UI_ComPanelHandler : MonoBehaviour
 {
     internal ComPanelIsRemoved removedPanelEvent;
     bool isAlreadyAwaken=false;
+    bool comObjIsCreated=false;
     internal UnityEvent hasBeenModified;
 
     // Persistent object to handle coms in every scenes (positioned in the DontDestroyOnLoad folder)
@@ -134,6 +135,9 @@ public class UI_ComPanelHandler : MonoBehaviour
             comsHandler.channels[channelIdx].channelObj_generic.isActive = mainToggleSwitch.isOn;
         disabledPanel.gameObject.SetActive(!mainToggleSwitch.isOn);
         enabledPanel.gameObject.SetActive(mainToggleSwitch.isOn);
+
+        if(comObjIsCreated)
+            Update_ComObj();
     }
 
     void OnProtocol_ValueChanged()
@@ -171,18 +175,29 @@ public class UI_ComPanelHandler : MonoBehaviour
             panelTitle.text = "Ship Control Orders";
         else if(chosenCoType.Equals(ComConectionType.None))
             panelTitle.text = "None";
+        
+        List<string> dataFieldsOptions = new List<string>();
+        if(chosenCoType.Equals(ComConectionType.shipControlOrders))
+            dataFieldsOptions = Enum.GetValues(typeof(ComDataFieldsIn)).Cast<ComDataFieldsIn>().Select(v => v.ToString()).ToList();
+        else if(chosenCoType.Equals(ComConectionType.dataVisualization) || chosenCoType.Equals(ComConectionType.simulationEnv))
+            dataFieldsOptions = Enum.GetValues(typeof(ComDataFieldsOut)).Cast<ComDataFieldsOut>().Select(v => v.ToString()).ToList();
+
+        List<stringBoolStruct> opts = new List<stringBoolStruct>();
+        foreach(string str in dataFieldsOptions) {
+            opts.Add(new stringBoolStruct(str, false));
+        }
+
+        // Setting up the MS Dropdown options
+        dataToSendReceive_MSDrop.ClearOptions();
+        dataToSendReceive_MSDrop.SetOptions(opts);
 
         OnDataToSend_ValueChanged();
     }
 
     void OnDataToSend_ValueChanged()
     {
-        List<stringBoolStruct> opts = new List<stringBoolStruct>();
-        opts.Add(new stringBoolStruct("Option 1",false));
-        opts.Add(new stringBoolStruct("Option 2",true));
-        opts.Add(new stringBoolStruct("Option 3",true));
-        opts.Add(new stringBoolStruct("Option 4",false));
-        dataToSendReceive_MSDrop.SetOptions(opts);
+        if(comObjIsCreated)
+            Update_ComObj();
     }
 
     void OnRemovePanelBtn_Clicked()
@@ -191,6 +206,36 @@ public class UI_ComPanelHandler : MonoBehaviour
         removedPanelEvent.Invoke(channelIdx);
     }
 
+    void Update_ComObj()
+    {
+        string ip = ipField.text;
+        int port = int.Parse(portField.text);
+        ComProtocol prot = ComOps.Str_2_ComProtocol(protDropdown.options[protDropdown.value].text);
+        ComConectionType coType = ComOps.Str_2_ComConnectionType(dataTypeDropdown.options[dataTypeDropdown.value].text);
+
+        Enum dataFields = null;
+        if(coType.Equals(ComConectionType.dataVisualization) || coType.Equals(ComConectionType.simulationEnv))
+            dataFields = (Enum) ComOps.MS_Dropdown_2_ComDataFieldOut(dataToSendReceive_MSDrop.GetValues());
+        else if(coType.Equals(ComConectionType.shipControlOrders))
+            dataFields = (Enum) ComOps.MS_Dropdown_2_ComDataFieldIn(dataToSendReceive_MSDrop.GetValues());
+
+        ComSendReceiveType sendReceiveType;
+        if(prot.Equals(ComProtocol.UDP_Receiver) || prot.Equals(ComProtocol.UDP_Sender))
+            sendReceiveType = ComSendReceiveType.classExplicit;
+        else {
+            // Is TCPIP_Sender or TCPIP_Receiver
+            if(coType.Equals(ComConectionType.shipControlOrders))
+                sendReceiveType = ComSendReceiveType.receiveOnly;
+            else if(coType.Equals(ComConectionType.simulationEnv))
+                sendReceiveType = ComSendReceiveType.sendOnly;
+            else
+                sendReceiveType = ComSendReceiveType.sendOnly; // DataVizualisation
+        }
+
+        ComChannelParams channelParams = new ComChannelParams(ip, port, prot, coType, dataFields, sendReceiveType, 5012);
+        comsHandler.channels[channelIdx].comParams = channelParams;
+        comsHandler.channels[channelIdx].channelObj_generic.isActive = mainToggleSwitch.isOn;
+    }
     internal void Create_ComObj()
     {
         string ip = ipField.text;
@@ -198,7 +243,11 @@ public class UI_ComPanelHandler : MonoBehaviour
         ComProtocol prot = ComOps.Str_2_ComProtocol(protDropdown.options[protDropdown.value].text);
         ComConectionType coType = ComOps.Str_2_ComConnectionType(dataTypeDropdown.options[dataTypeDropdown.value].text);
         //----------------------------------------------------------
-        Enum dataFields = null; // TO MODIFIY
+        Enum dataFields = null;
+        if(coType.Equals(ComConectionType.dataVisualization) || coType.Equals(ComConectionType.simulationEnv))
+            dataFields = (Enum) ComOps.MS_Dropdown_2_ComDataFieldOut(dataToSendReceive_MSDrop.GetValues());
+        else if(coType.Equals(ComConectionType.shipControlOrders))
+            dataFields = (Enum) ComOps.MS_Dropdown_2_ComDataFieldIn(dataToSendReceive_MSDrop.GetValues());
         //----------------------------------------------------------
         ComSendReceiveType sendReceiveType;
         if(prot.Equals(ComProtocol.UDP_Receiver) || prot.Equals(ComProtocol.UDP_Sender))
@@ -216,6 +265,8 @@ public class UI_ComPanelHandler : MonoBehaviour
         ComChannelParams channelParams = new ComChannelParams(ip, port, prot, coType, dataFields, sendReceiveType, 5012);
         channelIdx = comsHandler.Add_ComObject(channelParams);
         comsHandler.channels[channelIdx].channelObj_generic.isActive = mainToggleSwitch.isOn;
+
+        comObjIsCreated = true;
     }
     //=======================
     //=======================
@@ -280,12 +331,8 @@ public class UI_ComPanelHandler : MonoBehaviour
         string prot = protDropdown.options[protDropdown.value].text;
         string dataType = dataTypeDropdown.options[dataTypeDropdown.value].text;
         List<stringBoolStruct> dataFields = dataToSendReceive_MSDrop.GetValues();
-        string dataFieldsStr = "";
-        foreach(stringBoolStruct item in dataFields) {
-            if(item.optionIsSelected) {
-                dataFieldsStr += item.optionString + ",";
-            }
-        }
+        // Fixing an issue not adding the final "}" after saving to Json the List<stringBoolStruct>, thus adding it manually
+        string dataFieldsStr = JsonHelper.ToJson<stringBoolStruct>(dataFields.ToArray()) + "}";
         dataFieldsStr = dataFieldsStr.Substring(0, dataFieldsStr.Length-1);
         string remoteIP = ipField.text;
         int port = int.Parse(portField.text);

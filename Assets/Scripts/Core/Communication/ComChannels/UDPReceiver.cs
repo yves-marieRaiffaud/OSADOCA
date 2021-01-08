@@ -110,5 +110,11 @@ namespace Communication
                 Debug.Log("<color=red>" + err.Message + "</color>");
             }
         }
+    
+        // Method not to be used, but present as present in the SenderReceiverBaseChannel
+        public void Send(string val)
+        {
+            Debug.LogError("Error ! Calling the method 'Send(byte[]) val' from the UDPReceiver class.");
+        }
     }
 }

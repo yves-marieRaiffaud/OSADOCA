@@ -6,6 +6,7 @@ using Communication;
 using UnityEngine;
 using System;
 using System.Globalization;
+using System.Linq;
 
 namespace CommonMethods
 {
@@ -58,7 +59,7 @@ namespace CommonMethods
                     if(outDataFields == ComDataFieldsOut.None)
                         outDataFields = Str_2_ComDataFieldsOut(pair.optionString);
                     else
-                        outDataFields = outDataFields & Str_2_ComDataFieldsOut(pair.optionString);
+                        outDataFields |= Str_2_ComDataFieldsOut(pair.optionString);
                 }
             }
             return outDataFields;
@@ -71,7 +72,7 @@ namespace CommonMethods
                     if(outDataFields == ComDataFieldsIn.None)
                         outDataFields = Str_2_ComDataFieldsIn(pair.optionString);
                     else
-                        outDataFields = outDataFields & Str_2_ComDataFieldsIn(pair.optionString);
+                        outDataFields |= Str_2_ComDataFieldsIn(pair.optionString);
                 }
             }
             return outDataFields;

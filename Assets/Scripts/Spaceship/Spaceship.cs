@@ -81,6 +81,26 @@ public class Spaceship : MonoBehaviour, Dynamic_Obj_Common
         }
     }
 
+    Quaterniond _previousRot;
+    public Quaterniond deltaRotation
+    {
+        get {
+            Quaterniond outQuat = new Quaterniond(transform.rotation) * Quaterniond.Invert(_previousRot);
+            //_previousRot = outQuat;
+            return outQuat;
+        }
+    }
+
+    Vector3d _previousVel;
+    public Vector3d deltaRelativeVel
+    {
+        get {
+            Vector3d outDeltaVel = relativeVel - _previousVel;
+            //_previousVel = relativeVel;
+            return outDeltaVel;
+        }
+    }
+
     [SerializeField]
     public bool spawnAs_UI_SC=false;
 

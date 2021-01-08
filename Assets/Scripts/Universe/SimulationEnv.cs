@@ -207,7 +207,7 @@ public struct stringBoolStruct
         optionIsSelected = _optionIsSelected;
     }
     public override string ToString() {
-        return "Option: " + optionString + "; Bool value: " + optionIsSelected; 
+        return "Option: " + optionString + "; Bool value: " + optionIsSelected;
     }
 }
 [Serializable]

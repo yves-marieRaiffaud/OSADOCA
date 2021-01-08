@@ -143,11 +143,15 @@ namespace CommonMethods
             }
         }
 
-        public static IEnumerable<Enum> GetEnumFlags(Enum input)
+        public static IEnumerable<Enum> GetEnumFlags<T>(T input)
+        where T: Enum
         {
-            foreach (Enum value in Enum.GetValues(input.GetType()))
+            foreach (Enum value in Enum.GetValues(typeof(T))) {
+                if(value.ToString().Equals("None"))
+                    continue; // Skipping None value
                 if (input.HasFlag(value))
                     yield return value;
+            }
         }
 
     }

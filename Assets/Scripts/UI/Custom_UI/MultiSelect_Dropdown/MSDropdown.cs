@@ -41,6 +41,7 @@ namespace MSDropdownNamespace
         public UnityEvent OnExit;
         //=========
         private bool cursorOverDropdown;
+        private bool hasDoneStart=false;
 
         public List<stringBoolStruct> GetValues()
         {
@@ -72,6 +73,8 @@ namespace MSDropdownNamespace
             if(dropdownListGO.transform.Find("Viewport").Find("Content").Find("Item") != null)
                 Destroy(dropdownListGO.transform.Find("Viewport").Find("Content").Find("Item").gameObject);
             contentGO = dropdownListGO.transform.Find("Viewport").Find("Content").gameObject;
+
+            hasDoneStart=true;
         }
 
         void InitOptions()
@@ -81,7 +84,10 @@ namespace MSDropdownNamespace
 
         void InitOptions(List<stringBoolStruct> optionsList)
         {
-            StartInit();
+            if(!hasDoneStart)
+                Start();
+
+            //StartInit();
             options = optionsList;
             dropdownListGO.SetActive(true);
             int yPos = 0;
@@ -125,6 +131,8 @@ namespace MSDropdownNamespace
 
         public void ClearOptions()
         {
+            if(!hasDoneStart)
+                Start();
             ClearDropdownGOs();
             RectTransform dropdownlistRT = dropdownListGO.GetComponent<RectTransform>();
             dropdownlistRT.sizeDelta = new Vector2(dropdownlistRT.sizeDelta.x, dropdownlistRT.anchoredPosition.y+4f);
@@ -135,6 +143,8 @@ namespace MSDropdownNamespace
 
         private void ClearDropdownGOs()
         {
+            if(!hasDoneStart)
+                Start();
             foreach(Transform child in contentGO.transform)
             {
                 Destroy(child.gameObject);
@@ -143,12 +153,16 @@ namespace MSDropdownNamespace
 
         public void SetOptions(List<stringBoolStruct> optionsData)
         {
+            if(!hasDoneStart)
+                Start();
             InitOptions(optionsData);
         }
 
         void OnItemClick(stringBoolStruct option, GameObject clickedItem)
         {
-            StartInit();
+            if(!hasDoneStart)
+                Start();
+
             int idx = options.FindIndex(0, options.Count, item => item.optionString.Equals(option.optionString));
             stringBoolStruct itm = new stringBoolStruct(option.optionString, !option.optionIsSelected);
             options.RemoveAt(idx);
@@ -166,6 +180,8 @@ namespace MSDropdownNamespace
 
         void UpdateDropdownMainText()
         {
+            if(!hasDoneStart)
+                Start();
             string title = "None";
             int nb_selected = 0;
             foreach(stringBoolStruct item in options)
@@ -204,19 +220,23 @@ namespace MSDropdownNamespace
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            if(!hasDoneStart)
+                Start();
             if(OnClick != null)
                 OnClick.Invoke();
         }
-
         public void OnPointerEnter(PointerEventData pointerEventData)
         {
+            if(!hasDoneStart)
+                Start();
             cursorOverDropdown = true;
             if(OnEnter != null)
                 OnEnter.Invoke();
         }
-
         public void OnPointerExit(PointerEventData pointerEventData)
         {
+            if(!hasDoneStart)
+                Start();
             cursorOverDropdown = false;
             if(OnExit != null)
                 OnExit.Invoke();

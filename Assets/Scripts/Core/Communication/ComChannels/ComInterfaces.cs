@@ -11,6 +11,7 @@ namespace Communication
         string IP {get; set;}
         int port {get; set;}
         bool isActive {get; set;}
+        void Send(string val);
     }
 
     public interface ComChannelInterface

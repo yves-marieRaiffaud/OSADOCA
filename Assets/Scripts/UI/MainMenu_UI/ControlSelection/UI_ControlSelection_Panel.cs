@@ -193,7 +193,8 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         foreach(PanelSavingStruct item in panelsParams) {
             ComProtocol prot = ComOps.Str_2_ComProtocol(item.protocol);
             ComConectionType comDataType = ComOps.Str_2_ComConnectionType(item.dataType);
-            UI_ComPanelHandler addedPanel = AddComPanelInstance(item.comIsEnabled, prot, item.remoteIP, item.port, comDataType);
+            List<stringBoolStruct> dataFields = new List<stringBoolStruct>(JsonHelper.FromJson<stringBoolStruct>(item.dataFields));
+            UI_ComPanelHandler addedPanel = AddComPanelInstance(item.comIsEnabled, prot, item.remoteIP, item.port, comDataType, dataFields);
         }
     }
     void Create_Default_ComPanels()
@@ -216,7 +217,7 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         }
     }
 
-    UI_ComPanelHandler AddComPanelInstance(bool toggleSwitch, ComProtocol protocol, string ip, int port, ComConectionType comDataType=ComConectionType.None, Enum dataFields=null)
+    UI_ComPanelHandler AddComPanelInstance(bool toggleSwitch, ComProtocol protocol, string ip, int port, ComConectionType comDataType=ComConectionType.None, List<stringBoolStruct> dataFields=null/*Enum dataFields=null*/)
     {
         GameObject itemGO = GameObject.Instantiate(comPanelPrefab, Vector3.zero, Quaternion.identity, scrollRectPanel_TR);
         itemGO.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f,0f);
@@ -228,6 +229,11 @@ public class UI_ControlSelection_Panel : MonoBehaviour
         itemComOb.protDropdown.RefreshShownValue(); // Will call the action related to the protDropdown onValueChanged
         itemComOb.dataTypeDropdown.value = itemComOb.dataTypeDropdown.options.FindIndex(option => option.text == comDataType.ToString());
         itemComOb.dataTypeDropdown.RefreshShownValue(); // Will call the action related to the protDropdown onValueChanged
+
+        itemComOb.dataToSendReceive_MSDrop.ClearOptions();
+        if(dataFields != null)
+            itemComOb.dataToSendReceive_MSDrop.SetOptions(dataFields);
+
         itemComOb.ipField.text = ip;
         itemComOb.portField.text = port.ToString();
 
