@@ -170,7 +170,8 @@ namespace Universe
                 }
             }
 
-            comsHandler.StartCoroutine(comsHandler.SimEnv_Coroutine());
+            comsHandler.Start_ComChannels();
+            //comsHandler.StartCoroutine(comsHandler.SimEnv_Coroutine());
         }
 
         void FixedUpdate()

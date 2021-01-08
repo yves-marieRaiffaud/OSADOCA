@@ -2,8 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using ComOps = CommonMethods.CommunicationOps;
 using ObjHand = CommonMethods.ObjectsHandling;
 using MathOps = CommonMethods.MathsOps;
 using Communication;
@@ -25,6 +23,7 @@ public class ComsOverallHandler : MonoBehaviour
     // Dictionary that is filled in a method in the 'ComsOverallHandler' script
     public Dictionary<Enum, object> comDataVariables = new Dictionary<Enum, object>() { };
     public Dictionary<Enum, Type> comDataTypes = new Dictionary<Enum, Type>() { };
+
 
     void Awake()
     {
@@ -62,7 +61,8 @@ public class ComsOverallHandler : MonoBehaviour
         channels.RemoveAt(removedIndex);
         channels_Cor_AreRunning.RemoveAt(removedIndex);
     }
-
+    //---------------------------------
+    //---------------------------------
     bool Try_Get_UniverseRunner()
     {
         // Returns the boolean to indicate if the 'universe' variable has been initiliazed with the UniverseRunner component of the active scene
@@ -81,7 +81,6 @@ public class ComsOverallHandler : MonoBehaviour
         else
             return false;
     }
-
     void Init_ComDataVariables_Dict()
     {
         bool res = false;
@@ -109,12 +108,12 @@ public class ComsOverallHandler : MonoBehaviour
         comDataVariables.Add(ComDataFieldsOut.shipVelIncr  , universe.activeSC.deltaRelativeVel);
         comDataTypes.Add(ComDataFieldsOut.shipVelIncr, typeof(Vector3d));
     }
-
-    public IEnumerator SimEnv_Coroutine()
+    //---------------------------------
+    //---------------------------------
+    IEnumerator SimEnv_DataViz_Coroutine(int channelIdx)
     {
-        // COMMON METHODS TO INCLUDE IN EVERY COROUTINE FOR SENDING DATA
-        //--------------------------------------------------
-        //--------------------------------------------------
+        // THERE IS ONLY ONE COROUTINE FOR SENDING DATA, FOR THE SIMENV OR THE DATAVISUALIZATION
+        //------------------------------
         bool res = false;
         if(universe == null)
             res = Try_Get_UniverseRunner();
@@ -132,13 +131,13 @@ public class ComsOverallHandler : MonoBehaviour
         while(true)
         {
             List<string> strToAssemble = new List<string>();
-            foreach(Enum enumObj in ObjHand.GetEnumFlags<ComDataFieldsOut>((ComDataFieldsOut)channels[1].comParams.dataFields))
+            foreach(Enum enumObj in ObjHand.GetEnumFlags<ComDataFieldsOut>((ComDataFieldsOut)channels[channelIdx].comParams.dataFields))
                 strToAssemble.Add(Format_DataComVariable(comDataTypes[enumObj], comDataVariables[enumObj]));
 
             string dataToSend = AssembleStringList(strToAssemble);
-            channels[0].channelObj_generic.Send(dataToSend);
+            channels[channelIdx].channelObj_generic.Send(dataToSend);
 
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1f); // Update rate to vary
         }
     }
     string Format_DataComVariable(Type variableType, object variable)
@@ -177,14 +176,25 @@ public class ComsOverallHandler : MonoBehaviour
         }
         return txt;
     }
-
-    public void StartChannel(int channelIdx)
+    //---------------------------------
+    //---------------------------------
+    public void Start_ComChannels()
     {
-        if(channelIdx < channels.Count && channels[channelIdx] != null)
+        // Depending on the 'isActive' bool of each ComChannelInterface.generic_comObj, this method will start the corresponding coroutines
+        for(int idx=0; idx<channels.Count; idx++) {
+            if(channels[idx].channelObj_generic.isActive)
+                StartChannel(idx);
+        }
+    }
+    void StartChannel(int channelIdx)
+    {
+        ComChannelInterface channel = channels[channelIdx];
+        switch(channel.comParams.connectionType)
         {
-            // Authorized to start the channel
-            channels_Cor_AreRunning[channelIdx] = true; // Setting to true
-            // StartCoroutine(...);
+            case ComConectionType.simulationEnv: case ComConectionType.dataVisualization:
+                StartCoroutine(SimEnv_DataViz_Coroutine(channelIdx));
+                channels_Cor_AreRunning[channelIdx] = true;
+                break;
         }
     }
 }
