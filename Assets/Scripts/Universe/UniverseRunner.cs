@@ -4,8 +4,8 @@ using UnityEngine;
 using Mathd_Lib;
 using System.IO;
 using System.Linq;
-//using UnityEngine.Events;
-using Vectrosity;
+using UnityEngine.Events;
+//using Vectrosity;
 using KeplerGrav = Kepler.Gravitational;
 using FlyingObjects;
 using ComFcn = CommonMethods;
@@ -38,11 +38,16 @@ namespace Universe
         [HideInInspector] public GameObject starFolder; // GameObject containing every Star(s)
         [HideInInspector] public GameObject spaceshipFolder; // GameObject containing every spaceship/spacecraft
 
+        internal UnityEvent hasDoneStart;
+
         public List<Rigidbody> physicsRigidbodies;
         public List<Dynamic_Obj_Common> physicsObjArray;
 
         void Awake()
         {
+            if(hasDoneStart == null)
+                hasDoneStart = new UnityEvent();
+
             //comsHandler = GameObject.Find("ComsHandler").GetComponent<ComsOverallHandler>();
             universeClock = GetComponent<UniverseClock>(); // First action to do: starting the universe clock
             InitSimEnv(); // Applying the simulation parameters to the application
@@ -58,7 +63,6 @@ namespace Universe
 
             if(earthCB == null || activeSC == null)
                 Debug.LogError("One of the two required GameObject has not been specified");
-            VectorLine.SetCamera3D(playerCamera);
         }
         /// <summary>
         /// Reading the JSON simEnv file from disk and applying the read parameters to the current Unity Application
@@ -176,6 +180,9 @@ namespace Universe
             aba.Add(new stringBoolStruct("test 3", false));
             drop.SetOptions(aba);
             //comsHandler.Start_ComChannels();
+
+            if(hasDoneStart != null)
+                hasDoneStart.Invoke();
         }
 
         void FixedUpdate()

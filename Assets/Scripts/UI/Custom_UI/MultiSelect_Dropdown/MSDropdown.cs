@@ -31,6 +31,14 @@ namespace MSDropdownNamespace
                 _options=value;
             }
         }
+        
+        List<MSButton> _buttonsList;
+        public List<MSButton> buttonsList
+        {
+            get {
+                return _buttonsList;
+            }
+        }
         //==========
         TMPro.TMP_Text mainTitle;
         GameObject templateGO;
@@ -60,6 +68,8 @@ namespace MSDropdownNamespace
         {
             cursorOverDropdown = false;
             //=============
+            _buttonsList = new List<MSButton>();
+
             templateGO = transform.Find("Template").gameObject;
             itemGO = templateGO.transform.Find("Viewport").Find("Content").Find("Item").gameObject;
             mainTitle = transform.Find("Label").GetComponent<TMPro.TMP_Text>();
@@ -128,6 +138,7 @@ namespace MSDropdownNamespace
                 yPos -= itemHeight;
 
                 MSButton itemBtn = item.GetComponent<MSButton>();
+                _buttonsList.Add(itemBtn);
                 itemBtn.normalColor = normalColor;
                 itemBtn.pressedColor = pressedColor;
                 itemBtn.highlightedColor = highlightedColor;
@@ -155,15 +166,14 @@ namespace MSDropdownNamespace
             TMPro.TMP_Text mainTitle = transform.Find("Label").GetComponent<TMPro.TMP_Text>();
             mainTitle.text = "None";
             options = new List<stringBoolStruct>();
+            _buttonsList.Clear();
         }
         private void ClearDropdownGOs()
         {
             if(!hasDoneStart)
                 Start();
             foreach(Transform child in contentGO.transform)
-            {
                 Destroy(child.gameObject);
-            }
         }
 
         public void SetOptions(List<stringBoolStruct> optionsData)
@@ -197,10 +207,6 @@ namespace MSDropdownNamespace
         {
             if(!hasDoneStart)
                 Start();
-            /*if(!displaySelectionOptions) {
-                mainTitle.text = "";
-                return;
-            }*/
 
             string title = "None";
             int nb_selected = 0;

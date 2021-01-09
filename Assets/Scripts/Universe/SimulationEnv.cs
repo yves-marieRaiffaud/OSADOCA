@@ -211,6 +211,15 @@ public struct stringBoolStruct
     }
 }
 [Serializable]
+public class GenericStringBoolStruct
+{
+    public List<stringBoolStruct> stringBoolStructsList;
+    public GenericStringBoolStruct(List<stringBoolStruct> _stringBoolStructsList) {
+        stringBoolStructsList = _stringBoolStructsList;
+    }
+}
+
+[Serializable]
 public struct SimSettingEnumDictionary
 {
     [SerializeField]

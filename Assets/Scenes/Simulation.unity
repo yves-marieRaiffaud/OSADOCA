@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 62165409}
   - component: {fileID: 62165411}
   - component: {fileID: 62165410}
+  - component: {fileID: 62165412}
   m_Layer: 5
   m_Name: UI_Content
   m_TagString: Untagged
@@ -172,7 +173,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.15686275}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -196,6 +197,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 62165408}
   m_CullTransparentMesh: 0
+--- !u!114 &62165412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 62165408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88d06142c0130e24aafd6098156ff5db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  displayOPts_dropdown: {fileID: 698048934632352131}
 --- !u!1 &63975256
 GameObject:
   m_ObjectHideFlags: 0
@@ -1932,7 +1946,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 0.81333333}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2293,7 +2307,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281545523
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -2329,7 +2343,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -2358,7 +2372,7 @@ MonoBehaviour:
     spaceCount: 1
     wordCount: 2
     linkCount: 0
-    lineCount: 1
+    lineCount: 7
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -2501,16 +2515,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d36ca807c6dc7ae45a7f9b0cd6762c40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
-  pressedColor: {r: 0.51, g: 0.51, b: 0.51, a: 1}
-  highlightedColor: {r: 0.84, g: 0.84, b: 0.84, a: 1}
-  selectedColor: {r: 0.73, g: 0.73, b: 0.73, a: 1}
-  disabledColor: {r: 0.28, g: 0.28, b: 0.28, a: 1}
+  normalColor: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 1}
+  pressedColor: {r: 0, g: 0, b: 0, a: 1}
+  highlightedColor: {r: 0.6037736, g: 0.6037736, b: 0.6037736, a: 1}
+  selectedColor: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 1}
+  disabledColor: {r: 0.46274513, g: 0.46274513, b: 0.46274513, a: 1}
   addEverythingOption: 0
   addNoneOption: 0
   displaySelectionOptions: 0
   useCustomDropdownListWidth: 1
-  dropdownListCustomWidth: 80
+  dropdownListCustomWidth: 120
   _options: []
   OnValueChanged:
     m_PersistentCalls:
@@ -2534,18 +2548,7 @@ MonoBehaviour:
         m_CallState: 2
   OnExit:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 698048934632352131}
-        m_MethodName: UnfoldDropdownList
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!222 &698048934632352132
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2635,7 +2638,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2926,7 +2929,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 698048933776548782}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.81333333
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

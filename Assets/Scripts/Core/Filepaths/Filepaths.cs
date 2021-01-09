@@ -29,6 +29,9 @@ public static class Filepaths
     public const string userAdded_launchPads = "/custom_launchPads.json";
 
     public const string comsPanel_params = "/communication_remoteControl.json";
+    
+    public const string simUI_Folder = "/Sim_UI";
+    public const string simUI_displayOptions = "/displayOptions_MSDropdown.json";
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
     public enum EngineLayersName { Spaceship, CelestialBody, Orbit, StarDome, SpaceshipVectors };

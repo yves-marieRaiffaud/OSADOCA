@@ -95,6 +95,7 @@
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UI_OrbitPreview_MouseOrbit.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UI_planetMap_PointerEvents.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\UIMainMenu.cs" />
+     <Compile Include="Assets\Scripts\UI\Simulation_UI\SimUI_Dispatcher.cs" />
      <Compile Include="Assets\Scripts\Universe\FlyingDynamics.cs" />
      <Compile Include="Assets\Scripts\Universe\SimulationEnv.cs" />
      <Compile Include="Assets\Scripts\Universe\StarDome.cs" />
