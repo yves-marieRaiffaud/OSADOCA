@@ -17,6 +17,9 @@ namespace MSDropdownNamespace
         //=====
         public bool addEverythingOption;
         public bool addNoneOption;
+        public bool displaySelectionOptions=true;
+        public bool useCustomDropdownListWidth=false;
+        public int dropdownListCustomWidth=0;
         //=====
         public List<stringBoolStruct> _options;
         public List<stringBoolStruct> options
@@ -29,6 +32,7 @@ namespace MSDropdownNamespace
             }
         }
         //==========
+        TMPro.TMP_Text mainTitle;
         GameObject templateGO;
         GameObject contentGO;
         GameObject dropdownListGO;
@@ -52,22 +56,35 @@ namespace MSDropdownNamespace
         {
             StartInit();
         }
-
         void StartInit()
         {
             cursorOverDropdown = false;
             //=============
             templateGO = transform.Find("Template").gameObject;
             itemGO = templateGO.transform.Find("Viewport").Find("Content").Find("Item").gameObject;
-            
+            mainTitle = transform.Find("Label").GetComponent<TMPro.TMP_Text>();
+            mainTitle.gameObject.SetActive(displaySelectionOptions);
+            transform.Find("Arrow").gameObject.SetActive(displaySelectionOptions);
+            if(transform.Find("Image") != null) {
+                Image img = transform.Find("Image").GetComponent<Image>();
+                if(img.sprite != null)
+                    img.gameObject.SetActive(!displaySelectionOptions);
+                else
+                    img.gameObject.SetActive(false);
+            }
+
             dropdownListIsActive = false;
-            if(transform.Find("Dropdown List") == null)
-            {
+            if(transform.Find("Dropdown List") == null) {
                 dropdownListGO = Instantiate(templateGO, transform);
                 dropdownListGO.name = "Dropdown List";
             }
             else
                 dropdownListGO = transform.Find("Dropdown List").gameObject;
+
+            if(useCustomDropdownListWidth) {
+                RectTransform dropdownListRT = dropdownListGO.GetComponent<RectTransform>();
+                dropdownListRT.sizeDelta = new Vector2(dropdownListCustomWidth, dropdownListRT.sizeDelta.y);
+            }
             
             // Destroy the Template Item
             if(dropdownListGO.transform.Find("Viewport").Find("Content").Find("Item") != null)
@@ -81,7 +98,6 @@ namespace MSDropdownNamespace
         {
             InitOptions(options);
         }
-
         void InitOptions(List<stringBoolStruct> optionsList)
         {
             if(!hasDoneStart)
@@ -90,8 +106,8 @@ namespace MSDropdownNamespace
             //StartInit();
             options = optionsList;
             dropdownListGO.SetActive(true);
-            int yPos = 0;
-            int itemHeight = 20;
+            float yPos = 0;
+            float itemHeight = itemGO.GetComponent<RectTransform>().sizeDelta.y;
             if(options == null) { return; }
             foreach(stringBoolStruct option in optionsList)
             {
@@ -140,7 +156,6 @@ namespace MSDropdownNamespace
             mainTitle.text = "None";
             options = new List<stringBoolStruct>();
         }
-
         private void ClearDropdownGOs()
         {
             if(!hasDoneStart)
@@ -182,10 +197,14 @@ namespace MSDropdownNamespace
         {
             if(!hasDoneStart)
                 Start();
+            /*if(!displaySelectionOptions) {
+                mainTitle.text = "";
+                return;
+            }*/
+
             string title = "None";
             int nb_selected = 0;
-            foreach(stringBoolStruct item in options)
-            {
+            foreach(stringBoolStruct item in options) {
                 if(item.optionIsSelected && nb_selected == 0)
                     title = item.optionString;
                 else if(item.optionIsSelected && nb_selected >= 1)
@@ -198,7 +217,6 @@ namespace MSDropdownNamespace
                 title = "Everything";
             else if(nb_selected == 0)
                 title = "None";
-            TMPro.TMP_Text mainTitle = transform.Find("Label").GetComponent<TMPro.TMP_Text>();
             mainTitle.text = title;
         }
 

@@ -43,7 +43,7 @@ namespace Universe
 
         void Awake()
         {
-            comsHandler = GameObject.Find("ComsHandler").GetComponent<ComsOverallHandler>();
+            //comsHandler = GameObject.Find("ComsHandler").GetComponent<ComsOverallHandler>();
             universeClock = GetComponent<UniverseClock>(); // First action to do: starting the universe clock
             InitSimEnv(); // Applying the simulation parameters to the application
             flyingDynamics = new FlyingDynamics(this);
@@ -169,7 +169,13 @@ namespace Universe
                 }
             }
 
-            comsHandler.Start_ComChannels();
+            MSDropdownNamespace.MSDropdown drop = GameObject.Find("MS_Dropdown").GetComponent<MSDropdownNamespace.MSDropdown>();
+            List<stringBoolStruct> aba = new List<stringBoolStruct>();
+            aba.Add(new stringBoolStruct("test 1", true));
+            aba.Add(new stringBoolStruct("test 2", true));
+            aba.Add(new stringBoolStruct("test 3", false));
+            drop.SetOptions(aba);
+            //comsHandler.Start_ComChannels();
         }
 
         void FixedUpdate()
