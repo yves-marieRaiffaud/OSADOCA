@@ -173,12 +173,6 @@ namespace Universe
                 }
             }
 
-            MSDropdownNamespace.MSDropdown drop = GameObject.Find("MS_Dropdown").GetComponent<MSDropdownNamespace.MSDropdown>();
-            List<stringBoolStruct> aba = new List<stringBoolStruct>();
-            aba.Add(new stringBoolStruct("test 1", true));
-            aba.Add(new stringBoolStruct("test 2", true));
-            aba.Add(new stringBoolStruct("test 3", false));
-            drop.SetOptions(aba);
             //comsHandler.Start_ComChannels();
 
             if(hasDoneStart != null)

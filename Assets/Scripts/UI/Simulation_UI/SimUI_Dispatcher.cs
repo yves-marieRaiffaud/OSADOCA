@@ -50,11 +50,22 @@ public class SimUI_Dispatcher : MonoBehaviour
             loadedOpts.Add(new stringBoolStruct("Toggle ship thrust axis", false));
         }
 
+        displayOPts_dropdown.ClearOptions();
         displayOPts_dropdown.SetOptions(loadedOpts);
         displayOPts_dropdown.buttonsList[0].OnClick.AddListener(Toggle_OrbitDisplay);
+        displayOPts_dropdown.buttonsList[1].OnClick.AddListener(Toggle_Ship_Axes);
+        displayOPts_dropdown.buttonsList[2].OnClick.AddListener(Toggle_Ship_Thrust_Axis);
     }
     void Toggle_OrbitDisplay()
     {
-
+        Debug.LogWarning("clicked on Toggle Orbit display");
+    }
+    void Toggle_Ship_Axes()
+    {
+        Debug.LogWarning("clicked on Toggle Ship axes");
+    }
+    void Toggle_Ship_Thrust_Axis()
+    {
+        Debug.LogWarning("clicked on Toggle ship thrust axis");
     }
 }

@@ -74,8 +74,7 @@
      <Compile Include="Assets\Scripts\Interfaces.cs" />
      <Compile Include="Assets\Scripts\Spaceship\ShipCamHandling.cs" />
      <Compile Include="Assets\Scripts\Spaceship\Spaceship.cs" />
-     <Compile Include="Assets\Scripts\UI\Custom_UI\ButtonTooltip.cs" />
-     <Compile Include="Assets\Scripts\UI\Custom_UI\CustomShaped_Buttons.cs" />
+     <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\CustomShaped_Button.cs" />
      <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSButton.cs" />
      <Compile Include="Assets\Scripts\UI\Custom_UI\MultiSelect_Dropdown\MSDropdown.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\ControlBarCheck.cs" />

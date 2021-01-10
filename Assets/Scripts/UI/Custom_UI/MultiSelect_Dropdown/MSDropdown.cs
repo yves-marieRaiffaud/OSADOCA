@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
+using System.Linq;
 
 namespace MSDropdownNamespace
 {
@@ -20,15 +21,17 @@ namespace MSDropdownNamespace
         public bool displaySelectionOptions=true;
         public bool useCustomDropdownListWidth=false;
         public int dropdownListCustomWidth=0;
+        public bool useCustomShapedButtons=false;
+        CustomShaped_Button customBtnsScript=null;
         //=====
-        public List<stringBoolStruct> _options;
+        stringBoolStruct[] _options;
         public List<stringBoolStruct> options
         {
             get {
-                return _options;
+                return _options.ToList<stringBoolStruct>();
             }
             set {
-                _options=value;
+                _options=value.ToArray();
             }
         }
         
@@ -68,6 +71,14 @@ namespace MSDropdownNamespace
         {
             cursorOverDropdown = false;
             //=============
+            if(useCustomShapedButtons) {
+                bool foundScript = transform.TryGetComponent<CustomShaped_Button>(out customBtnsScript);
+                if(foundScript) {
+                    customBtnsScript.OnEnter.AddListener(OnPointerEnter_CustomShapedBtn);
+                    customBtnsScript.OnExit.AddListener(OnPointerExit_CustomShapedBtn);
+                }
+            }
+
             _buttonsList = new List<MSButton>();
 
             templateGO = transform.Find("Template").gameObject;
@@ -189,15 +200,16 @@ namespace MSDropdownNamespace
                 Start();
 
             int idx = options.FindIndex(0, options.Count, item => item.optionString.Equals(option.optionString));
-            stringBoolStruct itm = new stringBoolStruct(option.optionString, !option.optionIsSelected);
-            options.RemoveAt(idx);
-            options.Insert(idx, itm);
+            //stringBoolStruct itm = new stringBoolStruct(option.optionString, !option.optionIsSelected);
+            /*options.RemoveAt(idx);
+            options.Insert(idx, itm);*/
+            _options[idx].optionIsSelected = !_options[idx].optionIsSelected;
 
             GameObject checkmark = clickedItem.transform.Find("Item Checkmark").gameObject;
-            checkmark.SetActive(itm.optionIsSelected);
+            checkmark.SetActive(_options[idx].optionIsSelected);
             UpdateDropdownMainText();
-            ClearDropdownGOs();
-            InitOptions();
+            /*ClearDropdownGOs();
+            InitOptions();*/
 
             if(OnValueChanged != null)
                 OnValueChanged.Invoke();
@@ -249,7 +261,8 @@ namespace MSDropdownNamespace
             if(OnClick != null)
                 OnClick.Invoke();
         }
-        public void OnPointerEnter(PointerEventData pointerEventData)
+        
+        void OnPointerEnter_CustomShapedBtn()
         {
             if(!hasDoneStart)
                 Start();
@@ -257,13 +270,27 @@ namespace MSDropdownNamespace
             if(OnEnter != null)
                 OnEnter.Invoke();
         }
-        public void OnPointerExit(PointerEventData pointerEventData)
+        public void OnPointerEnter(PointerEventData pointerEventData)
+        {
+            if(useCustomShapedButtons)
+                return;
+            else
+                OnPointerEnter_CustomShapedBtn();
+        }
+        void OnPointerExit_CustomShapedBtn()
         {
             if(!hasDoneStart)
                 Start();
             cursorOverDropdown = false;
             if(OnExit != null)
                 OnExit.Invoke();
+        }
+        public void OnPointerExit(PointerEventData pointerEventData)
+        {
+            if(useCustomShapedButtons)
+                return;
+            else
+                OnPointerExit_CustomShapedBtn();
         }
     }
 }

@@ -40,6 +40,19 @@ namespace MSDropdownNamespace
             CheckTargetGraphic();
         }
 
+        void Awake()
+        {
+            if(OnClick == null)
+                OnClick = new UnityEvent();
+            if(OnEnter == null)
+                OnEnter = new UnityEvent();
+            if(OnExit == null)
+                OnExit = new UnityEvent();
+            if(OnPressed == null)
+                OnPressed = new UnityEvent();
+            if(OnReleased == null)
+                OnReleased = new UnityEvent();
+        }
         public void Enable()
         {
             isEnabled = true;
