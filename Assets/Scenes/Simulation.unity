@@ -371,7 +371,6 @@ GameObject:
   - component: {fileID: 328132365}
   - component: {fileID: 328132367}
   - component: {fileID: 328132366}
-  - component: {fileID: 328132368}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -435,18 +434,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 328132364}
   m_CullTransparentMesh: 0
---- !u!114 &328132368
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 328132364}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13a9841ef447d0f4eb45d6091f5f075f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &454841540
 GameObject:
   m_ObjectHideFlags: 0
@@ -2391,6 +2378,7 @@ GameObject:
   - component: {fileID: 698048934632352133}
   - component: {fileID: 698048934632352130}
   - component: {fileID: 698048934632352131}
+  - component: {fileID: 698048934632352134}
   m_Layer: 5
   m_Name: DisplayOpts_MS_Dropdown
   m_TagString: Untagged
@@ -2524,6 +2512,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &698048934632352134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698048934632352129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13a9841ef447d0f4eb45d6091f5f075f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &698048934676092076
 RectTransform:
   m_ObjectHideFlags: 0

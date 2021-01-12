@@ -12,7 +12,6 @@ using ObjHand = CommonMethods.ObjectsHandling;
 public class SimUI_Dispatcher : MonoBehaviour
 {
     public MSDropdown displayOPts_dropdown;
-    
     //---------
     UniverseRunner universe;
 

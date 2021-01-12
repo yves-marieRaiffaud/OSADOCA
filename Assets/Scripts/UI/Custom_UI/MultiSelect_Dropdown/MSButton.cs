@@ -17,11 +17,41 @@ namespace MSDropdownNamespace
         public Color selectedColor; 
         public Color disabledColor;
         //========
-        public UnityEvent OnClick {get; set;}
-        public UnityEvent OnEnter {get; set;}
-        public UnityEvent OnExit {get; set;}
-        public UnityEvent OnPressed {get; set;}
-        public UnityEvent OnReleased {get; set;}
+        UnityEvent _OnClick;
+        public UnityEvent OnClick
+        {
+            get {
+                return _OnClick;
+            }
+        }
+        UnityEvent _OnEnter;
+        public UnityEvent OnEnter
+        {
+            get {
+                return _OnEnter;
+            }
+        }
+        UnityEvent _OnExit;
+        public UnityEvent OnExit
+        {
+            get {
+                return _OnExit;
+            }
+        }
+        UnityEvent _OnPressed;
+        public UnityEvent OnPressed
+        {
+            get {
+                return _OnPressed;
+            }
+        }
+        UnityEvent _OnReleased;
+        public UnityEvent OnReleased
+        {
+            get {
+                return _OnReleased;
+            }
+        }
         //========
         public bool isEnabled { get; set; }
 
@@ -40,18 +70,18 @@ namespace MSDropdownNamespace
             CheckTargetGraphic();
         }
 
-        void Awake()
+        internal void Awake()
         {
-            if(OnClick == null)
-                OnClick = new UnityEvent();
-            if(OnEnter == null)
-                OnEnter = new UnityEvent();
-            if(OnExit == null)
-                OnExit = new UnityEvent();
-            if(OnPressed == null)
-                OnPressed = new UnityEvent();
-            if(OnReleased == null)
-                OnReleased = new UnityEvent();
+            if(_OnClick == null)
+                _OnClick = new UnityEvent();
+            if(_OnEnter == null)
+                _OnEnter = new UnityEvent();
+            if(_OnExit == null)
+                _OnExit = new UnityEvent();
+            if(_OnPressed == null)
+                _OnPressed = new UnityEvent();
+            if(_OnReleased == null)
+                _OnReleased = new UnityEvent();
         }
         public void Enable()
         {
@@ -63,8 +93,8 @@ namespace MSDropdownNamespace
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if(OnClick != null)
-                OnClick.Invoke();
+            if(_OnClick != null)
+                _OnClick.Invoke();
 
             isSelected = !isSelected;
             if(targetGraphic != null && isSelected)
@@ -76,8 +106,8 @@ namespace MSDropdownNamespace
 
         public void OnPointerEnter(PointerEventData pointerEventData)
         {
-            if(OnEnter != null)
-                OnEnter.Invoke();
+            if(_OnEnter != null)
+                _OnEnter.Invoke();
             if(targetGraphic != null && !isSelected)
                 targetGraphic.color = currentColor = highlightedColor;
             CheckTargetGraphic();
@@ -85,8 +115,8 @@ namespace MSDropdownNamespace
 
         public void OnPointerExit(PointerEventData pointerEventData)
         {
-            if(OnExit != null)
-                OnExit.Invoke();
+            if(_OnExit != null)
+                _OnExit.Invoke();
             
             if(targetGraphic != null && !isSelected)
                 targetGraphic.color = currentColor = normalColor;
@@ -95,8 +125,8 @@ namespace MSDropdownNamespace
 
         public void OnPointerUp(PointerEventData pointerEventData)
         {
-            if(OnPressed != null)
-                OnPressed.Invoke();
+            if(_OnPressed != null)
+                _OnPressed.Invoke();
 
             if(targetGraphic != null && !isSelected)
                 targetGraphic.color = currentColor = highlightedColor;
@@ -105,8 +135,8 @@ namespace MSDropdownNamespace
 
         public void OnPointerDown(PointerEventData pointerEventData)
         {
-            if(OnReleased != null)
-                OnReleased.Invoke();
+            if(_OnReleased != null)
+                _OnReleased.Invoke();
             
             if(targetGraphic != null && !isSelected)
                 targetGraphic.color = currentColor = pressedColor;

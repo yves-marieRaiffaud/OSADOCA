@@ -24,7 +24,7 @@ namespace MSDropdownNamespace
             }
         }
 
-        void Start()
+        void Awake()
         {
             if(_OnEnter == null)
                 _OnEnter = new UnityEvent();
@@ -35,14 +35,19 @@ namespace MSDropdownNamespace
 
         public void OnPointerEnter(PointerEventData data)
         {
-            if(_OnEnter != null)
+            if(_OnEnter != null) {
+                Debug.LogWarning("invoking enter ...");
                 _OnEnter.Invoke();
+            }
+                
         }
 
         public void OnPointerExit(PointerEventData data)
         { 
-            if(_OnExit != null)
+            if(_OnExit != null) {
+                Debug.LogWarning("invoking exit ...");
                 _OnExit.Invoke();
+            }
         }
     }
 }

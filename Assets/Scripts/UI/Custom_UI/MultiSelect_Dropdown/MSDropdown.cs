@@ -149,6 +149,7 @@ namespace MSDropdownNamespace
                 yPos -= itemHeight;
 
                 MSButton itemBtn = item.GetComponent<MSButton>();
+                itemBtn.Awake();
                 _buttonsList.Add(itemBtn);
                 itemBtn.normalColor = normalColor;
                 itemBtn.pressedColor = pressedColor;
@@ -157,8 +158,6 @@ namespace MSDropdownNamespace
                 itemBtn.disabledColor = disabledColor;
 
                 itemBtn.UpdateButton(option.optionIsSelected);
-                if(itemBtn.OnClick==null)
-                    itemBtn.OnClick = new UnityEngine.Events.UnityEvent();
                 itemBtn.OnClick.AddListener(delegate{OnItemClick(option, item);});
             }
             RectTransform dropdownlistRT = dropdownListGO.GetComponent<RectTransform>();
@@ -240,6 +239,7 @@ namespace MSDropdownNamespace
 
         public void UnfoldDropdownList()
         {
+            Debug.LogWarning("unfolding...");
             dropdownListIsActive = !dropdownListIsActive;
             dropdownListGO.SetActive(dropdownListIsActive);
         }
@@ -279,6 +279,8 @@ namespace MSDropdownNamespace
         }
         void OnPointerExit_CustomShapedBtn()
         {
+            Debug.LogWarning("onPointyer exit");
+            Debug.LogWarning("hasDoneStart = " + hasDoneStart);
             if(!hasDoneStart)
                 Start();
             cursorOverDropdown = false;
