@@ -188,9 +188,9 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
         // If one planet from the list matches the name of the this.name, need to copy its dictionary values to the settings variable of 'this'
         // And finally, need to save the settings object to disk by creating and saving its corresponding JSON file (will howevre work without this in the editor, but not at deployement).
     
-        if(!spawnAsUIPlanet) {
-            float simBodyRadius = (float)(settings.planetaryParams.radius.val/UniCsts.sim2uni);
+        /*if(!spawnAsUIPlanet) {
+            float simBodyRadius = (float)(settings.planetaryParams.radius.val.ToSim());
             transform.localScale = new Vector3(simBodyRadius, simBodyRadius, simBodyRadius);
-        }
+        }*/
     }
 }

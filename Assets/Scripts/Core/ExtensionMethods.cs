@@ -76,6 +76,11 @@ public static class ExtensionMethods
     {
         return val*UniverseConstants.sim2uni;
     }
+    
+    public static Velocity ToUni(this Velocity val)
+    {
+        return new Velocity(val.val*UniverseConstants.sim2uni, val.unit);
+    }
     //------------------------
     //------------------------
     /// <summary>
@@ -141,6 +146,10 @@ public static class ExtensionMethods
     {
         return val/UniverseConstants.sim2uni;
     }
-
+    
+    public static Velocity ToSim(this Velocity val)
+    {
+        return new Velocity(val.val/UniverseConstants.sim2uni, val.unit);
+    }
 
 }

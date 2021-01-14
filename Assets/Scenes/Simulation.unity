@@ -587,42 +587,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
   planetaryParams:
     radius:
-      _val: 695700
-      _unit: 3
+      _val: 0
+      _unit: 0
     polarRadius:
-      _val: 695700
-      _unit: 3
+      _val: 0
+      _unit: 0
     radiusSOI:
-      _val: 100000
-      _unit: 3
+      _val: 0
+      _unit: 0
     inverseFlattening:
-      _val: 20000
+      _val: 0
       _unit: 0
     axialTilt:
       _val: 0
       _unit: 0
     siderealRotPeriod:
-      _val: 2192832
-      _unit: 1
+      _val: 0
+      _unit: 0
     revolutionPeriod:
       _val: 0
-      _unit: 1
+      _unit: 0
     mu:
-      _val: 13271244.0018
+      _val: 0
       _unit: 0
     massEarthRatio:
-      _val: 333000
+      _val: 0
       _unit: 0
     isRockyBody: 0
   lightOrbitalParams:
     orbitedBodyName:
-      _stringVal: None
+      _stringVal: 
     apoapsis:
       _val: 0
-      _unit: 4
+      _unit: 0
     periapsis:
       _val: 0
-      _unit: 4
+      _unit: 0
     i:
       _val: 0
       _unit: 0
@@ -638,7 +638,7 @@ MonoBehaviour:
   surfaceParams:
     surfPressure:
       _val: 0
-      _unit: 4
+      _unit: 0
     surfDensity:
       _val: 0
       _unit: 0
@@ -715,6 +715,100 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1063587010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
+  planetaryParams:
+    radius:
+      _val: 6378.137
+      _unit: 3
+    polarRadius:
+      _val: 6356.752
+      _unit: 3
+    radiusSOI:
+      _val: 120000
+      _unit: 3
+    inverseFlattening:
+      _val: 298.257223563
+      _unit: 0
+    axialTilt:
+      _val: 23.4392811
+      _unit: 0
+    siderealRotPeriod:
+      _val: 86164.09
+      _unit: 1
+    revolutionPeriod:
+      _val: 365.26
+      _unit: 4
+    mu:
+      _val: 39.86004418
+      _unit: 0
+    massEarthRatio:
+      _val: 1
+      _unit: 0
+    isRockyBody: 0
+  lightOrbitalParams:
+    orbitedBodyName:
+      _stringVal: Sun
+    apoapsis:
+      _val: 1.067
+      _unit: 4
+    periapsis:
+      _val: 0.92329
+      _unit: 4
+    i:
+      _val: 7.155
+      _unit: 0
+    lAscN:
+      _val: 174.9
+      _unit: 0
+    periapsisArg:
+      _val: 288.1
+      _unit: 0
+    trueAnomaly:
+      _val: 0
+      _unit: 0
+  surfaceParams:
+    surfPressure:
+      _val: 1015
+      _unit: 1
+    surfDensity:
+      _val: 1.217
+      _unit: 0
+    surfTemp:
+      _val: 288
+      _unit: 1
+    maxAtmoHeight:
+      _val: 100
+      _unit: 0
+    highestBumpAlt:
+      _val: 8.848
+      _unit: 0
+  jns:
+    j2:
+      _val: 1082.63
+      _unit: 0
+    j3:
+      _val: 0
+      _unit: 0
+    j4:
+      _val: 0
+      _unit: 0
+    j5:
+      _val: 0
+      _unit: 0
+    j6:
+      _val: 0
+      _unit: 0
 --- !u!114 &1283321320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1085,100 +1179,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1855253723
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
-  planetaryParams:
-    radius:
-      _val: 6378.137
-      _unit: 3
-    polarRadius:
-      _val: 6356.752
-      _unit: 3
-    radiusSOI:
-      _val: 120000
-      _unit: 3
-    inverseFlattening:
-      _val: 298.257223563
-      _unit: 0
-    axialTilt:
-      _val: 23.4392811
-      _unit: 0
-    siderealRotPeriod:
-      _val: 86164.09
-      _unit: 1
-    revolutionPeriod:
-      _val: 365.26
-      _unit: 4
-    mu:
-      _val: 39.86004418
-      _unit: 0
-    massEarthRatio:
-      _val: 1
-      _unit: 0
-    isRockyBody: 0
-  lightOrbitalParams:
-    orbitedBodyName:
-      _stringVal: Sun
-    apoapsis:
-      _val: 1.067
-      _unit: 4
-    periapsis:
-      _val: 0.92329
-      _unit: 4
-    i:
-      _val: 7.155
-      _unit: 0
-    lAscN:
-      _val: 174.9
-      _unit: 0
-    periapsisArg:
-      _val: 288.1
-      _unit: 0
-    trueAnomaly:
-      _val: 0
-      _unit: 0
-  surfaceParams:
-    surfPressure:
-      _val: 1015
-      _unit: 1
-    surfDensity:
-      _val: 1.217
-      _unit: 0
-    surfTemp:
-      _val: 288
-      _unit: 1
-    maxAtmoHeight:
-      _val: 100
-      _unit: 0
-    highestBumpAlt:
-      _val: 8.848
-      _unit: 0
-  jns:
-    j2:
-      _val: 1082.63
-      _unit: 0
-    j3:
-      _val: 0
-      _unit: 0
-    j4:
-      _val: 0
-      _unit: 0
-    j5:
-      _val: 0
-      _unit: 0
-    j6:
-      _val: 0
-      _unit: 0
 --- !u!1 &1961056305
 GameObject:
   m_ObjectHideFlags: 0
@@ -1353,7 +1353,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inspectorFoldout_showInfo: 1
-  settings: {fileID: 1855253723}
+  settings: {fileID: 1063587010}
   _relativeAcc:
     x: 0
     y: 0
@@ -1458,7 +1458,7 @@ MonoBehaviour:
     minValue: 1
     maxValue: 100
   timeScale:
-    _value: 1
+    _value: 40
     _default_value: 0
     _type: System.Single
     _displayName: Time scale

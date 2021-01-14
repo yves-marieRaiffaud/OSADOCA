@@ -19,8 +19,18 @@ public interface Dynamic_Obj_Common
     OrbitalParams orbitalParams {get; set;}
     Orbit orbit {get; set;}
 
+    // Each of the hereunder properties are defined with the Universe Scaling System
+    /// <summary>
+    /// Acceleration of the body relative to its parent, defined with the UniverseScalingSystem
+    /// </summary>
     Vector3d relativeAcc {get; set;} // Orbited body relative acceleration, m/s2
+    /// <summary>
+    /// Velocity of the body relative to its parent, defined with the UniverseScalingSystem
+    /// </summary>
     Vector3d relativeVel {get; set;} // Orbited body relative velocity, m/s
+    /// <summary>
+    /// Position of the body in the offset universe, defined with the UniverseScalingSystem
+    /// </summary>
     Vector3d realPosition {get; set;} // Position with respect to the center of the universe
 }
 
