@@ -6,6 +6,7 @@ using System;
 
 using Mathd_Lib;
 using Universe;
+using UniCsts = UniverseConstants;
 using ObjHand = CommonMethods.ObjectsHandling;
 using distance = Units.distance;
 using angle = Units.angle;
@@ -132,7 +133,6 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
         else
             Debug.LogErrorFormat("Error while trying to get the rigidbody of {0} via its interface.", name);
     }
-
     void SetMaterial()
     {
         MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
@@ -187,5 +187,10 @@ public class CelestialBody : MonoBehaviour, Dynamic_Obj_Common
         // If no JSON file is found matching the name of the this.name, thus need to compare the name of the celestialBody with the list of planets.
         // If one planet from the list matches the name of the this.name, need to copy its dictionary values to the settings variable of 'this'
         // And finally, need to save the settings object to disk by creating and saving its corresponding JSON file (will howevre work without this in the editor, but not at deployement).
+    
+        if(!spawnAsUIPlanet) {
+            float simBodyRadius = (float)(settings.planetaryParams.radius.val/UniCsts.sim2uni);
+            transform.localScale = new Vector3(simBodyRadius, simBodyRadius, simBodyRadius);
+        }
     }
 }

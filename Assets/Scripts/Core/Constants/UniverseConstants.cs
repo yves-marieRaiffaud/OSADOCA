@@ -21,6 +21,9 @@ public static class UniverseConstants
     // Max distance before offseting every object to bring the camera back at the origin, in Unity units
     public const double dstThreshold = 30_000d;
 
+    // 50000 km in the real universe represents 1 unit in Unity
+    public const int sim2uni = 50000;
+
     // Vernal Point, very high value on x so that it is located at the infinity
     // Positive Vernal direction is the intersection between the ecliptic plane and the Earth's equatorial plane
     // Arbitrarly, the vernal direction is set hereunder in the J2000 frame
