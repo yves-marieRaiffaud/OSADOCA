@@ -80,7 +80,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
     public RectTransform perihelionPinpoint;
     public RectTransform aphelionPinpoint;
     //==================================================================
-    private bool ORBITAL_PARAMS_VALID = true;
+    internal bool ORBITAL_PARAMS_VALID = true;
     public Orbit previewedOrbit;
     public StartLocPanelIsSetUp panelIsFullySetUp;
 
