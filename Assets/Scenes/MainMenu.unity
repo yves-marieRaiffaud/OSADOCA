@@ -24225,7 +24225,7 @@ MonoBehaviour:
   m_points: []
   lineThickness: 1
   relativeSize: 0
-  lineList: 0
+  lineList: 1
   lineCaps: 0
   bezierSegmentsPerCurve: 10
   LineJoins: 0

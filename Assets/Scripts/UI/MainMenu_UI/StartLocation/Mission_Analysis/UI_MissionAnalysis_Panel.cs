@@ -39,6 +39,7 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
         if(_lr == null) {
             GameObject go = ObjHand.CreateAssignGameObject("GroundTrack", panelPlanetMap_RT.Find("PlanetMap").gameObject);
             _lr = (UIExt.UILineRenderer) ObjHand.CreateAssignComponent(typeof(UIExt.UILineRenderer), go);
+            _lr.gameObject.SetActive(false);
         }
     }
 

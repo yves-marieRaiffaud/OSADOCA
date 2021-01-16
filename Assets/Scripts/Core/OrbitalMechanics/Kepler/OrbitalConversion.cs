@@ -174,7 +174,7 @@ namespace Kepler.OrbitalConversions
     public static class OrbitTime
     {
         /// <summary>
-        /// Computes orbital period in seconds from the semi-major axis in meters and the orbitedBody's standard gravitational parameter, in m3/s2
+        /// Computes orbital period in seconds from the semi-major axis in meters and the orbitedBody's standard gravitational parameter, in m3/s2 (without its µExponent)
         /// </summary>
         public static double amu_2_T(double a, double mu) {
             return 2d*Mathd.PI*Mathd.Sqrt(Mathd.Pow(a,3)/(mu*UniCsts.µExponent));

@@ -63,7 +63,7 @@ public class Orbit
             a_km *= Units.AU2KM;
 
         if(orbitedBody != null) {
-            param.period = OrbTime.amu_2_T(a_km, orbitedBody.settings.planetaryParams.mu.val*UniCsts.µExponent);
+            param.period = OrbTime.amu_2_T(a_km*1000d, orbitedBody.settings.planetaryParams.mu.val);
             param.n = OrbTime.T_2_n(param.period);
         }
         else {
