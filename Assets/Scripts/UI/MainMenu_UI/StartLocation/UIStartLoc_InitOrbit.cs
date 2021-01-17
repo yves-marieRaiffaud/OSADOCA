@@ -121,7 +121,7 @@ public class UIStartLoc_InitOrbit : MonoBehaviour
                 orbitShape_p2_txt.text = periStr;
                 break;
             case 1:
-                orbitShape_p1_txt.text = apoStr;
+                orbitShape_p1_txt.text = periStr;
                 break;
         }
     }

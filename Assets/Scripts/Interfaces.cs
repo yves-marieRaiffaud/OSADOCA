@@ -72,3 +72,5 @@ public class MainPanelIsSetUp : UnityEvent<int, int>{}
 public class UseKeyboardSimSettingEvent : UnityEvent<bool>{}
 // Panel sending its channelIdx when it is deleted from the UI Main Menu Group Layout
 public class ComPanelIsRemoved : UnityEvent<int>{}
+
+public class OnPlanetSelectValueChange : UnityEvent<string>{}

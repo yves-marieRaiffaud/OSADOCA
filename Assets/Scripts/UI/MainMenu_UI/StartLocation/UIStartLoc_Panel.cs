@@ -23,6 +23,13 @@ public class UIStartLoc_Panel : MonoBehaviour
     [Header("Dropdowns")]
     public TMPro.TMP_Dropdown startLocInitTypeDropdown;
     public TMPro.TMP_Dropdown startLocPlanetSelectorDropdown;
+    OnPlanetSelectValueChange _onPlanetSelectionValueChange;
+    public OnPlanetSelectValueChange onPlanetSelectionValueChange
+    {
+        get {
+            return _onPlanetSelectionValueChange;
+        }
+    }
     //----------------------
     //----------------------
     [HideInInspector] public MainPanelIsSetUp panelIsFullySetUp;
@@ -45,6 +52,8 @@ public class UIStartLoc_Panel : MonoBehaviour
         hasFinishedStart = false;
         if(panelIsFullySetUp == null)
             panelIsFullySetUp = new MainPanelIsSetUp();
+        if(_onPlanetSelectionValueChange == null)
+            _onPlanetSelectionValueChange = new OnPlanetSelectValueChange();
 
         // By default, sending 0 to indicate that things need to be configured by the user
         if(panelIsFullySetUp != null)
@@ -162,6 +171,8 @@ public class UIStartLoc_Panel : MonoBehaviour
 
         UI_initPlanetaryScript.currPlanetSelectedName = dropdownText;
         UI_initPlanetaryScript.UpdatePlanetaryMap();
+        if(_onPlanetSelectionValueChange != null)
+            _onPlanetSelectionValueChange.Invoke(dropdownText);
 
         foreach(Transform child in simpleSpheresFolder.transform)
         {

@@ -84,7 +84,7 @@ public class UIStartLoc_InitPlanetarySurf : MonoBehaviour
             // planet is rocky
             string pathToMap = Filepaths.RSC_UIPlanetaryMaps + currPlanetSelectedName;
             Sprite newSprite = Resources.Load<Sprite>(pathToMap);
-            
+
             if(planetMapImg == null) {
                 planetMapImg = planetMap.gameObject.GetComponent<Image>();
             }
