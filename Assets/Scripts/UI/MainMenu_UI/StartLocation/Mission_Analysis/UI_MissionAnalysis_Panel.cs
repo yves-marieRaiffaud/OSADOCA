@@ -27,7 +27,7 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     
     [Tooltip("RectTransform of the 'Panel_PlanetMap'")]
     public RectTransform panelPlanetMap_RT;
-    Image planetMap;
+    internal Image planetMap;
 
     [Tooltip("Button of the 'HideShow_OritPreview_btn'")]
     public Button hideShowOrbitPreview_btn;
@@ -38,25 +38,34 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     UIStartLoc_InitOrbit initOrbitScript;
     Mission_Analysis_Plots maPlots;
 
-    internal UIExt.UILineRenderer _lr;
+    [Tooltip("Prefab for the Ground Track UILineRenderer")]
+    public GameObject groundTrack_prefab;
+    internal List<UIExt.UILineRenderer> _lrArr;
 
     void Start()
     {
         initOrbitScript = sectionInitOrbit_RT.GetComponent<UIStartLoc_InitOrbit>();
+        planetMap = panelPlanetMap_RT.Find("PlanetMap").GetComponent<Image>();
         maPlots = new Mission_Analysis_Plots(this, initOrbitScript);
         initOrbitScript.panelIsFullySetUp.AddListener(OnOrbitDef_UpdateClick);
 
         hideShow3DOrbit_btnTxt = hideShowOrbitPreview_btn.GetComponentInChildren<TMP_Text>();
 
-        planetMap = panelPlanetMap_RT.Find("PlanetMap").GetComponent<Image>();
         // Adding callback when another planet is selected from the dropdown ==> update the planetary map of the mission analysis panel
         startLocPanelScript.onPlanetSelectionValueChange.AddListener(Update_Planetary_Map);
 
-        if(_lr == null) {
-            GameObject go = ObjHand.CreateAssignGameObject("GroundTrack", panelPlanetMap_RT.Find("PlanetMap").gameObject);
-            _lr = (UIExt.UILineRenderer) ObjHand.CreateAssignComponent(typeof(UIExt.UILineRenderer), go);
-            _lr.gameObject.SetActive(false);
-        }
+        _lrArr = new List<UIExt.UILineRenderer>();
+    }
+    void Create_GroundTrack_LineRenderer_Obj(string goName)
+    {
+        if(groundTrack_prefab == null)
+            Debug.LogError("Error while trying to create a UILineRenderer GroundTrack Object: 'groundTrack_prefab' GameObject is null");
+        GameObject go = GameObject.Instantiate(groundTrack_prefab, Vector3.zero, Quaternion.identity, panelPlanetMap_RT.Find("PlanetMap"));
+        RectTransform goRT = go.GetComponent<RectTransform>();
+        goRT.offsetMin = Vector2.zero;
+        goRT.offsetMax = Vector2.zero;
+        _lrArr.Add(go.GetComponent<UIExt.UILineRenderer>());
+        _lrArr[_lrArr.Count-1].gameObject.SetActive(false);
     }
 
     void Update_Planetary_Map(string newPlanetName)
@@ -89,14 +98,25 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     {
         if(panelIdentifier != 0 && isSetupBool != 1)
             return;
-        maPlots.Create_GroundTracks_Data();
+        for(int i=0; i<1; i++)
+        {
+            Create_GroundTrack_LineRenderer_Obj(i.ToString());
+            Vector2[] pts;
+            pts = maPlots.Create_GroundTracks_Data(true);
+            _lrArr[_lrArr.Count-1].gameObject.SetActive(true);
+            if(i > 0) {
+                int lastIdx = _lrArr[_lrArr.Count-2].Points.Length-1;
+                pts = maPlots.OffsetOrbit_fromLastOrbit_Point(_lrArr[_lrArr.Count-2].Points[lastIdx], pts);
+            }
+            _lrArr[_lrArr.Count-1].Points = pts;
+        }
     }
     void Check_Plot_DataLines()
     {
         if(initOrbitScript == null || maPlots == null)
             return;
         if(initOrbitScript.ORBITAL_PARAMS_VALID)
-            maPlots.Create_GroundTracks_Data();
+            maPlots.Create_GroundTracks_Data(true);
     }
 
     public void TogglePanel()

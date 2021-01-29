@@ -118,6 +118,23 @@ namespace CommonMethods
                 return false;
         }
 
+        public static float ClampAngle(float value, float lowerBound, float upperBound, float incr=2f*Mathf.PI)
+        {
+            while(value - upperBound > Mathf.Epsilon)
+                value -= incr;
+            while(value - lowerBound < Mathf.Epsilon)
+                value += incr;
+            return value;
+        }
+        public static double ClampAngle(double value, double lowerBound, double upperBound, double incr=2d*Mathd.PI)
+        {
+            while(value - upperBound > Mathf.Epsilon)
+                value -= incr;
+            while(value - lowerBound < Mathf.Epsilon)
+                value += incr;
+            return value;
+        }
+
         /// <summary>
         /// Returns the boolean indicating if float 'a' is greater than float 'b', with respect to the specified tolerance.
         /// </summary>
