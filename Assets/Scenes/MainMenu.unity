@@ -161,6 +161,100 @@ Transform:
   m_Father: {fileID: 1570534416}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8179910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
+  planetaryParams:
+    radius:
+      _val: 2439.7
+      _unit: 3
+    polarRadius:
+      _val: 2439.7
+      _unit: 3
+    radiusSOI:
+      _val: 100000
+      _unit: 3
+    inverseFlattening:
+      _val: 0
+      _unit: 0
+    axialTilt:
+      _val: 0.034
+      _unit: 0
+    siderealRotPeriod:
+      _val: 5065560
+      _unit: 1
+    revolutionPeriod:
+      _val: 87.97
+      _unit: 4
+    mu:
+      _val: 2.2032
+      _unit: 0
+    massEarthRatio:
+      _val: 0.0553
+      _unit: 0
+    isRockyBody: 0
+  lightOrbitalParams:
+    orbitedBodyName:
+      _stringVal: Sun
+    apoapsis:
+      _val: 0.466697
+      _unit: 4
+    periapsis:
+      _val: 0.307499
+      _unit: 4
+    i:
+      _val: 3.38
+      _unit: 0
+    lAscN:
+      _val: 48.331
+      _unit: 0
+    periapsisArg:
+      _val: 29.124
+      _unit: 0
+    trueAnomaly:
+      _val: 0
+      _unit: 0
+  surfaceParams:
+    surfPressure:
+      _val: 0
+      _unit: 4
+    surfDensity:
+      _val: 0
+      _unit: 0
+    surfTemp:
+      _val: 0
+      _unit: 0
+    maxAtmoHeight:
+      _val: 0
+      _unit: 0
+    highestBumpAlt:
+      _val: 0
+      _unit: 0
+  jns:
+    j2:
+      _val: 50.3
+      _unit: 0
+    j3:
+      _val: 0
+      _unit: 0
+    j4:
+      _val: 0
+      _unit: 0
+    j5:
+      _val: 0
+      _unit: 0
+    j6:
+      _val: 0
+      _unit: 0
 --- !u!1 &13289378
 GameObject:
   m_ObjectHideFlags: 0
@@ -2589,13 +2683,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 143750004}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: -0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 2511511}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 180, y: 90, z: 0}
 --- !u!114 &143750006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2609,7 +2703,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inspectorFoldout_showInfo: 0
-  settings: {fileID: 2057160082}
+  settings: {fileID: 723416712}
   _relativeAcc:
     x: 0
     y: 0
@@ -3448,13 +3542,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 192195051}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: -0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 2511511}
   m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 180, y: 90, z: 0}
 --- !u!114 &192195053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3468,7 +3562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inspectorFoldout_showInfo: 0
-  settings: {fileID: 2057160082}
+  settings: {fileID: 1508955389}
   _relativeAcc:
     x: 0
     y: 0
@@ -4848,6 +4942,100 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 261936868}
   m_CullTransparentMesh: 0
+--- !u!114 &273055375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
+  planetaryParams:
+    radius:
+      _val: 695700
+      _unit: 3
+    polarRadius:
+      _val: 695700
+      _unit: 3
+    radiusSOI:
+      _val: 100000
+      _unit: 3
+    inverseFlattening:
+      _val: 20000
+      _unit: 0
+    axialTilt:
+      _val: 0
+      _unit: 0
+    siderealRotPeriod:
+      _val: 2192832
+      _unit: 1
+    revolutionPeriod:
+      _val: 0
+      _unit: 1
+    mu:
+      _val: 13271244.0018
+      _unit: 0
+    massEarthRatio:
+      _val: 333000
+      _unit: 0
+    isRockyBody: 0
+  lightOrbitalParams:
+    orbitedBodyName:
+      _stringVal: None
+    apoapsis:
+      _val: 0
+      _unit: 4
+    periapsis:
+      _val: 0
+      _unit: 4
+    i:
+      _val: 0
+      _unit: 0
+    lAscN:
+      _val: 0
+      _unit: 0
+    periapsisArg:
+      _val: 0
+      _unit: 0
+    trueAnomaly:
+      _val: 0
+      _unit: 0
+  surfaceParams:
+    surfPressure:
+      _val: 0
+      _unit: 4
+    surfDensity:
+      _val: 0
+      _unit: 0
+    surfTemp:
+      _val: 0
+      _unit: 0
+    maxAtmoHeight:
+      _val: 0
+      _unit: 0
+    highestBumpAlt:
+      _val: 0
+      _unit: 0
+  jns:
+    j2:
+      _val: 0
+      _unit: 0
+    j3:
+      _val: 0
+      _unit: 0
+    j4:
+      _val: 0
+      _unit: 0
+    j5:
+      _val: 0
+      _unit: 0
+    j6:
+      _val: 0
+      _unit: 0
 --- !u!1 &277665002
 GameObject:
   m_ObjectHideFlags: 0
@@ -5631,6 +5819,100 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
+--- !u!114 &337963232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
+  planetaryParams:
+    radius:
+      _val: 71492
+      _unit: 3
+    polarRadius:
+      _val: 66854
+      _unit: 3
+    radiusSOI:
+      _val: 0
+      _unit: 3
+    inverseFlattening:
+      _val: 15.4154
+      _unit: 0
+    axialTilt:
+      _val: 3.13
+      _unit: 0
+    siderealRotPeriod:
+      _val: 35730
+      _unit: 1
+    revolutionPeriod:
+      _val: 11.86
+      _unit: 5
+    mu:
+      _val: 12668.6534
+      _unit: 0
+    massEarthRatio:
+      _val: 317.83
+      _unit: 0
+    isRockyBody: 0
+  lightOrbitalParams:
+    orbitedBodyName:
+      _stringVal: Sun
+    apoapsis:
+      _val: 5.4588
+      _unit: 4
+    periapsis:
+      _val: 4.9501
+      _unit: 4
+    i:
+      _val: 1.304
+      _unit: 0
+    lAscN:
+      _val: 100.464
+      _unit: 0
+    periapsisArg:
+      _val: 273.867
+      _unit: 0
+    trueAnomaly:
+      _val: 0
+      _unit: 0
+  surfaceParams:
+    surfPressure:
+      _val: 0
+      _unit: 4
+    surfDensity:
+      _val: 0
+      _unit: 0
+    surfTemp:
+      _val: 0
+      _unit: 0
+    maxAtmoHeight:
+      _val: 0
+      _unit: 0
+    highestBumpAlt:
+      _val: 0
+      _unit: 0
+  jns:
+    j2:
+      _val: 0
+      _unit: 0
+    j3:
+      _val: 0
+      _unit: 0
+    j4:
+      _val: 0
+      _unit: 0
+    j5:
+      _val: 0
+      _unit: 0
+    j6:
+      _val: 0
+      _unit: 0
 --- !u!1 &340573360
 GameObject:
   m_ObjectHideFlags: 0
@@ -6896,13 +7178,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 417587136}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: -0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 2511511}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 180, y: 90, z: 0}
 --- !u!114 &417587138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6916,7 +7198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inspectorFoldout_showInfo: 0
-  settings: {fileID: 2057160082}
+  settings: {fileID: 1351183487}
   _relativeAcc:
     x: 0
     y: 0
@@ -7621,13 +7903,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 457129120}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: -0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 2511511}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 180, y: 90, z: 0}
 --- !u!114 &457129122
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7641,7 +7923,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inspectorFoldout_showInfo: 0
-  settings: {fileID: 2057160082}
+  settings: {fileID: 8179910}
   _relativeAcc:
     x: 0
     y: 0
@@ -8293,13 +8575,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 466400213}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: -0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 2511511}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 180, y: 90, z: 0}
 --- !u!114 &466400215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8313,7 +8595,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inspectorFoldout_showInfo: 0
-  settings: {fileID: 2057160082}
+  settings: {fileID: 937119165}
   _relativeAcc:
     x: 0
     y: 0
@@ -12318,6 +12600,100 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 716081978}
   m_CullTransparentMesh: 0
+--- !u!114 &723416712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
+  planetaryParams:
+    radius:
+      _val: 6378.137
+      _unit: 3
+    polarRadius:
+      _val: 6356.752
+      _unit: 3
+    radiusSOI:
+      _val: 120000
+      _unit: 3
+    inverseFlattening:
+      _val: 298.257223563
+      _unit: 0
+    axialTilt:
+      _val: 23.4392811
+      _unit: 0
+    siderealRotPeriod:
+      _val: 86164.09
+      _unit: 1
+    revolutionPeriod:
+      _val: 365.26
+      _unit: 4
+    mu:
+      _val: 39.86004418
+      _unit: 0
+    massEarthRatio:
+      _val: 1
+      _unit: 0
+    isRockyBody: 0
+  lightOrbitalParams:
+    orbitedBodyName:
+      _stringVal: Sun
+    apoapsis:
+      _val: 1.067
+      _unit: 4
+    periapsis:
+      _val: 0.92329
+      _unit: 4
+    i:
+      _val: 7.155
+      _unit: 0
+    lAscN:
+      _val: 174.9
+      _unit: 0
+    periapsisArg:
+      _val: 288.1
+      _unit: 0
+    trueAnomaly:
+      _val: 0
+      _unit: 0
+  surfaceParams:
+    surfPressure:
+      _val: 1015
+      _unit: 1
+    surfDensity:
+      _val: 1.217
+      _unit: 0
+    surfTemp:
+      _val: 288
+      _unit: 1
+    maxAtmoHeight:
+      _val: 100
+      _unit: 0
+    highestBumpAlt:
+      _val: 8.848
+      _unit: 0
+  jns:
+    j2:
+      _val: 1082.63
+      _unit: 0
+    j3:
+      _val: 0
+      _unit: 0
+    j4:
+      _val: 0
+      _unit: 0
+    j5:
+      _val: 0
+      _unit: 0
+    j6:
+      _val: 0
+      _unit: 0
 --- !u!1 &735956180
 GameObject:
   m_ObjectHideFlags: 0
@@ -13871,13 +14247,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 775534058}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: -0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 2511511}
   m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 180, y: 90, z: 0}
 --- !u!114 &775534060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13891,7 +14267,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inspectorFoldout_showInfo: 0
-  settings: {fileID: 2057160082}
+  settings: {fileID: 993552908}
   _relativeAcc:
     x: 0
     y: 0
@@ -16504,6 +16880,100 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 927109265}
   m_CullTransparentMesh: 0
+--- !u!114 &937119165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
+  planetaryParams:
+    radius:
+      _val: 6051.8
+      _unit: 3
+    polarRadius:
+      _val: 6051.8
+      _unit: 3
+    radiusSOI:
+      _val: 0
+      _unit: 3
+    inverseFlattening:
+      _val: 0
+      _unit: 0
+    axialTilt:
+      _val: 2.64
+      _unit: 0
+    siderealRotPeriod:
+      _val: -20997360
+      _unit: 1
+    revolutionPeriod:
+      _val: 224.7
+      _unit: 4
+    mu:
+      _val: 32.4859
+      _unit: 0
+    massEarthRatio:
+      _val: 0.815
+      _unit: 0
+    isRockyBody: 0
+  lightOrbitalParams:
+    orbitedBodyName:
+      _stringVal: Sun
+    apoapsis:
+      _val: 0.728213
+      _unit: 4
+    periapsis:
+      _val: 0.71844
+      _unit: 4
+    i:
+      _val: 3.39
+      _unit: 0
+    lAscN:
+      _val: 76.68
+      _unit: 0
+    periapsisArg:
+      _val: 54.884
+      _unit: 0
+    trueAnomaly:
+      _val: 0
+      _unit: 0
+  surfaceParams:
+    surfPressure:
+      _val: 0
+      _unit: 4
+    surfDensity:
+      _val: 0
+      _unit: 0
+    surfTemp:
+      _val: 0
+      _unit: 0
+    maxAtmoHeight:
+      _val: 0
+      _unit: 0
+    highestBumpAlt:
+      _val: 0
+      _unit: 0
+  jns:
+    j2:
+      _val: 0
+      _unit: 0
+    j3:
+      _val: 0
+      _unit: 0
+    j4:
+      _val: 0
+      _unit: 0
+    j5:
+      _val: 0
+      _unit: 0
+    j6:
+      _val: 0
+      _unit: 0
 --- !u!1 &948094985
 GameObject:
   m_ObjectHideFlags: 0
@@ -17164,100 +17634,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 967337629}
   m_CullTransparentMesh: 0
---- !u!114 &978750791
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
-  planetaryParams:
-    radius:
-      _val: 0
-      _unit: 0
-    polarRadius:
-      _val: 0
-      _unit: 0
-    radiusSOI:
-      _val: 0
-      _unit: 0
-    inverseFlattening:
-      _val: 0
-      _unit: 0
-    axialTilt:
-      _val: 0
-      _unit: 0
-    siderealRotPeriod:
-      _val: 0
-      _unit: 0
-    revolutionPeriod:
-      _val: 0
-      _unit: 0
-    mu:
-      _val: 0
-      _unit: 0
-    massEarthRatio:
-      _val: 0
-      _unit: 0
-    isRockyBody: 0
-  lightOrbitalParams:
-    orbitedBodyName:
-      _stringVal: 
-    apoapsis:
-      _val: 0
-      _unit: 0
-    periapsis:
-      _val: 0
-      _unit: 0
-    i:
-      _val: 0
-      _unit: 0
-    lAscN:
-      _val: 0
-      _unit: 0
-    periapsisArg:
-      _val: 0
-      _unit: 0
-    trueAnomaly:
-      _val: 0
-      _unit: 0
-  surfaceParams:
-    surfPressure:
-      _val: 0
-      _unit: 0
-    surfDensity:
-      _val: 0
-      _unit: 0
-    surfTemp:
-      _val: 0
-      _unit: 0
-    maxAtmoHeight:
-      _val: 0
-      _unit: 0
-    highestBumpAlt:
-      _val: 0
-      _unit: 0
-  jns:
-    j2:
-      _val: 0
-      _unit: 0
-    j3:
-      _val: 0
-      _unit: 0
-    j4:
-      _val: 0
-      _unit: 0
-    j5:
-      _val: 0
-      _unit: 0
-    j6:
-      _val: 0
-      _unit: 0
 --- !u!1 &988972904
 GameObject:
   m_ObjectHideFlags: 0
@@ -17308,6 +17684,100 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &993552908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
+  planetaryParams:
+    radius:
+      _val: 25559
+      _unit: 3
+    polarRadius:
+      _val: 24973
+      _unit: 3
+    radiusSOI:
+      _val: 0
+      _unit: 3
+    inverseFlattening:
+      _val: 43.61098
+      _unit: 0
+    axialTilt:
+      _val: 82.33
+      _unit: 0
+    siderealRotPeriod:
+      _val: -62064
+      _unit: 1
+    revolutionPeriod:
+      _val: 84
+      _unit: 5
+    mu:
+      _val: 579.3939
+      _unit: 0
+    massEarthRatio:
+      _val: 14.54
+      _unit: 0
+    isRockyBody: 0
+  lightOrbitalParams:
+    orbitedBodyName:
+      _stringVal: Sun
+    apoapsis:
+      _val: 20.11
+      _unit: 4
+    periapsis:
+      _val: 18.33
+      _unit: 4
+    i:
+      _val: 0.772
+      _unit: 0
+    lAscN:
+      _val: 74.006
+      _unit: 0
+    periapsisArg:
+      _val: 96.998857
+      _unit: 0
+    trueAnomaly:
+      _val: 0
+      _unit: 0
+  surfaceParams:
+    surfPressure:
+      _val: 0
+      _unit: 4
+    surfDensity:
+      _val: 0
+      _unit: 0
+    surfTemp:
+      _val: 0
+      _unit: 0
+    maxAtmoHeight:
+      _val: 0
+      _unit: 0
+    highestBumpAlt:
+      _val: 0
+      _unit: 0
+  jns:
+    j2:
+      _val: 0
+      _unit: 0
+    j3:
+      _val: 0
+      _unit: 0
+    j4:
+      _val: 0
+      _unit: 0
+    j5:
+      _val: 0
+      _unit: 0
+    j6:
+      _val: 0
+      _unit: 0
 --- !u!1 &1012650979
 GameObject:
   m_ObjectHideFlags: 0
@@ -17453,13 +17923,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1028811457}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: -0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 2511511}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 180, y: 90, z: 0}
 --- !u!114 &1028811459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17473,7 +17943,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inspectorFoldout_showInfo: 0
-  settings: {fileID: 978750791}
+  settings: {fileID: 273055375}
   _relativeAcc:
     x: 0
     y: 0
@@ -21147,100 +21617,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1281750045}
   m_CullTransparentMesh: 0
---- !u!114 &1284951420
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
-  planetaryParams:
-    radius:
-      _val: 0
-      _unit: 0
-    polarRadius:
-      _val: 0
-      _unit: 0
-    radiusSOI:
-      _val: 0
-      _unit: 0
-    inverseFlattening:
-      _val: 0
-      _unit: 0
-    axialTilt:
-      _val: 0
-      _unit: 0
-    siderealRotPeriod:
-      _val: 0
-      _unit: 0
-    revolutionPeriod:
-      _val: 0
-      _unit: 0
-    mu:
-      _val: 0
-      _unit: 0
-    massEarthRatio:
-      _val: 0
-      _unit: 0
-    isRockyBody: 0
-  lightOrbitalParams:
-    orbitedBodyName:
-      _stringVal: 
-    apoapsis:
-      _val: 0
-      _unit: 0
-    periapsis:
-      _val: 0
-      _unit: 0
-    i:
-      _val: 0
-      _unit: 0
-    lAscN:
-      _val: 0
-      _unit: 0
-    periapsisArg:
-      _val: 0
-      _unit: 0
-    trueAnomaly:
-      _val: 0
-      _unit: 0
-  surfaceParams:
-    surfPressure:
-      _val: 0
-      _unit: 0
-    surfDensity:
-      _val: 0
-      _unit: 0
-    surfTemp:
-      _val: 0
-      _unit: 0
-    maxAtmoHeight:
-      _val: 0
-      _unit: 0
-    highestBumpAlt:
-      _val: 0
-      _unit: 0
-  jns:
-    j2:
-      _val: 0
-      _unit: 0
-    j3:
-      _val: 0
-      _unit: 0
-    j4:
-      _val: 0
-      _unit: 0
-    j5:
-      _val: 0
-      _unit: 0
-    j6:
-      _val: 0
-      _unit: 0
 --- !u!1 &1286220569
 GameObject:
   m_ObjectHideFlags: 0
@@ -22766,6 +23142,100 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1348673744}
   m_CullTransparentMesh: 0
+--- !u!114 &1351183487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
+  planetaryParams:
+    radius:
+      _val: 3396.2
+      _unit: 3
+    polarRadius:
+      _val: 3376.2
+      _unit: 3
+    radiusSOI:
+      _val: 0
+      _unit: 3
+    inverseFlattening:
+      _val: 16.9779
+      _unit: 0
+    axialTilt:
+      _val: 25.19
+      _unit: 0
+    siderealRotPeriod:
+      _val: 88642.44
+      _unit: 1
+    revolutionPeriod:
+      _val: 686.98
+      _unit: 4
+    mu:
+      _val: 4.282837
+      _unit: 0
+    massEarthRatio:
+      _val: 0.107
+      _unit: 0
+    isRockyBody: 0
+  lightOrbitalParams:
+    orbitedBodyName:
+      _stringVal: Sun
+    apoapsis:
+      _val: 1.666
+      _unit: 4
+    periapsis:
+      _val: 1.382
+      _unit: 4
+    i:
+      _val: 1.85
+      _unit: 0
+    lAscN:
+      _val: 49.558
+      _unit: 0
+    periapsisArg:
+      _val: 286.502
+      _unit: 0
+    trueAnomaly:
+      _val: 0
+      _unit: 0
+  surfaceParams:
+    surfPressure:
+      _val: 0
+      _unit: 4
+    surfDensity:
+      _val: 0
+      _unit: 0
+    surfTemp:
+      _val: 0
+      _unit: 0
+    maxAtmoHeight:
+      _val: 0
+      _unit: 0
+    highestBumpAlt:
+      _val: 0
+      _unit: 0
+  jns:
+    j2:
+      _val: 0
+      _unit: 0
+    j3:
+      _val: 0
+      _unit: 0
+    j4:
+      _val: 0
+      _unit: 0
+    j5:
+      _val: 0
+      _unit: 0
+    j6:
+      _val: 0
+      _unit: 0
 --- !u!1 &1353633794
 GameObject:
   m_ObjectHideFlags: 0
@@ -22792,13 +23262,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1353633794}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: -0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 2511511}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 180, y: 90, z: 0}
 --- !u!114 &1353633796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22812,7 +23282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inspectorFoldout_showInfo: 0
-  settings: {fileID: 2057160082}
+  settings: {fileID: 337963232}
   _relativeAcc:
     x: 0
     y: 0
@@ -25693,6 +26163,100 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1496478442}
   m_CullTransparentMesh: 0
+--- !u!114 &1508955389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
+  planetaryParams:
+    radius:
+      _val: 60268
+      _unit: 3
+    polarRadius:
+      _val: 54364
+      _unit: 3
+    radiusSOI:
+      _val: 0
+      _unit: 3
+    inverseFlattening:
+      _val: 10.2082
+      _unit: 0
+    axialTilt:
+      _val: 26.73
+      _unit: 0
+    siderealRotPeriod:
+      _val: 38361.6
+      _unit: 1
+    revolutionPeriod:
+      _val: 29.46
+      _unit: 5
+    mu:
+      _val: 3793.1187
+      _unit: 0
+    massEarthRatio:
+      _val: 95.16
+      _unit: 0
+    isRockyBody: 0
+  lightOrbitalParams:
+    orbitedBodyName:
+      _stringVal: Sun
+    apoapsis:
+      _val: 10.1238
+      _unit: 4
+    periapsis:
+      _val: 9.0412
+      _unit: 4
+    i:
+      _val: 2.485
+      _unit: 0
+    lAscN:
+      _val: 113.665
+      _unit: 0
+    periapsisArg:
+      _val: 339.392
+      _unit: 0
+    trueAnomaly:
+      _val: 0
+      _unit: 0
+  surfaceParams:
+    surfPressure:
+      _val: 0
+      _unit: 4
+    surfDensity:
+      _val: 0
+      _unit: 0
+    surfTemp:
+      _val: 0
+      _unit: 0
+    maxAtmoHeight:
+      _val: 0
+      _unit: 0
+    highestBumpAlt:
+      _val: 0
+      _unit: 0
+  jns:
+    j2:
+      _val: 0
+      _unit: 0
+    j3:
+      _val: 0
+      _unit: 0
+    j4:
+      _val: 0
+      _unit: 0
+    j5:
+      _val: 0
+      _unit: 0
+    j6:
+      _val: 0
+      _unit: 0
 --- !u!1 &1511569678
 GameObject:
   m_ObjectHideFlags: 0
@@ -30915,6 +31479,100 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1754918498}
   m_CullTransparentMesh: 0
+--- !u!114 &1758249835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
+  planetaryParams:
+    radius:
+      _val: 24764
+      _unit: 3
+    polarRadius:
+      _val: 24341
+      _unit: 3
+    radiusSOI:
+      _val: 0
+      _unit: 3
+    inverseFlattening:
+      _val: 58.54808
+      _unit: 0
+    axialTilt:
+      _val: 28.32
+      _unit: 0
+    siderealRotPeriod:
+      _val: 57996
+      _unit: 1
+    revolutionPeriod:
+      _val: 164.8
+      _unit: 5
+    mu:
+      _val: 683.6529
+      _unit: 0
+    massEarthRatio:
+      _val: 17.15
+      _unit: 0
+    isRockyBody: 0
+  lightOrbitalParams:
+    orbitedBodyName:
+      _stringVal: Sun
+    apoapsis:
+      _val: 30.33
+      _unit: 4
+    periapsis:
+      _val: 29.81
+      _unit: 4
+    i:
+      _val: 0.0113
+      _unit: 0
+    lAscN:
+      _val: 131.784
+      _unit: 0
+    periapsisArg:
+      _val: 276.336
+      _unit: 0
+    trueAnomaly:
+      _val: 0
+      _unit: 0
+  surfaceParams:
+    surfPressure:
+      _val: 0
+      _unit: 4
+    surfDensity:
+      _val: 0
+      _unit: 0
+    surfTemp:
+      _val: 0
+      _unit: 0
+    maxAtmoHeight:
+      _val: 0
+      _unit: 0
+    highestBumpAlt:
+      _val: 0
+      _unit: 0
+  jns:
+    j2:
+      _val: 0
+      _unit: 0
+    j3:
+      _val: 0
+      _unit: 0
+    j4:
+      _val: 0
+      _unit: 0
+    j5:
+      _val: 0
+      _unit: 0
+    j6:
+      _val: 0
+      _unit: 0
 --- !u!1 &1759040705
 GameObject:
   m_ObjectHideFlags: 0
@@ -33137,13 +33795,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1847738931}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: -0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 2511511}
   m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 180, y: 90, z: 0}
 --- !u!114 &1847738933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33157,7 +33815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inspectorFoldout_showInfo: 0
-  settings: {fileID: 1284951420}
+  settings: {fileID: 1758249835}
   _relativeAcc:
     x: 0
     y: 0
@@ -35565,100 +36223,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2055461133}
   m_CullTransparentMesh: 0
---- !u!114 &2057160082
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CelestialBodySettings
-  planetaryParams:
-    radius:
-      _val: 0
-      _unit: 0
-    polarRadius:
-      _val: 0
-      _unit: 0
-    radiusSOI:
-      _val: 0
-      _unit: 0
-    inverseFlattening:
-      _val: 0
-      _unit: 0
-    axialTilt:
-      _val: 0
-      _unit: 0
-    siderealRotPeriod:
-      _val: 0
-      _unit: 0
-    revolutionPeriod:
-      _val: 0
-      _unit: 0
-    mu:
-      _val: 0
-      _unit: 0
-    massEarthRatio:
-      _val: 0
-      _unit: 0
-    isRockyBody: 0
-  lightOrbitalParams:
-    orbitedBodyName:
-      _stringVal: 
-    apoapsis:
-      _val: 0
-      _unit: 0
-    periapsis:
-      _val: 0
-      _unit: 0
-    i:
-      _val: 0
-      _unit: 0
-    lAscN:
-      _val: 0
-      _unit: 0
-    periapsisArg:
-      _val: 0
-      _unit: 0
-    trueAnomaly:
-      _val: 0
-      _unit: 0
-  surfaceParams:
-    surfPressure:
-      _val: 0
-      _unit: 0
-    surfDensity:
-      _val: 0
-      _unit: 0
-    surfTemp:
-      _val: 0
-      _unit: 0
-    maxAtmoHeight:
-      _val: 0
-      _unit: 0
-    highestBumpAlt:
-      _val: 0
-      _unit: 0
-  jns:
-    j2:
-      _val: 0
-      _unit: 0
-    j3:
-      _val: 0
-      _unit: 0
-    j4:
-      _val: 0
-      _unit: 0
-    j5:
-      _val: 0
-      _unit: 0
-    j6:
-      _val: 0
-      _unit: 0
 --- !u!1 &2096737098
 GameObject:
   m_ObjectHideFlags: 0

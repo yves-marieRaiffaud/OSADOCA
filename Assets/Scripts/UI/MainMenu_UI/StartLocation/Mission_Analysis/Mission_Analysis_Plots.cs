@@ -41,34 +41,45 @@ public class Mission_Analysis_Plots
         float deltaLat = 0f;
         float deltaLong = 0f;
 
-        List<Vector2> latLong = new List<Vector2>();
-        List<Vector3> debugArr = new List<Vector3>();
+        List<Vector3> latLongTime = new List<Vector3>();
 
         float lAscN_M = (float) Kepler.OrbitalConversions.OrbitPosition.nu_2_M(-aop, e).Item1;
+        // Time since periapsis to reach the ascending node
+        float t_lAscN = lAscN_M/(float)_initOrbitScript.previewedOrbit.param.n;
+        Debug.Log("lAscN_M = " + lAscN_M + "; t_lAscN = " + t_lAscN);
 
-        for(float deltaTheta=-Mathf.PI; deltaTheta<Mathf.PI; deltaTheta+=nuIncr)
+        for(float deltaTheta=0f; deltaTheta<2f*Mathf.PI; deltaTheta+=nuIncr)
         {
             deltaLat = Mathf.Asin(sI*Mathf.Sin(deltaTheta));
-            deltaLong = -Mathf.PI - Mathf.Asin(Mathf.Sin(deltaTheta)*cI/Mathf.Cos(deltaLat));
-            if(deltaTheta < -Mathf.PI/2f)
-                deltaLong = -Mathf.PI - deltaLong;
-            else if(deltaTheta > Mathf.PI/2f)
+            deltaLong = Mathf.Asin(Mathf.Sin(deltaTheta)*cI/Mathf.Cos(deltaLat));
+            if(MathOps.isInRange(deltaTheta, Mathf.PI/2f, 3f*Mathf.PI/2f, MathOps.isInRangeFlags.both_excluded))
                 deltaLong = Mathf.PI - deltaLong;
 
-            /*float currM = (float) Kepler.OrbitalConversions.OrbitPosition.nu_2_M(deltaTheta-aop, e).Item1 + lAscN_M;
-            currM = ClampAngle(currM, 0f, 2f*Mathf.PI);
-            float t = currM/(float)_initOrbitScript.previewedOrbit.param.n;
-            deltaLong = deltaLong - earthEquatorSpeed*t;*/
+            // Mean anomaly of the current satellite pos with respect to the apside line/perigee
+            float nuToPeriapsis_M = (float) Kepler.OrbitalConversions.OrbitPosition.nu_2_M(deltaTheta - aop, e).Item1;
+            nuToPeriapsis_M -= lAscN_M;
+            nuToPeriapsis_M = ClampAngle(nuToPeriapsis_M, -Mathf.PI, Mathf.PI);
 
-            //debugArr.Add(new Vector3((float)(deltaLat*UniCsts.rad2deg), (float)((deltaLong+lAscN-Mathf.PI/2f)*UniCsts.rad2deg), earthEquatorSpeed*t*(float)UniCsts.rad2deg));
-            latLong.Add(LaunchPad.RawLatLong_2_XY(new Vector2(913.4f, 443.4f), deltaLat*UniCsts.rad2deg, (deltaLong+lAscN-Mathf.PI/2f)*UniCsts.rad2deg));
+            float t = nuToPeriapsis_M/(float)_initOrbitScript.previewedOrbit.param.n; // time since the ascending node, in s
+            if(t+0.00001f < Mathf.Epsilon)
+                t = T - Mathf.Abs(t);
+
+            deltaLong += lAscN; // Computing the longitude with respect to the 0° longitude, not with respect to the ascending node longitude
+            deltaLong = deltaLong - earthEquatorSpeed*t;
+
+            Vector2 latLong_xy = LaunchPad.RawLatLong_2_XY(new Vector2(913.4f, 443.4f), deltaLat*UniCsts.rad2deg, deltaLong*UniCsts.rad2deg);
+            latLongTime.Add(new Vector3(latLong_xy.x, latLong_xy.y, t));
         }
         _missionAnalysisScript._lr.gameObject.SetActive(true);
-        _missionAnalysisScript._lr.Points = latLong.OrderBy(v => v.x).ToArray<Vector2>();
 
-        debugArr = debugArr.OrderBy(itm => itm.y).ToList<Vector3>();
-        foreach(Vector3 itm in debugArr)
-            Debug.LogFormat("lat = {0}; long = {1}; t = {2}", itm.x, itm.y, itm.z);
+        latLongTime = latLongTime.OrderBy(v => v.z).ToList<Vector3>(); // Sorting by time
+        // Nedd to offset by x pos so that their is no weird line
+        _missionAnalysisScript._lr.Points = latLongTime.ConvertAll<Vector2>(Retrieve_XY_From_LatLongTime_List).ToArray();
+    }
+
+    Vector2 Retrieve_XY_From_LatLongTime_List(Vector3 _inVec)
+    {
+        return new Vector2(_inVec.x, _inVec.y);
     }
 
     public float ClampAngle(float value, float lowerBound, float upperBound, float incr=2f*Mathf.PI)
