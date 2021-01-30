@@ -50,6 +50,9 @@ public class Mission_Analysis_Plots
         List<Vector3> latLongTime = new List<Vector3>();
 
         float lAscN_M = (float) Kepler.OrbitalConversions.OrbitPosition.nu_2_M(-aop, e).Item1;
+        bool foundPeriapsisIdx = false;
+        int idxStart_periapsis = 0;
+        int loopIndex = 0;
 
         for(float deltaTheta=0f; deltaTheta<2f*Mathf.PI; deltaTheta+=nuIncr)
         {
@@ -57,10 +60,16 @@ public class Mission_Analysis_Plots
             deltaLong = Mathf.Asin(Mathf.Sin(deltaTheta)*cI/Mathf.Cos(deltaLat));
             if(MathOps.isInRange(deltaTheta, Mathf.PI/2f, 3f*Mathf.PI/2f, MathOps.isInRangeFlags.both_excluded))
                 deltaLong = Mathf.PI - deltaLong;
+            
+            if(!foundPeriapsisIdx &&  MathOps.FloatIsGreaterThan(deltaTheta, 3f*Mathf.PI/2f)) {
+                foundPeriapsisIdx = true;
+                idxStart_periapsis = loopIndex;
+            }
 
             // Mean anomaly of the current satellite pos with respect to the ascending node
             float nuToPeriapsis_M = (float) Kepler.OrbitalConversions.OrbitPosition.nu_2_M(deltaTheta - aop, e).Item1 - lAscN_M;
             nuToPeriapsis_M = MathOps.ClampAngle(nuToPeriapsis_M, -Mathf.PI, Mathf.PI);
+
             // Time since the ascending node, in s
             float t = nuToPeriapsis_M/(float)_initOrbitScript.previewedOrbit.param.n;
             if(t+0.00001f < Mathf.Epsilon)
@@ -72,11 +81,37 @@ public class Mission_Analysis_Plots
 
             Vector2 latLong_xy = LaunchPad.RawLatLong_2_XY(new Vector2(planetMapWidth, planetMapHeight), deltaLat*UniCsts.rad2deg, deltaLong*UniCsts.rad2deg);
             latLongTime.Add(new Vector3(latLong_xy.x, latLong_xy.y, t));
+
+            loopIndex++;
         }
 
         // Sorting List by time since ascending node ==> output list is from the ascending node to the next ascending node one orbit afterwards
         latLongTime = latLongTime.OrderBy(v => v.z).ToList<Vector3>();
-        return latLongTime.ConvertAll<Vector2>(Retrieve_XY_From_LatLongTime_List).ToArray();
+
+        // Patching the values from 3*PI/2 to 2*PI before the ascending node, so that the orbit is defined from periapsis to periapsis
+        // and not from ascending node to ascending node
+        Vector3[] latLongTimeArr;
+        if(idxStart_periapsis != latLongTime.Count && idxStart_periapsis != 0)
+        {
+            float lastPt_X = latLongTime[latLongTime.Count-1].x;
+            float firstPt_X = latLongTime[0].x;
+
+            int nbItemToMove = latLongTime.Count - idxStart_periapsis;
+            List<Vector3> range_cp_begin = latLongTime.GetRange(idxStart_periapsis, nbItemToMove);
+            latLongTime.RemoveRange(idxStart_periapsis, nbItemToMove);
+            latLongTime.InsertRange(0, range_cp_begin);
+            latLongTimeArr = latLongTime.ToArray();
+            for(int index=0; index<nbItemToMove; index++) {
+                latLongTimeArr[index].x += firstPt_X - lastPt_X;
+                /*if(latLongTimeArr[index].x < planetMapWidth)
+                    latLongTimeArr[index].x += planetMapWidth - latLongTimeArr[index].x;
+                else if(latLongTimeArr[index].x > planetMapWidth)
+                    latLongTimeArr[index].x += -planetMapWidth + latLongTimeArr[index].x-planetMapWidth;*/
+            }
+        }
+        else
+            latLongTimeArr = latLongTime.ToArray();
+        return latLongTimeArr.ToList<Vector3>().ConvertAll<Vector2>(Retrieve_XY_From_LatLongTime_List).ToArray();
     }
     Vector2 Retrieve_XY_From_LatLongTime_List(Vector3 _latLongTimeVec3)
     {
@@ -94,6 +129,8 @@ public class Mission_Analysis_Plots
                 float extraWidth = currOrbitXY[idx].x - planetMapWidth;
                 currOrbitXY[idx].x += - planetMapWidth + extraWidth;
             }
+            else if(currOrbitXY[idx].x < planetMapWidth)
+                currOrbitXY[idx].x += planetMapWidth - currOrbitXY[idx].x;
         }
         return currOrbitXY;
     }
