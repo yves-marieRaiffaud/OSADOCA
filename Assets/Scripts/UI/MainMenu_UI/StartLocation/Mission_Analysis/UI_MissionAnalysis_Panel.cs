@@ -41,6 +41,7 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     [Tooltip("Prefab for the Ground Track UILineRenderer")]
     public GameObject groundTrack_prefab;
     internal List<UIExt.UILineRenderer> _lrArr;
+    GameObject ma_GridGO;
 
     public Slider nbOrbits_slider;
 
@@ -48,6 +49,7 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     {
         initOrbitScript = sectionInitOrbit_RT.GetComponent<UIStartLoc_InitOrbit>();
         planetMap = panelPlanetMap_RT.Find("PlanetMap").GetComponent<Image>();
+        ma_GridGO = planetMap.transform.Find("Grid").gameObject;
         maPlots = new Mission_Analysis_Plots(this, initOrbitScript);
         initOrbitScript.panelIsFullySetUp.AddListener(OnOrbitDef_UpdateClick);
 
@@ -112,10 +114,12 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     {
         if(panelIdentifier != 0 && isSetupBool != 1)
             return;
-        
         _lrArr.Clear();
-        for(int childIdx=0; childIdx<panelPlanetMap_RT.Find("PlanetMap").childCount; childIdx++)
-            GameObject.Destroy(panelPlanetMap_RT.Find("PlanetMap").GetChild(childIdx).gameObject);
+
+        for(int childIdx=0; childIdx<planetMap.transform.childCount; childIdx++) {
+            if(planetMap.transform.GetChild(childIdx) != ma_GridGO.transform)
+                GameObject.Destroy(planetMap.transform.GetChild(childIdx).gameObject);
+        }
 
         for(int i=0; i<(int)nbOrbits_slider.value; i++)
         {

@@ -24,6 +24,7 @@ public class Mission_Analysis_Plots
         float planetMapWidth = _missionAnalysisScript.planetMap.rectTransform.rect.width;
         float planetMapHeight = _missionAnalysisScript.planetMap.rectTransform.rect.height;
         planetMapSize = new Vector2(planetMapWidth, planetMapHeight);
+        Debug.Log("planetMapSize = " + planetMapSize);
     }
 
     public Vector2[] Create_GroundTracks_Data(bool plotRotatingPlanet_GT)
