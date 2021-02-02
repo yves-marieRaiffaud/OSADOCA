@@ -42,6 +42,8 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     public GameObject groundTrack_prefab;
     internal List<UIExt.UILineRenderer> _lrArr;
 
+    public Slider nbOrbits_slider;
+
     void Start()
     {
         initOrbitScript = sectionInitOrbit_RT.GetComponent<UIStartLoc_InitOrbit>();
@@ -55,12 +57,24 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
         startLocPanelScript.onPlanetSelectionValueChange.AddListener(Update_Planetary_Map);
 
         _lrArr = new List<UIExt.UILineRenderer>();
+
+        /*Create_GroundTrack_LineRenderer_Obj("DebugLine");
+        _lrArr[_lrArr.Count-1].gameObject.SetActive(true);
+        List<Vector2> debugPts = new List<Vector2>();
+        debugPts.Add(new Vector2(13.3f,0f));
+        debugPts.Add(new Vector2(planetMap.rectTransform.rect.width,0f));
+        debugPts.Add(new Vector2(planetMap.rectTransform.rect.width,planetMap.rectTransform.rect.height));
+        debugPts.Add(new Vector2(0f,planetMap.rectTransform.rect.height));
+        debugPts.Add(new Vector2(0f,0f));
+        _lrArr[_lrArr.Count-1].Points = debugPts.ToArray();*/
+
     }
     void Create_GroundTrack_LineRenderer_Obj(string goName)
     {
         if(groundTrack_prefab == null)
             Debug.LogError("Error while trying to create a UILineRenderer GroundTrack Object: 'groundTrack_prefab' GameObject is null");
         GameObject go = GameObject.Instantiate(groundTrack_prefab, Vector3.zero, Quaternion.identity, panelPlanetMap_RT.Find("PlanetMap"));
+        go.name = goName;
         RectTransform goRT = go.GetComponent<RectTransform>();
         goRT.offsetMin = Vector2.zero;
         goRT.offsetMax = Vector2.zero;
@@ -98,7 +112,12 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     {
         if(panelIdentifier != 0 && isSetupBool != 1)
             return;
-        for(int i=0; i<1; i++)
+        
+        _lrArr.Clear();
+        for(int childIdx=0; childIdx<panelPlanetMap_RT.Find("PlanetMap").childCount; childIdx++)
+            GameObject.Destroy(panelPlanetMap_RT.Find("PlanetMap").GetChild(childIdx).gameObject);
+
+        for(int i=0; i<(int)nbOrbits_slider.value; i++)
         {
             Create_GroundTrack_LineRenderer_Obj(i.ToString());
             Vector2[] pts;

@@ -14,15 +14,16 @@ public class Mission_Analysis_Plots
 {
     UIStartLoc_InitOrbit _initOrbitScript;
     UI_MissionAnalysis_Panel _missionAnalysisScript;
-    float planetMapWidth;
-    float planetMapHeight;
+    Vector2 planetMapSize; // x = width; y = height
 
     public Mission_Analysis_Plots(UI_MissionAnalysis_Panel __missionAnalysisScript, UIStartLoc_InitOrbit __initOrbitScript)
     {
         _initOrbitScript = __initOrbitScript;
         _missionAnalysisScript = __missionAnalysisScript;
-        planetMapWidth = _missionAnalysisScript.planetMap.rectTransform.rect.width;
-        planetMapHeight = _missionAnalysisScript.planetMap.rectTransform.rect.height;
+
+        float planetMapWidth = _missionAnalysisScript.planetMap.rectTransform.rect.width;
+        float planetMapHeight = _missionAnalysisScript.planetMap.rectTransform.rect.height;
+        planetMapSize = new Vector2(planetMapWidth, planetMapHeight);
     }
 
     public Vector2[] Create_GroundTracks_Data(bool plotRotatingPlanet_GT)
@@ -48,11 +49,10 @@ public class Mission_Analysis_Plots
         float deltaLong = 0f;
 
         List<Vector3> latLongTime = new List<Vector3>();
+        int perigeeIdxStart = (int) Mathf.Ceil(3f*Mathf.PI/(2f*nuIncr)) - 1;
+        Debug.Log("perigeeIdxStart = " + perigeeIdxStart);
 
         float lAscN_M = (float) Kepler.OrbitalConversions.OrbitPosition.nu_2_M(-aop, e).Item1;
-        bool foundPeriapsisIdx = false;
-        int idxStart_periapsis = 0;
-        int loopIndex = 0;
 
         for(float deltaTheta=0f; deltaTheta<2f*Mathf.PI; deltaTheta+=nuIncr)
         {
@@ -60,11 +60,6 @@ public class Mission_Analysis_Plots
             deltaLong = Mathf.Asin(Mathf.Sin(deltaTheta)*cI/Mathf.Cos(deltaLat));
             if(MathOps.isInRange(deltaTheta, Mathf.PI/2f, 3f*Mathf.PI/2f, MathOps.isInRangeFlags.both_excluded))
                 deltaLong = Mathf.PI - deltaLong;
-            
-            if(!foundPeriapsisIdx &&  MathOps.FloatIsGreaterThan(deltaTheta, 3f*Mathf.PI/2f)) {
-                foundPeriapsisIdx = true;
-                idxStart_periapsis = loopIndex;
-            }
 
             // Mean anomaly of the current satellite pos with respect to the ascending node
             float nuToPeriapsis_M = (float) Kepler.OrbitalConversions.OrbitPosition.nu_2_M(deltaTheta - aop, e).Item1 - lAscN_M;
@@ -79,39 +74,36 @@ public class Mission_Analysis_Plots
             if(plotRotatingPlanet_GT)
                 deltaLong -= earthEquatorSpeed*t;
 
-            Vector2 latLong_xy = LaunchPad.RawLatLong_2_XY(new Vector2(planetMapWidth, planetMapHeight), deltaLat*UniCsts.rad2deg, deltaLong*UniCsts.rad2deg);
-            latLongTime.Add(new Vector3(latLong_xy.x, latLong_xy.y, t));
-
-            loopIndex++;
+            Vector2 latLong_xy = LaunchPad.RawLatLong_2_XY(planetMapSize, deltaLat*UniCsts.rad2deg, deltaLong*UniCsts.rad2deg);
+            latLongTime.Add(new Vector3(latLong_xy.x-13.33f, latLong_xy.y, t));
         }
 
         // Sorting List by time since ascending node ==> output list is from the ascending node to the next ascending node one orbit afterwards
         latLongTime = latLongTime.OrderBy(v => v.z).ToList<Vector3>();
+        
+        // Patching 
+        if(perigeeIdxStart != 0 && perigeeIdxStart != latLongTime.Count-1) {
+            int nbItems = latLongTime.Count - perigeeIdxStart;
+            float ascendingNode_Pt_XVal = latLongTime[0].x;
+            float lastMovedPt_XVal = latLongTime[latLongTime.Count-1].x;
 
-        // Patching the values from 3*PI/2 to 2*PI before the ascending node, so that the orbit is defined from periapsis to periapsis
-        // and not from ascending node to ascending node
-        Vector3[] latLongTimeArr;
-        if(idxStart_periapsis != latLongTime.Count && idxStart_periapsis != 0)
-        {
-            float lastPt_X = latLongTime[latLongTime.Count-1].x;
-            float firstPt_X = latLongTime[0].x;
-
-            int nbItemToMove = latLongTime.Count - idxStart_periapsis;
-            List<Vector3> range_cp_begin = latLongTime.GetRange(idxStart_periapsis, nbItemToMove);
-            latLongTime.RemoveRange(idxStart_periapsis, nbItemToMove);
-            latLongTime.InsertRange(0, range_cp_begin);
-            latLongTimeArr = latLongTime.ToArray();
-            for(int index=0; index<nbItemToMove; index++) {
-                latLongTimeArr[index].x += firstPt_X - lastPt_X;
-                /*if(latLongTimeArr[index].x < planetMapWidth)
-                    latLongTimeArr[index].x += planetMapWidth - latLongTimeArr[index].x;
-                else if(latLongTimeArr[index].x > planetMapWidth)
-                    latLongTimeArr[index].x += -planetMapWidth + latLongTimeArr[index].x-planetMapWidth;*/
+            List<Vector3> range2Move = latLongTime.GetRange(perigeeIdxStart, nbItems);
+            latLongTime.RemoveRange(perigeeIdxStart, nbItems);
+            latLongTime.InsertRange(0, range2Move);
+            // Offseting the moved values so that they are patched correctly
+            Vector3 loopVectorVal;
+            for(int rngIdx = 0; rngIdx<nbItems; rngIdx++)
+            {
+                loopVectorVal = latLongTime[rngIdx];
+                loopVectorVal.x += ascendingNode_Pt_XVal - lastMovedPt_XVal;
+                if(loopVectorVal.x > planetMapSize.x)
+                    loopVectorVal.x -= planetMapSize.x;
+                latLongTime[rngIdx] = loopVectorVal;
             }
+
         }
-        else
-            latLongTimeArr = latLongTime.ToArray();
-        return latLongTimeArr.ToList<Vector3>().ConvertAll<Vector2>(Retrieve_XY_From_LatLongTime_List).ToArray();
+
+        return  latLongTime.ConvertAll<Vector2>(Retrieve_XY_From_LatLongTime_List).ToArray();
     }
     Vector2 Retrieve_XY_From_LatLongTime_List(Vector3 _latLongTimeVec3)
     {
@@ -125,12 +117,12 @@ public class Mission_Analysis_Plots
         Vector2 firstPt = currOrbitXY[0];
         for(int idx=0; idx<currOrbitXY.Length; idx++) {
             currOrbitXY[idx] += prevOrbitLastPt_XY - firstPt;
-            if(currOrbitXY[idx].x > planetMapWidth) {
-                float extraWidth = currOrbitXY[idx].x - planetMapWidth;
-                currOrbitXY[idx].x += - planetMapWidth + extraWidth;
+            if(currOrbitXY[idx].x > planetMapSize.x) {
+                float extraWidth = currOrbitXY[idx].x - planetMapSize.x + 13.33f;
+                currOrbitXY[idx].x += - planetMapSize.x + extraWidth;
             }
-            else if(currOrbitXY[idx].x < planetMapWidth)
-                currOrbitXY[idx].x += planetMapWidth - currOrbitXY[idx].x;
+            else if(currOrbitXY[idx].x < planetMapSize.x)
+                currOrbitXY[idx].x += planetMapSize.x - 13.33f - currOrbitXY[idx].x;
         }
         return currOrbitXY;
     }
