@@ -52,8 +52,6 @@ public class Mission_Analysis_Plots
 
         List<Vector3> latLongTime = new List<Vector3>();
         int perigeeIdxStart = (int) Mathf.Ceil(3f*Mathf.PI/(2f*nuIncr)) - 1;
-        Debug.Log("perigeeIdxStart = " + perigeeIdxStart);
-
         float lAscN_M = (float) Kepler.OrbitalConversions.OrbitPosition.nu_2_M(-aop, e).Item1;
 
         for(float deltaTheta=0f; deltaTheta<2f*Mathf.PI; deltaTheta+=nuIncr)
@@ -83,7 +81,7 @@ public class Mission_Analysis_Plots
         // Sorting List by time since ascending node ==> output list is from the ascending node to the next ascending node one orbit afterwards
         latLongTime = latLongTime.OrderBy(v => v.z).ToList<Vector3>();
         
-        // Patching 
+        // Patching from the apogee to the ascending node to the beginning of the List, so that it becomes from the perigee to the ascending node
         if(perigeeIdxStart != 0 && perigeeIdxStart != latLongTime.Count-1) {
             int nbItems = latLongTime.Count - perigeeIdxStart;
             float ascendingNode_Pt_XVal = latLongTime[0].x;
