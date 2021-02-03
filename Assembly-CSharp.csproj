@@ -39,6 +39,7 @@
      <Compile Include="Assets\Scripts\ALibs\JsonHelper.cs" />
      <Compile Include="Assets\Scripts\ALibs\Mathd.cs" />
      <Compile Include="Assets\Scripts\ALibs\Quaterniond.cs" />
+     <Compile Include="Assets\Scripts\ALibs\Resources_Manifest_Helper.cs" />
      <Compile Include="Assets\Scripts\ALibs\Vector2d.cs" />
      <Compile Include="Assets\Scripts\ALibs\Vector3d.cs" />
      <Compile Include="Assets\Scripts\ALibs\Vector4d.cs" />
@@ -88,6 +89,7 @@
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\LaunchPad\LaunchPad.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\LaunchPad\LaunchPadList.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\Mission_Analysis\Mission_Analysis_Plots.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\Mission_Analysis\Options_Scripts\MissionAnalysis_Grid_Handler.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\Mission_Analysis\UI_MissionAnalysis_Panel.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UIStartLoc_InitOrbit.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UIStartLoc_InitPlanetarySurf.cs" />
@@ -281,6 +283,7 @@
      <None Include="Assets\com.unity.uiextensions\Runtime\Resources\Shaders\UI Particle VertexLit Blended.shader" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
      <None Include="Assets\com.unity.uiextensions\Runtime\Resources\Shaders\UI Particle MultiplyDouble.shader" />
+     <None Include="Assets\Resources\Mission_Analysis\Grids\manifest.txt" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface.shader" />
      <None Include="Assets\com.unity.uiextensions\Runtime\Resources\Shaders\UI Particle AddMultiply.shader" />
      <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />

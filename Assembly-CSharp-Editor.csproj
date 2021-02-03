@@ -38,6 +38,8 @@
   <ItemGroup>
      <Compile Include="Assets\Editor\CelestialBodyEditor.cs" />
      <Compile Include="Assets\Editor\CreateIcoSphere.cs" />
+     <Compile Include="Assets\Editor\MissionAnalysis_Grid_Handler_Editor.cs" />
+     <Compile Include="Assets\Editor\Resources_Manifest_Helper_Editor.cs" />
      <Compile Include="Assets\Editor\SpaceshipEditor.cs" />
      <Compile Include="Assets\Editor\Units\Acceleration3dEditor.cs" />
      <Compile Include="Assets\Editor\Units\AccelerationEditor.cs" />

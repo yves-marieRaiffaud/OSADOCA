@@ -32,6 +32,9 @@ public static class Filepaths
     
     public const string simUI_Folder = "/Sim_UI";
     public const string simUI_displayOptions = "/displayOptions_MSDropdown.json";
+
+    public const string ma_Grids_FolderPath = "Mission_Analysis/Grids/";
+    public const string ma_Grids_ManifestPath = "Mission_Analysis/Grids/manifest";
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
     public enum EngineLayersName { Spaceship, CelestialBody, Orbit, StarDome, SpaceshipVectors };
