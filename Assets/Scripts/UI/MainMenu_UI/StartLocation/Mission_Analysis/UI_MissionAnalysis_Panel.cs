@@ -10,6 +10,8 @@ using UI_Fncs = CommonMethods.UI_Methods;
 using UniCsts = UniverseConstants;
 using Planets = CelestialBodiesConstants;
 using UnityEngine.Events;
+
+using Vectrosity;
 using UIExt = UnityEngine.UI.Extensions;
 
 public class UI_MissionAnalysis_Panel : MonoBehaviour
@@ -40,7 +42,7 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
 
     [Tooltip("Prefab for the Ground Track UILineRenderer")]
     public GameObject groundTrack_prefab;
-    internal List<UIExt.UILineRenderer> _lrArr;
+    internal List<VectorObject2D> _lrArr;
     GameObject ma_GridGO;
 
     public Slider nbOrbits_slider;
@@ -58,29 +60,23 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
         // Adding callback when another planet is selected from the dropdown ==> update the planetary map of the mission analysis panel
         startLocPanelScript.onPlanetSelectionValueChange.AddListener(Update_Planetary_Map);
 
-        _lrArr = new List<UIExt.UILineRenderer>();
-
-        /*Create_GroundTrack_LineRenderer_Obj("DebugLine");
-        _lrArr[_lrArr.Count-1].gameObject.SetActive(true);
-        List<Vector2> debugPts = new List<Vector2>();
-        debugPts.Add(new Vector2(13.3f,0f));
-        debugPts.Add(new Vector2(planetMap.rectTransform.rect.width,0f));
-        debugPts.Add(new Vector2(planetMap.rectTransform.rect.width,planetMap.rectTransform.rect.height));
-        debugPts.Add(new Vector2(0f,planetMap.rectTransform.rect.height));
-        debugPts.Add(new Vector2(0f,0f));
-        _lrArr[_lrArr.Count-1].Points = debugPts.ToArray();*/
-
+        _lrArr = new List<VectorObject2D>();
     }
     void Create_GroundTrack_LineRenderer_Obj(string goName)
     {
         if(groundTrack_prefab == null)
             Debug.LogError("Error while trying to create a UILineRenderer GroundTrack Object: 'groundTrack_prefab' GameObject is null");
+
+        // Spawning the UILineRenderer Prefab
         GameObject go = GameObject.Instantiate(groundTrack_prefab, Vector3.zero, Quaternion.identity, panelPlanetMap_RT.Find("PlanetMap"));
         go.name = goName;
         RectTransform goRT = go.GetComponent<RectTransform>();
         goRT.offsetMin = Vector2.zero;
         goRT.offsetMax = Vector2.zero;
-        _lrArr.Add(go.GetComponent<UIExt.UILineRenderer>());
+
+        // Adding it to the List<UILineRender>
+        VectorObject2D object2D = go.GetComponent<VectorObject2D>();
+        _lrArr.Add(object2D);
         _lrArr[_lrArr.Count-1].gameObject.SetActive(false);
     }
 
@@ -110,28 +106,40 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
         }
     } 
 
-    void OnOrbitDef_UpdateClick(int panelIdentifier, int isSetupBool)
+    void Clear_GroundTracks_Plots()
     {
-        if(panelIdentifier != 0 && isSetupBool != 1)
-            return;
+        // Clearing the List<UILineRenderer> containing the Ground Tracks
         _lrArr.Clear();
 
+        // Clear the GroundTracks UILineRenderer except for the Grid GameObject
         for(int childIdx=0; childIdx<planetMap.transform.childCount; childIdx++) {
             if(planetMap.transform.GetChild(childIdx) != ma_GridGO.transform)
                 GameObject.Destroy(planetMap.transform.GetChild(childIdx).gameObject);
         }
+    }
 
+    void OnOrbitDef_UpdateClick(int panelIdentifier, int isSetupBool)
+    {
+        if(panelIdentifier != 0 && isSetupBool != 1)
+            return;
+
+        Clear_GroundTracks_Plots();
         for(int i=0; i<(int)nbOrbits_slider.value; i++)
         {
+            // Spawning a new UILineRenderer
             Create_GroundTrack_LineRenderer_Obj(i.ToString());
-            Vector2[] pts;
+            List<Vector2> pts;
+            // Computing the Ground Track X & Y Values
             pts = maPlots.Create_GroundTracks_Data(true);
-            _lrArr[_lrArr.Count-1].gameObject.SetActive(true);
             if(i > 0) {
-                int lastIdx = _lrArr[_lrArr.Count-2].Points.Length-1;
-                pts = maPlots.OffsetOrbit_fromLastOrbit_Point(_lrArr[_lrArr.Count-2].Points[lastIdx], pts);
+                int lastIdx = _lrArr[_lrArr.Count-2].vectorLine.points2.Count-1;
+                pts = maPlots.OffsetOrbit_fromLastOrbit_Point(_lrArr[_lrArr.Count-2].vectorLine.points2[lastIdx], pts);
             }
-            _lrArr[_lrArr.Count-1].Points = pts;
+            _lrArr[_lrArr.Count-1].gameObject.SetActive(true);
+            _lrArr[_lrArr.Count-1].vectorLine.active = true;
+            _lrArr[_lrArr.Count-1].vectorLine.color = Color.green;
+            _lrArr[_lrArr.Count-1].vectorLine.points2 = pts;
+            _lrArr[_lrArr.Count-1].vectorLine.Draw();
         }
     }
     void Check_Plot_DataLines()

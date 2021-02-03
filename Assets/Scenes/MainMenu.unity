@@ -7582,7 +7582,7 @@ MonoBehaviour:
   panelOrbitPreview_RT: {fileID: 2023494796}
   panelPlanetMap_RT: {fileID: 751430333}
   hideShowOrbitPreview_btn: {fileID: 1808034714}
-  groundTrack_prefab: {fileID: 3850028186136512396, guid: 903abb2fb4b06164ab1b2f8b4e6c0454,
+  groundTrack_prefab: {fileID: 3529007357960770321, guid: 386f9d5b8adcd88408bbcf28b9521320,
     type: 3}
   nbOrbits_slider: {fileID: 1422333645}
 --- !u!1 &445301402

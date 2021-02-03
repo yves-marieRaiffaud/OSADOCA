@@ -9,6 +9,7 @@ using UI_Fncs = CommonMethods.UI_Methods;
 using UniCsts = UniverseConstants;
 using UnityEngine.Events;
 using System.Linq;
+using Vectrosity;
 
 public class Mission_Analysis_Plots
 {
@@ -27,14 +28,14 @@ public class Mission_Analysis_Plots
         Debug.Log("planetMapSize = " + planetMapSize);
     }
 
-    public Vector2[] Create_GroundTracks_Data(bool plotRotatingPlanet_GT)
+    public List<Vector2> Create_GroundTracks_Data(bool plotRotatingPlanet_GT)
     {
         // if 'plotRotatingPlanet_GT' == true: plotting the rotating planet ground tracks
         // if 'plotRotatingPlanet_GT' == false: plotting the non-rotating ground tracks
         if(_initOrbitScript.previewedOrbit == null || _initOrbitScript.previewedOrbit.param == null)
             Debug.LogError("Error while plotting ground track. '_initOrbitScript.previewedOrbit' or '_initOrbitScript.previewedOrbit.param' is null");
 
-        float nuIncr = (float)(1f*UniCsts.deg2rad);
+        float nuIncr = (float)(0.5f*UniCsts.deg2rad);
         float aop = (float) _initOrbitScript.previewedOrbit.param.omega;
         float e = (float) _initOrbitScript.previewedOrbit.param.e;
         float T = (float) _initOrbitScript.previewedOrbit.param.period;
@@ -101,10 +102,9 @@ public class Mission_Analysis_Plots
                     loopVectorVal.x -= planetMapSize.x;
                 latLongTime[rngIdx] = loopVectorVal;
             }
-
         }
 
-        return  latLongTime.ConvertAll<Vector2>(Retrieve_XY_From_LatLongTime_List).ToArray();
+        return  latLongTime.ConvertAll<Vector2>(Retrieve_XY_From_LatLongTime_List);
     }
     Vector2 Retrieve_XY_From_LatLongTime_List(Vector3 _latLongTimeVec3)
     {
@@ -113,17 +113,16 @@ public class Mission_Analysis_Plots
         return new Vector2(_latLongTimeVec3.x, _latLongTimeVec3.y);
     }
 
-    internal Vector2[] OffsetOrbit_fromLastOrbit_Point(Vector2 prevOrbitLastPt_XY, Vector2[] currOrbitXY)
+    internal List<Vector2> OffsetOrbit_fromLastOrbit_Point(Vector2 prevOrbitLastPt_XY, List<Vector2> currOrbitXY)
     {
         Vector2 firstPt = currOrbitXY[0];
-        for(int idx=0; idx<currOrbitXY.Length; idx++) {
-            currOrbitXY[idx] += prevOrbitLastPt_XY - firstPt;
-            if(currOrbitXY[idx].x > planetMapSize.x) {
-                float extraWidth = currOrbitXY[idx].x - planetMapSize.x + 13.33f;
-                currOrbitXY[idx].x += - planetMapSize.x + extraWidth;
-            }
-            else if(currOrbitXY[idx].x < planetMapSize.x)
-                currOrbitXY[idx].x += planetMapSize.x - 13.33f - currOrbitXY[idx].x;
+        Vector2 loopVectorVal;
+        for(int idx=0; idx<currOrbitXY.Count; idx++) {
+            loopVectorVal = currOrbitXY[idx];
+            loopVectorVal += prevOrbitLastPt_XY - firstPt;
+            if(loopVectorVal.x > planetMapSize.x)
+                loopVectorVal.x -= planetMapSize.x;
+            currOrbitXY[idx] = loopVectorVal;
         }
         return currOrbitXY;
     }
