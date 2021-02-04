@@ -25,7 +25,6 @@ public class Mission_Analysis_Plots
         float planetMapWidth = _missionAnalysisScript.planetMap.rectTransform.rect.width;
         float planetMapHeight = _missionAnalysisScript.planetMap.rectTransform.rect.height;
         planetMapSize = new Vector2(planetMapWidth, planetMapHeight);
-        Debug.Log("planetMapSize = " + planetMapSize);
     }
 
     public List<Vector2> Create_GroundTracks_Data(bool plotRotatingPlanet_GT)
@@ -51,7 +50,8 @@ public class Mission_Analysis_Plots
         float deltaLong = 0f;
 
         List<Vector3> latLongTime = new List<Vector3>();
-        int perigeeIdxStart = (int) Mathf.Ceil(3f*Mathf.PI/(2f*nuIncr)) - 1;
+        int perigeeIdxStart = (int) Mathf.Ceil(MathOps.ClampAngle(aop, 0f, 2f*Mathf.PI)/nuIncr) - 1;
+        //int perigeeIdxStart = (int) Mathf.Ceil(3f*Mathf.PI/(2f*nuIncr)) - 1;
         float lAscN_M = (float) Kepler.OrbitalConversions.OrbitPosition.nu_2_M(-aop, e).Item1;
 
         for(float deltaTheta=0f; deltaTheta<2f*Mathf.PI; deltaTheta+=nuIncr)

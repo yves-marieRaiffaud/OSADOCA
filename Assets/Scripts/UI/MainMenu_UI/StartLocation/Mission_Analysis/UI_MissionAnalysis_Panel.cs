@@ -4,15 +4,10 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
 using TMPro;
-using Mathd_Lib;
 using ObjHand = CommonMethods.ObjectsHandling;
-using UI_Fncs = CommonMethods.UI_Methods;
-using UniCsts = UniverseConstants;
 using Planets = CelestialBodiesConstants;
-using UnityEngine.Events;
-
 using Vectrosity;
-using UIExt = UnityEngine.UI.Extensions;
+using System.Linq;
 
 public class UI_MissionAnalysis_Panel : MonoBehaviour
 {
@@ -45,13 +40,30 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     internal List<VectorObject2D> _lrArr;
     GameObject ma_GridGO;
 
-    public Slider nbOrbits_slider;
+    // Array of Colors & current index of the last used Color
+    int currGtColorIdx=0;
+    Color[] gtColors = new Color[] { Color.magenta, Color.yellow, Color.green, Color.red };
 
+    [Tooltip("TMP_Dropdown 'GroundTrackType_Dropdown' to select the GT type to plot (body-fixed or body-rotating)")]
+    public TMP_Dropdown gtType_Drop;
+    enum GroundTrackType { bodyFixed, bodyRotating, both };
+    Dictionary<GroundTrackType, string> gtType_Names = new Dictionary<GroundTrackType, string>(){
+        { GroundTrackType.bodyFixed   , "Body-Fixed GT" },
+        { GroundTrackType.bodyRotating, "Body-Rotating GT" },
+        { GroundTrackType.both        , "Both" },
+    };
+
+    public Slider nbOrbits_slider;
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
     void Start()
     {
         initOrbitScript = sectionInitOrbit_RT.GetComponent<UIStartLoc_InitOrbit>();
         planetMap = panelPlanetMap_RT.Find("PlanetMap").GetComponent<Image>();
         ma_GridGO = planetMap.transform.Find("Grid").gameObject;
+        SetUp_GT_Type_Dropdown_Opts();
         maPlots = new Mission_Analysis_Plots(this, initOrbitScript);
         initOrbitScript.panelIsFullySetUp.AddListener(OnOrbitDef_UpdateClick);
 
@@ -62,6 +74,16 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
 
         _lrArr = new List<VectorObject2D>();
     }
+    void SetUp_GT_Type_Dropdown_Opts()
+    {
+        if(gtType_Drop == null)
+            Debug.LogError("Error while trying to setup the 'GroundTrackType_Dropdown': object is null");
+        gtType_Drop.AddOptions(gtType_Names.Select(f => f.Value).ToList());
+    }
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
     void Create_GroundTrack_LineRenderer_Obj(string goName)
     {
         if(groundTrack_prefab == null)
@@ -79,15 +101,100 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
         _lrArr.Add(object2D);
         _lrArr[_lrArr.Count-1].gameObject.SetActive(false);
     }
-
-    void Update_Planetary_Map(string newPlanetName)
+    void Clear_GroundTracks_Plots()
     {
-        Planets.planets currPlanet = ObjHand.Str_2_Planet(newPlanetName);
-        string pathToMap = Filepaths.RSC_UIPlanetaryMaps + newPlanetName;
-        Sprite newSprite = Resources.Load<Sprite>(pathToMap);
-        planetMap.sprite = newSprite;
-    }
+        // Clearing the List<UILineRenderer> containing the Ground Tracks
+        _lrArr.Clear();
 
+        // Clear the GroundTracks UILineRenderer except for the Grid GameObject
+        for(int childIdx=0; childIdx<planetMap.transform.childCount; childIdx++) {
+            if(planetMap.transform.GetChild(childIdx).name != ma_GridGO.name) {
+                GameObject.DestroyImmediate(planetMap.transform.GetChild(childIdx).gameObject);
+                childIdx--;
+            }
+        }
+    }
+    void Add_New_Ground_Track(string vectorLineGOName, bool bodyRotatingPlot)
+    {
+        if(planetMap.transform.Find(vectorLineGOName) == null)
+            Create_GroundTrack_LineRenderer_Obj(vectorLineGOName);
+        Compute_GroundTracks_Points(bodyRotatingPlot);
+    }
+    void Compute_GroundTracks_Points(bool bodyRotatingPlot)
+    {
+        // Plotting only 1 orbit for body-fixed plot
+        int nbOrbits = bodyRotatingPlot ? (int) nbOrbits_slider.value : 1;
+        List<Vector2> pts;
+        for(int i=0; i<nbOrbits ; i++)
+        {
+            // Computing the Ground Track X & Y Values
+            pts = maPlots.Create_GroundTracks_Data(bodyRotatingPlot);
+            if(i > 0) {
+                int lastIdx = _lrArr[_lrArr.Count-1].vectorLine.points2.Count-1;
+                pts = maPlots.OffsetOrbit_fromLastOrbit_Point(_lrArr[_lrArr.Count-1].vectorLine.points2[lastIdx], pts);
+            }
+            _lrArr[_lrArr.Count-1].vectorLine.points2.AddRange(pts);
+        }
+        _lrArr[_lrArr.Count-1].gameObject.SetActive(true);
+        _lrArr[_lrArr.Count-1].vectorLine.active = true;
+        _lrArr[_lrArr.Count-1].vectorLine.color = Get_Next_GroundTrack_Color();
+        _lrArr[_lrArr.Count-1].vectorLine.Draw();
+    }
+    Color Get_Next_GroundTrack_Color()
+    {
+        Color outColor = gtColors[currGtColorIdx];
+        currGtColorIdx = currGtColorIdx == gtColors.Length-1 ? 0 : currGtColorIdx+1;
+        return outColor;
+    }
+    
+    void Draw_Selected_GroundTracks()
+    {
+        // Removing every previous ground tracks
+        Clear_GroundTracks_Plots();
+
+        string gtName;
+        switch(gtType_Drop.value)
+        {
+            case 0:
+                // Plot only Body-Fixed Ground Track
+                gtName = gtType_Names[GroundTrackType.bodyFixed];
+                Add_New_Ground_Track(gtName, false);
+                break;
+            case 1:
+                // Plot only Body-Rotating Ground Track
+                gtName = gtType_Names[GroundTrackType.bodyRotating];
+                Add_New_Ground_Track(gtName, true);
+                break;
+            case 2:
+                // Plot both Body-Fixed & Body-Rotating Ground Tracks
+                gtName = gtType_Names[GroundTrackType.bodyFixed];
+                Add_New_Ground_Track(gtName, false);
+                gtName = gtType_Names[GroundTrackType.bodyRotating];
+                Add_New_Ground_Track(gtName, true);
+                break;
+        }
+    }
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    void OnOrbitDef_UpdateClick(int panelIdentifier, int isSetupBool)
+    {
+        if(panelIdentifier != 0 && isSetupBool != 1)
+            return;
+        Draw_Selected_GroundTracks();
+    }
+    void Check_Plot_DataLines()
+    {
+        if(initOrbitScript == null || maPlots == null)
+            return;
+        if(initOrbitScript.ORBITAL_PARAMS_VALID)
+            Draw_Selected_GroundTracks();
+    }
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
     public void On_HideShowOrbitPreview_btnClick()
     {
         if(panelOrbitPreview_RT.gameObject.activeSelf) {
@@ -104,66 +211,11 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
             panelPlanetMap_RT.DOLocalMove(new Vector3(490f, -128f, 0f), transitionsDur);
             panelPlanetMap_RT.DOScale(new Vector3(1f, 1f), transitionsDur);
         }
-    } 
-
-    void Clear_GroundTracks_Plots()
-    {
-        // Clearing the List<UILineRenderer> containing the Ground Tracks
-        _lrArr.Clear();
-
-        // Clear the GroundTracks UILineRenderer except for the Grid GameObject
-        for(int childIdx=0; childIdx<planetMap.transform.childCount; childIdx++) {
-            if(planetMap.transform.GetChild(childIdx) != ma_GridGO.transform)
-                GameObject.DestroyImmediate(planetMap.transform.GetChild(childIdx).gameObject);
-        }
     }
-
-    void OnOrbitDef_UpdateClick(int panelIdentifier, int isSetupBool)
-    {
-        if(panelIdentifier != 0 && isSetupBool != 1)
-            return;
-
-        Clear_GroundTracks_Plots();
-        // Spawning a new UILineRenderer if needed
-        if(planetMap.transform.Find("RotatingBody_GT") == null)
-            Create_GroundTrack_LineRenderer_Obj("RotatingBody_GT");
-        Draw_RotatingBody_GroundTracks();
-    }
-
-    void Draw_RotatingBody_GroundTracks()
-    {
-        int nbOrbits = (int) nbOrbits_slider.value;
-        for(int i=0; i<nbOrbits ; i++)
-        {
-            List<Vector2> pts;
-            // Computing the Ground Track X & Y Values
-            pts = maPlots.Create_GroundTracks_Data(true);
-            if(i > 0) {
-                int lastIdx = _lrArr[_lrArr.Count-1].vectorLine.points2.Count-1;
-                pts = maPlots.OffsetOrbit_fromLastOrbit_Point(_lrArr[_lrArr.Count-1].vectorLine.points2[lastIdx], pts);
-            }
-            _lrArr[_lrArr.Count-1].vectorLine.points2.AddRange(pts);
-        }
-        _lrArr[_lrArr.Count-1].gameObject.SetActive(true);
-        _lrArr[_lrArr.Count-1].vectorLine.active = true;
-        _lrArr[_lrArr.Count-1].vectorLine.color = Color.green;
-        _lrArr[_lrArr.Count-1].vectorLine.Draw();
-    }
-
-    void Check_Plot_DataLines()
-    {
-        if(initOrbitScript == null || maPlots == null)
-            return;
-        if(initOrbitScript.ORBITAL_PARAMS_VALID) {
-            Clear_GroundTracks_Plots();
-            // Spawning a new UILineRenderer if needed
-            if(planetMap.transform.Find("RotatingBody_GT") == null)
-                Create_GroundTrack_LineRenderer_Obj("RotatingBody_GT");
-            Draw_RotatingBody_GroundTracks();
-        }
-    }
-
-
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
     public void TogglePanel()
     {
         if(gameObject.activeSelf)
@@ -215,5 +267,16 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
         panelOrbitDef_RT.DOLocalMoveX(-344f, transitionsDur, false);
         panelOrbitPreview_RT.DOScale(new Vector3(1f, 1f), transitionsDur);
         panelOrbitPreview_RT.DOLocalMove(new Vector3(300f,-85.3f,0f), transitionsDur);
+    }
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
+    void Update_Planetary_Map(string newPlanetName)
+    {
+        Planets.planets currPlanet = ObjHand.Str_2_Planet(newPlanetName);
+        string pathToMap = Filepaths.RSC_UIPlanetaryMaps + newPlanetName;
+        Sprite newSprite = Resources.Load<Sprite>(pathToMap);
+        planetMap.sprite = newSprite;
     }
 }
