@@ -32,7 +32,8 @@ public class Mission_Analysis_Plots
         // if 'plotRotatingPlanet_GT' == true: plotting the rotating planet ground tracks
         // if 'plotRotatingPlanet_GT' == false: plotting the non-rotating ground tracks
         if(_initOrbitScript.previewedOrbit == null || _initOrbitScript.previewedOrbit.param == null)
-            Debug.LogError("Error while plotting ground track. '_initOrbitScript.previewedOrbit' or '_initOrbitScript.previewedOrbit.param' is null");
+            return null;
+            //Debug.LogError("Error while plotting ground track. '_initOrbitScript.previewedOrbit' or '_initOrbitScript.previewedOrbit.param' is null");
 
         float nuIncr = (float)(0.5f*UniCsts.deg2rad);
         float aop = (float) _initOrbitScript.previewedOrbit.param.omega;
@@ -90,6 +91,7 @@ public class Mission_Analysis_Plots
             List<Vector3> range2Move = latLongTime.GetRange(perigeeIdxStart, nbItems);
             latLongTime.RemoveRange(perigeeIdxStart, nbItems);
             latLongTime.InsertRange(0, range2Move);
+
             // Offseting the moved values so that they are patched correctly
             Vector3 loopVectorVal;
             for(int rngIdx = 0; rngIdx<nbItems; rngIdx++)

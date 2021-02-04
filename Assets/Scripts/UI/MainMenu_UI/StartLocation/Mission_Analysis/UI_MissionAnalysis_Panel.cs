@@ -180,7 +180,7 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     //--------------------------------------------------------------------------------------------
     void OnOrbitDef_UpdateClick(int panelIdentifier, int isSetupBool)
     {
-        if(panelIdentifier != 0 && isSetupBool != 1)
+        if(panelIdentifier != 0 || isSetupBool != 1)
             return;
         Draw_Selected_GroundTracks();
     }
