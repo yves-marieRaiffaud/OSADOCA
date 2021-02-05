@@ -8,6 +8,9 @@ using ObjHand = CommonMethods.ObjectsHandling;
 using Planets = CelestialBodiesConstants;
 using Vectrosity;
 using System.Linq;
+using System;
+using GT = MissionAnalysis.GroundTracks;
+using MSDropdownNamespace;
 
 public class UI_MissionAnalysis_Panel : MonoBehaviour
 {
@@ -46,12 +49,8 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
 
     [Tooltip("TMP_Dropdown 'GroundTrackType_Dropdown' to select the GT type to plot (body-fixed or body-rotating)")]
     public TMP_Dropdown gtType_Drop;
-    enum GroundTrackType { bodyFixed, bodyRotating, both };
-    Dictionary<GroundTrackType, string> gtType_Names = new Dictionary<GroundTrackType, string>(){
-        { GroundTrackType.bodyFixed   , "Body-Fixed GT" },
-        { GroundTrackType.bodyRotating, "Body-Rotating GT" },
-        { GroundTrackType.both        , "Both" },
-    };
+    [Tooltip("MSDropdown 'PointsofInterest_MS_Dropdown' to select the multiple interesting points to display")]
+    public MSDropdown gtPOI_MSDrop;
 
     public Slider nbOrbits_slider;
     //--------------------------------------------------------------------------------------------
@@ -63,7 +62,10 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
         initOrbitScript = sectionInitOrbit_RT.GetComponent<UIStartLoc_InitOrbit>();
         planetMap = panelPlanetMap_RT.Find("PlanetMap").GetComponent<Image>();
         ma_GridGO = planetMap.transform.Find("Grid").gameObject;
+
         SetUp_GT_Type_Dropdown_Opts();
+        SetUp_GT_POI_MSDropdown_Opts();
+
         maPlots = new Mission_Analysis_Plots(this, initOrbitScript);
         initOrbitScript.panelIsFullySetUp.AddListener(OnOrbitDef_UpdateClick);
 
@@ -78,7 +80,17 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     {
         if(gtType_Drop == null)
             Debug.LogError("Error while trying to setup the 'GroundTrackType_Dropdown': object is null");
-        gtType_Drop.AddOptions(gtType_Names.Select(f => f.Value).ToList());
+        gtType_Drop.AddOptions(GT.gtType_Names.Select(f => f.Value).ToList());
+    }
+    void SetUp_GT_POI_MSDropdown_Opts()
+    {
+        if(gtPOI_MSDrop== null)
+            Debug.LogError("Error while trying to setup the 'PointsOfInterest_MS_Dropdown': object is null");
+        List<string> opts_string = GT.gtPOI_Names.Select(f => f.Value).ToList();
+        List<stringBoolStruct> opts = new List<stringBoolStruct>();
+        foreach(string strOpt in opts_string)
+            opts.Add(new stringBoolStruct(strOpt, false));
+        gtPOI_MSDrop.SetOptions(opts);
     }
     //--------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------
@@ -157,19 +169,19 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
         {
             case 0:
                 // Plot only Body-Fixed Ground Track
-                gtName = gtType_Names[GroundTrackType.bodyFixed];
+                gtName = GT.gtType_Names[GT.GroundTrackType.bodyFixed];
                 Add_New_Ground_Track(gtName, false);
                 break;
             case 1:
                 // Plot only Body-Rotating Ground Track
-                gtName = gtType_Names[GroundTrackType.bodyRotating];
+                gtName = GT.gtType_Names[GT.GroundTrackType.bodyRotating];
                 Add_New_Ground_Track(gtName, true);
                 break;
             case 2:
                 // Plot both Body-Fixed & Body-Rotating Ground Tracks
-                gtName = gtType_Names[GroundTrackType.bodyFixed];
+                gtName = GT.gtType_Names[GT.GroundTrackType.bodyFixed];
                 Add_New_Ground_Track(gtName, false);
-                gtName = gtType_Names[GroundTrackType.bodyRotating];
+                gtName = GT.gtType_Names[GT.GroundTrackType.bodyRotating];
                 Add_New_Ground_Track(gtName, true);
                 break;
         }

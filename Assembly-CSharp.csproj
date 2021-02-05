@@ -88,6 +88,7 @@
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\Spaceship\UI_Spaceship_Panel.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\LaunchPad\LaunchPad.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\LaunchPad\LaunchPadList.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\Mission_Analysis\GroundTracks.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\Mission_Analysis\Mission_Analysis_Plots.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\Mission_Analysis\Options_Scripts\MissionAnalysis_Grid_Handler.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\Mission_Analysis\UI_MissionAnalysis_Panel.cs" />
