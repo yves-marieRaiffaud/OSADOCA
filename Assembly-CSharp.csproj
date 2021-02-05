@@ -91,6 +91,7 @@
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\Mission_Analysis\GroundTracks.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\Mission_Analysis\Mission_Analysis_Plots.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\Mission_Analysis\Options_Scripts\MissionAnalysis_Grid_Handler.cs" />
+     <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\Mission_Analysis\Options_Scripts\PointOfInterest.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\Mission_Analysis\UI_MissionAnalysis_Panel.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UIStartLoc_InitOrbit.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu_UI\StartLocation\UIStartLoc_InitPlanetarySurf.cs" />

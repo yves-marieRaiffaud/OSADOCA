@@ -51,6 +51,8 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     public TMP_Dropdown gtType_Drop;
     [Tooltip("MSDropdown 'PointsofInterest_MS_Dropdown' to select the multiple interesting points to display")]
     public MSDropdown gtPOI_MSDrop;
+    [Tooltip("Prefab GameObject for the PointOfInterest for the GroundTracks")]
+    public GameObject poi_prefab;
 
     public Slider nbOrbits_slider;
     //--------------------------------------------------------------------------------------------

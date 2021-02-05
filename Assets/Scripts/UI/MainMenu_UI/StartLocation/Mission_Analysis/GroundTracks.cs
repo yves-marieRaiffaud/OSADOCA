@@ -1,11 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
-using ObjHand = CommonMethods.ObjectsHandling;
-using Planets = CelestialBodiesConstants;
-using System.Linq;
 using System;
+using ObjHand = CommonMethods.ObjectsHandling;
 
 namespace MissionAnalysis
 {
@@ -30,5 +27,14 @@ namespace MissionAnalysis
             { GroundTrack_POI.descendingNode, "Descending Node" },
             { GroundTrack_POI.Everything    , "Everything" }
         };
+
+        public static GroundTrack_POI Str_2_GroundTrack_POI(string stringEnum)
+        {
+            (GroundTrack_POI,bool) res = ObjHand.Generic_Str_2_Enum<GroundTrack_POI>(stringEnum);
+            if(res.Item2)
+                return res.Item1; // If we found the Enum object mathcing 'stringEnum'
+            else
+                return GroundTrack_POI.None; // Default value to return
+        }
     }
 }
