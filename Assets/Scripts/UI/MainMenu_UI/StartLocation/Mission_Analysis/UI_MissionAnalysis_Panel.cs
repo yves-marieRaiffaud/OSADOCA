@@ -111,21 +111,21 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     {
         GT.GroundTrack_POI selectedPOI = (GT.GroundTrack_POI) gtPOI_MSDrop.Options_To_FlagedEnum_Int<GT.GroundTrack_POI>(GT.gtPOI_Names);
         if(selectedPOI.HasFlag(GT.GroundTrack_POI.apocentre))
-            POI_Add_Apocentre();
+            Add_POI("Apocentre", Mathf.PI);
         if(selectedPOI.HasFlag(GT.GroundTrack_POI.pericentre))
-            POI_Add_Pericentre();
+            Add_POI("Pericentre", 0f);
         if(selectedPOI.HasFlag(GT.GroundTrack_POI.ascendingNode))
-            POI_Add_AscendingNode();
+            Add_POI("AscendingNode", (float)-initOrbitScript.previewedOrbit.param.omega);
         if(selectedPOI.HasFlag(GT.GroundTrack_POI.descendingNode))
-            POI_Add_DescendingNode();
+            Add_POI("DescendingNode", (float)-initOrbitScript.previewedOrbit.param.omega + Mathf.PI);
     }
-    void POI_Add_Apocentre()
+    void Add_POI(string goName, float trueAnomaly)
     {
         float e = (float) initOrbitScript.previewedOrbit.param.e; // no dim
         float n = (float) initOrbitScript.previewedOrbit.param.n; // rad/s
         float T = (float) initOrbitScript.previewedOrbit.param.period; // seconds
         // Corresponding Mean Anomaly of the apocentre
-        float apocentre_M = (float) Kepler.OrbitalConversions.OrbitPosition.nu_2_M(Mathf.PI, e).Item1;
+        float apocentre_M = (float) Kepler.OrbitalConversions.OrbitPosition.nu_2_M(trueAnomaly, e).Item1;
         apocentre_M = MathsOps.ClampAngle(apocentre_M, 0f, 2f*Mathf.PI);
         float apocentre_time = apocentre_M/n;
 
@@ -144,7 +144,7 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
             // Spawning new Sprite
             GameObject poiGO = GameObject.Instantiate(poi_prefab, Vector3.zero, Quaternion.identity, planetMapRT);
             poiGO.SetActive(true);
-            poiGO.name = "Apocentre";
+            poiGO.name = goName;
             PointOfInterest poi = poiGO.GetComponent<PointOfInterest>();
             RectTransform poiGoRT = poiGO.GetComponent<RectTransform>();
             poiGoRT.offsetMin = Vector2.zero;
@@ -153,18 +153,6 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
 
             poi.SetPosition(foundData.x-planetMap.rectTransform.rect.width/2f, foundData.y-planetMap.rectTransform.rect.height/2f);
         }
-    }
-    void POI_Add_Pericentre()
-    {
-
-    }
-    void POI_Add_AscendingNode()
-    {
-
-    }
-    void POI_Add_DescendingNode()
-    {
-
     }
     //--------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------
