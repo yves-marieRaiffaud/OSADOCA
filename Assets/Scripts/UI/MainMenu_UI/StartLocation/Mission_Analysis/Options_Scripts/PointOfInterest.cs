@@ -3,12 +3,24 @@ using System.Collections;
 using UnityEngine.Events;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
 
 public class PointOfInterest : MonoBehaviour
 {
     RectTransform _rt;
     Button _btn;
+    Image _spriteImg;
+
+    [SerializeField] Color _spriteColor=Color.red;
+    public Color spriteColor
+    {
+        get {
+            return _spriteColor;
+        }
+        set {
+            _spriteColor=value;
+            SetColor(_spriteColor);
+        }
+    }
 
     [SerializeField] bool _isActive=false;
     public bool isActive
@@ -18,6 +30,7 @@ public class PointOfInterest : MonoBehaviour
         }
         set {
             _isActive=value;
+            SetActiveState(_isActive);
         }
     }
 
@@ -58,6 +71,8 @@ public class PointOfInterest : MonoBehaviour
             Debug.Log("Error while awaking 'PointOfInterest': can't find its RectTransform component.");
         if(!TryGetComponent<Button>(out _btn))
             Debug.Log("Error while awaking 'PointOfInterest': can't find its Button component.");
+        if(!TryGetComponent<Image>(out _spriteImg))
+            Debug.Log("Error while awaking 'PointOfInterest': can't find its Image component.");
 
         if(_OnClick == null)
             _OnClick = new UnityEvent();
@@ -65,8 +80,16 @@ public class PointOfInterest : MonoBehaviour
             _OnEnter = new UnityEvent();
         if(_OnExit == null)
             _OnExit = new UnityEvent();
-        
+
         _btn.onClick.AddListener(OnPOIClick);
+        // Apply properties
+        SetActiveState(_isActive);
+        SetColor(_spriteColor);
+    }
+
+    void SetColor(Color newSpriteColor)
+    {
+        _spriteImg.color = newSpriteColor;
     }
 
     void OnPOIClick()

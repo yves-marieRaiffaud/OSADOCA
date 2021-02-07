@@ -134,6 +134,16 @@ namespace CommonMethods
                 return OrbitalTypes.bodyPositionType.nu; // Default value to return
         }
 
+        public static T Get_Enum_From_Dictionary_String<T>(Dictionary<T,string> enumStringDict, string stringToLookFor)
+        where T: struct
+        {
+            foreach(KeyValuePair<T,string> keyValue in enumStringDict) {
+                if(keyValue.Value.Equals(stringToLookFor))
+                    return keyValue.Key;
+            }
+            return default(T);
+        }
+
         public static void Check_Create_Directory(string filepath, bool printToDebugLog)
         {
             if(!Directory.Exists(filepath)) {

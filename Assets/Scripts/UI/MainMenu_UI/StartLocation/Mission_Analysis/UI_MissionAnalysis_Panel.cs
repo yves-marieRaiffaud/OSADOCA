@@ -10,7 +10,9 @@ using Vectrosity;
 using System.Linq;
 using System;
 using GT = MissionAnalysis.GroundTracks;
+using MA = Mission_Analysis_Plots;
 using MSDropdownNamespace;
+using MathsOps = CommonMethods.MathsOps;
 
 public class UI_MissionAnalysis_Panel : MonoBehaviour
 {
@@ -28,6 +30,7 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     [Tooltip("RectTransform of the 'Panel_PlanetMap'")]
     public RectTransform panelPlanetMap_RT;
     internal Image planetMap;
+    Transform planetMapRT;
 
     [Tooltip("Button of the 'HideShow_OritPreview_btn'")]
     public Button hideShowOrbitPreview_btn;
@@ -41,6 +44,7 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     [Tooltip("Prefab for the Ground Track UILineRenderer")]
     public GameObject groundTrack_prefab;
     internal List<VectorObject2D> _lrArr;
+    List<MA.XYLatLongTime> _groundTracksData;
     GameObject ma_GridGO;
 
     // Array of Colors & current index of the last used Color
@@ -62,11 +66,13 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     void Start()
     {
         initOrbitScript = sectionInitOrbit_RT.GetComponent<UIStartLoc_InitOrbit>();
-        planetMap = panelPlanetMap_RT.Find("PlanetMap").GetComponent<Image>();
+        planetMapRT = panelPlanetMap_RT.Find("PlanetMap");
+        planetMap = planetMapRT.GetComponent<Image>();
         ma_GridGO = planetMap.transform.Find("Grid").gameObject;
 
         SetUp_GT_Type_Dropdown_Opts();
         SetUp_GT_POI_MSDropdown_Opts();
+        gtPOI_MSDrop.OnValueChanged.AddListener(On_POI_Dropdown_ValueChanged);
 
         maPlots = new Mission_Analysis_Plots(this, initOrbitScript);
         initOrbitScript.panelIsFullySetUp.AddListener(OnOrbitDef_UpdateClick);
@@ -77,6 +83,7 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
         startLocPanelScript.onPlanetSelectionValueChange.AddListener(Update_Planetary_Map);
 
         _lrArr = new List<VectorObject2D>();
+        _groundTracksData = new List<MA.XYLatLongTime>();
     }
     void SetUp_GT_Type_Dropdown_Opts()
     {
@@ -96,6 +103,71 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     }
     //--------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------
+    void On_POI_Dropdown_ValueChanged()
+    {
+        Update_POI();
+    }
+    void Update_POI()
+    {
+        GT.GroundTrack_POI selectedPOI = (GT.GroundTrack_POI) gtPOI_MSDrop.Options_To_FlagedEnum_Int<GT.GroundTrack_POI>(GT.gtPOI_Names);
+        if(selectedPOI.HasFlag(GT.GroundTrack_POI.apocentre))
+            POI_Add_Apocentre();
+        if(selectedPOI.HasFlag(GT.GroundTrack_POI.pericentre))
+            POI_Add_Pericentre();
+        if(selectedPOI.HasFlag(GT.GroundTrack_POI.ascendingNode))
+            POI_Add_AscendingNode();
+        if(selectedPOI.HasFlag(GT.GroundTrack_POI.descendingNode))
+            POI_Add_DescendingNode();
+    }
+    void POI_Add_Apocentre()
+    {
+        float e = (float) initOrbitScript.previewedOrbit.param.e; // no dim
+        float n = (float) initOrbitScript.previewedOrbit.param.n; // rad/s
+        float T = (float) initOrbitScript.previewedOrbit.param.period; // seconds
+        // Corresponding Mean Anomaly of the apocentre
+        float apocentre_M = (float) Kepler.OrbitalConversions.OrbitPosition.nu_2_M(Mathf.PI, e).Item1;
+        apocentre_M = MathsOps.ClampAngle(apocentre_M, 0f, 2f*Mathf.PI);
+        float apocentre_time = apocentre_M/n;
+
+        // Looping through all times modulo the orbital period
+        List<MA.XYLatLongTime> apocentreArr = new List<MA.XYLatLongTime>();
+        for(int orbitNb=1; orbitNb<= (int)nbOrbits_slider.value; orbitNb++)
+        {
+            MA.XYLatLongTime closest = _groundTracksData.Select(w => new { w, distance = Math.Abs(w.time - orbitNb*apocentre_time) })
+            .OrderBy(p => p.distance)
+            .Select(p => p.w).First();
+            apocentreArr.Add(closest);
+        }
+        Debug.Log("apocentreArr = " + string.Join("\n", apocentreArr));
+        foreach(MA.XYLatLongTime foundData in apocentreArr)
+        {
+            // Spawning new Sprite
+            GameObject poiGO = GameObject.Instantiate(poi_prefab, Vector3.zero, Quaternion.identity, planetMapRT);
+            poiGO.SetActive(true);
+            poiGO.name = "Apocentre";
+            PointOfInterest poi = poiGO.GetComponent<PointOfInterest>();
+            RectTransform poiGoRT = poiGO.GetComponent<RectTransform>();
+            poiGoRT.offsetMin = Vector2.zero;
+            poiGoRT.offsetMax = Vector2.zero;
+            poiGoRT.sizeDelta = new Vector2(20f, 20f);
+
+            poi.SetPosition(foundData.x-planetMap.rectTransform.rect.width/2f, foundData.y-planetMap.rectTransform.rect.height/2f);
+        }
+    }
+    void POI_Add_Pericentre()
+    {
+
+    }
+    void POI_Add_AscendingNode()
+    {
+
+    }
+    void POI_Add_DescendingNode()
+    {
+
+    }
+    //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------
     void Create_GroundTrack_LineRenderer_Obj(string goName)
@@ -104,7 +176,7 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
             Debug.LogError("Error while trying to create a UILineRenderer GroundTrack Object: 'groundTrack_prefab' GameObject is null");
 
         // Spawning the UILineRenderer Prefab
-        GameObject go = GameObject.Instantiate(groundTrack_prefab, Vector3.zero, Quaternion.identity, panelPlanetMap_RT.Find("PlanetMap"));
+        GameObject go = GameObject.Instantiate(groundTrack_prefab, Vector3.zero, Quaternion.identity, planetMapRT);
         go.name = goName;
         RectTransform goRT = go.GetComponent<RectTransform>();
         goRT.offsetMin = Vector2.zero;
@@ -119,6 +191,7 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     {
         // Clearing the List<UILineRenderer> containing the Ground Tracks
         _lrArr.Clear();
+        _groundTracksData.Clear();
 
         // Clear the GroundTracks UILineRenderer except for the Grid GameObject
         for(int childIdx=0; childIdx<planetMap.transform.childCount; childIdx++) {
@@ -138,16 +211,17 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
     {
         // Plotting only 1 orbit for body-fixed plot
         int nbOrbits = bodyRotatingPlot ? (int) nbOrbits_slider.value : 1;
-        List<Vector2> pts;
+        List<MA.XYLatLongTime> pts;
         for(int i=0; i<nbOrbits ; i++)
         {
             // Computing the Ground Track X & Y Values
             pts = maPlots.Create_GroundTracks_Data(bodyRotatingPlot);
             if(i > 0) {
                 int lastIdx = _lrArr[_lrArr.Count-1].vectorLine.points2.Count-1;
-                pts = maPlots.OffsetOrbit_fromLastOrbit_Point(_lrArr[_lrArr.Count-1].vectorLine.points2[lastIdx], pts);
+                pts = maPlots.OffsetOrbit_fromLastOrbit_Point(_groundTracksData[_groundTracksData.Count-1], pts);
             }
-            _lrArr[_lrArr.Count-1].vectorLine.points2.AddRange(pts);
+            _groundTracksData.AddRange(pts);
+            _lrArr[_lrArr.Count-1].vectorLine.points2.AddRange(pts.ConvertAll<Vector2>(MA.XYLatLongTime.Retrieve_XY_From_Struct));
         }
         _lrArr[_lrArr.Count-1].gameObject.SetActive(true);
         _lrArr[_lrArr.Count-1].vectorLine.active = true;
@@ -187,6 +261,7 @@ public class UI_MissionAnalysis_Panel : MonoBehaviour
                 Add_New_Ground_Track(gtName, true);
                 break;
         }
+        Update_POI();
     }
     //--------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------

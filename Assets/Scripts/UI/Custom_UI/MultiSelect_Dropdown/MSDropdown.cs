@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 using System.Linq;
+using ObjHand = CommonMethods.ObjectsHandling;
 
 namespace MSDropdownNamespace
 {
@@ -191,6 +192,21 @@ namespace MSDropdownNamespace
             if(!hasDoneStart)
                 Start();
             InitOptions(optionsData);
+        }
+
+        public int Options_To_FlagedEnum_Int<T>(Dictionary<T,string> enumStringDict=null)
+        where T: struct
+        {
+            int intEnum=0;
+            foreach(stringBoolStruct pair in _options) {
+                if(pair.optionIsSelected) {
+                    string modifiedStringEnum = pair.optionString;
+                    if(enumStringDict != null)
+                        modifiedStringEnum = ObjHand.Get_Enum_From_Dictionary_String<T>(enumStringDict, pair.optionString).ToString();
+                    intEnum |= (int)(object) ObjHand.Generic_Str_2_FlagedEnum<T>(modifiedStringEnum).Item1;
+                }
+            }
+            return intEnum;
         }
 
         void OnItemClick(stringBoolStruct option, GameObject clickedItem)
